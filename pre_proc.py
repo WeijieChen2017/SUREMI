@@ -20,6 +20,6 @@ for file_path  in file_list:
     print("-"*60)
     print(file_path)
     file_nifty = nib.load(file_path)
-    file_data = nib.load_fdata(file_nifty)
+    file_data = file_nifty.load_fdata()
     print(np.amax(file_data), np.amin(file_data))
 
