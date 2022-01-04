@@ -153,7 +153,7 @@ for idx_epoch in range(train_dict["epochs"]):
             for idx_iter in range(len_z//train_dict["batch"]):
 
                 batch_x = np.zeros((train_dict["batch"], train_dict["input_channel"], cube_x_data.shape[0], cube_x_data.shape[1]))
-                batch_y = np.zeros((train_dict["batch"], train_dict["output_channel"], cube_y_data.shape[0], cube_y_data.shape[1]))
+                batch_y = np.zeros((train_dict["batch"], train_dict["output_channel"], cube_y1_data.shape[0], cube_y1_data.shape[1]))
 
                 for idx_batch in range(train_dict["batch"]):
                     z_center = input_list[idx_iter*train_dict["batch"]+idx_batch]

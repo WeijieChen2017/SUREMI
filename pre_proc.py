@@ -13,7 +13,7 @@ import nibabel as nib
 # pre_proc_dict["name_orig"] = "CT__MLAC_*_MNI.nii.gz"
 # pre_proc_dict["dir_syn"] = "./data_dir/seg_CT/"
 # pre_proc_dict["is_seg"] = True
-# pre_proc_dict["attr_seg"] = ["air", "soft tissue", "bone"]
+# pre_proc_dict["attr_seg"] = ["air", "soft_tissue", "bone"]
 # pre_proc_dict["range_seg"] = [[-1024, -500], [-500, 500], [500, 3000]]
 # pre_proc_dict["note"] = []
 # pre_proc_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
