@@ -140,7 +140,7 @@ for idx_epoch in range(train_dict["epochs"]):
             cube_x1_path = train_dict["folder_X"] + "/air/" + file_name
             cube_x2_path = train_dict["folder_X"] + "/bone/" + file_name
             cube_x3_path = train_dict["folder_X"] + "/soft_tissue/" + file_name
-            print("--->",cube_x_path,"<---", end="")
+            print("--->",cube_y_path,"<---", end="")
             cube_y_data = nib.load(cube_y_path).get_fdata()
             cube_x1_data = nib.load(cube_x1_path).get_fdata()
             cube_x2_data = nib.load(cube_x2_path).get_fdata()
@@ -164,7 +164,7 @@ for idx_epoch in range(train_dict["epochs"]):
                         batch_x[idx_batch, 0, :, :] = cube_x1_data[:, :, z_center]
                         batch_x[idx_batch, 1, :, :] = cube_x2_data[:, :, z_center]
                         batch_x[idx_batch, 2, :, :] = cube_x3_data[:, :, z_center]
-                        
+
                     if train_dict["output_channel"] == 3:
                         batch_y[idx_batch, 0, :, :] = cube_y_data[:, :, z_before]
                         batch_y[idx_batch, 1, :, :] = cube_y_data[:, :, z_center]
@@ -185,7 +185,7 @@ for idx_epoch in range(train_dict["epochs"]):
                 case_loss[idx_iter] = loss.item()
                 case_loss[idx_iter] = loss.item()
             
-            case_name = os.path.basename(cube_x_path)[5:8]
+            case_name = os.path.basename(cube_y_path)[5:8]
             if not isTrain:
                 np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_x.npy".format(idx_epoch+1, case_name), batch_x.cpu().detach().numpy())
                 np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_y.npy".format(idx_epoch+1, case_name), batch_y.cpu().detach().numpy())
