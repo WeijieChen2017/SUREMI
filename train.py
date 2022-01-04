@@ -89,7 +89,6 @@ optimizer = torch.optim.AdamW(
 
 X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
 Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
-assert len(X_list) == len(Y_list)
 
 X_list = np.asarray(X_list)
 np.random.shuffle(X_list)
