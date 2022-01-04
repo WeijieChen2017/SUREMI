@@ -18,19 +18,19 @@ from model import UNet
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "seg_bone_to_CT"
+train_dict["project_name"] = "seg_to_CT"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_channel"] = 1
 train_dict["output_channel"] = 1
 train_dict["gpu_ids"] = [5]
 train_dict["epochs"] = 50
-train_dict["batch"] = 4
+train_dict["batch"] = 10
 train_dict["dropout"] = 0
 train_dict["model_term"] = "UNet"
 
-train_dict["folder_X"] = "./data_dir/seg_CT/bone/"
-train_dict["folder_Y"] = "./data_dir/norm_CT/bone/"
+train_dict["folder_X"] = "./data_dir/seg_CT/"
+train_dict["folder_Y"] = "./data_dir/norm_CT/"
 train_dict["val_ratio"] = 0.2
 train_dict["test_ratio"] = 0.1
 

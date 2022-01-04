@@ -53,16 +53,16 @@ import nibabel as nib
 # np.save("./log_dir/log_pre_proc_"+pre_proc_dict["time_stamp"]+".npy", pre_proc_dict)
 
 
-# ------------------------------MR------------------------------
+# ------------------------------regular------------------------------
 
 pre_proc_dict = {}
 
 pre_proc_dict["dir_orig"] = "./data_dir/MR2CT/"
-pre_proc_dict["name_orig"] = "MR__MLAC_*_MNI.nii.gz"
-pre_proc_dict["dir_syn"] = "./data_dir/norm_MR/"
+pre_proc_dict["name_orig"] = "CT__MLAC_*_MNI.nii.gz"
+pre_proc_dict["dir_syn"] = "./data_dir/norm_CT/"
 pre_proc_dict["is_seg"] = False
 pre_proc_dict["attr_seg"] = ["regular"]
-pre_proc_dict["range_seg"] = [[0, 4000]]
+pre_proc_dict["range_seg"] = [[-1024, 3000]]
 pre_proc_dict["note"] = []
 pre_proc_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 
