@@ -22,7 +22,7 @@ for file_path  in file_list:
     print(file_path)
     file_nifty = nib.load(file_path)
     file_data = file_nifty.get_fdata()
-    print(np.amax(file_data), np.amin(file_data))
+    print(np.amin(file_data), np.amax(file_data))
 
     pre_proc_dict["note"].append(["There are two ranges, [-1024, 2000+], [0, 3000+]"])
     if np.amin(file_data) >-1:
@@ -43,7 +43,7 @@ for file_path  in file_list:
         save_name = "NORM_0"+os.path.basename(file_path)[9:11]+".nii.gz"
         save_nifty = nib.Nifti1Image(value_seg, file_nifty.affine, file_nifty.header)
         nib.save(save_nifty, save_folder+save_name)
-        print(save_folder+save_name, np.amax(value_seg), np.amin(value_seg))
+        print(save_folder+save_name, " "*4, np.amin(value_seg), " "*4, np.amax(value_seg))
 
 np.save("./log_dir/log_pre_proc_"+pre_proc_dict["time_stamp"]+".npy", pre_proc_dict)
 
