@@ -161,15 +161,14 @@ for idx_epoch in range(train_dict["epochs"]):
                     z_after = z_center + 1 if z_center < len_z-1 else len_z-1
 
                     if train_dict["input_channel"] == 3:
-                        batch_x[idx_batch, 1, :, :] = cube_x1_data[:, :, z_center]
-                        batch_x[idx_batch, 0, :, :] = cube_x2_data[:, :, z_before]
-                        batch_x[idx_batch, 2, :, :] = cube_x3_data[:, :, z_after]
-                    if train_dict["input_channel"] == 1:
-                        batch_x[idx_batch, 0, :, :] = cube_x_data[:, :, z_center]
+                        batch_x[idx_batch, 0, :, :] = cube_x1_data[:, :, z_center]
+                        batch_x[idx_batch, 1, :, :] = cube_x2_data[:, :, z_center]
+                        batch_x[idx_batch, 2, :, :] = cube_x3_data[:, :, z_center]
+                        
                     if train_dict["output_channel"] == 3:
-                        batch_y[idx_batch, 0, :, :] = cube_y1_data[:, :, z_before]
-                        batch_y[idx_batch, 1, :, :] = cube_y2_data[:, :, z_center]
-                        batch_y[idx_batch, 2, :, :] = cube_y3_data[:, :, z_after]
+                        batch_y[idx_batch, 0, :, :] = cube_y_data[:, :, z_before]
+                        batch_y[idx_batch, 1, :, :] = cube_y_data[:, :, z_center]
+                        batch_y[idx_batch, 2, :, :] = cube_y_data[:, :, z_after]
                     if train_dict["output_channel"] == 1:
                         batch_y[idx_batch, 0, :, :] = cube_y_data[:, :, z_center]
 
