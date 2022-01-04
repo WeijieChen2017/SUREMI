@@ -42,6 +42,9 @@ train_dict["opt_eps"] = 1e-8 # default
 train_dict["opt_weight_decay"] = 0.01 # default
 train_dict["amsgrad"] = False # default
 
+for path in [train_dict["save_folder"], train_dict["save_folder"]+"npy/", train_dict["save_folder"]+"loss/"]:
+    if not os.path.exists(path):
+        os.mkdir(path)
 
 wandb.init(project=train_dict["project_name"])
 config = wandb.config
@@ -67,9 +70,7 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-for path in [train_dict["save_folder"], train_dict["save_folder"]+"npy/", train_dict["save_folder"]+"loss/"]:
-    if not os.path.exists(path):
-        os.mkdir(path)
+
 
 model = UNet(n_channels=train_dict["input_channel"], n_classes=train_dict["output_channel"])
 model.train().float()
@@ -190,6 +191,7 @@ for idx_epoch in range(train_dict["epochs"]):
     loss_std = np.std(epoch_loss_train)
     print("===> Epoch[{}]: ".format(idx_epoch+1), end='')
     print("Loss mean: {:.6} Loss std: {:.6}".format(loss_mean, loss_std))
+    wandb.log({"train_loss": loss_mean})
     np.save(train_dict["save_folder"]+"loss/epoch_loss_t_{:03d}.npy".format(idx_epoch+1), epoch_loss_train)
     train_loss[idx_epoch] = loss_mean
     torch.cuda.empty_cache()
@@ -260,6 +262,7 @@ for idx_epoch in range(train_dict["epochs"]):
     loss_std = np.std(epoch_loss_val)
     print("===> Epoch[{:03d}]-Val: ".format(idx_epoch+1), end='')
     print("Loss mean: {:.6} Loss std: {:.6}".format(loss_mean, loss_std))
+    wandb.log({"val_loss": loss_mean})
     np.save(train_dict["save_folder"]+"loss/epoch_loss_v_{:03d}.npy".format(idx_epoch+1), epoch_loss_val)
     if loss_mean < best_val_loss:
         # save the best model
@@ -345,4 +348,4 @@ print("===> Epoch[{:03d}]-Eval: ".format(idx_epoch+1), end='')
 print("Loss mean: {:.6} Loss std: {:.6}".format(loss_mean, loss_std))
 np.save(train_dict["save_folder"]+"loss/epoch_loss_e_{:03d}.npy".format(idx_epoch+1), epoch_loss_test)
 
-wandb.log({"loss": loss_mean})
+wandb.log({"test_loss": loss_mean})
