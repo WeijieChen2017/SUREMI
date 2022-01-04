@@ -210,9 +210,9 @@ for idx_epoch in range(train_dict["epochs"]):
 
         if isVal:
             if loss_mean < best_val_loss:
-            # save the best model
-            torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch+1))
-            print("Checkpoint saved at Epoch {:03d}".format(idx_epoch+1))
-            best_val_loss = loss_mean
+                # save the best model
+                torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch+1))
+                print("Checkpoint saved at Epoch {:03d}".format(idx_epoch+1))
+                best_val_loss = loss_mean
 
         torch.cuda.empty_cache()
