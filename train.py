@@ -14,6 +14,7 @@ import requests
 
 from model import UNet
 
+# ==================== dict and config ====================
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
@@ -53,6 +54,12 @@ config.loss_term = train_dict["loss_term"]
 config.opt_lr = train_dict["opt_lr"]
 config.opt_weight_decay = train_dict["opt_weight_decay"]
 
+np.save(train_dict["project_name"]+"conf.npy", config)
+np.save(train_dict["project_name"]+"dict.npy", train_dict)
+
+
+# ==================== basic settings ====================
+
 np.random.seed(train_dict["seed"])
 gpu_list = ','.join(str(x) for x in train_dict["gpu_ids"])
 os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
@@ -77,6 +84,7 @@ optimizer = torch.optim.AdamW(
     amsgrad = train_dict["amsgrad"]
     )
 
+# ==================== data division ====================
 
 X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
 Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
@@ -92,6 +100,13 @@ test_list_X = X_list[-int(len(X_list)*train_dict["test_ratio"]):]
 test_list_X.sort()
 train_list_X = list(set(X_list) - set(val_list_X) - set(test_list_X))
 train_list_X.sort()
+
+data_division_dict = {
+    "train_list_X" : train_list_X,
+    "val_list_X" : val_list_X,
+    "test_list_X" : test_list_X}
+np.save(train_dict["project_name"]+"data_division.npy", data_division_dict)
+
 
 train_loss = np.zeros((train_dict["epochs"]))
 epoch_loss_train = np.zeros((len(train_list_X)))
@@ -329,6 +344,3 @@ print("Loss mean: {:.6} Loss std: {:.6}".format(loss_mean, loss_std))
 np.save(train_dict["project_name"]+"loss/epoch_loss_e_{:03d}.npy".format(idx_epoch+1), epoch_loss_test)
 
 wandb.log({"loss": loss_mean})
-np.save(train_dict["project_name"]+"conf.npy", config)
-np.save(train_dict["project_name"]+"dict.npy", train_dict)
-
