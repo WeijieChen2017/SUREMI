@@ -62,7 +62,7 @@ class UNet(nn.Module):
 
 class UNet_seg(nn.Module):
     def __init__(self, n_channels, n_classes, bilinear=True):
-        super(UNet, self).__init__()
+        super(UNet_seg, self).__init__()
         self.n_channels = n_channels
         self.n_classes = n_classes
         self.bilinear = bilinear
