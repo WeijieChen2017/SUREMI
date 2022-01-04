@@ -12,7 +12,7 @@ import torch
 import torchvision
 import requests
 
-from model import UNet
+from model import UNet, UNet_seg
 
 # ==================== dict and config ====================
 
@@ -27,7 +27,7 @@ train_dict["gpu_ids"] = [5]
 train_dict["epochs"] = 50
 train_dict["batch"] = 10
 train_dict["dropout"] = 0
-train_dict["model_term"] = "UNet"
+train_dict["model_term"] = "UNet_seg"
 
 train_dict["folder_X"] = "./data_dir/norm_MR/regular/"
 train_dict["folder_Y"] = "./data_dir/seg_CT/"
@@ -71,7 +71,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 
-model = UNet(n_channels=train_dict["input_channel"], n_classes=train_dict["output_channel"])
+model = UNet_seg(n_channels=train_dict["input_channel"], n_classes=train_dict["output_channel"])
 model.train().float()
 model = model.to(device)
 criterion = nn.SmoothL1Loss()
