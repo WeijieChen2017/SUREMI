@@ -9,7 +9,7 @@ pre_proc_dict = {}
 
 pre_proc_dict["dir_orig"] = "./data_dir/MR2CT/"
 pre_proc_dict["name_orig"] = "CT__MLAC_*_MNI.nii.gz"
-pre_proc_dict["dir_syn"] = "./data_dir/norm_CT/"
+pre_proc_dict["dir_syn"] = "./data_dir/seg_CT/"
 pre_proc_dict["is_seg"] = True
 pre_proc_dict["attr_seg"] = ["air", "soft tissue", "bone"]
 pre_proc_dict["range_seg"] = [[-1024, -500], [-500, 500], [500, 3000]]
@@ -37,6 +37,7 @@ for file_path  in file_list:
         value_seg[value_seg < value_min] = value_min
         value_seg[value_seg > value_max] = value_min
         value_seg = ( value_seg - value_min ) / (value_max - value_min)
+        value_seg[value_seg > 0] = 1
 
         save_folder = pre_proc_dict["dir_syn"] + pre_proc_dict["attr_seg"][idx] + "/"
         if not os.path.exists(save_folder):
