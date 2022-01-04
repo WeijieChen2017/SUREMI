@@ -58,7 +58,7 @@ config.loss_term = train_dict["loss_term"]
 config.opt_lr = train_dict["opt_lr"]
 config.opt_weight_decay = train_dict["opt_weight_decay"]
 
-np.save(train_dict["save_folder"]+"conf.npy", config)
+# np.save(train_dict["save_folder"]+"conf.npy", config)
 np.save(train_dict["save_folder"]+"dict.npy", train_dict)
 
 
