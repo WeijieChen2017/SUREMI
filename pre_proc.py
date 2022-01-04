@@ -34,7 +34,7 @@ for file_path  in file_list:
         value_max = value_range[1]
         value_seg = copy.deepcopy(file_data)
         value_seg[value_seg < value_min] = value_min
-        value_seg[value_seg > value_max] = value_max
+        value_seg[value_seg > value_max] = value_min
         value_seg = ( value_seg - value_min ) / (value_max - value_min)
 
         save_folder = pre_proc_dict["dir_syn"] + pre_proc_dict["attr_seg"][idx] + "/"
