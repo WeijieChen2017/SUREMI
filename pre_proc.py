@@ -12,7 +12,7 @@ pre_proc_dict["name_orig"] = "CT__MLAC_*_MNI.nii.gz"
 pre_proc_dict["dir_syn"] = "./data_dir/norm_CT/"
 pre_proc_dict["is_seg"] = True
 pre_proc_dict["attr_seg"] = ["air", "soft tissue", "bone"]
-pre_proc_dict["range_seg"] = [[-1024, -500], [-200, 200], [500, 3000]]
+pre_proc_dict["range_seg"] = [[-1024, -500], [-500, 500], [500, 3000]]
 pre_proc_dict["note"] = []
 pre_proc_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 
@@ -28,7 +28,8 @@ for file_path  in file_list:
     if np.amin(file_data) >-1:
         file_data -= 1024
 
-    pre_proc_dict["note"].append(["For HU values in CT, [-1024, -500] for air, [-200, 200] for soft tissue, [500, 3000] for bone"])
+    pre_proc_dict["note"].append(["For HU values in CT, [-1024, -500] for air, [-500, 500] for soft tissue, [500, 3000] for bone"])
+    pre_proc_dict["note"].append(["For HU values, we don't want a gap, so soft tissue should be [-200, 200], but we use [-500, 500] instead"])
     for idx, value_range in enumerate(pre_proc_dict["range_seg"]):
         value_min = value_range[0]
         value_max = value_range[1]
