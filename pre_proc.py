@@ -1,5 +1,6 @@
 import os
 import glob
+import copy
 import time
 import numpy as np
 import nibabel as nib
@@ -33,8 +34,10 @@ for file_path  in file_list:
     for idx, value_range in enumerate(pre_proc_dict["range_seg"]):
         value_min = value_range[0]
         value_max = value_range[1]
-        value_mask = file_data>= value_min and file_data <= value_max
-        value_seg = ( file_data[value_mask] + value_min ) / (value_min + value_max)
+        value_seg = copy.deepcopy(file_data)
+        value_seg[value_seg < value_min] = value_min
+        value_seg[value_seg > value_max] = value_max
+        value_seg = ( value_seg + value_min ) / (value_min + value_max)
 
         save_folder = pre_proc_dict["dir_syn"] + pre_proc_dict["attr_seg"][idx] + "/"
         if not os.path.exists(save_folder):
