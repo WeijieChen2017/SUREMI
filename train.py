@@ -18,7 +18,8 @@ from model import UNet
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "./project_dir/seg_bone_to_CT/"
+train_dict["project_name"] = "seg_bone_to_CT"
+train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_channel"] = 1
 train_dict["output_channel"] = 1
@@ -54,8 +55,8 @@ config.loss_term = train_dict["loss_term"]
 config.opt_lr = train_dict["opt_lr"]
 config.opt_weight_decay = train_dict["opt_weight_decay"]
 
-np.save(train_dict["project_name"]+"conf.npy", config)
-np.save(train_dict["project_name"]+"dict.npy", train_dict)
+np.save(train_dict["save_folder"]+"conf.npy", config)
+np.save(train_dict["save_folder"]+"dict.npy", train_dict)
 
 
 # ==================== basic settings ====================
@@ -66,7 +67,7 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-for path in [train_dict["project_name"], train_dict["project_name"]+"npy/", train_dict["project_name"]+"loss/"]:
+for path in [train_dict["save_folder"], train_dict["save_folder"]+"npy/", train_dict["save_folder"]+"loss/"]:
     if not os.path.exists(path):
         os.mkdir(path)
 
@@ -105,8 +106,9 @@ data_division_dict = {
     "train_list_X" : train_list_X,
     "val_list_X" : val_list_X,
     "test_list_X" : test_list_X}
-np.save(train_dict["project_name"]+"data_division.npy", data_division_dict)
+np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 
+# ==================== training ====================
 
 train_loss = np.zeros((train_dict["epochs"]))
 epoch_loss_train = np.zeros((len(train_list_X)))
@@ -172,9 +174,9 @@ for idx_epoch in range(train_dict["epochs"]):
             case_loss[idx_iter] = loss.item()
         
         case_name = os.path.basename(cube_x_path)[5:8]
-        np.save(train_dict["project_name"]+"npy/Epoch[{:03d}]_Case[{}]_t_x.npy".format(idx_epoch+1, case_name), batch_x.cpu().detach().numpy())
-        np.save(train_dict["project_name"]+"npy/Epoch[{:03d}]_Case[{}]_t_y.npy".format(idx_epoch+1, case_name), batch_y.cpu().detach().numpy())
-        np.save(train_dict["project_name"]+"npy/Epoch[{:03d}]_Case[{}]_t_z.npy".format(idx_epoch+1, case_name), y_hat.cpu().detach().numpy())
+        np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_t_x.npy".format(idx_epoch+1, case_name), batch_x.cpu().detach().numpy())
+        np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_t_y.npy".format(idx_epoch+1, case_name), batch_y.cpu().detach().numpy())
+        np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_t_z.npy".format(idx_epoch+1, case_name), y_hat.cpu().detach().numpy())
 
         # after training one case
         loss_mean = np.mean(case_loss)
@@ -188,7 +190,7 @@ for idx_epoch in range(train_dict["epochs"]):
     loss_std = np.std(epoch_loss_train)
     print("===> Epoch[{}]: ".format(idx_epoch+1), end='')
     print("Loss mean: {:.6} Loss std: {:.6}".format(loss_mean, loss_std))
-    np.save(train_dict["project_name"]+"loss/epoch_loss_t_{:03d}.npy".format(idx_epoch+1), epoch_loss_train)
+    np.save(train_dict["save_folder"]+"loss/epoch_loss_t_{:03d}.npy".format(idx_epoch+1), epoch_loss_train)
     train_loss[idx_epoch] = loss_mean
     torch.cuda.empty_cache()
     # ====================================>train<====================================
@@ -243,9 +245,9 @@ for idx_epoch in range(train_dict["epochs"]):
         
         # save one progress shot
         case_name = os.path.basename(cube_x_path)[5:8]
-        np.save(train_dict["project_name"]+"npy/Epoch[{:03d}]_Case[{}]_v_x.npy".format(idx_epoch+1, case_name), batch_x.cpu().detach().numpy())
-        np.save(train_dict["project_name"]+"npy/Epoch[{:03d}]_Case[{}]_v_y.npy".format(idx_epoch+1, case_name), batch_y.cpu().detach().numpy())
-        np.save(train_dict["project_name"]+"npy/Epoch[{:03d}]_Case[{}]_v_z.npy".format(idx_epoch+1, case_name), y_hat.cpu().detach().numpy())
+        np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_v_x.npy".format(idx_epoch+1, case_name), batch_x.cpu().detach().numpy())
+        np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_v_y.npy".format(idx_epoch+1, case_name), batch_y.cpu().detach().numpy())
+        np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_v_z.npy".format(idx_epoch+1, case_name), y_hat.cpu().detach().numpy())
 
         # after training one case
         loss_mean = np.mean(case_loss)
@@ -258,11 +260,11 @@ for idx_epoch in range(train_dict["epochs"]):
     loss_std = np.std(epoch_loss_val)
     print("===> Epoch[{:03d}]-Val: ".format(idx_epoch+1), end='')
     print("Loss mean: {:.6} Loss std: {:.6}".format(loss_mean, loss_std))
-    np.save(train_dict["project_name"]+"loss/epoch_loss_v_{:03d}.npy".format(idx_epoch+1), epoch_loss_val)
+    np.save(train_dict["save_folder"]+"loss/epoch_loss_v_{:03d}.npy".format(idx_epoch+1), epoch_loss_val)
     if loss_mean < best_val_loss:
         # save the best model
         best_model = model
-        torch.save(model, train_dict["project_name"]+"model_best_{:03d}.pth".format(idx_epoch+1))
+        torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch+1))
         print("Checkpoint saved at Epoch {:03d}".format(idx_epoch+1))
         best_val_loss = loss_mean
     torch.cuda.empty_cache()
@@ -326,9 +328,9 @@ for cnt_file, file_path in enumerate(test_list_X):
     
     # save one progress shot
     case_name = os.path.basename(cube_x_path)[5:8]
-    np.save(train_dict["project_name"]+"npy/Epoch[{:03d}]_Case[{}]_e_x.npy".format(idx_epoch+1, case_name), batch_x.cpu().detach().numpy())
-    np.save(train_dict["project_name"]+"npy/Epoch[{:03d}]_Case[{}]_e_y.npy".format(idx_epoch+1, case_name), batch_y.cpu().detach().numpy())
-    np.save(train_dict["project_name"]+"npy/Epoch[{:03d}]_Case[{}]_e_z.npy".format(idx_epoch+1, case_name), y_hat.cpu().detach().numpy())
+    np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_e_x.npy".format(idx_epoch+1, case_name), batch_x.cpu().detach().numpy())
+    np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_e_y.npy".format(idx_epoch+1, case_name), batch_y.cpu().detach().numpy())
+    np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_e_z.npy".format(idx_epoch+1, case_name), y_hat.cpu().detach().numpy())
 
     # after training one case
     loss_mean = np.mean(case_loss)
@@ -341,6 +343,6 @@ loss_mean = np.mean(epoch_loss_test)
 loss_std = np.std(epoch_loss_test)
 print("===> Epoch[{:03d}]-Eval: ".format(idx_epoch+1), end='')
 print("Loss mean: {:.6} Loss std: {:.6}".format(loss_mean, loss_std))
-np.save(train_dict["project_name"]+"loss/epoch_loss_e_{:03d}.npy".format(idx_epoch+1), epoch_loss_test)
+np.save(train_dict["save_folder"]+"loss/epoch_loss_e_{:03d}.npy".format(idx_epoch+1), epoch_loss_test)
 
 wandb.log({"loss": loss_mean})
