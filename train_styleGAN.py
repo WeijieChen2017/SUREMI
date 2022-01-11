@@ -161,9 +161,11 @@ for idx_epoch in range(train_dict["epochs"]):
         iter_tag = package[3]
 
         if isTrain:
-            model.train()
+            gen_MR.train()
+            gen_CT.train()
         else:
-            model.eval()
+            gen_MR.eval()
+            gen_CT.eval()
 
         random.shuffle(file_list)
         epoch_loss_MR = np.zeros((len(file_list)))
