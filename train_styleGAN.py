@@ -44,8 +44,8 @@ train_dict["opt_weight_decay"] = 0.01 # default
 train_dict["amsgrad"] = False # default
 
 
-train_dict["latent_size"] = 512
-train_dict["dlatent_size"] = 512
+train_dict["latent_size"] = 256
+train_dict["dlatent_size"] = 256
 train_dict["resolution"] = 256
 train_dict["structure"] = "fixed"
 train_dict["style_mixing_prob"] = 0.0
@@ -186,7 +186,7 @@ for current_depth in range(start_depth, train_dict["depth"]):
                 file_name = os.path.basename(file_path)
                 cube_x_path = file_path
                 cube_y_path = train_dict["folder_Y"] + file_name
-                print("--->",cube_x_path,"<---", end="")
+                print("--->",cube_x_path,"<---")
                 cube_x_data = nib.load(cube_x_path).get_fdata()
                 cube_y_data = nib.load(cube_y_path).get_fdata()
                 len_z = cube_x_data.shape[2]
@@ -264,7 +264,7 @@ for current_depth in range(start_depth, train_dict["depth"]):
                 loss_std_MR = np.std(case_loss_MR)
                 loss_mean_CT = np.mean(case_loss_CT)
                 loss_std_CT = np.std(case_loss_CT)
-                print("[{}]===> Epoch[{:03d}]-Case[{:03d}]: ".format(current_res, idx_epoch+1, cnt_file+1), end='')
+                print("[{}]===> Epoch[{:03d}]-Case[{:03d}]: ".format(current_res, idx_epoch+1, cnt_file+1))
                 print("Loss MR mean: {:.6} Loss std: {:.6}".format(loss_mean_MR, loss_std_MR))
                 print("Loss CT mean: {:.6} Loss std: {:.6}".format(loss_mean_CT, loss_std_CT))
                 epoch_loss_MR[cnt_file] = loss_mean_MR
@@ -277,7 +277,7 @@ for current_depth in range(start_depth, train_dict["depth"]):
             loss_mean_CT = np.mean(epoch_loss_CT)
             loss_std_CT = np.std(epoch_loss_CT)
             
-            print("[{}]===> Epoch[{}]: ".format(current_res, idx_epoch+1), end='')
+            print("[{}]===> Epoch[{}]: ".format(current_res, idx_epoch+1))
             print("Loss MR mean: {:.6} Loss std: {:.6}".format(loss_mean_MR, loss_std_MR))
             print("Loss CT mean: {:.6} Loss std: {:.6}".format(loss_mean_CT, loss_std_CT))
             # wandb.log({iter_tag+"_loss_MR": loss_mean_MR})
