@@ -154,7 +154,7 @@ for current_depth in range(start_depth, train_dict["depth"]):
     epochs = train_dict["epochs"][current_depth]
     batchs = train_dict["batchs"][current_depth]
     total_batches = 200 // batchs
-    fade_point = int((train_dict["fade_in_percentage"][current_depth] / 100) * epochs[current_depth] * total_batches)
+    fade_point = int(0.5 * epochs[current_depth] * total_batches)
     
     gen_loss = self.optimize_generator(gan_input, images, current_depth, alpha, labels)
 
