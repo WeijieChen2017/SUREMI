@@ -156,146 +156,146 @@ for current_depth in range(start_depth, train_dict["depth"]):
     total_batches = 200 // batchs
     fade_point = int((train_dict["fade_in_percentage"][current_depth] / 100) * epochs * total_batches)
 
-for idx_epoch in range(epochs+1):
-    print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
-    np.save(train_dict["save_folder"]+"rand_dict.npy", rand_dict)           
+    for idx_epoch in range(epochs+1):
+        print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
+        np.save(train_dict["save_folder"]+"rand_dict.npy", rand_dict)           
 
-    package_train = [train_list_X, True, False, "train"]
-    package_val = [val_list_X, False, True, "val"]
-    package_test = [test_list_X, False, False, "test"]
+        package_train = [train_list_X, True, False, "train"]
+        package_val = [val_list_X, False, True, "val"]
+        package_test = [test_list_X, False, False, "test"]
 
-    for package in [package_train, package_val, package_test]:
+        for package in [package_train, package_val, package_test]:
 
-        file_list = package[0]
-        isTrain = package[1]
-        isVal = package[2]
-        iter_tag = package[3]
+            file_list = package[0]
+            isTrain = package[1]
+            isVal = package[2]
+            iter_tag = package[3]
 
-        if isTrain:
-            gen_MR.train()
-            gen_CT.train()
-        else:
-            gen_MR.eval()
-            gen_CT.eval()
+            if isTrain:
+                gen_MR.train()
+                gen_CT.train()
+            else:
+                gen_MR.eval()
+                gen_CT.eval()
 
-        random.shuffle(file_list)
-        epoch_loss_MR = np.zeros((len(file_list)))
-        epoch_loss_CT = np.zeros((len(file_list)))
-        for cnt_file, file_path in enumerate(file_list):
+            random.shuffle(file_list)
+            epoch_loss_MR = np.zeros((len(file_list)))
+            epoch_loss_CT = np.zeros((len(file_list)))
+            for cnt_file, file_path in enumerate(file_list):
+                
+                file_name = os.path.basename(file_path)
+                cube_x_path = file_path
+                cube_y_path = train_dict["folder_Y"] + file_name
+                print("--->",cube_x_path,"<---", end="")
+                cube_x_data = nib.load(cube_x_path).get_fdata()
+                cube_y_data = nib.load(cube_y_path).get_fdata()
+                len_z = cube_x_data.shape[2]
+                case_loss_MR = np.zeros((len_z//batchs))
+                case_loss_CT = np.zeros((len_z//batchs))
+                input_list = list(range(len_z))
+                random.shuffle(input_list)
+
+                for idx_iter in range(len_z//batchs):
+
+                    batch_x = np.zeros((batchs, train_dict["input_channel"], cube_x_data.shape[0], cube_x_data.shape[1]))
+                    batch_y = np.zeros((batchs, train_dict["output_channel"], cube_y_data.shape[0], cube_y_data.shape[1]))
+                    batch_seed = np.zeros((batchs, train_dict["latent_size"]))
+
+                    for idx_batch in range(batchs):
+                        z_center = input_list[idx_iter*batchs+idx_batch]
+                        z_before = z_center - 1 if z_center > 0 else 0
+                        z_after = z_center + 1 if z_center < len_z-1 else len_z-1
+
+                        if train_dict["input_channel"] == 3:
+                            batch_x[idx_batch, 0, :, :] = cube_x_data[:, :, z_before]
+                            batch_x[idx_batch, 1, :, :] = cube_x_data[:, :, z_center]
+                            batch_x[idx_batch, 2, :, :] = cube_x_data[:, :, z_after]
+                            
+                        if train_dict["output_channel"] == 3:
+                            batch_y[idx_batch, 0, :, :] = cube_y_data[:, :, z_center]
+                            batch_y[idx_batch, 1, :, :] = cube_y_data[:, :, z_center]
+                            batch_y[idx_batch, 2, :, :] = cube_y_data[:, :, z_center]
+
+                        rand_key = file_name + "_" + str(z_center)
+                        if not rand_key in rand_dict:
+                            rand_dict[rand_key] = torch.randn(1, train_dict["latent_size"])
+                        batch_seed[idx_batch, :] = rand_dict[rand_key]
+
+                    batch_x = torch.from_numpy(batch_x).float().to(device)
+                    batch_y = torch.from_numpy(batch_y).float().to(device)
+                    batch_seed = torch.from_numpy(batch_seed).float().to(device)
+
+                    # ------------------------------start to train------------------------------
+
+                    opt_MR.zero_grad()
+                    opt_CT.zero_grad()
+                    alpha = cnt_file / fade_point if cnt_file <= fade_point else 1
+                    MR_hat = gen_MR(batch_seed, current_depth, alpha)
+                    CT_hat = gen_CT(batch_seed, current_depth, alpha)
+                    loss_MR = criterion_MR(MR_hat, batch_x)
+                    loss_CT = criterion_MR(CT_hat, batch_y)
+                    if isTrain:
+                        loss_MR.backward()
+                        loss_CT.backward()
+                        opt_MR.step()
+                        opt_CT.step()
+
+
+                    # ------------------------------end of train------------------------------
+
+                    case_loss_MR[idx_iter] = loss_MR.item()
+                    case_loss_CT[idx_iter] = loss_CT.item()
+                
+                case_name = os.path.basename(cube_x_path)[5:8]
+                if not isTrain:
+                    np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_x_{}.npy".format(
+                        idx_epoch+1, case_name, current_res), batch_x.cpu().detach().numpy())
+                    np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_y_{}.npy".format(
+                        idx_epoch+1, case_name, current_res), batch_y.cpu().detach().numpy())
+                    np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_seed_{}.npy".format(
+                        idx_epoch+1, case_name, current_res), batch_seed.cpu().detach().numpy())
+                    np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_x_hat_{}.npy".format(
+                        idx_epoch+1, case_name), MR_hat.cpu().detach().numpy())
+                    np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_y_hat_{}.npy".format(
+                        idx_epoch+1, case_name), CT_hat.cpu().detach().numpy())
+
+                # after training one case
+                loss_mean_MR = np.mean(case_loss_MR)
+                loss_std_MR = np.std(case_loss_MR)
+                loss_mean_CT = np.mean(case_loss_CT)
+                loss_std_CT = np.std(case_loss_CT)
+                print("[{}]===> Epoch[{:03d}]-Case[{:03d}]: ".format(current_res, idx_epoch+1, cnt_file+1), end='')
+                print("Loss MR mean: {:.6} Loss std: {:.6}".format(loss_mean_MR, loss_std_MR))
+                print("Loss CT mean: {:.6} Loss std: {:.6}".format(loss_mean_CT, loss_std_CT))
+                epoch_loss_MR[cnt_file] = loss_mean_MR
+                epoch_loss_CT[cnt_file] = loss_mean_CT
             
-            file_name = os.path.basename(file_path)
-            cube_x_path = file_path
-            cube_y_path = train_dict["folder_Y"] + file_name
-            print("--->",cube_x_path,"<---", end="")
-            cube_x_data = nib.load(cube_x_path).get_fdata()
-            cube_y_data = nib.load(cube_y_path).get_fdata()
-            len_z = cube_x_data.shape[2]
-            case_loss_MR = np.zeros((len_z//batchs))
-            case_loss_CT = np.zeros((len_z//batchs))
-            input_list = list(range(len_z))
-            random.shuffle(input_list)
-
-            for idx_iter in range(len_z//batchs):
-
-                batch_x = np.zeros((batchs, train_dict["input_channel"], cube_x_data.shape[0], cube_x_data.shape[1]))
-                batch_y = np.zeros((batchs, train_dict["output_channel"], cube_y_data.shape[0], cube_y_data.shape[1]))
-                batch_seed = np.zeros((batchs, train_dict["latent_size"]))
-
-                for idx_batch in range(batchs):
-                    z_center = input_list[idx_iter*batchs+idx_batch]
-                    z_before = z_center - 1 if z_center > 0 else 0
-                    z_after = z_center + 1 if z_center < len_z-1 else len_z-1
-
-                    if train_dict["input_channel"] == 3:
-                        batch_x[idx_batch, 0, :, :] = cube_x_data[:, :, z_before]
-                        batch_x[idx_batch, 1, :, :] = cube_x_data[:, :, z_center]
-                        batch_x[idx_batch, 2, :, :] = cube_x_data[:, :, z_after]
-                        
-                    if train_dict["output_channel"] == 3:
-                        batch_y[idx_batch, 0, :, :] = cube_y_data[:, :, z_center]
-                        batch_y[idx_batch, 1, :, :] = cube_y_data[:, :, z_center]
-                        batch_y[idx_batch, 2, :, :] = cube_y_data[:, :, z_center]
-
-                    rand_key = file_name + "_" + str(z_center)
-                    if not rand_key in rand_dict:
-                        rand_dict[rand_key] = torch.randn(1, train_dict["latent_size"])
-                    batch_seed[idx_batch, :] = rand_dict[rand_key]
-
-                batch_x = torch.from_numpy(batch_x).float().to(device)
-                batch_y = torch.from_numpy(batch_y).float().to(device)
-                batch_seed = torch.from_numpy(batch_seed).float().to(device)
-
-                # ------------------------------start to train------------------------------
-
-                opt_MR.zero_grad()
-                opt_CT.zero_grad()
-                alpha = cnt_file / fade_point if cnt_file <= fade_point else 1
-                MR_hat = gen_MR(batch_seed, current_depth, alpha)
-                CT_hat = gen_CT(batch_seed, current_depth, alpha)
-                loss_MR = criterion_MR(MR_hat, batch_x)
-                loss_CT = criterion_MR(CT_hat, batch_y)
-                if isTrain:
-                    loss_MR.backward()
-                    loss_CT.backward()
-                    opt_MR.step()
-                    opt_CT.step()
-
-
-                # ------------------------------end of train------------------------------
-
-                case_loss_MR[idx_iter] = loss.item()
-                case_loss_CT[idx_iter] = loss.item()
+                
+            # after training all cases
+            loss_mean_MR = np.mean(epoch_loss_MR)
+            loss_std_MR = np.std(epoch_loss_MR)
+            loss_mean_CT = np.mean(epoch_loss_CT)
+            loss_std_CT = np.std(epoch_loss_CT)
             
-            case_name = os.path.basename(cube_x_path)[5:8]
-            if not isTrain:
-                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_x_{}.npy".format(
-                    idx_epoch+1, case_name, current_res), batch_x.cpu().detach().numpy())
-                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_y_{}.npy".format(
-                    idx_epoch+1, case_name, current_res), batch_y.cpu().detach().numpy())
-                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_seed_{}.npy".format(
-                    idx_epoch+1, case_name, current_res), batch_seed.cpu().detach().numpy())
-                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_x_hat_{}.npy".format(
-                    idx_epoch+1, case_name), MR_hat.cpu().detach().numpy())
-                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_y_hat_{}.npy".format(
-                    idx_epoch+1, case_name), CT_hat.cpu().detach().numpy())
-
-            # after training one case
-            loss_mean_MR = np.mean(case_loss_MR)
-            loss_std_MR = np.std(case_loss_MR)
-            loss_mean_CT = np.mean(case_loss_CT)
-            loss_std_CT = np.std(case_loss_CT)
-            print("[{}]===> Epoch[{:03d}]-Case[{:03d}]: ".format(current_res, idx_epoch+1, cnt_file+1), end='')
+            print("[{}]===> Epoch[{}]: ".format(current_res, idx_epoch+1), end='')
             print("Loss MR mean: {:.6} Loss std: {:.6}".format(loss_mean_MR, loss_std_MR))
             print("Loss CT mean: {:.6} Loss std: {:.6}".format(loss_mean_CT, loss_std_CT))
-            epoch_loss_MR[cnt_file] = loss_mean_MR
-            epoch_loss_CT[cnt_file] = loss_mean_CT
-        
-            
-        # after training all cases
-        loss_mean_MR = np.mean(epoch_loss_MR)
-        loss_std_MR = np.std(epoch_loss_MR)
-        loss_mean_CT = np.mean(epoch_loss_CT)
-        loss_std_CT = np.std(epoch_loss_CT)
-        
-        print("[{}]===> Epoch[{}]: ".format(current_res, idx_epoch+1), end='')
-        print("Loss MR mean: {:.6} Loss std: {:.6}".format(loss_mean_MR, loss_std_MR))
-        print("Loss CT mean: {:.6} Loss std: {:.6}".format(loss_mean_CT, loss_std_CT))
-        # wandb.log({iter_tag+"_loss_MR": loss_mean_MR})
-        # wandb.log({iter_tag+"_loss_CT": loss_mean_CT})
-        np.save(train_dict["save_folder"]+"loss/epoch_loss_MR_"+iter_tag+"_{:03d}_{}.npy".format(idx_epoch+1, current_res), epoch_loss_MR)
-        np.save(train_dict["save_folder"]+"loss/epoch_loss_CT_"+iter_tag+"_{:03d}_{}.npy".format(idx_epoch+1, current_res), epoch_loss_CT)
+            # wandb.log({iter_tag+"_loss_MR": loss_mean_MR})
+            # wandb.log({iter_tag+"_loss_CT": loss_mean_CT})
+            np.save(train_dict["save_folder"]+"loss/epoch_loss_MR_"+iter_tag+"_{:03d}_{}.npy".format(idx_epoch+1, current_res), epoch_loss_MR)
+            np.save(train_dict["save_folder"]+"loss/epoch_loss_CT_"+iter_tag+"_{:03d}_{}.npy".format(idx_epoch+1, current_res), epoch_loss_CT)
 
-        if isVal:
-            if loss_mean_MR < best_val_loss_MR:
-                # save the best model
-                torch.save(gen_MR, train_dict["save_folder"]+"model_best_MR_{:03d}_{}.pth".format(idx_epoch+1, current_res))
-                print("Checkpoint MR saved at Epoch {:03d}".format(idx_epoch+1))
-                best_val_loss_MR = loss_mean_MR
+            if isVal:
+                if loss_mean_MR < best_val_loss_MR:
+                    # save the best model
+                    torch.save(gen_MR, train_dict["save_folder"]+"model_best_MR_{:03d}_{}.pth".format(idx_epoch+1, current_res))
+                    print("Checkpoint MR saved at Epoch {:03d}".format(idx_epoch+1))
+                    best_val_loss_MR = loss_mean_MR
 
-            if loss_mean_CT < best_val_loss_CT:
-                # save the best model
-                torch.save(gen_CT, train_dict["save_folder"]+"model_best_CT_{:03d}_{}.pth".format(idx_epoch+1, current_res))
-                print("Checkpoint CT saved at Epoch {:03d}".format(idx_epoch+1))
-                best_val_loss_CT = loss_mean_CT
+                if loss_mean_CT < best_val_loss_CT:
+                    # save the best model
+                    torch.save(gen_CT, train_dict["save_folder"]+"model_best_CT_{:03d}_{}.pth".format(idx_epoch+1, current_res))
+                    print("Checkpoint CT saved at Epoch {:03d}".format(idx_epoch+1))
+                    best_val_loss_CT = loss_mean_CT
 
-        torch.cuda.empty_cache()
+            torch.cuda.empty_cache()
