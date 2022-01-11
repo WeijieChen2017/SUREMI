@@ -48,6 +48,7 @@ train_dict["dlatent_size"] = 512
 train_dict["resolution"] = 256
 train_dict["structure"] = "fixed"
 train_dict["style_mixing_prob"] = 0.0
+train_dict["depth"] = int(np.log2(resolution)) - 1
 
 
 
@@ -218,8 +219,8 @@ for idx_epoch in range(train_dict["epochs"]):
 
                 opt_MR.zero_grad()
                 opt_CT.zero_grad()
-                MR_hat = gen_MR(batch_seed)
-                CT_hat = gen_CT(batch_seed)
+                MR_hat = gen_MR(batch_seed, train_dict["depth"], 1)
+                CT_hat = gen_CT(batch_seed, train_dict["depth"], 1)
                 loss_MR = criterion_MR(MR_hat, batch_x)
                 loss_CT = criterion_MR(CT_hat, batch_y)
                 if isTrain:
