@@ -26,11 +26,12 @@ import torch.nn as nn
 from torch.nn.functional import interpolate
 from torch.nn.modules.sparse import Embedding
 
-import model.styleGAN_losses as Losses
+
 # from models import update_average
-from models.styleGAN_blocks import (DiscriminatorBlock, DiscriminatorTop,
+import model.styleGAN_losses as Losses
+from model.styleGAN_blocks import (DiscriminatorBlock, DiscriminatorTop,
                            GSynthesisBlock, InputBlock)
-from models.styleGAN_layers import (EqualizedConv2d, EqualizedLinear,
+from model.styleGAN_layers import (EqualizedConv2d, EqualizedLinear,
                                  PixelNormLayer, Truncation)
 
 
