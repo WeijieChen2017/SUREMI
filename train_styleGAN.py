@@ -288,13 +288,13 @@ for current_depth in range(start_depth, train_dict["depth"]):
             if isVal:
                 if loss_mean_MR < best_val_loss_MR:
                     # save the best model
-                    torch.save(gen_MR, train_dict["save_folder"]+"model_best_MR_{:03d}_{}.pth".format(idx_epoch+1, current_res))
+                    torch.save(gen_MR.state_dict(), train_dict["save_folder"]+"model_best_MR_{:03d}_{}.pth".format(idx_epoch+1, current_res))
                     print("Checkpoint MR saved at Epoch {:03d}".format(idx_epoch+1))
                     best_val_loss_MR = loss_mean_MR
 
                 if loss_mean_CT < best_val_loss_CT:
                     # save the best model
-                    torch.save(gen_CT, train_dict["save_folder"]+"model_best_CT_{:03d}_{}.pth".format(idx_epoch+1, current_res))
+                    torch.save(gen_CT.state_dict(), train_dict["save_folder"]+"model_best_CT_{:03d}_{}.pth".format(idx_epoch+1, current_res))
                     print("Checkpoint CT saved at Epoch {:03d}".format(idx_epoch+1))
                     best_val_loss_CT = loss_mean_CT
 
