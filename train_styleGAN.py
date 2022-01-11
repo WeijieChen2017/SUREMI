@@ -24,8 +24,9 @@ train_dict["seed"] = 426
 train_dict["input_channel"] = 3
 train_dict["output_channel"] = 3
 train_dict["gpu_ids"] = [7]
-train_dict["epochs"] = 50
-train_dict["batch"] = 10
+train_dict["epochs"] = [4, 8, 8, 16, 32, 64, 64]
+train_dict["batchs"] = [128, 128, 128, 64, 32, 16, 8]
+train_dict["fade_in_percentage"] = [50, 50, 50, 50, 50, 50, 50]
 train_dict["dropout"] = 0
 train_dict["model_term"] = "styleGAN"
 
@@ -146,7 +147,18 @@ best_val_loss_CT = 1e6
 rand_dict = {}
 # wandb.watch(model)
 
-for idx_epoch in range(train_dict["epochs"]):
+start_depth = 0
+
+for current_depth in range(start_depth, train_dict["depth"]):
+    current_res = np.power(2, current_depth + 2)
+    epochs = train_dict["epochs"][current_depth]
+    batchs = train_dict["batchs"][current_depth]
+    total_batches = 200 // batchs
+    fade_point = int((train_dict["fade_in_percentage"][current_depth] / 100) * epochs[current_depth] * total_batches)
+    
+    gen_loss = self.optimize_generator(gan_input, images, current_depth, alpha, labels)
+
+for idx_epoch in range(epochs+1):
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
     np.save(train_dict["save_folder"]+"rand_dict.npy", rand_dict)           
 
@@ -219,8 +231,9 @@ for idx_epoch in range(train_dict["epochs"]):
 
                 opt_MR.zero_grad()
                 opt_CT.zero_grad()
-                MR_hat = gen_MR(batch_seed, train_dict["depth"], 1)
-                CT_hat = gen_CT(batch_seed, train_dict["depth"], 1)
+                alpha = cnt_file / fade_point if cnt_file <= fade_point else 1
+                MR_hat = gen_MR(batch_seed, current_depth, alpha)
+                CT_hat = gen_CT(batch_seed, current_depth, alpha)
                 loss_MR = criterion_MR(MR_hat, batch_x)
                 loss_CT = criterion_MR(CT_hat, batch_y)
                 if isTrain:
@@ -248,7 +261,7 @@ for idx_epoch in range(train_dict["epochs"]):
             loss_std_MR = np.std(case_loss_MR)
             loss_mean_CT = np.mean(case_loss_CT)
             loss_std_CT = np.std(case_loss_CT)
-            print("===> Epoch[{:03d}]-Case[{:03d}]: ".format(idx_epoch+1, cnt_file+1), end='')
+            print("[{}]===> Epoch[{:03d}]-Case[{:03d}]: ".format(current_res, idx_epoch+1, cnt_file+1), end='')
             print("Loss MR mean: {:.6} Loss std: {:.6}".format(loss_mean_MR, loss_std_MR))
             print("Loss CT mean: {:.6} Loss std: {:.6}".format(loss_mean_CT, loss_std_CT))
             epoch_loss_MR[cnt_file] = loss_mean_MR
@@ -261,7 +274,7 @@ for idx_epoch in range(train_dict["epochs"]):
         loss_mean_CT = np.mean(epoch_loss_CT)
         loss_std_CT = np.std(epoch_loss_CT)
         
-        print("===> Epoch[{}]: ".format(idx_epoch+1), end='')
+        print("[{}]===> Epoch[{}]: ".format(current_res, idx_epoch+1), end='')
         print("Loss MR mean: {:.6} Loss std: {:.6}".format(loss_mean_MR, loss_std_MR))
         print("Loss CT mean: {:.6} Loss std: {:.6}".format(loss_mean_CT, loss_std_CT))
         # wandb.log({iter_tag+"_loss_MR": loss_mean_MR})
