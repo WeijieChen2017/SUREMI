@@ -1,7 +1,7 @@
 import os
 import glob
 import time
-import wandb
+# import wandb
 import random
 
 import numpy as np
@@ -55,17 +55,17 @@ for path in [train_dict["save_folder"], train_dict["save_folder"]+"npy/", train_
     if not os.path.exists(path):
         os.mkdir(path)
 
-wandb.init(project=train_dict["project_name"])
-config = wandb.config
-config.in_chan = train_dict["input_channel"]
-config.out_chan = train_dict["output_channel"]
-config.epochs = train_dict["epochs"]
-config.batch = train_dict["batch"]
-config.dropout = train_dict["dropout"]
-config.moodel_term = train_dict["model_term"]
-config.loss_term = train_dict["loss_term"]
-config.opt_lr = train_dict["opt_lr"]
-config.opt_weight_decay = train_dict["opt_weight_decay"]
+# wandb.init(project=train_dict["project_name"])
+# config = wandb.config
+# config.in_chan = train_dict["input_channel"]
+# config.out_chan = train_dict["output_channel"]
+# config.epochs = train_dict["epochs"]
+# config.batch = train_dict["batch"]
+# config.dropout = train_dict["dropout"]
+# config.moodel_term = train_dict["model_term"]
+# config.loss_term = train_dict["loss_term"]
+# config.opt_lr = train_dict["opt_lr"]
+# config.opt_weight_decay = train_dict["opt_weight_decay"]
 
 np.save(train_dict["save_folder"]+"dict.npy", train_dict)
 
@@ -145,7 +145,7 @@ np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 best_val_loss_MR = 1e6
 best_val_loss_CT = 1e6
 rand_dict = {}
-wandb.watch(model)
+# wandb.watch(model)
 
 for idx_epoch in range(train_dict["epochs"]):
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
@@ -263,8 +263,8 @@ for idx_epoch in range(train_dict["epochs"]):
         print("===> Epoch[{}]: ".format(idx_epoch+1), end='')
         print("Loss MR mean: {:.6} Loss std: {:.6}".format(loss_mean_MR, loss_std_MR))
         print("Loss CT mean: {:.6} Loss std: {:.6}".format(loss_mean_CT, loss_std_CT))
-        wandb.log({iter_tag+"_loss_MR": loss_mean_MR})
-        wandb.log({iter_tag+"_loss_CT": loss_mean_CT})
+        # wandb.log({iter_tag+"_loss_MR": loss_mean_MR})
+        # wandb.log({iter_tag+"_loss_CT": loss_mean_CT})
         np.save(train_dict["save_folder"]+"loss/epoch_loss_MR_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), epoch_loss_MR)
         np.save(train_dict["save_folder"]+"loss/epoch_loss_CT_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), epoch_loss_CT)
 
