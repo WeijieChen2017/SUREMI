@@ -190,19 +190,19 @@ for idx_epoch in range(epochs+1):
             cube_x_data = nib.load(cube_x_path).get_fdata()
             cube_y_data = nib.load(cube_y_path).get_fdata()
             len_z = cube_x_data.shape[2]
-            case_loss_MR = np.zeros((len_z//train_dict["batch"]))
-            case_loss_CT = np.zeros((len_z//train_dict["batch"]))
+            case_loss_MR = np.zeros((len_z//batchs))
+            case_loss_CT = np.zeros((len_z//batchs))
             input_list = list(range(len_z))
             random.shuffle(input_list)
 
-            for idx_iter in range(len_z//train_dict["batch"]):
+            for idx_iter in range(len_z//batchs):
 
-                batch_x = np.zeros((train_dict["batch"], train_dict["input_channel"], cube_x_data.shape[0], cube_x_data.shape[1]))
-                batch_y = np.zeros((train_dict["batch"], train_dict["output_channel"], cube_y_data.shape[0], cube_y_data.shape[1]))
-                batch_seed = np.zeros((train_dict["batch"], train_dict["latent_size"]))
+                batch_x = np.zeros((batchs, train_dict["input_channel"], cube_x_data.shape[0], cube_x_data.shape[1]))
+                batch_y = np.zeros((batchs, train_dict["output_channel"], cube_y_data.shape[0], cube_y_data.shape[1]))
+                batch_seed = np.zeros((batchs, train_dict["latent_size"]))
 
-                for idx_batch in range(train_dict["batch"]):
-                    z_center = input_list[idx_iter*train_dict["batch"]+idx_batch]
+                for idx_batch in range(batchs):
+                    z_center = input_list[idx_iter*batchs+idx_batch]
                     z_before = z_center - 1 if z_center > 0 else 0
                     z_after = z_center + 1 if z_center < len_z-1 else len_z-1
 
