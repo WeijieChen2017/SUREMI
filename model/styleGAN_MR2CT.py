@@ -104,7 +104,7 @@ class GMapping(nn.Module):
 class GSynthesis(nn.Module):
 
     def __init__(self, dlatent_size=256, num_channels=3, resolution=1024,
-                 fmap_base=8192, fmap_decay=1.0, fmap_max=256,
+                 fmap_base=2048, fmap_decay=1.0, fmap_max=256,
                  use_styles=True, const_input_layer=True, use_noise=True, nonlinearity='lrelu',
                  use_wscale=True, use_pixel_norm=False, use_instance_norm=True, blur_filter=None,
                  structure='linear', **kwargs):
@@ -301,7 +301,7 @@ class Generator(nn.Module):
 class Discriminator(nn.Module):
 
     def __init__(self, resolution, num_channels=3, conditional=False,
-                 n_classes=0, fmap_base=8192, fmap_decay=1.0, fmap_max=256,
+                 n_classes=0, fmap_base=2048, fmap_decay=1.0, fmap_max=256,
                  nonlinearity='lrelu', use_wscale=True, mbstd_group_size=4,
                  mbstd_num_features=1, blur_filter=None, structure='linear',
                  **kwargs):
