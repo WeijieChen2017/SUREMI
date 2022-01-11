@@ -48,7 +48,7 @@ train_dict["dlatent_size"] = 512
 train_dict["resolution"] = 256
 train_dict["structure"] = "fixed"
 train_dict["style_mixing_prob"] = 0.0
-train_dict["depth"] = int(np.log2(resolution)) - 1
+train_dict["depth"] = int(np.log2(train_dict["resolution"])) - 1
 
 
 
