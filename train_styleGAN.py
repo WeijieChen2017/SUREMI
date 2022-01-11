@@ -98,7 +98,7 @@ criterion_MR = nn.SmoothL1Loss()
 criterion_CT = nn.SmoothL1Loss()
 
 opt_MR = torch.optim.AdamW(
-    loss_MR.parameters(),
+    criterion_MR.parameters(),
     lr = train_dict["opt_lr"],
     betas = train_dict["opt_betas"],
     eps = train_dict["opt_eps"],
@@ -107,7 +107,7 @@ opt_MR = torch.optim.AdamW(
     )
 
 opt_CT = torch.optim.AdamW(
-    loss_CT.parameters(),
+    criterion_CT.parameters(),
     lr = train_dict["opt_lr"],
     betas = train_dict["opt_betas"],
     eps = train_dict["opt_eps"],
