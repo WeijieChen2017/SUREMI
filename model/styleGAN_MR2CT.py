@@ -22,15 +22,15 @@ from collections import OrderedDict
 import numpy as np
 import torch
 import torch.nn as nn
-from data import get_data_loader
+# from data import get_data_loader
 from torch.nn.functional import interpolate
 from torch.nn.modules.sparse import Embedding
 
-import models.Losses as Losses
+import model.styleGAN_losses as Losses
 # from models import update_average
-from models.Blocks import (DiscriminatorBlock, DiscriminatorTop,
+from models.styleGAN_blocks import (DiscriminatorBlock, DiscriminatorTop,
                            GSynthesisBlock, InputBlock)
-from models.CustomLayers import (EqualizedConv2d, EqualizedLinear,
+from models.styleGAN_layers import (EqualizedConv2d, EqualizedLinear,
                                  PixelNormLayer, Truncation)
 
 
@@ -488,71 +488,32 @@ class StyleGAN:
         self.conditional = conditional
         self.n_classes = n_classes
 
-        self.use_ema = use_ema
-        self.ema_decay = ema_decay
-
         # Create the Generator and the Discriminator
-        self.gen = Generator(num_channels=num_channels,
-                             resolution=resolution,
-                             structure=self.structure,
-                             conditional=self.conditional,
-                             n_classes=self.n_classes,
-                             **g_args).to(self.device)
+        self.gen_MR = Generator(
+            num_channels=num_channels,
+            resolution=resolution,
+            structure=self.structure,
+            conditional=self.conditional,
+            n_classes=self.n_classes,
+            **g_args).to(self.device)
 
-        self.dis = Discriminator(num_channels=num_channels,
-                                 resolution=resolution,
-                                 structure=self.structure,
-                                 conditional=self.conditional,
-                                 n_classes=self.n_classes,
-                                 **d_args).to(self.device)
-
-        # if code is to be run on GPU, we can use DataParallel:
-        # TODO
-
+        self.gen_CT = Generator(
+            num_channels=num_channels,
+            resolution=resolution,
+            structure=self.structure,
+            conditional=self.conditional,
+            n_classes=self.n_classes,
+            **g_args).to(self.device)
+        
         # define the optimizers for the discriminator and generator
-        self.__setup_gen_optim(**g_opt_args)
-        self.__setup_dis_optim(**d_opt_args)
-
-        # define the loss function used for training the GAN
-        self.drift = drift
-        self.loss = self.__setup_loss(loss)
-
-        # Use of ema
-        if self.use_ema:
-            # create a shadow copy of the generator
-            self.gen_shadow = copy.deepcopy(self.gen)
-            # updater function:
-            self.ema_updater = update_average
-            # initialize the gen_shadow weights equal to the weights of gen
-            self.ema_updater(self.gen_shadow, self.gen, beta=0)
+        self.__setup_gen_MR_optim(**g_opt_args)
+        self.__setup_gen_CT_optim(**g_opt_args)
 
     def __setup_gen_optim(self, learning_rate, beta_1, beta_2, eps):
         self.gen_optim = torch.optim.Adam(self.gen.parameters(), lr=learning_rate, betas=(beta_1, beta_2), eps=eps)
 
     def __setup_dis_optim(self, learning_rate, beta_1, beta_2, eps):
         self.dis_optim = torch.optim.Adam(self.dis.parameters(), lr=learning_rate, betas=(beta_1, beta_2), eps=eps)
-
-    def __setup_loss(self, loss):
-        if isinstance(loss, str):
-            loss = loss.lower()  # lowercase the string
-            
-            if not self.conditional:
-                assert loss in ["logistic", "hinge", "standard-gan",
-                                "relativistic-hinge"], "Unknown loss function"
-                if loss == "logistic":
-                    loss_func = Losses.LogisticGAN(self.dis)
-                elif loss == "hinge":
-                    loss_func = Losses.HingeGAN(self.dis)
-                if loss == "standard-gan":
-                    loss_func = Losses.StandardGAN(self.dis)
-                elif loss == "relativistic-hinge":
-                    loss_func = Losses.RelativisticAverageHingeGAN(self.dis)
-            else:
-                assert loss in ["conditional-loss"]
-                if loss == "conditional-loss":
-                    loss_func = Losses.ConditionalGANLoss(self.dis)
-
-        return loss_func
 
     def __progressive_down_sampling(self, real_batch, depth, alpha):
         """
@@ -587,39 +548,6 @@ class StyleGAN:
 
         # return the so computed real_samples
         return real_samples
-
-    def optimize_discriminator(self, noise, real_batch, depth, alpha, labels=None):
-        """
-        performs one step of weight update on discriminator using the batch of data
-
-        :param noise: input noise of sample generation
-        :param real_batch: real samples batch
-        :param depth: current depth of optimization
-        :param alpha: current alpha for fade-in
-        :return: current loss (Wasserstein loss)
-        """
-        
-        real_samples = self.__progressive_down_sampling(real_batch, depth, alpha)
-
-        loss_val = 0
-        for _ in range(self.d_repeats):
-            # generate a batch of samples
-            fake_samples = self.gen(noise, depth, alpha, labels).detach()
-
-            if not self.conditional:
-                loss = self.loss.dis_loss(
-                    real_samples, fake_samples, depth, alpha)
-            else:
-                loss = self.loss.dis_loss(
-                    real_samples, fake_samples, labels, depth, alpha)
-            # optimize discriminator
-            self.dis_optim.zero_grad()
-            loss.backward()
-            self.dis_optim.step()
-
-            loss_val += loss.item()
-
-        return loss_val / self.d_repeats
 
     def optimize_generator(self, noise, real_batch, depth, alpha, labels=None):
         """
