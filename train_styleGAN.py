@@ -23,7 +23,7 @@ train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_channel"] = 3
 train_dict["output_channel"] = 3
-train_dict["gpu_ids"] = [5]
+train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 50
 train_dict["batch"] = 10
 train_dict["dropout"] = 0
@@ -85,7 +85,7 @@ gen_MR = Generator(
     resolution=train_dict["resolution"],
     structure=train_dict["structure"],
     style_mixing_prob=train_dict["style_mixing_prob"]
-    **g_args).train()to(self.device)
+    **g_args).train().to(self.device)
 
 gen_CT = Generator(
     latent_size=train_dict["latent_size"],
@@ -94,7 +94,7 @@ gen_CT = Generator(
     resolution=train_dict["resolution"],
     structure=train_dict["structure"],
     style_mixing_prob=train_dict["style_mixing_prob"]
-    **g_args).train()to(self.device)
+    **g_args).train().to(self.device)
 
 criterion_MR = nn.SmoothL1Loss()
 criterion_CT = nn.SmoothL1Loss()
