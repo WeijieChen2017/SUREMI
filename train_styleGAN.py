@@ -155,8 +155,6 @@ for current_depth in range(start_depth, train_dict["depth"]):
     batchs = train_dict["batchs"][current_depth]
     total_batches = 200 // batchs
     fade_point = int((train_dict["fade_in_percentage"][current_depth] / 100) * epochs * total_batches)
-    
-    gen_loss = self.optimize_generator(gan_input, images, current_depth, alpha, labels)
 
 for idx_epoch in range(epochs+1):
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
@@ -250,11 +248,16 @@ for idx_epoch in range(epochs+1):
             
             case_name = os.path.basename(cube_x_path)[5:8]
             if not isTrain:
-                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_x.npy".format(idx_epoch+1, case_name), batch_x.cpu().detach().numpy())
-                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_y.npy".format(idx_epoch+1, case_name), batch_y.cpu().detach().numpy())
-                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_seed.npy".format(idx_epoch+1, case_name), batch_seed.cpu().detach().numpy())
-                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_x_hat.npy".format(idx_epoch+1, case_name), MR_hat.cpu().detach().numpy())
-                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_y_hat.npy".format(idx_epoch+1, case_name), CT_hat.cpu().detach().numpy())
+                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_x_{}.npy".format(
+                    idx_epoch+1, case_name, current_res), batch_x.cpu().detach().numpy())
+                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_y_{}.npy".format(
+                    idx_epoch+1, case_name, current_res), batch_y.cpu().detach().numpy())
+                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_seed_{}.npy".format(
+                    idx_epoch+1, case_name, current_res), batch_seed.cpu().detach().numpy())
+                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_x_hat_{}.npy".format(
+                    idx_epoch+1, case_name), MR_hat.cpu().detach().numpy())
+                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_y_hat_{}.npy".format(
+                    idx_epoch+1, case_name), CT_hat.cpu().detach().numpy())
 
             # after training one case
             loss_mean_MR = np.mean(case_loss_MR)
@@ -279,19 +282,19 @@ for idx_epoch in range(epochs+1):
         print("Loss CT mean: {:.6} Loss std: {:.6}".format(loss_mean_CT, loss_std_CT))
         # wandb.log({iter_tag+"_loss_MR": loss_mean_MR})
         # wandb.log({iter_tag+"_loss_CT": loss_mean_CT})
-        np.save(train_dict["save_folder"]+"loss/epoch_loss_MR_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), epoch_loss_MR)
-        np.save(train_dict["save_folder"]+"loss/epoch_loss_CT_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), epoch_loss_CT)
+        np.save(train_dict["save_folder"]+"loss/epoch_loss_MR_"+iter_tag+"_{:03d}_{}.npy".format(idx_epoch+1, current_res), epoch_loss_MR)
+        np.save(train_dict["save_folder"]+"loss/epoch_loss_CT_"+iter_tag+"_{:03d}_{}.npy".format(idx_epoch+1, current_res), epoch_loss_CT)
 
         if isVal:
             if loss_mean_MR < best_val_loss_MR:
                 # save the best model
-                torch.save(gen_MR, train_dict["save_folder"]+"model_best_MR_{:03d}.pth".format(idx_epoch+1))
+                torch.save(gen_MR, train_dict["save_folder"]+"model_best_MR_{:03d}_{}.pth".format(idx_epoch+1, current_res))
                 print("Checkpoint MR saved at Epoch {:03d}".format(idx_epoch+1))
                 best_val_loss_MR = loss_mean_MR
 
             if loss_mean_CT < best_val_loss_CT:
                 # save the best model
-                torch.save(gen_CT, train_dict["save_folder"]+"model_best_CT_{:03d}.pth".format(idx_epoch+1))
+                torch.save(gen_CT, train_dict["save_folder"]+"model_best_CT_{:03d}_{}.pth".format(idx_epoch+1, current_res))
                 print("Checkpoint CT saved at Epoch {:03d}".format(idx_epoch+1))
                 best_val_loss_CT = loss_mean_CT
 
