@@ -84,7 +84,7 @@ gen_MR = Generator(
     num_channels=train_dict["input_channel"],
     resolution=train_dict["resolution"],
     structure=train_dict["structure"],
-    style_mixing_prob=train_dict["style_mixing_prob"]).train().to(self.device)
+    style_mixing_prob=train_dict["style_mixing_prob"]).train().to(device)
 
 gen_CT = Generator(
     latent_size=train_dict["latent_size"],
@@ -92,7 +92,7 @@ gen_CT = Generator(
     num_channels=train_dict["input_channel"],
     resolution=train_dict["resolution"],
     structure=train_dict["structure"],
-    style_mixing_prob=train_dict["style_mixing_prob"]).train().to(self.device)
+    style_mixing_prob=train_dict["style_mixing_prob"]).train().to(device)
 
 criterion_MR = nn.SmoothL1Loss()
 criterion_CT = nn.SmoothL1Loss()
