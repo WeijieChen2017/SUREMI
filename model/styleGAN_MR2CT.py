@@ -37,8 +37,8 @@ from model.styleGAN_layers import (EqualizedConv2d, EqualizedLinear,
 
 class GMapping(nn.Module):
 
-    def __init__(self, latent_size=256, dlatent_size=256, dlatent_broadcast=None,
-                 mapping_layers=8, mapping_fmaps=256, mapping_lrmul=0.01, mapping_nonlinearity='lrelu',
+    def __init__(self, latent_size=512, dlatent_size=512, dlatent_broadcast=None,
+                 mapping_layers=8, mapping_fmaps=512, mapping_lrmul=0.01, mapping_nonlinearity='lrelu',
                  use_wscale=True, normalize_latents=True, **kwargs):
         """
         Mapping network used in the StyleGAN paper.
@@ -103,8 +103,8 @@ class GMapping(nn.Module):
 
 class GSynthesis(nn.Module):
 
-    def __init__(self, dlatent_size=256, num_channels=3, resolution=1024,
-                 fmap_base=2048, fmap_decay=1.0, fmap_max=256,
+    def __init__(self, dlatent_size=512, num_channels=3, resolution=1024,
+                 fmap_base=2048, fmap_decay=1.0, fmap_max=512,
                  use_styles=True, const_input_layer=True, use_noise=True, nonlinearity='lrelu',
                  use_wscale=True, use_pixel_norm=False, use_instance_norm=True, blur_filter=None,
                  structure='linear', **kwargs):
@@ -211,7 +211,7 @@ class GSynthesis(nn.Module):
 
 class Generator(nn.Module):
 
-    def __init__(self, resolution, latent_size=256, dlatent_size=256,
+    def __init__(self, resolution, latent_size=512, dlatent_size=512,
                  conditional=False, n_classes=0, truncation_psi=0.7,
                  truncation_cutoff=8, dlatent_avg_beta=0.995,
                  style_mixing_prob=0.9, **kwargs):
@@ -301,7 +301,7 @@ class Generator(nn.Module):
 class Discriminator(nn.Module):
 
     def __init__(self, resolution, num_channels=3, conditional=False,
-                 n_classes=0, fmap_base=2048, fmap_decay=1.0, fmap_max=256,
+                 n_classes=0, fmap_base=2048, fmap_decay=1.0, fmap_max=512,
                  nonlinearity='lrelu', use_wscale=True, mbstd_group_size=4,
                  mbstd_num_features=1, blur_filter=None, structure='linear',
                  **kwargs):

@@ -18,13 +18,13 @@ from model.styleGAN_MR2CT import Generator
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "z_to_img"
+train_dict["project_name"] = "z512_to_img"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_channel"] = 3
 train_dict["output_channel"] = 3
 train_dict["gpu_ids"] = [7]
-train_dict["epochs"] = [4, 8, 8, 16, 32, 64, 64]
+train_dict["epochs"] = [8, 8, 16, 16, 32, 32, 64]
 train_dict["batchs"] = [64, 64, 32, 32, 16, 8, 4]
 train_dict["fade_in_percentage"] = [50, 50, 50, 50, 50, 50, 50]
 train_dict["dropout"] = 0
@@ -248,16 +248,16 @@ for current_depth in range(start_depth, train_dict["depth"]):
                 
                 case_name = os.path.basename(cube_x_path)[5:8]
                 if not isTrain:
-                    np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_x_{}.npy".format(
-                        idx_epoch+1, case_name, current_res), batch_x.cpu().detach().numpy())
-                    np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_y_{}.npy".format(
-                        idx_epoch+1, case_name, current_res), batch_y.cpu().detach().numpy())
-                    np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_seed_{}.npy".format(
-                        idx_epoch+1, case_name, current_res), batch_seed.cpu().detach().numpy())
-                    np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_x_hat_{}.npy".format(
-                        idx_epoch+1, case_name), MR_hat.cpu().detach().numpy())
-                    np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_y_hat_{}.npy".format(
-                        idx_epoch+1, case_name), CT_hat.cpu().detach().numpy())
+                    np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, case_name)
+                        +iter_tag+"_x_{}.npy".format(current_res), batch_x.cpu().detach().numpy())
+                    np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, case_name)
+                        +iter_tag+"_y_{}.npy".format(current_res), batch_y.cpu().detach().numpy())
+                    np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, case_name)
+                        +iter_tag+"_seed_{}.npy".format(current_res), batch_seed.cpu().detach().numpy())
+                    np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, case_name)
+                        +iter_tag+"_x_hat_{}.npy".format(current_res), MR_hat.cpu().detach().numpy())
+                    np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, case_name)
+                        +iter_tag+"_y_hat_{}.npy".format(current_res), CT_hat.cpu().detach().numpy())
 
                 # after training one case
                 loss_mean_MR = np.mean(case_loss_MR)
