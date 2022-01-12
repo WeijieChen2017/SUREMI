@@ -264,8 +264,8 @@ for current_depth in range(start_depth, train_dict["depth"]):
                 loss_std_MR = np.std(case_loss_MR)
                 loss_mean_CT = np.mean(case_loss_CT)
                 loss_std_CT = np.std(case_loss_CT)
-                print("[{}]===> Epoch[{:03d}]-Case[{:03d}]: ".format(current_res, idx_epoch+1, cnt_file+1))
-                print("Loss MR mean: {:.6} Loss std: {:.6}".format(loss_mean_MR, loss_std_MR))
+                print("[{}]===> Epoch[{:03d}]-Case[{:03d}]: ".format(current_res, idx_epoch+1, cnt_file+1), end="")
+                print("Loss MR mean: {:.6} Loss std: {:.6}".format(loss_mean_MR, loss_std_MR), end="")
                 print("Loss CT mean: {:.6} Loss std: {:.6}".format(loss_mean_CT, loss_std_CT))
                 epoch_loss_MR[cnt_file] = loss_mean_MR
                 epoch_loss_CT[cnt_file] = loss_mean_CT
@@ -277,8 +277,8 @@ for current_depth in range(start_depth, train_dict["depth"]):
             loss_mean_CT = np.mean(epoch_loss_CT)
             loss_std_CT = np.std(epoch_loss_CT)
             
-            print("[{}]===> Epoch[{}]: ".format(current_res, idx_epoch+1))
-            print("Loss MR mean: {:.6} Loss std: {:.6}".format(loss_mean_MR, loss_std_MR))
+            print("[{}]===> Epoch[{}]: ".format(current_res, idx_epoch+1), end="")
+            print("Loss MR mean: {:.6} Loss std: {:.6}".format(loss_mean_MR, loss_std_MR), end="")
             print("Loss CT mean: {:.6} Loss std: {:.6}".format(loss_mean_CT, loss_std_CT))
             # wandb.log({iter_tag+"_loss_MR": loss_mean_MR})
             # wandb.log({iter_tag+"_loss_CT": loss_mean_CT})
