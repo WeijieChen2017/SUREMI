@@ -24,7 +24,7 @@ train_dict["seed"] = 426
 train_dict["input_channel"] = 3
 train_dict["output_channel"] = 3
 train_dict["gpu_ids"] = [7]
-train_dict["epochs"] = [8, 8, 16, 16, 32, 32, 64]
+train_dict["epochs"] = [32, 32, 64, 64, 128, 128, 256]
 train_dict["batchs"] = [64, 64, 32, 32, 16, 8, 4]
 train_dict["fade_in_percentage"] = [50, 50, 50, 50, 50, 50, 50]
 train_dict["dropout"] = 0
@@ -265,8 +265,8 @@ for current_depth in range(start_depth, train_dict["depth"]):
                 loss_mean_CT = np.mean(case_loss_CT)
                 loss_std_CT = np.std(case_loss_CT)
                 print("[{}]===> Epoch[{:03d}]-Case[{:03d}]: ".format(current_res, idx_epoch+1, cnt_file+1), end="")
-                print("Loss MR mean: {:.6} Loss std: {:.6}".format(loss_mean_MR, loss_std_MR), end="")
-                print("Loss CT mean: {:.6} Loss std: {:.6}".format(loss_mean_CT, loss_std_CT))
+                print("-->Loss MR mean: {:.6} Loss std: {:.6}".format(loss_mean_MR, loss_std_MR), end="")
+                print("-->Loss CT mean: {:.6} Loss std: {:.6}".format(loss_mean_CT, loss_std_CT))
                 epoch_loss_MR[cnt_file] = loss_mean_MR
                 epoch_loss_CT[cnt_file] = loss_mean_CT
             
@@ -278,8 +278,8 @@ for current_depth in range(start_depth, train_dict["depth"]):
             loss_std_CT = np.std(epoch_loss_CT)
             
             print("[{}]===> Epoch[{}]: ".format(current_res, idx_epoch+1), end="")
-            print("Loss MR mean: {:.6} Loss std: {:.6}".format(loss_mean_MR, loss_std_MR), end="")
-            print("Loss CT mean: {:.6} Loss std: {:.6}".format(loss_mean_CT, loss_std_CT))
+            print("-->Loss MR mean: {:.6} Loss std: {:.6}".format(loss_mean_MR, loss_std_MR), end="")
+            print("-->Loss CT mean: {:.6} Loss std: {:.6}".format(loss_mean_CT, loss_std_CT))
             # wandb.log({iter_tag+"_loss_MR": loss_mean_MR})
             # wandb.log({iter_tag+"_loss_CT": loss_mean_CT})
             np.save(train_dict["save_folder"]+"loss/epoch_loss_MR_"+iter_tag+"_{:03d}_{}.npy".format(idx_epoch+1, current_res), epoch_loss_MR)
