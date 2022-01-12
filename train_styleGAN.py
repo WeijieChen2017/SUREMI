@@ -24,7 +24,7 @@ train_dict["seed"] = 426
 train_dict["input_channel"] = 3
 train_dict["output_channel"] = 3
 train_dict["gpu_ids"] = [7]
-train_dict["epochs"] = [32, 32, 64, 64, 128, 128, 256]
+train_dict["epochs"] = [8, 8, 16, 16, 32, 32, 64]
 train_dict["batchs"] = [64, 64, 32, 32, 16, 8, 4]
 train_dict["fade_in_percentage"] = [50, 50, 50, 50, 50, 50, 50]
 train_dict["dropout"] = 0
@@ -219,7 +219,7 @@ for current_depth in range(start_depth, train_dict["depth"]):
                         rand_key = file_name + "_" + str(z_center)
                         if not rand_key in rand_dict:
                             rand_dict[rand_key] = torch.randn(1, train_dict["latent_size"])
-                        batch_seed[idx_batch, :] = rand_dict[rand_key]
+                            batch_seed[idx_batch, :] = rand_dict[rand_key]
 
                     batch_x = torch.from_numpy(batch_x).float().to(device)
                     batch_y = torch.from_numpy(batch_y).float().to(device)
