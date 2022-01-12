@@ -44,8 +44,8 @@ train_dict["opt_weight_decay"] = 0.01 # default
 train_dict["amsgrad"] = False # default
 
 
-train_dict["latent_size"] = 256
-train_dict["dlatent_size"] = 256
+train_dict["latent_size"] = 512
+train_dict["dlatent_size"] = 512
 train_dict["resolution"] = 256
 train_dict["structure"] = "fixed"
 train_dict["style_mixing_prob"] = 0.0
