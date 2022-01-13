@@ -7,6 +7,7 @@ import random
 import numpy as np
 import nibabel as nib
 import torch.nn as nn
+import torch.nn.functional as F
 
 import torch
 import torchvision
@@ -242,10 +243,10 @@ for current_depth in range(start_depth, train_dict["depth"]):
                     ds_CT = nn.AvgPool2d(down_sample_factor)(CT_hat)                    
 
                     if current_depth > 0:
-                        prior_ds_x = interpolate(nn.AvgPool2d(prior_down_sample_factor)(batch_x), scale_factor=2)
-                        prior_ds_y = interpolate(nn.AvgPool2d(prior_down_sample_factor)(batch_y), scale_factor=2)
-                        prior_ds_MR = interpolate(nn.AvgPool2d(prior_down_sample_factor)(batch_MR), scale_factor=2)
-                        prior_ds_CT = interpolate(nn.AvgPool2d(prior_down_sample_factor)(batch_CT), scale_factor=2)
+                        prior_ds_x = F.interpolate(nn.AvgPool2d(prior_down_sample_factor)(batch_x), scale_factor=2)
+                        prior_ds_y = F.interpolate(nn.AvgPool2d(prior_down_sample_factor)(batch_y), scale_factor=2)
+                        prior_ds_MR = F.interpolate(nn.AvgPool2d(prior_down_sample_factor)(batch_MR), scale_factor=2)
+                        prior_ds_CT = F.interpolate(nn.AvgPool2d(prior_down_sample_factor)(batch_CT), scale_factor=2)
                     else:
                         prior_ds_x = ds_x
                         prior_ds_y = ds_y
