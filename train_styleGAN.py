@@ -18,13 +18,13 @@ from model.styleGAN_MR2CT import Generator
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "z512_to_img"
+train_dict["project_name"] = "z512_to_img_ds"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_channel"] = 3
 train_dict["output_channel"] = 3
 train_dict["gpu_ids"] = [7]
-train_dict["epochs"] = [8, 8, 16, 16, 32, 32, 64]
+train_dict["epochs"] = [16, 16, 16, 16, 32, 32, 64]
 train_dict["batchs"] = [64, 64, 32, 32, 16, 8, 4]
 train_dict["fade_in_percentage"] = [50, 50, 50, 50, 50, 50, 50]
 train_dict["dropout"] = 0
@@ -230,10 +230,28 @@ for current_depth in range(start_depth, train_dict["depth"]):
                     opt_MR.zero_grad()
                     opt_CT.zero_grad()
                     alpha = cnt_file / fade_point if cnt_file <= fade_point else 1
+
+                    down_sample_factor = int(np.power(2, train_dict["depth"] - current_depth - 1))
+                    prior_down_sample_factor = max(int(np.power(2, train_dict["depth"] - current_depth)), 0)
+
+                    ds_x = nn.AvgPool2d(down_sample_factor)(batch_x)
+                    ds_y = nn.AvgPool2d(down_sample_factor)(batch_y)
+
+                    if depth > 0:
+                        prior_ds_x = interpolate(nn.AvgPool2d(prior_down_sample_factor)(batch_x), scale_factor=2)
+                        prior_ds_y = interpolate(nn.AvgPool2d(prior_down_sample_factor)(batch_y), scale_factor=2)
+                    else:
+                        prior_ds_x = ds_x
+                        prior_ds_y = ds_y
+                        
+                    # real samples are a combination of ds_real_samples and prior_ds_real_samples
+                    real_x = (alpha * ds_x) + ((1 - alpha) * prior_ds_x)
+                    real_y = (alpha * ds_y) + ((1 - alpha) * prior_ds_y)
+
                     MR_hat = gen_MR(batch_seed, current_depth, alpha)
                     CT_hat = gen_CT(batch_seed, current_depth, alpha)
-                    loss_MR = criterion_MR(MR_hat, batch_x)
-                    loss_CT = criterion_MR(CT_hat, batch_y)
+                    loss_MR = criterion_MR(MR_hat, real_x)
+                    loss_CT = criterion_MR(CT_hat, real_y)
                     if isTrain:
                         loss_MR.backward()
                         loss_CT.backward()
@@ -249,9 +267,9 @@ for current_depth in range(start_depth, train_dict["depth"]):
                 case_name = os.path.basename(cube_x_path)[5:8]
                 if not isTrain:
                     np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, case_name)
-                        +iter_tag+"_x_{}.npy".format(current_res), batch_x.cpu().detach().numpy())
+                        +iter_tag+"_x_{}.npy".format(current_res), real_x.cpu().detach().numpy())
                     np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, case_name)
-                        +iter_tag+"_y_{}.npy".format(current_res), batch_y.cpu().detach().numpy())
+                        +iter_tag+"_y_{}.npy".format(current_res), real_y.cpu().detach().numpy())
                     np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, case_name)
                         +iter_tag+"_seed_{}.npy".format(current_res), batch_seed.cpu().detach().numpy())
                     np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, case_name)
