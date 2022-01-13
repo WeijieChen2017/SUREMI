@@ -237,7 +237,7 @@ for current_depth in range(start_depth, train_dict["depth"]):
                     ds_x = nn.AvgPool2d(down_sample_factor)(batch_x)
                     ds_y = nn.AvgPool2d(down_sample_factor)(batch_y)
 
-                    if depth > 0:
+                    if current_depth > 0:
                         prior_ds_x = interpolate(nn.AvgPool2d(prior_down_sample_factor)(batch_x), scale_factor=2)
                         prior_ds_y = interpolate(nn.AvgPool2d(prior_down_sample_factor)(batch_y), scale_factor=2)
                     else:
