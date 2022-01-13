@@ -25,7 +25,7 @@ train_dict["seed"] = 426
 train_dict["input_channel"] = 3
 train_dict["output_channel"] = 3
 train_dict["gpu_ids"] = [7]
-train_dict["epochs"] = [16, 16, 16, 16, 32, 32, 64]
+train_dict["epochs"] = [8, 8, 16, 16, 32, 32, 64]
 train_dict["batchs"] = [64, 64, 32, 32, 16, 8, 4]
 train_dict["fade_in_percentage"] = [50, 50, 50, 50, 50, 50, 50]
 train_dict["dropout"] = 0
@@ -245,8 +245,8 @@ for current_depth in range(start_depth, train_dict["depth"]):
                     if current_depth > 0:
                         prior_ds_x = F.interpolate(nn.AvgPool2d(prior_down_sample_factor)(batch_x), scale_factor=2)
                         prior_ds_y = F.interpolate(nn.AvgPool2d(prior_down_sample_factor)(batch_y), scale_factor=2)
-                        prior_ds_MR = F.interpolate(nn.AvgPool2d(prior_down_sample_factor)(batch_MR), scale_factor=2)
-                        prior_ds_CT = F.interpolate(nn.AvgPool2d(prior_down_sample_factor)(batch_CT), scale_factor=2)
+                        prior_ds_MR = F.interpolate(nn.AvgPool2d(prior_down_sample_factor)(MR_hat), scale_factor=2)
+                        prior_ds_CT = F.interpolate(nn.AvgPool2d(prior_down_sample_factor)(CT_hat), scale_factor=2)
                     else:
                         prior_ds_x = ds_x
                         prior_ds_y = ds_y
