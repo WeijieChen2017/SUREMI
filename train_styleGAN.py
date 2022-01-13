@@ -230,28 +230,36 @@ for current_depth in range(start_depth, train_dict["depth"]):
                     opt_MR.zero_grad()
                     opt_CT.zero_grad()
                     alpha = cnt_file / fade_point if cnt_file <= fade_point else 1
+                    MR_hat = gen_MR(batch_seed, current_depth, alpha)
+                    CT_hat = gen_CT(batch_seed, current_depth, alpha)
 
                     down_sample_factor = int(np.power(2, train_dict["depth"] - current_depth - 1))
                     prior_down_sample_factor = max(int(np.power(2, train_dict["depth"] - current_depth)), 0)
 
                     ds_x = nn.AvgPool2d(down_sample_factor)(batch_x)
                     ds_y = nn.AvgPool2d(down_sample_factor)(batch_y)
+                    ds_MR = nn.AvgPool2d(down_sample_factor)(MR_hat)
+                    ds_CT = nn.AvgPool2d(down_sample_factor)(CT_hat)                    
 
                     if current_depth > 0:
                         prior_ds_x = interpolate(nn.AvgPool2d(prior_down_sample_factor)(batch_x), scale_factor=2)
                         prior_ds_y = interpolate(nn.AvgPool2d(prior_down_sample_factor)(batch_y), scale_factor=2)
+                        prior_ds_MR = interpolate(nn.AvgPool2d(prior_down_sample_factor)(batch_MR), scale_factor=2)
+                        prior_ds_CT = interpolate(nn.AvgPool2d(prior_down_sample_factor)(batch_CT), scale_factor=2)
                     else:
                         prior_ds_x = ds_x
                         prior_ds_y = ds_y
+                        prior_ds_MR = ds_MR
+                        prior_ds_CT = ds_CT
                         
                     # real samples are a combination of ds_real_samples and prior_ds_real_samples
                     real_x = (alpha * ds_x) + ((1 - alpha) * prior_ds_x)
                     real_y = (alpha * ds_y) + ((1 - alpha) * prior_ds_y)
-
-                    MR_hat = gen_MR(batch_seed, current_depth, alpha)
-                    CT_hat = gen_CT(batch_seed, current_depth, alpha)
-                    loss_MR = criterion_MR(MR_hat, real_x)
-                    loss_CT = criterion_MR(CT_hat, real_y)
+                    real_MR = (alpha * ds_MR) + ((1 - alpha) * prior_ds_MR)
+                    real_CT = (alpha * ds_CT) + ((1 - alpha) * prior_ds_CT)
+                    
+                    loss_MR = criterion_MR(real_MR, real_x)
+                    loss_CT = criterion_MR(real_CT, real_y)
                     if isTrain:
                         loss_MR.backward()
                         loss_CT.backward()
