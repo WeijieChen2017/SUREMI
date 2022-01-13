@@ -281,9 +281,9 @@ for current_depth in range(start_depth, train_dict["depth"]):
                     np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, case_name)
                         +iter_tag+"_seed_{}.npy".format(current_res), batch_seed.cpu().detach().numpy())
                     np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, case_name)
-                        +iter_tag+"_x_hat_{}.npy".format(current_res), MR_hat.cpu().detach().numpy())
+                        +iter_tag+"_x_hat_{}.npy".format(current_res), real_MR.cpu().detach().numpy())
                     np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, case_name)
-                        +iter_tag+"_y_hat_{}.npy".format(current_res), CT_hat.cpu().detach().numpy())
+                        +iter_tag+"_y_hat_{}.npy".format(current_res), real_CT.cpu().detach().numpy())
 
                 # after training one case
                 loss_mean_MR = np.mean(case_loss_MR)
