@@ -220,8 +220,7 @@ for current_depth in range(start_depth, train_dict["depth"]):
                         rand_key = file_name + "_" + str(z_center)
                         if not rand_key in rand_dict:
                             rand_dict[rand_key] = torch.randn(1, train_dict["latent_size"])
-                            batch_seed[idx_batch, :] = rand_dict[rand_key]
-                            # print(batch_seed[idx_batch, :])
+                        batch_seed[idx_batch, :] = rand_dict[rand_key]
 
                     print(np.mean(batch_seed), np.std(batch_seed), np.amax(batch_seed), np.amin(batch_seed))
                     batch_x = torch.from_numpy(batch_x).float().to(device)
