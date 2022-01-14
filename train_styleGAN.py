@@ -221,8 +221,9 @@ for current_depth in range(start_depth, train_dict["depth"]):
                         if not rand_key in rand_dict:
                             rand_dict[rand_key] = torch.randn(1, train_dict["latent_size"])
                             batch_seed[idx_batch, :] = rand_dict[rand_key]
-                            print(batch_seed[idx_batch, :])
+                            # print(batch_seed[idx_batch, :])
 
+                    print(np.zeros(batch_seed), np.std(batch_seed), np.amax(batch_seed), np.amin(batch_seed))
                     batch_x = torch.from_numpy(batch_x).float().to(device)
                     batch_y = torch.from_numpy(batch_y).float().to(device)
                     batch_seed = torch.from_numpy(batch_seed).float().to(device)
