@@ -37,9 +37,11 @@ train_dict["batchs"] = [64, 64, 32, 32, 16, 8, 4]
 train_dict["fade_in_percentage"] = [50, 50, 50, 50, 50, 50, 50]
 train_dict["dropout"] = 0
 train_dict["model_term"] = "styleGAN"
+
 train_dict["pre_train_CT"] = "model_best_CT_014_32.pth"
 train_dict["pre_train_MR"] = "model_best_MR_016_32.pth"
 train_dict["data_division"] = "data_division.npy"
+train_dict["rand_dict"] = "rand_dict.npy"
 
 train_dict["folder_X"] = "./data_dir/norm_MR/regular/"
 train_dict["folder_Y"] = "./data_dir/norm_CT/regular/"
@@ -80,7 +82,7 @@ for path in [train_dict["save_folder"], train_dict["save_folder"]+"npy/", train_
 # config.opt_lr = train_dict["opt_lr"]
 # config.opt_weight_decay = train_dict["opt_weight_decay"]
 
-np.save(train_dict["save_folder"]+"_"+train_dict["time_stamp"]+"_dict.npy", train_dict)
+np.save(train_dict["save_folder"]+"train_dict_"+train_dict["time_stamp"]+"_dict.npy", train_dict)
 
 
 # ==================== basic settings ====================
@@ -172,7 +174,11 @@ else:
 
 best_val_loss_MR = 1e6
 best_val_loss_CT = 1e6
-rand_dict = {}
+if train_dict["rand_dict"] is None:
+    rand_dict = {}
+else:
+    rand_dict = np.load(train_dict["save_folder"]+train_dict["rand_dict"], allow_pickle=True).item()
+    print("======Load ", train_dict["save_folder"]+train_dict["rand_dict"], "======")
 # wandb.watch(model)
 
 start_depth = 0
