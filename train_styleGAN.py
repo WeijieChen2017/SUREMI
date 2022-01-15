@@ -38,7 +38,7 @@ train_dict["fade_in_percentage"] = [50, 50, 50, 50, 50, 50, 50]
 train_dict["dropout"] = 0
 train_dict["model_term"] = "styleGAN"
 train_dict["pre_train_CT"] = "model_best_CT_014_32.pth"
-train_dict["pre_train_MR"] = "model_best_CT_016_32.pth"
+train_dict["pre_train_MR"] = "model_best_MR_016_32.pth"
 train_dict["data_division"] = "data_division.npy"
 
 train_dict["folder_X"] = "./data_dir/norm_MR/regular/"
@@ -109,8 +109,10 @@ gen_CT = Generator(
 
 if not train_dict["pre_train_MR"] is None:
     load(gen_MR, train_dict["save_folder"]+train_dict["pre_train_MR"])
+    print("======Load ", train_dict["save_folder"]+train_dict["pre_train_MR"], "======")
 if not train_dict["pre_train_CT"] is None:
     load(gen_CT, train_dict["save_folder"]+train_dict["pre_train_CT"])
+    print("======Load ", train_dict["save_folder"]+train_dict["pre_train_CT"], "======")
 
 
 criterion_MR = nn.SmoothL1Loss()
@@ -163,6 +165,7 @@ else:
     train_list_X = data_division_dict["train_list_X"]
     val_list_X = data_division_dict["val_list_X"]
     test_list_X = data_division_dict["test_list_X"]
+    print("======Load ", train_dict["save_folder"]+train_dict["data_division"], "======")
 
 # ==================== training ====================
 
