@@ -15,13 +15,20 @@ import requests
 
 from model.styleGAN_MR2CT import Generator
 
+def load(model, pre_train_model):
+    pretrained_dict = torch.load(pre_train_model)
+    model_dict = model.state_dict()
+    pretrained_dict = {k: v for k, v in pretrained_dict.items() if k in model_dict}
+    model_dict.update(pretrained_dict)
+    model.load_state_dict(model_dict)
+
 # ==================== dict and config ====================
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 train_dict["project_name"] = "z512_to_img_ds"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
-train_dict["seed"] = 426
+train_dict["seed"] = 813
 train_dict["input_channel"] = 3
 train_dict["output_channel"] = 3
 train_dict["gpu_ids"] = [7]
@@ -30,6 +37,9 @@ train_dict["batchs"] = [64, 64, 32, 32, 16, 8, 4]
 train_dict["fade_in_percentage"] = [50, 50, 50, 50, 50, 50, 50]
 train_dict["dropout"] = 0
 train_dict["model_term"] = "styleGAN"
+train_dict["pre_train_CT"] = "model_best_CT_014_32.pth"
+train_dict["pre_train_MR"] = "model_best_CT_016_32.pth"
+train_dict["data_division"] = "data_division.npy"
 
 train_dict["folder_X"] = "./data_dir/norm_MR/regular/"
 train_dict["folder_Y"] = "./data_dir/norm_CT/regular/"
@@ -70,7 +80,7 @@ for path in [train_dict["save_folder"], train_dict["save_folder"]+"npy/", train_
 # config.opt_lr = train_dict["opt_lr"]
 # config.opt_weight_decay = train_dict["opt_weight_decay"]
 
-np.save(train_dict["save_folder"]+"dict.npy", train_dict)
+np.save(train_dict["save_folder"]+"_"+train_dict["time_stamp"]+"_dict.npy", train_dict)
 
 
 # ==================== basic settings ====================
@@ -97,6 +107,12 @@ gen_CT = Generator(
     structure=train_dict["structure"],
     style_mixing_prob=train_dict["style_mixing_prob"]).train().to(device)
 
+if not train_dict["pre_train_MR"] is None:
+    load(gen_MR, train_dict["save_folder"]+train_dict["pre_train_MR"])
+if not train_dict["pre_train_CT"] is None:
+    load(gen_CT, train_dict["save_folder"]+train_dict["pre_train_CT"])
+
+
 criterion_MR = nn.SmoothL1Loss()
 criterion_CT = nn.SmoothL1Loss()
 
@@ -120,26 +136,33 @@ opt_CT = torch.optim.AdamW(
 
 
 # ==================== data division ====================
+if train_dict["data_division"] is None:
 
-X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
-Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
+    X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
+    Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
 
-X_list = np.asarray(X_list)
-np.random.shuffle(X_list)
-X_list = list(X_list)
+    X_list = np.asarray(X_list)
+    np.random.shuffle(X_list)
+    X_list = list(X_list)
 
-val_list_X = X_list[:int(len(X_list)*train_dict["val_ratio"])]
-val_list_X.sort()
-test_list_X = X_list[-int(len(X_list)*train_dict["test_ratio"]):]
-test_list_X.sort()
-train_list_X = list(set(X_list) - set(val_list_X) - set(test_list_X))
-train_list_X.sort()
+    val_list_X = X_list[:int(len(X_list)*train_dict["val_ratio"])]
+    val_list_X.sort()
+    test_list_X = X_list[-int(len(X_list)*train_dict["test_ratio"]):]
+    test_list_X.sort()
+    train_list_X = list(set(X_list) - set(val_list_X) - set(test_list_X))
+    train_list_X.sort()
 
-data_division_dict = {
-    "train_list_X" : train_list_X,
-    "val_list_X" : val_list_X,
-    "test_list_X" : test_list_X}
-np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
+    data_division_dict = {
+        "train_list_X" : train_list_X,
+        "val_list_X" : val_list_X,
+        "test_list_X" : test_list_X}
+    np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
+
+else:
+    data_division_dict = np.load(train_dict["save_folder"]+train_dict["data_division"])
+    train_list_X = data_division_dict["train_list_X"]
+    val_list_X = data_division_dict["val_list_X"]
+    test_list_X = data_division_dict["test_list_X"]
 
 # ==================== training ====================
 
