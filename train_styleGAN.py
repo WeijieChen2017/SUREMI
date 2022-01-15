@@ -162,6 +162,7 @@ if train_dict["data_division"] is None:
 
 else:
     data_division_dict = np.load(train_dict["save_folder"]+train_dict["data_division"], allow_pickle=True)
+    print(data_division_dict)
     train_list_X = data_division_dict["train_list_X"]
     val_list_X = data_division_dict["val_list_X"]
     test_list_X = data_division_dict["test_list_X"]
