@@ -37,7 +37,7 @@ train_dict["batchs"] = [64, 64, 32, 32, 16, 8, 4]
 train_dict["fade_in_percentage"] = [50, 50, 50, 50, 50, 50, 50]
 train_dict["dropout"] = 0
 train_dict["model_term"] = "styleGAN"
-train_dict["pre_train_CT"] = "model_best_CT_013_32.pth"
+train_dict["pre_train_CT"] = "model_best_CT_012_32.pth"
 train_dict["pre_train_MR"] = "model_best_MR_016_32.pth"
 train_dict["data_division"] = "data_division.npy"
 
