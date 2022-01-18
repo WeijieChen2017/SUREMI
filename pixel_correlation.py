@@ -16,8 +16,9 @@ X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
 Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
 
 for cnt_file, file_path in enumerate(X_list):
-                
+     
     file_name = os.path.basename(file_path)
+    cube_x_path = file_path
     cube_y_path = train_dict["folder_Y"] + file_name
     print("--->",cube_x_path,"<---")
     cube_x_data = nib.load(cube_x_path).get_fdata()
