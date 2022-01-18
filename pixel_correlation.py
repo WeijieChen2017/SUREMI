@@ -5,7 +5,7 @@ import numpy as np
 import nibabel as nib
 
 def bin_CT(img, n_bins=1024):
-    data_vector = np.vectorize(img)
+    data_vector = np.ravel(img)
     data_max = np.amax(data_vector)
     data_min = np.amin(data_vector)
     data_squeezed = (data_vector-data_min)/(data_max-data_min)
