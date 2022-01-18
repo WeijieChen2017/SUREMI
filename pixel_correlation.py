@@ -5,9 +5,10 @@ import numpy as np
 import nibabel as nib
 
 def bin_CT(img, n_bins=1024):
-    data_max = np.amax(img)
-    data_min = np.amin(img)
-    data_squeezed = (img-data_min)/(data_max-data_min)
+	data_vector = np.vectorize(img)
+    data_max = np.amax(data_vector)
+    data_min = np.amin(data_vector)
+    data_squeezed = (data_vector-data_min)/(data_max-data_min)
     data_extended = data_squeezed * n_bins
     data_discrete = data_extended // 1
     print(data_discrete.shape)
@@ -38,7 +39,8 @@ for cnt_file, file_path in enumerate(X_list):
     X_discrete = bin_CT(cube_x_data, n_bins=1024)
     Y_discrete = bin_CT(cube_y_data, n_bins=1024)
 
-    print(X_discrete.shape)
+    XY_discrete = np.asarray([X_discrete, Y_discrete])
+    print(XY_discrete.shape)
     
     pixel_corr = np.zeros((1024, 1024))
 
