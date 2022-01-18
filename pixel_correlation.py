@@ -10,6 +10,7 @@ def bin_CT(img, n_bins=1024):
     data_squeezed = (img-data_min)/(data_max-data_min)
     data_extended = data_squeezed * n_bins
     data_discrete = data_extended // 1
+    print(data_discrete.shape)
     return np.int(data_discrete)
 
 train_dict = {}
