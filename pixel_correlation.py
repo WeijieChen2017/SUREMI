@@ -5,7 +5,7 @@ import numpy as np
 import nibabel as nib
 
 def bin_CT(img, n_bins=1024):
-	data_vector = np.vectorize(img)
+    data_vector = np.vectorize(img)
     data_max = np.amax(data_vector)
     data_min = np.amin(data_vector)
     data_squeezed = (data_vector-data_min)/(data_max-data_min)
@@ -45,9 +45,9 @@ for cnt_file, file_path in enumerate(X_list):
     pixel_corr = np.zeros((1024, 1024))
 
     for ix in range(len_x):
-    	for iy in range(len_y):
-    		for iz in range(len_z):
-    			pixel_corr[X_discrete[ix, iy, iz], Y_discrete[ix, iy, iz]] += 1
+        for iy in range(len_y):
+            for iz in range(len_z):
+                pixel_corr[X_discrete[ix, iy, iz], Y_discrete[ix, iy, iz]] += 1
 
     np.save(train_dict["save_folder"]+file_name+"_pix_cor.npy")
 
