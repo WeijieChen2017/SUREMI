@@ -111,10 +111,10 @@ gen_CT = Generator(
 
 if not train_dict["pre_train_MR"] is None:
     load(gen_MR, train_dict["save_folder"]+train_dict["pre_train_MR"])
-    print("======Load ", train_dict["save_folder"]+train_dict["pre_train_MR"], "======")
+    print("======      Load ", train_dict["save_folder"]+train_dict["pre_train_MR"], "======")
 if not train_dict["pre_train_CT"] is None:
     load(gen_CT, train_dict["save_folder"]+train_dict["pre_train_CT"])
-    print("======Load ", train_dict["save_folder"]+train_dict["pre_train_CT"], "======")
+    print("======      Load ", train_dict["save_folder"]+train_dict["pre_train_CT"], "======")
 
 
 criterion_MR = nn.SmoothL1Loss()
@@ -164,11 +164,11 @@ if train_dict["data_division"] is None:
 
 else:
     data_division_dict = np.load(train_dict["save_folder"]+train_dict["data_division"], allow_pickle=True).item()
-    print(data_division_dict)
+    # print(data_division_dict)
     train_list_X = data_division_dict["train_list_X"]
     val_list_X = data_division_dict["val_list_X"]
     test_list_X = data_division_dict["test_list_X"]
-    print("======Load ", train_dict["save_folder"]+train_dict["data_division"], "======")
+    print("======      Load ", train_dict["save_folder"]+train_dict["data_division"], "======")
 
 # ==================== training ====================
 
@@ -178,7 +178,7 @@ if train_dict["rand_dict"] is None:
     rand_dict = {}
 else:
     rand_dict = np.load(train_dict["save_folder"]+train_dict["rand_dict"], allow_pickle=True).item()
-    print("======Load ", train_dict["save_folder"]+train_dict["rand_dict"], "======")
+    print("======      Load ", train_dict["save_folder"]+train_dict["rand_dict"], "======")
 # wandb.watch(model)
 
 start_depth = 0
