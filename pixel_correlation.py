@@ -12,7 +12,7 @@ def bin_CT(img, n_bins=1024):
     data_extended = data_squeezed * n_bins
     data_discrete = data_extended // 1
     print(data_discrete.shape)
-    return np.int(list(data_discrete))
+    return np.asarray(list(data_discrete), dtype=np.int)
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
