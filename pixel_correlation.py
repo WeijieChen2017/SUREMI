@@ -1,5 +1,6 @@
 import os
 import glob
+import time
 import numpy as np
 import nibabel as nib
 
