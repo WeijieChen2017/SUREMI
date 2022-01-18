@@ -10,7 +10,7 @@ def bin_CT(img, n_bins=1024):
     data_squeezed = (img-data_min)/(data_max-data_min)
     data_extended = data_squeezed * n_bins
     data_discrete = data_extended // 1
-    return int(data_discrete)
+    return np.int(data_discrete)
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
@@ -31,10 +31,13 @@ for cnt_file, file_path in enumerate(X_list):
     print("--->",cube_x_path,"<---")
     cube_x_data = nib.load(cube_x_path).get_fdata()
     cube_y_data = nib.load(cube_y_path).get_fdata()
+    print(cube_x_data.shape)
     len_x, len_y, len_z = cube_x_data.shape
 
     X_discrete = bin_CT(cube_x_data, n_bins=1024)
     Y_discrete = bin_CT(cube_y_data, n_bins=1024)
+
+    print(X_discrete.shape)
     
     pixel_corr = np.zeros((1024, 1024))
 
