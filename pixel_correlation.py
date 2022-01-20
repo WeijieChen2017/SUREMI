@@ -50,10 +50,10 @@ for cnt_file, file_path in enumerate(X_list):
         
     for ix in range(n_bin):
         temp_sum = np.sum(pixel_corr[ix, :])
-        print(np.amax(pixel_corr[ix, :]), end="")
+        # print(np.amax(pixel_corr[ix, :]), end="")
         if not temp_sum == 0.0:
             pixel_corr[ix, :] = pixel_corr[ix, :] / np.sum(pixel_corr[ix, :])
-        print(np.amax(pixel_corr[ix, :]))
+        # print(np.amax(pixel_corr[ix, :]))
             
     loc_x = np.zeros((n_bin)*(n_bin))
     loc_y = np.zeros((n_bin)*(n_bin))
