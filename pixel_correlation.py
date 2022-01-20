@@ -42,30 +42,29 @@ for cnt_file, file_path in enumerate(X_list):
     pixel_corr = np.zeros((n_bin, n_bin))
     
     for iz in range(len_z):
-    
         X_discrete = bin_CT(cube_x_data[:, :, iz], n_bins=n_bin-1)
         Y_discrete = bin_CT(cube_y_data[:, :, iz], n_bins=n_bin-1)
         
         for ix in range(n_bin*n_bin):
             pixel_corr[X_discrete[ix], Y_discrete[ix]] += 1
-
-    
-    np.save(train_dict["save_folder"]+file_name[:-7]+"_pix_cor.npy", pixel_corr)
-    
+        
+    for ix in range(n_bin):
+        temp_sum = np.sum(pixel_corr[ix, :])
+        print(np.amax(pixel_corr[ix, :]), end="")
+        if not temp_sum == 0.0:
+            pixel_corr[ix, :] = pixel_corr[ix, :] / np.sum(pixel_corr[ix, :])
+        print(np.amax(pixel_corr[ix, :]))
+            
     loc_x = np.zeros((n_bin)*(n_bin))
     loc_y = np.zeros((n_bin)*(n_bin))
     pc_ft = np.zeros((n_bin)*(n_bin))
-    print(loc_x.shape)
     for idx in range(n_bin):
         for idy in range(n_bin):
             flatten = idx*n_bin + idy
             loc_x[flatten] = idx
             loc_y[flatten] = idy
-            pc_ft[flatten] = np.log(pixel_corr[idx, idy]+1)
-            
-    print(np.amax(pc_ft))
+            pc_ft[flatten] = pixel_corr[idx, idy]
 
-    pc_ft = pc_ft / np.amax(pc_ft)
     corr_mat = pd.DataFrame({"X":loc_x, "Y":loc_y, "counts":pc_ft})
 
     plt.figure(figsize=(12, 12), dpi=1200)
@@ -85,6 +84,7 @@ for cnt_file, file_path in enumerate(X_list):
     for artist in g.legend.legendHandles:
         artist.set_edgecolor(".7")
         
+    np.save(train_dict["save_folder"]+file_name[:-7]+"_pix_cor.npy", pixel_corr)
     plt.savefig(train_dict["save_folder"]+file_name[:-7]+"_pix_cor.png")
     plt.close()
 
