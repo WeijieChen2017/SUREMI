@@ -11,11 +11,12 @@ def bin_CT(img, n_bins=1024):
     data_vector = np.ravel(img)
     data_max = np.amax(data_vector)
     data_min = np.amin(data_vector)
+    print(data_max, data_min)
     data_squeezed = (data_vector-data_min)/(data_max-data_min)
     data_extended = data_squeezed * n_bins
     data_discrete = data_extended // 1
 #     print(data_discrete.shape)
-    return np.asarray(list(data_discrete), dtype=np.int)
+    return np.asarray(list(data_discrete), dtype=np.int64)
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
@@ -41,13 +42,12 @@ for cnt_file, file_path in enumerate(X_list):
     len_x, len_y, len_z = cube_x_data.shape
     pixel_corr = np.zeros((n_bin, n_bin))
     
-    for iz in range(len_z):
-        X_discrete = bin_CT(cube_x_data[:, :, iz], n_bins=n_bin-1)
-        Y_discrete = bin_CT(cube_y_data[:, :, iz], n_bins=n_bin-1)
+    X_discrete = bin_CT(cube_x_data, n_bins=n_bin-1)
+    Y_discrete = bin_CT(cube_y_data, n_bins=n_bin-1)
         
-        for ix in range(n_bin*n_bin):
-            pixel_corr[X_discrete[ix], Y_discrete[ix]] += 1
-        
+    for ix in range(len(X_discrete)):
+        pixel_corr[X_discrete[ix], Y_discrete[ix]] += 1
+    
     for ix in range(n_bin):
         temp_sum = np.sum(pixel_corr[ix, :])
         # print(np.amax(pixel_corr[ix, :]), end="")
