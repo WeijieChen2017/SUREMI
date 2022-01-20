@@ -4,7 +4,7 @@ import time
 import numpy as np
 import nibabel as nib
 import matplotlib.pyplot as plt
-import seaborn as sns
+from externel import seaborn as sns
 
 def bin_CT(img, n_bins=1024):
     data_vector = np.ravel(img)
