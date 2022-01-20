@@ -2,6 +2,7 @@ import os
 import glob
 import time
 import numpy as np
+import pandas as pd
 import nibabel as nib
 import matplotlib.pyplot as plt
 from externel import seaborn as sns
@@ -51,6 +52,22 @@ for cnt_file, file_path in enumerate(X_list):
     
     np.save(train_dict["save_folder"]+file_name[:-7]+"_pix_cor.npy", pixel_corr)
     
+    loc_x = np.zeros((n_bin)*(n_bin))
+    loc_y = np.zeros((n_bin)*(n_bin))
+    pc_ft = np.zeros((n_bin)*(n_bin))
+    print(loc_x.shape)
+    for idx in range(n_bin):
+        for idy in range(n_bin):
+            flatten = idx*n_bin + idy
+            loc_x[flatten] = idx
+            loc_y[flatten] = idy
+            pc_ft[flatten] = np.log(pixel_corr[idx, idy]+1)
+            
+    print(np.amax(pc_ft))
+
+    pc_ft = pc_ft / np.amax(pc_ft)
+    corr_mat = pd.DataFrame({"X":loc_x, "Y":loc_y, "counts":pc_ft})
+
     plt.figure(figsize=(12, 12), dpi=1200)
     g = sns.relplot(
         data=corr_mat,
