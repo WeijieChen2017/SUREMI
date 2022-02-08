@@ -59,7 +59,7 @@ pre_proc_dict = {}
 
 pre_proc_dict["dir_orig"] = "./data_dir/MR2CT/"
 pre_proc_dict["name_orig"] = "CT__MLAC_*_MNI.nii.gz"
-pre_proc_dict["dir_syn"] = "./data_dir/norm_CT/"
+pre_proc_dict["dir_syn"] = "./data_dir/norm_CT_2/"
 pre_proc_dict["is_seg"] = False
 pre_proc_dict["attr_seg"] = ["regular"]
 pre_proc_dict["range_seg"] = [[-1024, 3000]]
@@ -79,6 +79,8 @@ for file_path  in file_list:
         value_min = value_range[0]
         value_max = value_range[1]
         value_seg = copy.deepcopy(file_data)
+        value_seg = value_seg - (np.amin(value_seg) - value_min)
+
         value_seg[value_seg < value_min] = value_min
         value_seg[value_seg > value_max] = value_min
         value_seg = ( value_seg - value_min ) / (value_max - value_min)
