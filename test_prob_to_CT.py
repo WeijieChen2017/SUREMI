@@ -79,7 +79,8 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
-model = model = torch.load(test_dict["save_folder"]+test_dict["model_save_name"])
+model = torch.load(test_dict["save_folder"]+test_dict["model_save_name"])
+print("The model loaded from ", test_dict["save_folder"]+test_dict["model_save_name"])
 # model = UNet_seg(n_channels=test_dict["input_channel"], n_classes=test_dict["output_channel"])
 model.eval().float()
 model = model.to(device)
@@ -143,7 +144,7 @@ for cnt_file, file_path in enumerate(X_list):
         batch_x = torch.from_numpy(batch_x).float().to(device)
 
         optimizer.zero_grad()
-        y_hat = model(batch_x)
+        y_hat = model(batch_x).cpu().numpy()
 
         for idx_batch in range(test_dict["batch"]):
             z_center = input_list[idx_iter*test_dict["batch"]+idx_batch] + 1
@@ -152,5 +153,6 @@ for cnt_file, file_path in enumerate(X_list):
     pred_file = nib.Nifti1Image(pred_x_data, file_x.affine, file_x.header)
     pred_name = os.path.dirname(file_path) + "pred_" + file_name
     nib.save(pred_file, pred_name)
+    print(file_path)
 
 
