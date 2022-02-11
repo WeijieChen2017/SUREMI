@@ -144,7 +144,7 @@ for cnt_file, file_path in enumerate(X_list):
         batch_x = torch.from_numpy(batch_x).float().to(device)
 
         optimizer.zero_grad()
-        y_hat = model(batch_x).cpu().numpy()
+        y_hat = model(batch_x).detach().cpu().numpy()
 
         for idx_batch in range(test_dict["batch"]):
             z_center = input_list[idx_iter*test_dict["batch"]+idx_batch] + 1
