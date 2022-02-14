@@ -93,7 +93,7 @@ for name, param in model.named_parameters():
     if param.requires_grad:
         print(name, param.data)
 print("*"*60)
-summary(vgg, (10, train_dict["input_channel"], 256, 256))
+summary(model, (train_dict["batch"], train_dict["input_channel"], 256, 256))
 print("*"*60)
 
 
