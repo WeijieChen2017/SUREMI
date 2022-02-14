@@ -132,7 +132,7 @@ class suremi(nn.Module):
         # print(x33.size(), x55.size(), x77.size(), x99.size())
         # print(x33_1.size(), x55_1.size(), x77_1.size(), x99_1.size())
         
-        x_fea = torch.cat((x33_1, x55_1, x77_1, x99_1) , dim=1, out=None)..retain_grad()
+        x_fea = torch.cat((x33_1, x55_1, x77_1, x99_1) , dim=1, out=None).retain_grad()
         # print(x_fea.size())
         x_fea = self.w1(x_fea)
         # print(x_fea.size())
