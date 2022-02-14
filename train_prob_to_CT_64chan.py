@@ -91,7 +91,7 @@ criterion = nn.SmoothL1Loss()
 print("*"*60)
 for name, param in model.named_parameters():
     if param.requires_grad:
-        print(name, param.data())
+        print(name, param.data
 print("*"*60)
 summary(vgg, (10, train_dict["input_channel"], 256, 256))
 print("*"*60)
