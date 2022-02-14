@@ -27,7 +27,7 @@ def bin_CT(img, n_bins=128):
 
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-test_dict["project_name"] = "Prob_to_CT"
+test_dict["project_name"] = "Prob256_to_CT"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["seed"] = 426
 test_dict["input_channel"] = 5
@@ -151,7 +151,7 @@ for cnt_file, file_path in enumerate(X_list):
             pred_x_data[:, :, z_center] = y_hat[idx_batch, 0, :, :]
     
     pred_file = nib.Nifti1Image(pred_x_data, file_x.affine, file_x.header)
-    pred_name = os.path.dirname(file_path) + "pred_" + file_name
+    pred_name = os.path.dirname(file_path) + "/pred_" + file_name
     nib.save(pred_file, pred_name)
     print(file_path)
 
