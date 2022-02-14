@@ -20,6 +20,19 @@ class suremi(nn.Module):
             device=None, 
             dtype=None)
 
+        self.conv33_1 = nn.Conv2d(
+            in_channels=n_bins, 
+            out_channels=n_conv_chan[0], 
+            kernel_size=1, 
+            stride=1, 
+            padding=0, 
+            dilation=1, 
+            groups=1, 
+            bias=True, 
+            padding_mode='zeros', 
+            device=None, 
+            dtype=None)
+
         self.conv55 = nn.Conv2d(
             in_channels=n_bins, 
             out_channels=n_bins, 
@@ -28,6 +41,19 @@ class suremi(nn.Module):
             padding=2, 
             dilation=1, 
             groups=n_bins, 
+            bias=True, 
+            padding_mode='zeros', 
+            device=None, 
+            dtype=None)
+
+        self.conv55_1 = nn.Conv2d(
+            in_channels=n_bins, 
+            out_channels=n_conv_chan[1], 
+            kernel_size=1, 
+            stride=1, 
+            padding=0, 
+            dilation=1, 
+            groups=1, 
             bias=True, 
             padding_mode='zeros', 
             device=None, 
@@ -46,6 +72,19 @@ class suremi(nn.Module):
             device=None, 
             dtype=None)
 
+        self.conv77_1 = nn.Conv2d(
+            in_channels=n_bins, 
+            out_channels=n_conv_chan[2], 
+            kernel_size=1, 
+            stride=1, 
+            padding=0, 
+            dilation=1, 
+            groups=1, 
+            bias=True, 
+            padding_mode='zeros', 
+            device=None, 
+            dtype=None)
+
         self.conv99 = nn.Conv2d(
             in_channels=n_bins, 
             out_channels=n_bins, 
@@ -58,6 +97,19 @@ class suremi(nn.Module):
             padding_mode='zeros', 
             device=None, 
             dtype=None)
+
+        self.conv99_1 = nn.Conv2d(
+            in_channels=n_bins, 
+            out_channels=n_conv_chan[3], 
+            kernel_size=1, 
+            stride=1, 
+            padding=0, 
+            dilation=1, 
+            groups=1, 
+            bias=True, 
+            padding_mode='zeros', 
+            device=None, 
+            dtype=None)
         
 
     def forward(self, x):
@@ -66,6 +118,12 @@ class suremi(nn.Module):
         x77 = self.conv77(x)
         x99 = self.conv99(x)
 
+        x33_1 = self.conv33_1(x33)
+        x55_1 = self.conv55_1(x55)
+        x77_1 = self.conv77_1(x77)
+        x99_1 = self.conv99_1(x99)
+
         print(x33.size(), x55.size(), x77.size(), x99.size())
+        print(x33_1.size(), x55_1.size(), x77_1.size(), x99_1.size())
         return x
 
