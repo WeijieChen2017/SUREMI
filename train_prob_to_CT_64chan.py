@@ -17,10 +17,11 @@ from model import UNet, UNet_seg
 from model import suremi
 
 def bin_CT(img, n_bins=128):
-    data_vector = img
-    data_max = np.amax(data_vector)
-    data_min = np.amin(data_vector)
-    data_squeezed = (data_vector-data_min)/(data_max-data_min)
+    # data_vector = img
+    # data_max = np.amax(data_vector)
+    # data_min = np.amin(data_vector)
+    # data_squeezed = (data_vector-data_min)/(data_max-data_min)
+    data_squeezed = img
     data_extended = data_squeezed * (n_bins-1)
     data_discrete = data_extended // 1
     return np.asarray(list(data_discrete), dtype=np.int64)
