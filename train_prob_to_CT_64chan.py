@@ -85,6 +85,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = suremi(n_bins=train_dict["input_channel"], n_conv_chan = (8,4,2,1))
 model.train().float()
 model = model.to(device)
+print(model.parameters())
 criterion = nn.SmoothL1Loss()
 
 optimizer = torch.optim.AdamW(
