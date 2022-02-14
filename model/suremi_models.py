@@ -9,7 +9,7 @@ class suremi(nn.Module):
         super(suremi, self).__init__()
         self.conv33 = nn.Conv2d(
             in_channels=n_bins, 
-            out_channels=n_conv_chan[0], 
+            out_channels=n_bins, 
             kernel_size=3, 
             stride=1, 
             padding=1, 
@@ -22,7 +22,7 @@ class suremi(nn.Module):
 
         self.conv55 = nn.Conv2d(
             in_channels=n_bins, 
-            out_channels=n_conv_chan[1], 
+            out_channels=n_bins, 
             kernel_size=5, 
             stride=1, 
             padding=2, 
@@ -35,7 +35,7 @@ class suremi(nn.Module):
 
         self.conv77 = nn.Conv2d(
             in_channels=n_bins, 
-            out_channels=n_conv_chan[2], 
+            out_channels=n_bins, 
             kernel_size=7, 
             stride=1, 
             padding=3, 
@@ -48,7 +48,7 @@ class suremi(nn.Module):
 
         self.conv99 = nn.Conv2d(
             in_channels=n_bins, 
-            out_channels=n_conv_chan[3], 
+            out_channels=n_bins, 
             kernel_size=9, 
             stride=1, 
             padding=4, 
