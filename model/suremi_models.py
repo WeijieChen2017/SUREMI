@@ -113,9 +113,9 @@ class suremi(nn.Module):
             dtype=None)
 
         self.total_fea_chan = np.sum(n_conv_chan)
-        self.w1 = nn.Linear(self.total_fea_chan, self.total_fea_chan)
-        self.w2 = nn.Linear(self.total_fea_chan, self.total_fea_chan)
-        self.w3 = nn.Linear(self.total_fea_chan, 1)
+        self.w1 = nn.Conv2d(self.total_fea_chan, self.total_fea_chan, kernel_size=1)
+        self.w2 = nn.Conv2d(self.total_fea_chan, self.total_fea_chan, kernel_size=1)
+        self.w3 = nn.Conv2d(self.total_fea_chan, 1, kernel_size=1)
         
 
     def forward(self, x):
