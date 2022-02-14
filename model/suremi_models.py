@@ -3,6 +3,7 @@ from torch import nn
 from .unet_parts import *
 from .vit import *
 from einops.layers.torch import Rearrange
+import numpy as np
 
 class suremi(nn.Module):
     def __init__(self, n_bins=64, n_conv_chan = (8,4,2,1)):
@@ -110,6 +111,11 @@ class suremi(nn.Module):
             padding_mode='zeros', 
             device=None, 
             dtype=None)
+
+        self.total_fea_chan = np.sum(n_conv_chan)
+        self.w1 = nn.Linear(self.total_fea_chan, self.total_fea_chan)
+        self.w2 = nn.Linear(self.total_fea_chan, self.total_fea_chan)
+        self.w3 = nn.Linear(self.total_fea_chan, 1)
         
 
     def forward(self, x):
@@ -125,5 +131,16 @@ class suremi(nn.Module):
 
         print(x33.size(), x55.size(), x77.size(), x99.size())
         print(x33_1.size(), x55_1.size(), x77_1.size(), x99_1.size())
+        print(x_fea.size())
+
+        x_fea = torch.cat((x33_1, x55_1, x77_1, x99_1) , dim=1, *, out=None)
+        print(x_fea.size())
+        x_fea = self.w1(x_fea)
+        print(x_fea.size())
+        x_fea = self.w2(x_fea)
+        print(x_fea.size())
+        x_fea = self.w3(x_fea)
+        print(x_fea.size())
+
         return x
 
