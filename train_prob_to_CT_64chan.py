@@ -171,7 +171,7 @@ for idx_epoch in range(train_dict["epochs"]):
                     for idx_chan in range(train_dict["input_channel"]):
                         batch_x[idx_batch, idx_chan, :, :] = np.where(X_data==idx_chan, 1, 0)
                         
-                # print(batch_x.shape, batch_y.shape)
+                print(batch_x.shape, batch_y.shape)
 
                 batch_x = torch.from_numpy(batch_x).float().to(device)
                 batch_y = torch.from_numpy(batch_y).float().to(device)
