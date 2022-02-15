@@ -186,9 +186,9 @@ for idx_epoch in range(train_dict["epochs"]):
             
             case_name = os.path.basename(cube_x_path)[5:8]
             if not isTrain:
-                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, case_name), batch_x.cpu().detach().numpy())+iter_tag+"_x.npy"
-                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, case_name), batch_y.cpu().detach().numpy())+iter_tag+"_y.npy"
-                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, case_name), y_hat.cpu().detach().numpy())+iter_tag+"_z.npy"
+                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, case_name)+iter_tag+"_x.npy", batch_x.cpu().detach().numpy())
+                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, case_name)+iter_tag+"_y.npy", batch_y.cpu().detach().numpy())
+                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, case_name)+iter_tag+"_z.npy", y_hat.cpu().detach().numpy())
 
             # after training one case
             loss_mean = np.mean(case_loss)
