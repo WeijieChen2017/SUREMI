@@ -64,6 +64,7 @@ X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
 Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
 
 nX_clusters = 10
+dist = generate_dist_weights(nib.load(X_list[0]).get_fdata().shape)
 
 for cnt_file, file_path in enumerate(X_list):
     X_file = nib.load(file_path)
