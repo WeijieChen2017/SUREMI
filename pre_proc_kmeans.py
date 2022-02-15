@@ -4,11 +4,11 @@ import time
 import numpy as np
 import nibabel as nib
 
-def generate_dist_weights(data):
-    dist = np.zeros((data.shape))
-    len_x = data.shape[0]
-    len_y = data.shape[1]
-    len_z = data.shape[2]
+def generate_dist_weights(data_shape):
+    dist = np.zeros(data_shape)
+    len_x = data_shape[0]
+    len_y = data_shape[1]
+    len_z = data_shape[2]
     center = [len_x // 2, len_y // 2, len_z // 2]
     for ix in range(len_x):
         for iy in range(len_y):
