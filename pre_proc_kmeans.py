@@ -84,6 +84,6 @@ for cnt_file, file_path in enumerate(X_list):
     X_path = file_path
     X_file = nib.load(X_path)
     X_data_k = dist_kmeans(X_path, nX_clusters, dist)
-    X_save_name = X_path.replace("regular", "kmeans")
+    X_save_name = X_path.replace("regular", train_dict["new_folder_X"])
     X_save_file = nib.Nifti1Image(X_data_k, X_file.affine, X_file.header)
     nib.save(X_save_file, X_save_name)
