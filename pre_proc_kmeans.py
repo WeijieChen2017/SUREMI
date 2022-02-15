@@ -81,8 +81,9 @@ dist = generate_dist_weights(nib.load(X_list[0]).get_fdata().shape)
 
 for cnt_file, file_path in enumerate(X_list):
     print(file_path)
-    X_file = nib.load(file_path)
-    X_data_k = dist_kmeans(file_path, nX_clusters, dist)
+    X_path = file_path
+    X_file = nib.load(X_path)
+    X_data_k = dist_kmeans(X_path, nX_clusters, dist)
     X_save_name = X_path.replace("regular", "kmeans")
     X_save_file = nib.Nifti1Image(X_data_k, X_file.affine, X_file.header)
     nib.save(X_save_file, X_save_name)
