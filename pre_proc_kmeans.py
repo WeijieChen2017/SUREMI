@@ -5,12 +5,12 @@ import numpy as np
 import nibabel as nib
 
 
-def bin_CT(img, n_bins=128):
+def bin_CT(img, n_bin=128):
     data_vector = img
     data_max = np.amax(data_vector)
     data_min = np.amin(data_vector)
     data_squeezed = (data_vector-data_min)/(data_max-data_min)
-    data_extended = data_squeezed * (n_bins-1)
+    data_extended = data_squeezed * (n_bin-1)
     data_discrete = data_extended // 1
     return np.asarray(list(data_discrete), dtype=np.int64)
 
@@ -35,7 +35,7 @@ def generate_dist_weights(data_shape):
 
 def dist_kmeans(X_path, nX_clusters, dist):
     X_file = nib.load(X_path)
-    X_data = bin_CT(X_file.get_fdata(), n_bin=256)
+    X_data = bin_CT(X_file.get_fdata(), n_bin=n_bin)
     
     X_cluster = cluster.KMeans(n_clusters=nX_clusters)
     X_flatten = np.ravel(X_data)
@@ -75,6 +75,7 @@ X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
 Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
 
 nX_clusters = 10
+n_bin = 256
 dist = generate_dist_weights(nib.load(X_list[0]).get_fdata().shape)
 
 for cnt_file, file_path in enumerate(X_list):
