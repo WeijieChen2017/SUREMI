@@ -159,6 +159,7 @@ for cnt_file, file_path in enumerate(X_list):
     X_file = nib.load(X_path)
     X_data_k = dist_kmeans(X_path, nX_clusters, dist)
     X_save_name = X_path.replace(".nii.gz", "_k10.nii.gz")
+    X_save_name = X_path.replace("T1_T2", "T1_T2_output")
     X_save_file = nib.Nifti1Image(X_data_k, X_file.affine, X_file.header)
     nib.save(X_save_file, X_save_name)
 
@@ -194,7 +195,7 @@ for cnt_file, file_path in enumerate(X_list):
                 pred_x_data[:, :, z_center] = y_hat[idx_batch, 0, :, :]
         
         pred_file = nib.Nifti1Image(pred_x_data, file_x.affine, file_x.header)
-        pred_name = os.path.dirname(X_path) + "/pred_" + str(cluster_order).replace(", ", "_") + file_name
+        pred_name = os.path.dirname(X_path).replace("T1_T2", "T1_T2_output") + "/pred_" + str(cluster_order).replace(", ", "_") + file_name
         nib.save(pred_file, pred_name)
         print(pred_name)
 
