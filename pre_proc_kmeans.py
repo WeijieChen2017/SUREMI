@@ -3,6 +3,7 @@ import glob
 import time
 import numpy as np
 import nibabel as nib
+from sklearn import cluster
 
 
 def bin_CT(img, n_bin=128):
