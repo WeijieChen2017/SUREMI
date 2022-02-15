@@ -58,7 +58,7 @@ train_dict["folder_X"] = "./data_dir/norm_MR/regular/"
 train_dict["folder_Y"] = "./data_dir/norm_CT/regular/"
 train_dict["new_folder_X"] = "kmeans10"
 if not os.path.exists(train_dict["folder_X"].replace("regular", train_dict["new_folder_X"])):
-	os.makedirs(train_dict["folder_X"].replace("regular", train_dict["new_folder_X"]))
+    os.makedirs(train_dict["folder_X"].replace("regular", train_dict["new_folder_X"]))
 
 X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
 Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
@@ -66,7 +66,7 @@ Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
 nX_clusters = 10
 
 for cnt_file, file_path in enumerate(X_list):
-	X_file = nib.load(file_path)
+    X_file = nib.load(file_path)
     X_data_k = dist_kmeans(file_path, nX_clusters, dist)
     X_save_name = X_path.replace("regular", "kmeans")
     X_save_file = nib.Nifti1Image(X_data_k, X_file.affine, X_file.header)
