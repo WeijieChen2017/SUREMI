@@ -4,6 +4,17 @@ import time
 import numpy as np
 import nibabel as nib
 
+
+def bin_CT(img, n_bins=128):
+    data_vector = img
+    data_max = np.amax(data_vector)
+    data_min = np.amin(data_vector)
+    data_squeezed = (data_vector-data_min)/(data_max-data_min)
+    data_extended = data_squeezed * (n_bins-1)
+    data_discrete = data_extended // 1
+    return np.asarray(list(data_discrete), dtype=np.int64)
+
+
 def generate_dist_weights(data_shape):
     dist = np.zeros(data_shape)
     len_x = data_shape[0]
@@ -37,8 +48,8 @@ def dist_kmeans(X_path, nX_clusters, dist):
     for idx in range(nX_clusters):
         cluster_map = np.where(X_data==idx, 1, 0)
         scores[idx] = np.sum(np.multiply(cluster_map, dist)) / np.sum(cluster_map)
-    print(scores)
     idx_scores = np.argsort(scores)
+    print(idx_scores, scores)
     
     for idx in range(nX_clusters):
         X_data_k[X_data_k == idx] = nX_clusters+idx
