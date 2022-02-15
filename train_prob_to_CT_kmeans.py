@@ -27,18 +27,18 @@ def bin_CT(img, n_bins=128):
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Prob_to_CT"
+train_dict["project_name"] = "Prob_to_CT_k10"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
-train_dict["input_channel"] = 5
+train_dict["input_channel"] = 10
 train_dict["output_channel"] = 1
-train_dict["gpu_ids"] = [5]
+train_dict["gpu_ids"] = [4,5,6,7]
 train_dict["epochs"] = 50
-train_dict["batch"] = 10
+train_dict["batch"] = 40
 train_dict["dropout"] = 0
-train_dict["model_term"] = "UNet_seg"
+train_dict["model_term"] = "UNet"
 
-train_dict["folder_X"] = "./data_dir/norm_MR/regular/"
+train_dict["folder_X"] = "./data_dir/norm_MR/kmeans10/"
 train_dict["folder_Y"] = "./data_dir/norm_CT/regular/"
 train_dict["val_ratio"] = 0.3
 train_dict["test_ratio"] = 0.2
@@ -79,7 +79,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 
-model = UNet_seg(n_channels=train_dict["input_channel"], n_classes=train_dict["output_channel"])
+model = UNet(n_channels=train_dict["input_channel"], n_classes=train_dict["output_channel"])
 model.train().float()
 model = model.to(device)
 criterion = nn.SmoothL1Loss()
@@ -159,30 +159,13 @@ for idx_epoch in range(train_dict["epochs"]):
                 batch_x = np.zeros((train_dict["batch"], train_dict["input_channel"], cube_x_data.shape[0], cube_x_data.shape[1]))
                 batch_y = np.zeros((train_dict["batch"], train_dict["output_channel"], cube_y_data.shape[0], cube_y_data.shape[1]))
 
-                res = cube_x_data.shape[0]
                 nX_clusters = train_dict["input_channel"]
 
                 for idx_batch in range(train_dict["batch"]):
-                    z_center = input_list[idx_iter*train_dict["batch"]+idx_batch] + cube_x_data.shape[2] // 4
-                    X_data = bin_CT(cube_x_data[:, :, z_center-1:z_center+2])
-                    X_cluster = cluster.KMeans(n_clusters=nX_clusters)
-                    X_flatten = np.reshape(X_data, (res*res, 3))
-                    X_flatten_k = X_cluster.fit_predict(X_flatten)
-                    X_data_k = np.reshape(X_flatten_k, (res, res))
-                    unique, counts = np.unique(X_flatten_k, return_counts=True)
-                    max_elem_count = np.amax(counts)
-                    max_elem_label = np.where(counts==np.amax(counts))[0][0]
-
-                    # set background (max label elem) to 0
-                    X_flatten_k[X_flatten_k == max_elem_label] = 10
-                    X_flatten_k[X_flatten_k == 0] = max_elem_label
-                    X_flatten_k[X_flatten_k == 10] = 0
+                    z_center = input_list[idx_iter*train_dict["batch"]+idx_batch]
                     
-                    for idx_cs in range(nX_clusters):
-                        X_iso_slice = np.zeros((res, res))
-                        X_mask = np.asarray([X_flatten_k == int(idx_cs)]).reshape((res, res))
-                        X_iso_slice[X_mask] = 1
-                        batch_x[idx_batch, idx_cs, :, :] = X_iso_slice
+                    for idx_cluster in range(train_dict["input_channel"]):
+                        batch_x[idx_batch, idx_cluster, :, :] = np.where(cube_x_data[:, :, z_center]==idx_cluster, 1, 0)  
                 
                     batch_y[idx_batch, 0, :, :] = cube_y_data[:, :, z_center]
                         
