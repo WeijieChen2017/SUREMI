@@ -34,7 +34,7 @@ train_dict["input_channel"] = 10
 train_dict["output_channel"] = 1
 train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 50
-train_dict["batch"] = 30
+train_dict["batch"] = 20
 train_dict["dropout"] = 0
 train_dict["model_term"] = "UNet"
 
