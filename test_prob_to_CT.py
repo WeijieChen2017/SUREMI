@@ -23,20 +23,65 @@ def bin_CT(img, n_bins=128):
     data_extended = data_squeezed * (n_bins-1)
     data_discrete = data_extended // 1
     return np.asarray(list(data_discrete), dtype=np.int64)
+
+
+def generate_dist_weights(data_shape):
+    dist = np.zeros(data_shape)
+    len_x = data_shape[0]
+    len_y = data_shape[1]
+    len_z = data_shape[2]
+    center = [len_x // 2, len_y // 2, len_z // 2]
+    for ix in range(len_x):
+        for iy in range(len_y):
+            for iz in range(len_z):
+                dx = np.abs(ix-center[0]) ** 2
+                dy = np.abs(iy-center[1]) ** 2
+                dz = np.abs(iz-center[2]) ** 2
+                dist[ix, iy, iz] = np.sqrt(dx+dy+dz)
+    
+    return dist
+
+
+def dist_kmeans(X_path, nX_clusters, dist):
+    X_file = nib.load(X_path)
+    X_data = bin_CT(X_file.get_fdata(), n_bin=n_bin)
+    
+    X_cluster = cluster.KMeans(n_clusters=nX_clusters)
+    X_flatten = np.ravel(X_data)
+    X_flatten = np.reshape(X_flatten, (len(X_flatten), 1))
+    X_flatten_k = X_cluster.fit_predict(X_flatten)
+    X_data_k = np.reshape(X_flatten_k, X_data.shape)
+    
+    weight_data = np.multiply(X_data_k, dist)
+    scores = np.zeros((nX_clusters))
+    for idx in range(nX_clusters):
+        cluster_map = np.where(X_data==idx, 1, 0)
+        scores[idx] = np.sum(np.multiply(cluster_map, dist)) / np.sum(cluster_map)
+    idx_scores = np.argsort(scores)
+    print(idx_scores, scores)
+    
+    for idx in range(nX_clusters):
+        X_data_k[X_data_k == idx] = nX_clusters+idx
+    
+    for idx in range(nX_clusters):
+        X_data_k[X_data_k == nX_clusters+idx] = idx_scores[idx]
+    
+    return X_data_k
+
 # ==================== dict and config ====================
 
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-test_dict["project_name"] = "Prob256_to_CT"
+test_dict["project_name"] = "Prob64_to_CT"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["seed"] = 426
-test_dict["input_channel"] = 5
+test_dict["input_channel"] = 10
 test_dict["output_channel"] = 1
 test_dict["gpu_ids"] = [5]
 test_dict["epochs"] = 50
-test_dict["batch"] = 10
+test_dict["batch"] = 8
 test_dict["dropout"] = 0
-test_dict["model_term"] = "UNet_seg"
+test_dict["model_term"] = "U"
 test_dict["model_save_name"] = "model_best_011.pth"
 
 test_dict["folder_X"] = "./data_dir/T1_T2/"
@@ -99,48 +144,44 @@ optimizer = torch.optim.AdamW(
 
 X_list = sorted(glob.glob(test_dict["folder_X"]+"*.nii.gz"))
 
-# ==================== training ====================
+# ==================== test ====================
+
+nX_clusters = 10
+n_bin = 256
+dist = generate_dist_weights((256, 256, 182))
 
 for cnt_file, file_path in enumerate(X_list):
     
+    print("--->",file_path,"<---", end="")
+    
+    X_path = file_path
+    X_file = nib.load(X_path)
+    X_data_k = dist_kmeans(X_path, nX_clusters, dist)
+    X_save_name = X_path.replace(".nii.gz", "_k10.nii.gz")
+    X_save_file = nib.Nifti1Image(X_data_k, X_file.affine, X_file.header)
+    nib.save(X_save_file, X_save_name)
+
+    file_path = X_save_name
     file_name = os.path.basename(file_path)
     cube_x_path = file_path
-    print("--->",cube_x_path,"<---", end="")
     file_x = nib.load(cube_x_path)
     cube_x_data = file_x.get_fdata()
     pred_x_data = np.zeros((cube_x_data.shape))
     len_z = cube_x_data.shape[2]
     input_list = list(range(len_z-2))
-    
+
     for idx_iter in range(len_z//test_dict["batch"]):
 
         batch_x = np.zeros((test_dict["batch"], test_dict["input_channel"], cube_x_data.shape[0], cube_x_data.shape[1]))
 
-        res = cube_x_data.shape[0]
         nX_clusters = test_dict["input_channel"]
 
         for idx_batch in range(test_dict["batch"]):
-            z_center = input_list[idx_iter*test_dict["batch"]+idx_batch] + 1
-            X_data = bin_CT(cube_x_data[:, :, z_center-1:z_center+2])
-            X_cluster = cluster.KMeans(n_clusters=nX_clusters)
-            X_flatten = np.reshape(X_data, (res*res, 3))
-            X_flatten_k = X_cluster.fit_predict(X_flatten)
-            X_data_k = np.reshape(X_flatten_k, (res, res))
-            unique, counts = np.unique(X_flatten_k, return_counts=True)
-            max_elem_count = np.amax(counts)
-            max_elem_label = np.where(counts==np.amax(counts))[0][0]
-
-            # set background (max label elem) to 0
-            X_flatten_k[X_flatten_k == max_elem_label] = 10
-            X_flatten_k[X_flatten_k == 0] = max_elem_label
-            X_flatten_k[X_flatten_k == 10] = 0
+            z_center = input_list[idx_iter*test_dict["batch"]+idx_batch]
             
-            for idx_cs in range(nX_clusters):
-                X_iso_slice = np.zeros((res, res))
-                X_mask = np.asarray([X_flatten_k == int(idx_cs)]).reshape((res, res))
-                X_iso_slice[X_mask] = 1
-                batch_x[idx_batch, idx_cs, :, :] = X_iso_slice
-                        
+            for idx_cluster in range(test_dict["input_channel"]):
+                batch_x[idx_batch, idx_cluster, :, :] = np.where(cube_x_data[:, :, z_center]==idx_cluster, 1, 0)  
+        
         batch_x = torch.from_numpy(batch_x).float().to(device)
 
         optimizer.zero_grad()
