@@ -72,7 +72,7 @@ def dist_kmeans(X_path, nX_clusters, dist):
 
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-test_dict["project_name"] = "Prob64_to_CT"
+test_dict["project_name"] = "Prob_to_CT_k10"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["seed"] = 426
 test_dict["input_channel"] = 10
@@ -82,7 +82,7 @@ test_dict["epochs"] = 50
 test_dict["batch"] = 8
 test_dict["dropout"] = 0
 test_dict["model_term"] = "U"
-test_dict["model_save_name"] = "model_best_011.pth"
+test_dict["model_save_name"] = "model_best_032.pth"
 
 test_dict["folder_X"] = "./data_dir/T1_T2/"
 # test_dict["folder_Y"] = "./data_dir/norm_CT/regular/"
