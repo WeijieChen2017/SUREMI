@@ -5,6 +5,25 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
+# class DoubleConv(nn.Module):
+#     """(convolution => [BN] => ReLU) * 2"""
+
+#     def __init__(self, in_channels, out_channels, mid_channels=None):
+#         super().__init__()
+#         if not mid_channels:
+#             mid_channels = out_channels
+#         self.double_conv = nn.Sequential(
+#             nn.Conv2d(in_channels, mid_channels, kernel_size=3, padding=1),
+#             nn.BatchNorm2d(mid_channels),
+#             nn.ReLU(inplace=True),
+#             nn.Conv2d(mid_channels, out_channels, kernel_size=3, padding=1),
+#             nn.BatchNorm2d(out_channels),
+#             nn.ReLU(inplace=True)
+#         )
+
+#     def forward(self, x):
+#         return self.double_conv(x)
+
 class DoubleConv(nn.Module):
     """(convolution => [BN] => ReLU) * 2"""
 
@@ -12,7 +31,17 @@ class DoubleConv(nn.Module):
         super().__init__()
         if not mid_channels:
             mid_channels = out_channels
-        self.double_conv = nn.Sequential(
+
+        self.double_conv1 = nn.Sequential(
+            nn.Conv2d(in_channels, mid_channels, kernel_size=1, padding=0),
+            nn.BatchNorm2d(mid_channels),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(mid_channels, out_channels, kernel_size=1, padding=0),
+            nn.BatchNorm2d(out_channels),
+            nn.ReLU(inplace=True)
+        )
+
+        self.double_conv3 = nn.Sequential(
             nn.Conv2d(in_channels, mid_channels, kernel_size=3, padding=1),
             nn.BatchNorm2d(mid_channels),
             nn.ReLU(inplace=True),
@@ -21,8 +50,28 @@ class DoubleConv(nn.Module):
             nn.ReLU(inplace=True)
         )
 
+        self.double_conv5 = nn.Sequential(
+            nn.Conv2d(in_channels, mid_channels, kernel_size=5, padding=2),
+            nn.BatchNorm2d(mid_channels),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(mid_channels, out_channels, kernel_size=5, padding=2),
+            nn.BatchNorm2d(out_channels),
+            nn.ReLU(inplace=True)
+        )
+
+        self.output = nn.Sequential(
+            nn.Conv2d(out_channels*3, out_channels, kernel_size=5, padding=2),
+            nn.BatchNorm2d(out_channels),
+            nn.ReLU(inplace=True)
+        )
+
     def forward(self, x):
-        return self.double_conv(x)
+
+        x1 = self.double_conv1(x)
+        x3 = self.double_conv3(x)
+        x5 = self.double_conv5(x)
+
+        return self.output(torch.cat((x1, x3, x5), 1))
 
 
 class Down(nn.Module):

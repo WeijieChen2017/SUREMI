@@ -34,7 +34,7 @@ train_dict["input_channel"] = 10
 train_dict["output_channel"] = 1
 train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 50
-train_dict["batch"] = 20
+train_dict["batch"] = 8
 train_dict["dropout"] = 0
 train_dict["model_term"] = "UNet"
 
@@ -186,9 +186,9 @@ for idx_epoch in range(train_dict["epochs"]):
             
             case_name = os.path.basename(cube_x_path)[5:8]
             if not isTrain:
-                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_x.npy".format(idx_epoch+1, case_name), batch_x.cpu().detach().numpy())
-                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_y.npy".format(idx_epoch+1, case_name), batch_y.cpu().detach().numpy())
-                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_z.npy".format(idx_epoch+1, case_name), y_hat.cpu().detach().numpy())
+                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, case_name), batch_x.cpu().detach().numpy())+iter_tag+"_x.npy"
+                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, case_name), batch_y.cpu().detach().numpy())+iter_tag+"_y.npy"
+                np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, case_name), y_hat.cpu().detach().numpy())+iter_tag+"_z.npy"
 
             # after training one case
             loss_mean = np.mean(case_loss)
