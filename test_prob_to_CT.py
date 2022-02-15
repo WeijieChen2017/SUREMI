@@ -44,7 +44,7 @@ def generate_dist_weights(data_shape):
 
 def dist_kmeans(X_path, nX_clusters, dist):
     X_file = nib.load(X_path)
-    X_data = bin_CT(X_file.get_fdata(), n_bin=n_bin)
+    X_data = bin_CT(X_file.get_fdata(), n_bins=n_bins)
     
     X_cluster = cluster.KMeans(n_clusters=nX_clusters)
     X_flatten = np.ravel(X_data)
@@ -147,7 +147,7 @@ X_list = sorted(glob.glob(test_dict["folder_X"]+"*.nii.gz"))
 # ==================== test ====================
 
 nX_clusters = 10
-n_bin = 256
+n_bins = 256
 dist = generate_dist_weights((256, 256, 182))
 
 for cnt_file, file_path in enumerate(X_list):
