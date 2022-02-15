@@ -67,6 +67,7 @@ nX_clusters = 10
 dist = generate_dist_weights(nib.load(X_list[0]).get_fdata().shape)
 
 for cnt_file, file_path in enumerate(X_list):
+    print(file_path)
     X_file = nib.load(file_path)
     X_data_k = dist_kmeans(file_path, nX_clusters, dist)
     X_save_name = X_path.replace("regular", "kmeans")
