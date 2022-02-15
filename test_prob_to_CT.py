@@ -153,15 +153,16 @@ dist = generate_dist_weights((256, 256, 182))
 
 for cnt_file, file_path in enumerate(X_list):
     
+    X_path = file_path
     print("--->",file_path,"<---", end="")
     
-    X_path = file_path
-    X_file = nib.load(X_path)
-    X_data_k = dist_kmeans(X_path, nX_clusters, dist)
-    X_save_name = X_path.replace(".nii.gz", "_k10.nii.gz")
-    X_save_name = X_path.replace("T1_T2", "T1_T2_output")
-    X_save_file = nib.Nifti1Image(X_data_k, X_file.affine, X_file.header)
-    nib.save(X_save_file, X_save_name)
+    
+    # X_file = nib.load(X_path)
+    # X_data_k = dist_kmeans(X_path, nX_clusters, dist)
+    # X_save_name = X_path.replace(".nii.gz", "_k10.nii.gz")
+    # X_save_name = X_path.replace("T1_T2", "T1_T2_output")
+    # X_save_file = nib.Nifti1Image(X_data_k, X_file.affine, X_file.header)
+    # nib.save(X_save_file, X_save_name)
 
     file_name = os.path.basename(X_path)
     cube_x_path = X_path
@@ -171,32 +172,32 @@ for cnt_file, file_path in enumerate(X_list):
     len_z = cube_x_data.shape[2]
     input_list = list(range(len_z-2))
 
-    for idx_shuffle in range(30):
-        random.shuffle(cluster_order)
-        for idx_iter in range(len_z//test_dict["batch"]):
+    # for idx_shuffle in range(30):
+    #     random.shuffle(cluster_order)
+    for idx_iter in range(len_z//test_dict["batch"]):
 
-            batch_x = np.zeros((test_dict["batch"], test_dict["input_channel"], cube_x_data.shape[0], cube_x_data.shape[1]))
+        batch_x = np.zeros((test_dict["batch"], test_dict["input_channel"], cube_x_data.shape[0], cube_x_data.shape[1]))
 
-            nX_clusters = test_dict["input_channel"]
+        nX_clusters = test_dict["input_channel"]
 
-            for idx_batch in range(test_dict["batch"]):
-                z_center = input_list[idx_iter*test_dict["batch"]+idx_batch]
-                
-                for idx_cluster in range(test_dict["input_channel"]):
-                    batch_x[idx_batch, idx_cluster, :, :] = np.where(cube_x_data[:, :, z_center]==cluster_order[idx_cluster], 1, 0)  
+        for idx_batch in range(test_dict["batch"]):
+            z_center = input_list[idx_iter*test_dict["batch"]+idx_batch]
             
-            batch_x = torch.from_numpy(batch_x).float().to(device)
-
-            optimizer.zero_grad()
-            y_hat = model(batch_x).detach().cpu().numpy()
-
-            for idx_batch in range(test_dict["batch"]):
-                z_center = input_list[idx_iter*test_dict["batch"]+idx_batch] + 1
-                pred_x_data[:, :, z_center] = y_hat[idx_batch, 0, :, :]
+            for idx_cluster in range(test_dict["input_channel"]):
+                batch_x[idx_batch, idx_cluster, :, :] = np.where(cube_x_data[:, :, z_center]==cluster_order[idx_cluster], 1, 0)  
         
-        pred_file = nib.Nifti1Image(pred_x_data, file_x.affine, file_x.header)
-        pred_name = os.path.dirname(X_path).replace("T1_T2", "T1_T2_output") + "/pred_" + str(cluster_order).replace(", ", "_") + file_name
-        nib.save(pred_file, pred_name)
-        print(pred_name)
+        batch_x = torch.from_numpy(batch_x).float().to(device)
+
+        optimizer.zero_grad()
+        y_hat = model(batch_x).detach().cpu().numpy()
+
+        for idx_batch in range(test_dict["batch"]):
+            z_center = input_list[idx_iter*test_dict["batch"]+idx_batch] + 1
+            pred_x_data[:, :, z_center] = y_hat[idx_batch, 0, :, :]
+    
+    pred_file = nib.Nifti1Image(pred_x_data, file_x.affine, file_x.header)
+    pred_name = os.path.dirname(X_path).replace("T1_T2", "T1_T2_output") + "/pred_" + str(cluster_order).replace(", ", "_") + file_name
+    nib.save(pred_file, pred_name)
+    print(pred_name)
 
 
