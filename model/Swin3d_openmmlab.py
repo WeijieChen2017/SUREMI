@@ -703,10 +703,10 @@ class SwinTransformer3D(nn.Module):
         print("bottleneck:", z.size())
 
         for iz in reversed(range(self.num_layers)):
-            u = self.UpConv[iz](x_list[iz])
+            u = self.up_conv[iz](x_list[iz])
             print("UpConv:", u.size)
             u = torch.cat([u, z], dim=1)
-            z = self.ConvUp[iz](u)
+            z = self.conv_up[iz](u)
             print("ConvUp:", z.size())
 
         z = self.OutConv(z)
