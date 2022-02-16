@@ -642,14 +642,18 @@ class SwinTransformer3D(nn.Module):
 
     def forward(self, x):
         """Forward function."""
+        print(x.size())
         x = self.patch_embed(x)
+        print(x.size())
 
         x = self.pos_drop(x)
+        print(x.size())
 
         for layer in self.layers:
             print(x.size())
             x = layer(x.contiguous())
-
+            
+        print(x.size())
         x = rearrange(x, 'n c d h w -> n d h w c')
         x = self.norm(x)
         x = rearrange(x, 'n d h w c -> n c d h w')
