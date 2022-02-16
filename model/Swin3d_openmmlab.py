@@ -647,6 +647,7 @@ class SwinTransformer3D(nn.Module):
         x = self.pos_drop(x)
 
         for layer in self.layers:
+            print(x.size())
             x = layer(x.contiguous())
 
         x = rearrange(x, 'n c d h w -> n d h w c')
