@@ -680,8 +680,9 @@ class SwinTransformer3D(nn.Module):
         x_list = [x]
 
         for layer in self.layers:
-            x_list.append(x)
             x = layer(x.contiguous())
+            x_list.append(x)
+
 
         # print(x.size())
         x = rearrange(x, 'n c d h w -> n d h w c')
@@ -700,7 +701,7 @@ class SwinTransformer3D(nn.Module):
         print("bottleneck:", z.size())
 
         for iz in reversed(range(self.num_layers)):
-            print()
+            # print(x_list[iz].size())
             u = self.up_conv[iz](x_list[iz])
             print("UpConv:", u.size)
             u = torch.cat([u, z], dim=1)
