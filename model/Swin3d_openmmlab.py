@@ -546,14 +546,14 @@ class SwinTransformer3D(nn.Module):
             layer = ConvUp(
                 in_channels = 2 ** (i_conv_up+8),
                 out_channels = 2 ** (i_conv_up+6))
-            self.layers.append(layer)
+            self.conv_up.append(layer)
 
         self.up_conv = nn.ModuleList()
         for i_up_conv in range(self.num_layers):
             layer = UpConv(
                 in_channels = 2 ** (i_conv_up+7),
                 out_channels = 2 ** (i_conv_up+7))
-            self.layers.append(layer)
+            self.up_conv.append(layer)
         
         self.bottleneck_up = nn.ConvTranspose3d(
             in_channels = 2**(self.num_layers+6), 
