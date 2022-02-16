@@ -94,12 +94,13 @@ model = SwinTransformer3D(
 
 pretrain = torch.load("./pre_train/"+train_dict["pre_train"])
 pretrain_state = pretrain["state_dict"]
-# pretrain_state_keys = pretrain_state.keys()
+pretrain_state_keys = pretrain_state.keys()
 model_state_keys = model.state_dict().keys()
 new_model_state = {}
 
 for model_key in model_state_keys:
-    new_model_state[model_key] = pretrain_state["backbone."+model_key]
+    if "backbone."+model_key in pretrain_state_keys:
+        new_model_state[model_key] = pretrain_state["backbone."+model_key]
 
 model.load_state_dict(new_model_state)
 model.train()
