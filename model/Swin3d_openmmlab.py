@@ -13,6 +13,8 @@ from functools import reduce, lru_cache
 from operator import mul
 from einops import rearrange
 
+from .unet_parts import *
+
 
 class Mlp(nn.Module):
     """ Multilayer perceptron."""
@@ -536,6 +538,9 @@ class SwinTransformer3D(nn.Module):
 
         self._freeze_stages()
 
+
+
+
     def _freeze_stages(self):
         if self.frozen_stages >= 0:
             self.patch_embed.eval()
@@ -642,18 +647,19 @@ class SwinTransformer3D(nn.Module):
 
     def forward(self, x):
         """Forward function."""
-        print(x.size())
+        # print(x.size())
         x = self.patch_embed(x)
-        print(x.size())
+        # print(x.size())
 
         x = self.pos_drop(x)
-        print(x.size())
+        # print(x.size())
 
         for layer in self.layers:
-            print(x.size())
+            # print(x.size())
             x = layer(x.contiguous())
-            
-        print(x.size())
+            print(x.size())
+
+        # print(x.size())
         x = rearrange(x, 'n c d h w -> n d h w c')
         x = self.norm(x)
         x = rearrange(x, 'n d h w c -> n c d h w')
