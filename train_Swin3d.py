@@ -200,6 +200,7 @@ for idx_epoch in range(train_dict["epochs"]):
                 
                 optimizer.zero_grad()
                 y_hat = model(batch_x)
+                print(y_hat.size())
                 loss = criterion(y_hat, batch_y)
                 if isTrain:
                     loss.backward()
