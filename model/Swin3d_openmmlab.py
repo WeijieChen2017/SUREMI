@@ -7,7 +7,7 @@ from timm.models.layers import DropPath, trunc_normal_
 
 # from mmcv.runner import load_checkpoint
 # from mmaction.utils import get_root_logger
-from ..builder import BACKBONES
+# from ..builder import BACKBONES
 
 from functools import reduce, lru_cache
 from operator import mul
@@ -446,7 +446,7 @@ class PatchEmbed3D(nn.Module):
 
         return x
 
-@BACKBONES.register_module()
+# @BACKBONES.register_module()
 class SwinTransformer3D(nn.Module):
     """ Swin Transformer backbone.
         A PyTorch impl of : `Swin Transformer: Hierarchical Vision Transformer using Shifted Windows`  -
