@@ -13,7 +13,7 @@ from functools import reduce, lru_cache
 from operator import mul
 from einops import rearrange
 
-from .unet_parts import *
+import unet3d_parts
 
 
 class Mlp(nn.Module):
@@ -538,24 +538,33 @@ class SwinTransformer3D(nn.Module):
 
         self._freeze_stages()
 
-        # self.deconv = nn.ModuleList()
-        # for i_deconv in range(self.num_layers):
-        #     layer = BasicLayer(
-        #         dim=int(embed_dim * 2**i_layer),
-        #         depth=depths[i_layer],
-        #         num_heads=num_heads[i_layer],
-        #         window_size=window_size,
-        #         mlp_ratio=mlp_ratio,
-        #         qkv_bias=qkv_bias,
-        #         qk_scale=qk_scale,
-        #         drop=drop_rate,
-        #         attn_drop=attn_drop_rate,
-        #         drop_path=dpr[sum(depths[:i_layer]):sum(depths[:i_layer + 1])],
-        #         norm_layer=norm_layer,
-        #         downsample=PatchMerging if i_layer<self.num_layers-1 else None,
-        #         use_checkpoint=use_checkpoint)
-        #     self.layers.append(layer)
 
+        # Add ConvUp and UpConv for image generation
+
+        self.conv_up = nn.ModuleList()
+        for i_conv_up in range(self.num_layers):
+            layer = unet3d_parts.ConvUp(
+                in_channels = 2 ** (i_conv_up+8),
+                out_channels = 2 ** (i_conv_up+6))
+            self.layers.append(layer)
+
+        self.up_conv = nn.ModuleList()
+        for i_up_conv in range(self.num_layers):
+            layer = unet3d_parts.UpConv(
+                in_channels = 2 ** (i_conv_up+7),
+                out_channels = 2 ** (i_conv_up+7))
+            self.layers.append(layer)
+        
+        self.bottleneck_up = nn.ConvTranspose3d(
+            in_channels = 2**(self.num_layers+6), 
+            out_channels = 2**(self.num_layers+6), 
+            kernel_size=2, 
+            stride=2)
+
+        self.outconv = unet3d_parts.OutConv(
+            in_channels = 2**(self.num_layers+2),
+            out_channels = in_chans
+            )
 
     def _freeze_stages(self):
         if self.frozen_stages >= 0:
@@ -664,21 +673,39 @@ class SwinTransformer3D(nn.Module):
     def forward(self, x):
         """Forward function."""
         # print(x.size())
-        x = self.patch_embed(x)
-        # print(x.size())
 
+        x = self.patch_embed(x)
         x = self.pos_drop(x)
-        print(x.size())
+
+        x_list = [x]
 
         for layer in self.layers:
-            # print(x.size())
+            x_list.append(x)
             x = layer(x.contiguous())
-            print(x.size())
 
         # print(x.size())
         x = rearrange(x, 'n c d h w -> n d h w c')
         x = self.norm(x)
         x = rearrange(x, 'n d h w c -> n c d h w')
+
+        x_list.append(x)
+
+        # x_list = [
+        #     B-128-15-64-64,
+        #     B-256-15-32-32,
+        #     B-512-15-16-16, 
+        #     B-1024-15-8-8,
+        #     B-1024-15-8-8
+        # ]
+
+        z = self.bottleneck_up(x)
+
+        for iz in reversed(range(self.num_layers)):
+            u = self.UpConv[iz](x_list[iz])
+            u = torch.cat([u, z], dim=1)
+            z = self.ConvUp[iz](u)
+
+
 
         return x
 

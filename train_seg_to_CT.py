@@ -172,8 +172,7 @@ for idx_epoch in range(train_dict["epochs"]):
                     if train_dict["output_channel"] == 1:
                         batch_y[idx_batch, 0, :, :] = cube_y_data[:, :, z_center]
 
-                batch_x = 
-                batch_x).float().to(device)
+                batch_x = torch.from_numpy(batch_x).float().to(device)
                 batch_y = torch.from_numpy(batch_y).float().to(device)
 
                 optimizer.zero_grad()

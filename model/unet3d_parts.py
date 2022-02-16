@@ -5,6 +5,47 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
+class ConvUp(nn.Module):
+    """ DoubleConv -> Up"""
+
+    def __init__(self, in_channels, out_channels, bilinear=False):
+        super().__init__()
+        self.bilinear = bilinear
+        self.double_conv = DoubleConv(
+            in_channels=in_channels,
+            out_channels=out_channels,
+        )
+        if self.bilinear:
+            self.up = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
+        else:
+            self.up = nn.ConvTranspose3d(out_channels, out_channels, kernel_size=2, stride=2)
+
+    def forward(self, x):
+        return self.up(self.double_conv(x))
+
+
+class UpConv(nn.Module):
+    """ Up -> DoubleConv """
+
+    def __init__(self, in_channels, out_channels, bilinear=False):
+        super().__init__()
+        self.bilinear = bilinear
+
+        if self.bilinear:
+            self.up = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
+        else:
+            self.up = nn.ConvTranspose3d(in_channels, in_channels, kernel_size=2, stride=2)
+
+        self.double_conv = DoubleConv(
+            in_channels=in_channels,
+            out_channels=out_channels,
+        )
+        
+    def forward(self, x):
+        return self.double_conv(self.up(x))
+
+
+
 class DoubleConv(nn.Module):
     """(convolution => [BN] => ReLU) * 2"""
 
