@@ -101,6 +101,8 @@ new_model_state = {}
 for model_key in model_state_keys:
     if "backbone."+model_key in pretrain_state_keys:
         new_model_state[model_key] = pretrain_state["backbone."+model_key]
+    else:
+        new_model_state[model_key] = model.state_dict()[model_key]
 
 model.load_state_dict(new_model_state)
 model.train()
