@@ -13,7 +13,7 @@ from functools import reduce, lru_cache
 from operator import mul
 from einops import rearrange
 
-import unet3d_parts
+from .unet3d_parts import UpConv, ConvUp, OutConv
 
 
 class Mlp(nn.Module):
@@ -543,14 +543,14 @@ class SwinTransformer3D(nn.Module):
 
         self.conv_up = nn.ModuleList()
         for i_conv_up in range(self.num_layers):
-            layer = unet3d_parts.ConvUp(
+            layer = ConvUp(
                 in_channels = 2 ** (i_conv_up+8),
                 out_channels = 2 ** (i_conv_up+6))
             self.layers.append(layer)
 
         self.up_conv = nn.ModuleList()
         for i_up_conv in range(self.num_layers):
-            layer = unet3d_parts.UpConv(
+            layer = UpConv(
                 in_channels = 2 ** (i_conv_up+7),
                 out_channels = 2 ** (i_conv_up+7))
             self.layers.append(layer)
@@ -561,7 +561,7 @@ class SwinTransformer3D(nn.Module):
             kernel_size=2, 
             stride=2)
 
-        self.outconv = unet3d_parts.OutConv(
+        self.outconv = OutConv(
             in_channels = 2**(self.num_layers+2),
             out_channels = in_chans
             )
