@@ -168,7 +168,7 @@ for idx_epoch in range(train_dict["epochs"]):
         # n c d h w
         x_data = nib.load(file_list[0]).get_fdata()
         batch_x = np.zeros((train_dict["batch"], 3, x_data.shape[2]//3, x_data.shape[0], x_data.shape[1]))
-        batch_y = np.zeros((train_dict["batch"], 3, y_data.shape[2]//3, y_data.shape[0], y_data.shape[1]))
+        batch_y = np.zeros((train_dict["batch"], 3, x_data.shape[2]//3, x_data.shape[0], x_data.shape[1]))
 
         for cnt_file, file_path in enumerate(file_list):
             
