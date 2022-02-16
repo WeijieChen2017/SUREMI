@@ -34,7 +34,7 @@ class UpConv(nn.Module):
         if self.bilinear:
             self.up = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
         else:
-            self.up = nn.ConvTranspose3d(in_channels, in_channels, kernel_size=(1,2,2), stride=(1,2,2))
+            self.up = nn.ConvTranspose3d(in_channels, in_channels, kernel_size=2, stride=2)
 
         self.double_conv = DoubleConv(
             in_channels=in_channels,
