@@ -700,14 +700,18 @@ class SwinTransformer3D(nn.Module):
 
         z = self.bottleneck_up(x)
 
+        print("bottleneck:", z.size())
+
         for iz in reversed(range(self.num_layers)):
             u = self.UpConv[iz](x_list[iz])
+            print("UpConv:", u.size)
             u = torch.cat([u, z], dim=1)
             z = self.ConvUp[iz](u)
+            print("ConvUp:", z.size())
 
+        z = self.OutConv(z)
 
-
-        return x
+        return z
 
     def train(self, mode=True):
         """Convert the model into training mode while keep layers freezed."""
