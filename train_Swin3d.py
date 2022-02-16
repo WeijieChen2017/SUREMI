@@ -12,24 +12,24 @@ import torch
 import torchvision
 import requests
 
-from model import UNet, UNet_seg
+from model import SwinTransformer3D
 
 # ==================== dict and config ====================
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "seg_to_CT"
+train_dict["project_name"] = "Swin3d_to_CT"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
-train_dict["input_channel"] = 3
-train_dict["output_channel"] = 3
-train_dict["gpu_ids"] = [5]
+train_dict["input_channel"] = 1
+train_dict["output_channel"] = 1
+train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 50
-train_dict["batch"] = 10
+train_dict["batch"] = 4
 train_dict["dropout"] = 0
-train_dict["model_term"] = "UNet_seg"
+train_dict["model_term"] = "SwinTransformer3D"
 
-train_dict["folder_X"] = "./data_dir/seg_CT/"
+train_dict["folder_X"] = "./data_dir/norm_MR/regular/"
 train_dict["folder_Y"] = "./data_dir/norm_CT/regular/"
 train_dict["val_ratio"] = 0.3
 train_dict["test_ratio"] = 0.2
@@ -69,9 +69,46 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+depths=[2, 2, 18, 2],
+embed_dim=128,
+num_heads=[4, 8, 16, 32]
+
+# Swin-B
+model = SwinTransformer3D(
+    pretrained=None,
+    pretrained2d=True,
+    patch_size=(2,4,4),
+    in_chans=3,
+    embed_dim=128,
+    depths=[2, 2, 18, 2],
+    num_heads=[4, 8, 16, 32],
+    window_size=(16,7,7),
+    mlp_ratio=4.,
+    qkv_bias=True,
+    qk_scale=None,
+    drop_rate=0.,
+    attn_drop_rate=0.,
+    drop_path_rate=0.2,
+    norm_layer=nn.LayerNorm,
+    patch_norm=False,
+    frozen_stages=-1,
+    use_checkpoint=False)
 
 
-model = UNet_seg(n_channels=train_dict["input_channel"], n_classes=train_dict["output_channel"])
+model_state_dict_MR = model.state_dict()
+model_state_dict_CT = model.state_dict()
+model_state_dict_MR.update(new_state_dict_MR)
+model_state_dict_CT.update(new_state_dict_CT)
+model.load_state_dict(model_state_dict_MR)
+model.load_state_dict(model_state_dict_CT)
+
+model_state_dict = model.state_dict()
+dict_name = list(model_state_dict)
+for i, p in enumerate(dict_name):
+    print(i, p)
+
+
+
 model.train().float()
 model = model.to(device)
 criterion = nn.SmoothL1Loss()
