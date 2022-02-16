@@ -561,7 +561,7 @@ class SwinTransformer3D(nn.Module):
             kernel_size=2, 
             stride=2)
 
-        self.outconv = OutConv(
+        self.out_conv = OutConv(
             in_channels = 2**(self.num_layers+2),
             out_channels = in_chans
             )
@@ -708,7 +708,7 @@ class SwinTransformer3D(nn.Module):
             z = self.conv_up[iz](u)
             print("ConvUp:", z.size())
 
-        z = self.OutConv(z)
+        z = self.out_conv(z)
 
         return z
 
