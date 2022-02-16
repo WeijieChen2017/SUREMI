@@ -101,7 +101,7 @@ for model_key in model_state_keys:
     new_model_state[model_key] = pretrain_state["backbone."+model_key]
 
 model.load_state_dict(new_model_state)
-model.train().float()
+model.train()
 model = model.to(device)
 criterion = nn.SmoothL1Loss()
 
