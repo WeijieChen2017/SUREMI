@@ -21,8 +21,9 @@ train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 train_dict["project_name"] = "Swin3d_to_CT"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
-train_dict["input_channel"] = 1
-train_dict["output_channel"] = 1
+train_dict["channel"] = 30
+# train_dict["input_channel"] = 30
+# train_dict["output_channel"] = 30
 train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 50
 train_dict["batch"] = 1
@@ -167,8 +168,8 @@ for idx_epoch in range(train_dict["epochs"]):
 
         # n c d h w
         x_data = nib.load(file_list[0]).get_fdata()
-        batch_x = np.zeros((train_dict["batch"], 3, x_data.shape[2]//3, x_data.shape[0], x_data.shape[1]))
-        batch_y = np.zeros((train_dict["batch"], 3, x_data.shape[2]//3, x_data.shape[0], x_data.shape[1]))
+        batch_x = np.zeros((train_dict["batch"], 3, train_dict["channel"], x_data.shape[0], x_data.shape[1]))
+        batch_y = np.zeros((train_dict["batch"], 3, train_dict["channel"], x_data.shape[0], x_data.shape[1]))
 
         for cnt_file, file_path in enumerate(file_list):
             
@@ -181,8 +182,10 @@ for idx_epoch in range(train_dict["epochs"]):
             x_data = x_file.get_fdata()
             y_data = y_file.get_fdata()
 
-            for idx_channel in range(x_data.shape[2]//3):
-                z_center = idx_channel * 3 + 1
+            z_offset = np.random.randint(x_data//3-train_dict["channel"])
+            for idx_channel in range(train_dict["channel"]):
+                
+                z_center = (z_offset + idx_channel) * 3 + 1
                 batch_x[idx_batch, 0, idx_channel, :, :] = x_data[:, :, z_center-1]
                 batch_x[idx_batch, 1, idx_channel, :, :] = x_data[:, :, z_center]
                 batch_x[idx_batch, 2, idx_channel, :, :] = x_data[:, :, z_center+1]
@@ -192,7 +195,6 @@ for idx_epoch in range(train_dict["epochs"]):
                 
             if idx_batch == train_dict["batch"] - 1:
                 idx_batch = 0
-                
                 batch_x = torch.from_numpy(batch_x).float().to(device)
                 batch_y = torch.from_numpy(batch_y).float().to(device)
                 
