@@ -148,7 +148,7 @@ for idx_epoch in range(train_dict["epochs"]):
     package_val = [val_list, False, True, "val"]
     # package_test = [test_list, False, False, "test"]
 
-    for package in [package_train, package_val, package_test]:
+    for package in [package_train, package_val]:
 
         file_list = package[0]
         isTrain = package[1]
