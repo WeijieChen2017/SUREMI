@@ -209,9 +209,9 @@ for idx_epoch in range(train_dict["epochs"]):
                     loss.backward()
                     optimizer.step()
                 epoch_loss[idx_bloss] = loss.item()
-                idx_bloss += 1
                 # print("===> Epoch[{:03d}]-Batch[{:03d}]: ".format(idx_epoch+1, idx_bloss+1), end='')
                 print("Loss: ", epoch_loss[idx_bloss])
+                idx_bloss += 1
 
                 batch_x = np.zeros((train_dict["batch"], 3, x_data.shape[2]//3, x_data.shape[0], x_data.shape[1]))
                 batch_y = np.zeros((train_dict["batch"], 3, y_data.shape[2]//3, y_data.shape[0], y_data.shape[1]))
