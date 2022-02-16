@@ -179,7 +179,7 @@ for idx_epoch in range(train_dict["epochs"]):
             x_path = file_path
             y_path = file_path.replace("MR", "CT")
             file_name = os.path.basename(file_path)
-            print("--->",x_path,"<---")
+            print("--->",x_path,"<---", end="")
             x_file = nib.load(x_path)
             y_file = nib.load(y_path)
             x_data = x_file.get_fdata()
@@ -203,14 +203,14 @@ for idx_epoch in range(train_dict["epochs"]):
                 
                 optimizer.zero_grad()
                 y_hat = model(batch_x)
-                print("Yhat size: ", y_hat.size())
+                # print("Yhat size: ", y_hat.size())
                 loss = criterion(y_hat, batch_y)
                 if isTrain:
                     loss.backward()
                     optimizer.step()
                 epoch_loss[idx_bloss] = loss.item()
                 idx_bloss += 1
-                print("===> Epoch[{:03d}]-Batch[{:03d}]: ".format(idx_epoch+1, idx_bloss+1), end='')
+                # print("===> Epoch[{:03d}]-Batch[{:03d}]: ".format(idx_epoch+1, idx_bloss+1), end='')
                 print("Loss: ", epoch_loss[idx_bloss])
 
                 batch_x = np.zeros((train_dict["batch"], 3, x_data.shape[2]//3, x_data.shape[0], x_data.shape[1]))
