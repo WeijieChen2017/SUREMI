@@ -182,9 +182,9 @@ for idx_epoch in range(train_dict["epochs"]):
             x_data = x_file.get_fdata()
             y_data = y_file.get_fdata()
 
-            z_offset = np.random.randint(x_data//3-train_dict["channel"])
+            z_offset = np.random.randint(x_data.shape[2]//3-train_dict["channel"])
             for idx_channel in range(train_dict["channel"]):
-                
+
                 z_center = (z_offset + idx_channel) * 3 + 1
                 batch_x[idx_batch, 0, idx_channel, :, :] = x_data[:, :, z_center-1]
                 batch_x[idx_batch, 1, idx_channel, :, :] = x_data[:, :, z_center]
