@@ -91,7 +91,7 @@ model = SwinTransformer3D(
     frozen_stages=-1,
     use_checkpoint=False)
 
-pretrain = torch.load("./pre_train"+train_dict["pre_train"])
+pretrain = torch.load("./pre_train/"+train_dict["pre_train"])
 pretrain_state = pretrain["state_dict"]
 # pretrain_state_keys = pretrain_state.keys()
 model_state_keys = model.state_dict().keys()
