@@ -57,12 +57,12 @@ import nibabel as nib
 
 pre_proc_dict = {}
 
-pre_proc_dict["dir_orig"] = "./data_dir/MR2CT/"
-pre_proc_dict["name_orig"] = "CT__MLAC_*_MNI.nii.gz"
-pre_proc_dict["dir_syn"] = "./data_dir/norm_CT_2/"
+pre_proc_dict["dir_orig"] = "./data_dir/Iman/CT/"
+pre_proc_dict["name_orig"] = "*.nii.gz"
+pre_proc_dict["dir_syn"] = "./data_dir/Iman_CT/"
 pre_proc_dict["is_seg"] = False
-pre_proc_dict["attr_seg"] = ["regular"]
-pre_proc_dict["range_seg"] = [[-1024, 3000]]
+pre_proc_dict["attr_seg"] = ["norm"]
+pre_proc_dict["range_seg"] = [[0, 3000]]
 pre_proc_dict["note"] = []
 pre_proc_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 
@@ -88,7 +88,7 @@ for file_path  in file_list:
         save_folder = pre_proc_dict["dir_syn"] + pre_proc_dict["attr_seg"][idx] + "/"
         if not os.path.exists(save_folder):
             os.makedirs(save_folder)
-        save_name = "NORM_0"+os.path.basename(file_path)[9:11]+".nii.gz"
+        save_name = os.path.basename(file_path)
         save_nifty = nib.Nifti1Image(value_seg, file_nifty.affine, file_nifty.header)
         nib.save(save_nifty, save_folder+save_name)
         print(save_folder+save_name, " "*4, np.amin(value_seg), " "*4, np.amax(value_seg))
