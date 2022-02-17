@@ -22,7 +22,7 @@ train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 train_dict["project_name"] = "Swin3d_to_CT"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
-train_dict["channel"] = 12
+train_dict["channel"] = 24
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
 train_dict["gpu_ids"] = [5,6,7]
@@ -223,7 +223,7 @@ for idx_epoch in range(train_dict["epochs"]):
                 idx_bloss += 1
 
         print("===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
-        print("Loss: ", np.mean(epoch_loss))
+        print("  Loss: ", np.mean(epoch_loss))
         np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), epoch_loss)
 
         if isVal:
