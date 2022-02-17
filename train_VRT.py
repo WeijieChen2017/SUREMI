@@ -184,7 +184,7 @@ for idx_epoch in range(train_dict["epochs"]):
             x_data = x_file.get_fdata()
             y_data = y_file.get_fdata()
 
-            for i_batch in range(train_dict["batch"]):
+            for idx_batch in range(train_dict["batch"]):
                 batch_x = np.zeros((train_dict["batch"], train_dict["input_size"][0], 3, train_dict["input_size"][1], train_dict["input_size"][2]))
                 batch_y = np.zeros((train_dict["batch"], train_dict["input_size"][0], 3, train_dict["input_size"][1], train_dict["input_size"][2]))
 
