@@ -19,21 +19,21 @@ from model import VRT
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "VRT_to_CT"
+train_dict["project_name"] = "VRT_Iman"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
 train_dict["gpu_ids"] = [1]
-train_dict["epochs"] = 50
+train_dict["epochs"] = 100
 train_dict["batch"] = 1
 train_dict["dropout"] = 0
 train_dict["model_term"] = "VRT"
 train_dict["deconv_channels"] = 6
 train_dict["input_size"] = [6,64,64]
 
-train_dict["folder_X"] = "./data_dir/norm_MR/regular/"
-train_dict["folder_Y"] = "./data_dir/norm_CT/regular/"
+train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
+train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
 train_dict["pre_train"] = "007_VRT_videodeblurring_REDS.pth"
 train_dict["val_ratio"] = 0.3
 train_dict["test_ratio"] = 0.2
@@ -178,7 +178,7 @@ for idx_epoch in range(train_dict["epochs"]):
             x_path = file_path
             y_path = file_path.replace("MR", "CT")
             file_name = os.path.basename(file_path)
-            print("===> Epoch[{:03d}]: --->".format(idx_epoch+1), x_path, "<---", end="")
+            print(iter_tag + " ===> Epoch[{:03d}]: --->".format(idx_epoch+1), x_path, "<---", end="")
             x_file = nib.load(x_path)
             y_file = nib.load(y_path)
             x_data = x_file.get_fdata()
@@ -218,7 +218,7 @@ for idx_epoch in range(train_dict["epochs"]):
             case_loss[cnt_file] = loss.item()
             print("Loss: ", case_loss[cnt_file])
 
-        print("===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
+        print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
         print("  Loss: ", np.mean(case_loss))
         np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), case_loss)
 
