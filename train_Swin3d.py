@@ -92,7 +92,7 @@ model = SwinTransformer3D(
     patch_norm=True,
     frozen_stages=-1,
     use_checkpoint=False,
-    deconv_channels = train_dict["deconv_channels"])
+    deconv_channels = 6)
 
 pretrain = torch.load("./pre_train/"+train_dict["pre_train"])
 pretrain_state = pretrain["state_dict"]
