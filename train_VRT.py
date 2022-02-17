@@ -34,7 +34,7 @@ train_dict["input_size"] = [6,192,192]
 
 train_dict["folder_X"] = "./data_dir/norm_MR/regular/"
 train_dict["folder_Y"] = "./data_dir/norm_CT/regular/"
-train_dict["pre_train"] = "008_VRT_videodenoising_DAVIS.pth"
+train_dict["pre_train"] = "007_VRT_videodeblurring_REDS.pth"
 train_dict["val_ratio"] = 0.3
 train_dict["test_ratio"] = 0.2
 
@@ -73,17 +73,17 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-# VRT-008-denoising
+# VRT-007-3motion-blur
 model = VRT(
-    upscale=1,
-    img_size=[6,192,192],
-    window_size=[6,8,8],
+    upscale=1, 
+    img_size=[6,192,192], 
+    window_size=[6,8,8], 
     depths=[8,8,8,8,8,8,8, 4,4, 4,4],
-    indep_reconsts=[9,10],
+    indep_reconsts=[9,10], 
     embed_dims=[96,96,96,96,96,96,96, 120,120, 120,120],
-    num_heads=[6,6,6,6,6,6,6, 6,6, 6,6],
-    pa_frames=2, deformable_groups=16,
-    nonblind_denoising=True
+    num_heads=[6,6,6,6,6,6,6, 6,6, 6,6], 
+    pa_frames=2, 
+    deformable_groups=16
     )
 
 pretrain = torch.load("./pre_train/"+train_dict["pre_train"], map_location=torch.device('cpu'))
