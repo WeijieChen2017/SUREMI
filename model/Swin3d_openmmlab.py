@@ -562,7 +562,7 @@ class SwinTransformer3D(nn.Module):
             stride=2)
 
         self.out_conv = OutConv(
-            in_channels = 2**(self.num_layers+2),
+            in_channels = 2**(self.num_layers+1),
             out_channels = in_chans
             )
 
