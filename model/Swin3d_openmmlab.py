@@ -546,8 +546,8 @@ class SwinTransformer3D(nn.Module):
         self.conv_up = nn.ModuleList()
         for i_conv_up in range(self.num_layers):
             layer = ConvUp(
-                in_channels = 2 ** (i_conv_up+self.deconv_channels+2),
-                out_channels = 2 ** (i_conv_up+self.deconv_channels))
+                in_channels = 2 ** (i_conv_up+self.deconv_channels+3),
+                out_channels = 2 ** (i_conv_up+self.deconv_channels+1))
             self.conv_up.append(layer)
 
         self.up_conv = nn.ModuleList()
