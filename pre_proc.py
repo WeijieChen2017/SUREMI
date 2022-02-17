@@ -57,12 +57,12 @@ import nibabel as nib
 
 pre_proc_dict = {}
 
-pre_proc_dict["dir_orig"] = "./data_dir/Iman/paired/CT/"
+pre_proc_dict["dir_orig"] = "./data_dir/Iman/paired/MR/"
 pre_proc_dict["name_orig"] = "*.nii.gz"
-pre_proc_dict["dir_syn"] = "./data_dir/Iman_CT/"
+pre_proc_dict["dir_syn"] = "./data_dir/Iman_MR/"
 pre_proc_dict["is_seg"] = False
 pre_proc_dict["attr_seg"] = ["norm"]
-pre_proc_dict["range_seg"] = [[0, 4000]]
+pre_proc_dict["range_seg"] = [[0, 3000]]
 pre_proc_dict["note"] = []
 pre_proc_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 
