@@ -94,7 +94,7 @@ model = SwinTransformer3D(
     use_checkpoint=False,
     deconv_channels = 6)
 
-pretrain = torch.load("./pre_train/"+train_dict["pre_train"])
+pretrain = torch.load("./pre_train/"+train_dict["pre_train"], map_location=torch.device('cpu'))
 pretrain_state = pretrain["state_dict"]
 pretrain_state_keys = pretrain_state.keys()
 model_state_keys = model.state_dict().keys()
