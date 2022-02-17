@@ -26,7 +26,7 @@ train_dict["seed"] = 426
 # train_dict["output_channel"] = 30
 train_dict["gpu_ids"] = [1]
 train_dict["epochs"] = 50
-train_dict["batch"] = 1
+train_dict["batch"] = 4
 train_dict["dropout"] = 0
 train_dict["model_term"] = "VRT"
 train_dict["deconv_channels"] = 6
@@ -166,19 +166,15 @@ for idx_epoch in range(train_dict["epochs"]):
             model.eval()
 
         random.shuffle(file_list)
-        idx_batch = 0
-        epoch_loss = np.zeros((len(file_list) // train_dict["batch"]))
-        idx_bloss = 0
+        
+        case_loss = np.zeros((len(file_list)))
 
         # b, d, c, h, w
         x_data = nib.load(file_list[0]).get_fdata()
-        
+
         for cnt_file, file_path in enumerate(file_list):
             
-            if idx_batch == 0:
-                batch_x = np.zeros((train_dict["batch"], train_dict["input_size"][0], 3, train_dict["input_size"][1], train_dict["input_size"][2]))
-                batch_y = np.zeros((train_dict["batch"], train_dict["input_size"][0], 3, train_dict["input_size"][1], train_dict["input_size"][2]))
-
+            
             x_path = file_path
             y_path = file_path.replace("MR", "CT")
             file_name = os.path.basename(file_path)
@@ -188,49 +184,40 @@ for idx_epoch in range(train_dict["epochs"]):
             x_data = x_file.get_fdata()
             y_data = y_file.get_fdata()
 
-            z_offset = np.random.randint(x_data.shape[2]//3 - train_dict["input_size"][0])
-            h_offset = np.random.randint(x_data.shape[0] - train_dict["input_size"][1])
-            w_offset = np.random.randint(x_data.shape[1] - train_dict["input_size"][2])
+            for i_batch in range(train_dict["batch"]):
+                batch_x = np.zeros((train_dict["batch"], train_dict["input_size"][0], 3, train_dict["input_size"][1], train_dict["input_size"][2]))
+                batch_y = np.zeros((train_dict["batch"], train_dict["input_size"][0], 3, train_dict["input_size"][1], train_dict["input_size"][2]))
 
-            for idx_channel in range(train_dict["input_size"][0]):
-                z_center = (z_offset + idx_channel) * 3 + 1
-                x_slice = x_data[h_offset:h_offset+train_dict["input_size"][1], w_offset:w_offset+train_dict["input_size"][2], z_center-1:z_center+2]
-                y_slice = y_data[h_offset:h_offset+train_dict["input_size"][1], w_offset:w_offset+train_dict["input_size"][2], z_center-1:z_center+2]
-                
-                batch_x[idx_batch, idx_channel, 0, :, :] = x_slice[:, :, 0]
-                batch_x[idx_batch, idx_channel, 1, :, :] = x_slice[:, :, 1]
-                batch_x[idx_batch, idx_channel, 2, :, :] = x_slice[:, :, 2]
-                batch_y[idx_batch, idx_channel, 0, :, :] = y_slice[:, :, 0]
-                batch_y[idx_batch, idx_channel, 1, :, :] = y_slice[:, :, 1]
-                batch_y[idx_batch, idx_channel, 2, :, :] = y_slice[:, :, 2]
-                
-            if idx_batch == train_dict["batch"] - 1:
-                idx_batch = 0
-                batch_x = torch.from_numpy(batch_x).float().to(device)
-                batch_y = torch.from_numpy(batch_y).float().to(device)
-                
-                print(batch_x.size())
-                optimizer.zero_grad()
-                y_hat = model(batch_x)
-                # print("Yhat size: ", y_hat.size())
-                loss = criterion(y_hat, batch_y)
-                if isTrain:
-                    loss.backward()
-                    optimizer.step()
-                epoch_loss[idx_bloss] = loss.item()
-                # print("===> Epoch[{:03d}]-Batch[{:03d}]: ".format(idx_epoch+1, idx_bloss+1), end='')
-                print("Loss: ", epoch_loss[idx_bloss])
-                idx_bloss += 1
 
-                # del batch_x, batch_y
-                # gc.collect()
-                # torch.cuda.empty_cache()
-            else:
-                idx_batch += 1
+                z_offset = np.random.randint(x_data.shape[2]//3 - train_dict["input_size"][0])
+                h_offset = np.random.randint(x_data.shape[0] - train_dict["input_size"][1])
+                w_offset = np.random.randint(x_data.shape[1] - train_dict["input_size"][2])
+
+                for idx_channel in range(train_dict["input_size"][0]):
+                    z_center = (z_offset + idx_channel) * 3 + 1
+                    x_slice = x_data[h_offset:h_offset+train_dict["input_size"][1], w_offset:w_offset+train_dict["input_size"][2], z_center-1:z_center+2]
+                    y_slice = y_data[h_offset:h_offset+train_dict["input_size"][1], w_offset:w_offset+train_dict["input_size"][2], z_center-1:z_center+2]
+                    
+                    batch_x[idx_batch, idx_channel, 0, :, :] = x_slice[:, :, 0]
+                    batch_x[idx_batch, idx_channel, 1, :, :] = x_slice[:, :, 1]
+                    batch_x[idx_batch, idx_channel, 2, :, :] = x_slice[:, :, 2]
+                    batch_y[idx_batch, idx_channel, 0, :, :] = y_slice[:, :, 0]
+                    batch_y[idx_batch, idx_channel, 1, :, :] = y_slice[:, :, 1]
+                    batch_y[idx_batch, idx_channel, 2, :, :] = y_slice[:, :, 2]
+
+            optimizer.zero_grad()
+            y_hat = model(batch_x)
+            # print("Yhat size: ", y_hat.size())
+            loss = criterion(y_hat, batch_y)
+            if isTrain:
+                loss.backward()
+                optimizer.step()
+            case_loss[cnt_file] = loss.item()
+            print("Loss: ", case_loss[cnt_file])
 
         print("===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
-        print("  Loss: ", np.mean(epoch_loss))
-        np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), epoch_loss)
+        print("  Loss: ", np.mean(case_loss))
+        np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), case_loss)
 
         if isVal:
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_x.npy".format(idx_epoch+1, file_name), batch_x.cpu().detach().numpy())
