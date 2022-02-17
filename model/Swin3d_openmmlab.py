@@ -710,6 +710,10 @@ class SwinTransformer3D(nn.Module):
 
         z = self.out_conv(z)
 
+        del x_list
+
+        torch.cuda.empty_cache()
+
         return z
 
     def train(self, mode=True):
