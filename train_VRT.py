@@ -185,9 +185,9 @@ for idx_epoch in range(train_dict["epochs"]):
             y_data = y_file.get_fdata()
 
             for idx_batch in range(train_dict["batch"]):
+
                 batch_x = np.zeros((train_dict["batch"], train_dict["input_size"][0], 3, train_dict["input_size"][1], train_dict["input_size"][2]))
                 batch_y = np.zeros((train_dict["batch"], train_dict["input_size"][0], 3, train_dict["input_size"][1], train_dict["input_size"][2]))
-
 
                 z_offset = np.random.randint(x_data.shape[2]//3 - train_dict["input_size"][0])
                 h_offset = np.random.randint(x_data.shape[0] - train_dict["input_size"][1])
@@ -204,6 +204,9 @@ for idx_epoch in range(train_dict["epochs"]):
                     batch_y[idx_batch, idx_channel, 0, :, :] = y_slice[:, :, 0]
                     batch_y[idx_batch, idx_channel, 1, :, :] = y_slice[:, :, 1]
                     batch_y[idx_batch, idx_channel, 2, :, :] = y_slice[:, :, 2]
+
+            batch_x = torch.from_numpy(batch_x).float().to(device)
+            batch_y = torch.from_numpy(batch_y).float().to(device)
 
             optimizer.zero_grad()
             y_hat = model(batch_x)
