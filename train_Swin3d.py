@@ -22,12 +22,12 @@ train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 train_dict["project_name"] = "Swin3d_to_CT"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
-train_dict["channel"] = 24
+train_dict["channel"] = 18
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
-train_dict["gpu_ids"] = [5,6,7]
+train_dict["gpu_ids"] = [0,1,2,3]
 train_dict["epochs"] = 50
-train_dict["batch"] = 1
+train_dict["batch"] = 4
 train_dict["dropout"] = 0
 train_dict["model_term"] = "SwinTransformer3D"
 train_dict["deconv_channels"] = 6
@@ -112,6 +112,8 @@ for model_key in model_state_keys:
         new_model_state[model_key] = model.state_dict()[model_key]
 
 model.load_state_dict(new_model_state)
+
+model = nn.DataParallel(model)
 model.train()
 model = model.to(device)
 criterion = nn.SmoothL1Loss()
@@ -222,18 +224,18 @@ for idx_epoch in range(train_dict["epochs"]):
                 print("Loss: ", epoch_loss[idx_bloss])
                 idx_bloss += 1
 
-                del batch_x, batch_y
-                gc.collect()
-                torch.cuda.empty_cache()
+                # del batch_x, batch_y
+                # gc.collect()
+                # torch.cuda.empty_cache()
 
         print("===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
         print("  Loss: ", np.mean(epoch_loss))
         np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), epoch_loss)
 
         if isVal:
-            # np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_x.npy".format(idx_epoch+1, file_name), batch_x.cpu().detach().numpy())
-            # np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_y.npy".format(idx_epoch+1, file_name), batch_y.cpu().detach().numpy())
-            # np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_z.npy".format(idx_epoch+1, file_name), y_hat.cpu().detach().numpy())
+            np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_x.npy".format(idx_epoch+1, file_name), batch_x.cpu().detach().numpy())
+            np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_y.npy".format(idx_epoch+1, file_name), batch_y.cpu().detach().numpy())
+            np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_z.npy".format(idx_epoch+1, file_name), y_hat.cpu().detach().numpy())
 
             if np.mean(epoch_loss) < best_val_loss:
                 # save the best model
