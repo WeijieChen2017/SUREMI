@@ -113,7 +113,7 @@ for model_key in model_state_keys:
 
 model.load_state_dict(new_model_state)
 
-# model = nn.DataParallel(model)
+model = nn.DataParallel(model)
 model.train()
 model = model.to(device)
 criterion = nn.SmoothL1Loss()
@@ -227,6 +227,7 @@ for idx_epoch in range(train_dict["epochs"]):
                 # del batch_x, batch_y
                 # gc.collect()
                 # torch.cuda.empty_cache()
+            idx_batch += 1
 
         print("===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
         print("  Loss: ", np.mean(epoch_loss))
