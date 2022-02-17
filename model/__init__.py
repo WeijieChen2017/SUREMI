@@ -8,3 +8,4 @@ from .unet_models import UNet_FC
 from .suremi_models import suremi
 
 from .Swin3d_openmmlab import SwinTransformer3D
+from .VRT_ETH import VRT
