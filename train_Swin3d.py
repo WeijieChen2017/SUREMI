@@ -227,7 +227,8 @@ for idx_epoch in range(train_dict["epochs"]):
                 # del batch_x, batch_y
                 # gc.collect()
                 # torch.cuda.empty_cache()
-            idx_batch += 1
+            else:
+                idx_batch += 1
 
         print("===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
         print("  Loss: ", np.mean(epoch_loss))
