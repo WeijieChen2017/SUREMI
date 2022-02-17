@@ -30,7 +30,7 @@ train_dict["batch"] = 1
 train_dict["dropout"] = 0
 train_dict["model_term"] = "VRT"
 train_dict["deconv_channels"] = 6
-train_dict["input_size"] = [6,192,192]
+train_dict["input_size"] = [6,64,64]
 
 train_dict["folder_X"] = "./data_dir/norm_MR/regular/"
 train_dict["folder_Y"] = "./data_dir/norm_CT/regular/"
