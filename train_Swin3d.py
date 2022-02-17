@@ -188,7 +188,7 @@ for idx_epoch in range(train_dict["epochs"]):
             x_path = file_path
             y_path = file_path.replace("MR", "CT")
             file_name = os.path.basename(file_path)
-            print("--->",x_path,"<---", end="")
+            print("===> Epoch[{:03d}]: --->".format(idx_epoch+1), x_path, "<---", end="")
             x_file = nib.load(x_path)
             y_file = nib.load(y_path)
             x_data = x_file.get_fdata()
@@ -231,10 +231,10 @@ for idx_epoch in range(train_dict["epochs"]):
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_y.npy".format(idx_epoch+1, file_name), batch_y.cpu().detach().numpy())
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_z.npy".format(idx_epoch+1, file_name), y_hat.cpu().detach().numpy())
 
-            if loss_mean < best_val_loss:
+            if np.mean(epoch_loss) < best_val_loss:
                 # save the best model
                 torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch+1))
                 print("Checkpoint saved at Epoch {:03d}".format(idx_epoch+1))
-                best_val_loss = loss_mean
+                best_val_loss = np.mean(epoch_loss)
 
         torch.cuda.empty_cache()
