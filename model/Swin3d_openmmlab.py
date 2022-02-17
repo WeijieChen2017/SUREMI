@@ -490,7 +490,8 @@ class SwinTransformer3D(nn.Module):
                  norm_layer=nn.LayerNorm,
                  patch_norm=False,
                  frozen_stages=-1,
-                 use_checkpoint=False):
+                 use_checkpoint=False,
+                 deconv_channels=6):
         super().__init__()
 
         self.pretrained = pretrained
@@ -501,6 +502,7 @@ class SwinTransformer3D(nn.Module):
         self.frozen_stages = frozen_stages
         self.window_size = window_size
         self.patch_size = patch_size
+        self.deconv_channels = deconv_channels
 
         # split image into non-overlapping patches
         self.patch_embed = PatchEmbed3D(
@@ -544,25 +546,25 @@ class SwinTransformer3D(nn.Module):
         self.conv_up = nn.ModuleList()
         for i_conv_up in range(self.num_layers):
             layer = ConvUp(
-                in_channels = 2 ** (i_conv_up+7),
-                out_channels = 2 ** (i_conv_up+5))
+                in_channels = 2 ** (i_conv_up+self.deconv_channels+2),
+                out_channels = 2 ** (i_conv_up+self.deconv_channels))
             self.conv_up.append(layer)
 
         self.up_conv = nn.ModuleList()
         for i_up_conv in range(self.num_layers):
             layer = UpConv(
-                in_channels = 2 ** (i_up_conv+7),
-                out_channels = 2 ** (i_up_conv+6))
+                in_channels = 2 ** (i_up_conv+self.deconv_channels+2),
+                out_channels = 2 ** (i_up_conv+self.deconv_channels+1))
             self.up_conv.append(layer)
         
         self.bottleneck_up = nn.ConvTranspose3d(
-            in_channels = 2**(self.num_layers+6), 
-            out_channels = 2**(self.num_layers+5), 
+            in_channels = 2**(self.num_layers+self.deconv_channels+1), 
+            out_channels = 2**(self.num_layers+self.deconv_channels), 
             kernel_size=2, 
             stride=2)
 
         self.out_conv = OutConv(
-            in_channels = 2**(self.num_layers+1),
+            in_channels = 2**(self.num_layers+self.deconv_channels-4),
             out_channels = in_chans
             )
 
