@@ -178,11 +178,13 @@ for idx_epoch in range(train_dict["epochs"]):
 
         # n c d h w
         x_data = nib.load(file_list[0]).get_fdata()
-        batch_x = np.zeros((train_dict["batch"], 3, train_dict["channel"], x_data.shape[0], x_data.shape[1]))
-        batch_y = np.zeros((train_dict["batch"], 3, train_dict["channel"], x_data.shape[0], x_data.shape[1]))
-
+        
         for cnt_file, file_path in enumerate(file_list):
             
+            if idx_batch == 0:
+                batch_x = np.zeros((train_dict["batch"], 3, train_dict["channel"], x_data.shape[0], x_data.shape[1]))
+                batch_y = np.zeros((train_dict["batch"], 3, train_dict["channel"], y_data.shape[0], y_data.shape[1]))
+
             x_path = file_path
             y_path = file_path.replace("MR", "CT")
             file_name = os.path.basename(file_path)
@@ -223,9 +225,6 @@ for idx_epoch in range(train_dict["epochs"]):
                 del batch_x, batch_y
                 gc.collect()
                 torch.cuda.empty_cache()
-
-                batch_x = np.zeros((train_dict["batch"], 3, train_dict["channel"], x_data.shape[0], x_data.shape[1]))
-                batch_y = np.zeros((train_dict["batch"], 3, train_dict["channel"], y_data.shape[0], y_data.shape[1]))
 
         print("===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
         print("Loss: ", np.mean(epoch_loss))
