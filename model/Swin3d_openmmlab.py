@@ -546,15 +546,15 @@ class SwinTransformer3D(nn.Module):
         self.conv_up = nn.ModuleList()
         for i_conv_up in range(self.num_layers):
             layer = ConvUp(
-                in_channels = 2 ** (i_conv_up+self.deconv_channels+3),
-                out_channels = 2 ** (i_conv_up+self.deconv_channels+1))
+                in_channels = 2 ** (i_conv_up+self.deconv_channels+2),
+                out_channels = 2 ** (i_conv_up+self.deconv_channels))
             self.conv_up.append(layer)
 
         self.up_conv = nn.ModuleList()
         for i_up_conv in range(self.num_layers):
             layer = UpConv(
                 in_channels = 2 ** (i_up_conv+self.deconv_channels+1),
-                out_channels = 2 ** (i_up_conv+self.deconv_channels))
+                out_channels = 2 ** (i_up_conv+self.deconv_channels+0))
             self.up_conv.append(layer)
         
         self.bottleneck_up = nn.ConvTranspose3d(
@@ -700,15 +700,15 @@ class SwinTransformer3D(nn.Module):
 
         z = self.bottleneck_up(x)
 
-        # print("bottleneck:", z.size())
+        print("bottleneck:", z.size())
 
         for iz in reversed(range(self.num_layers)):
             # print(x_list[iz].size())
             u = self.up_conv[iz](x_list[iz])
-            # print("UpConv:", u.size())
+            print("UpConv:", u.size())
             u = torch.cat([u, z], dim=1)
             z = self.conv_up[iz](u)
-            # print("ConvUp:", z.size())
+            print("ConvUp:", z.size())
 
         z = self.out_conv(z)
 
