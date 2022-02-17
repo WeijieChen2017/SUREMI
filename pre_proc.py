@@ -73,8 +73,8 @@ for file_path  in file_list:
     print(file_path)
     file_nifty = nib.load(file_path)
     file_data = file_nifty.get_fdata()
-    scl_slope = file_nifty.header['scl_slope']
-    scl_inter = file_nifty.header['scl_inter']
+    scl_slope = file_nifty.dataobj.slope
+    scl_inter = file_nifty.dataobj.inter
     file_data = file_data * scl_slope + scl_inter
     print(np.amin(file_data), np.amax(file_data))
 
