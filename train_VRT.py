@@ -188,7 +188,7 @@ for idx_epoch in range(train_dict["epochs"]):
             x_data = x_file.get_fdata()
             y_data = y_file.get_fdata()
 
-            z_offset = np.random.randint(x_data.shape[2]//3 - train_dict["channel"])
+            z_offset = np.random.randint(x_data.shape[2]//3 - train_dict["input_size"][0])
             h_offset = np.random.randint(x_data.shape[0] - train_dict["input_size"][1])
             w_offset = np.random.randint(x_data.shape[1] - train_dict["input_size"][2])
 
