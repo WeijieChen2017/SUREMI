@@ -22,7 +22,6 @@ train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 train_dict["project_name"] = "Swin3d_to_CT"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
-train_dict["channel"] = 18
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
 train_dict["gpu_ids"] = [0]
@@ -192,11 +191,11 @@ for idx_epoch in range(train_dict["epochs"]):
             z_offset = np.random.randint(x_data.shape[2]//3 - train_dict["channel"])
             h_offset = np.random.randint(x_data.shape[0] - train_dict["input_size"][1])
             w_offset = np.random.randint(x_data.shape[1] - train_dict["input_size"][2])
-            for idx_channel in range(train_dict["channel"]):
 
+            for idx_channel in range(train_dict["input_size"][0]):
                 z_center = (z_offset + idx_channel) * 3 + 1
-                x_slice = x_data[h_offset:h_offset+train_dict["input_size"][1], w_offset:w_offset+train_dict["input_size"][2], z_center-1:z_center+1]
-                y_slice = y_data[h_offset:h_offset+train_dict["input_size"][1], w_offset:w_offset+train_dict["input_size"][2], z_center-1:z_center+1]
+                x_slice = x_data[h_offset:h_offset+train_dict["input_size"][1], w_offset:w_offset+train_dict["input_size"][2], z_center-1:z_center+2]
+                y_slice = y_data[h_offset:h_offset+train_dict["input_size"][1], w_offset:w_offset+train_dict["input_size"][2], z_center-1:z_center+2]
                 
                 batch_x[idx_batch, 0, idx_channel, :, :] = x_slice[:, :, 0]
                 batch_x[idx_batch, 1, idx_channel, :, :] = x_slice[:, :, 1]
