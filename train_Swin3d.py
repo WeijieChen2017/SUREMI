@@ -100,6 +100,10 @@ pretrain_state_keys = pretrain_state.keys()
 model_state_keys = model.state_dict().keys()
 new_model_state = {}
 
+del pretrain
+gc.collect()
+torch.cuda.empty_cache()
+
 for model_key in model_state_keys:
     if "backbone."+model_key in pretrain_state_keys:
         new_model_state[model_key] = pretrain_state["backbone."+model_key]
