@@ -73,6 +73,9 @@ for file_path  in file_list:
     print(file_path)
     file_nifty = nib.load(file_path)
     file_data = file_nifty.get_fdata()
+    scl_slope = file_nifty.header['scl_slope'][0]
+    scl_inter = file_nifty.header['scl_inter'][0]
+    file_data = file_data * scl_slope + scl_inter
     print(np.amin(file_data), np.amax(file_data))
 
     for idx, value_range in enumerate(pre_proc_dict["range_seg"]):
