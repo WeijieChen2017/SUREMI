@@ -113,7 +113,7 @@ for model_key in model_state_keys:
 
 model.load_state_dict(new_model_state)
 
-model = nn.DataParallel(model)
+# model = nn.DataParallel(model)
 model.train()
 model = model.to(device)
 criterion = nn.SmoothL1Loss()
