@@ -72,7 +72,7 @@ for file_path  in file_list:
     print("-"*60)
     print(file_path)
     file_nifty = nib.load(file_path)
-    file_data = file_nifty.get_data()
+    file_data = np.asanyarray(file_nifty.dataobj)
     # scl_slope = file_nifty.dataobj.slope
     # scl_inter = file_nifty.dataobj.inter
     # file_data = file_data * scl_slope + scl_inter
