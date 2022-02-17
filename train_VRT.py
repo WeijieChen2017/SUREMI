@@ -21,7 +21,7 @@ train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 train_dict["project_name"] = "VRT_Iman"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
-train_dict["seed"] = 426
+train_dict["seed"] = 729
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
 train_dict["gpu_ids"] = [1]
@@ -30,7 +30,7 @@ train_dict["batch"] = 1
 train_dict["dropout"] = 0
 train_dict["model_term"] = "VRT"
 train_dict["deconv_channels"] = 6
-train_dict["input_size"] = [6,64,64]
+train_dict["input_size"] = [6,128,128]
 
 train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
 train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
