@@ -21,7 +21,7 @@ train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 train_dict["project_name"] = "Swin3d_to_CT"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
-train_dict["channel"] = 12
+train_dict["channel"] = 6
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
 train_dict["gpu_ids"] = [5,6,7]
@@ -29,6 +29,7 @@ train_dict["epochs"] = 50
 train_dict["batch"] = 1
 train_dict["dropout"] = 0
 train_dict["model_term"] = "SwinTransformer3D"
+train_dict["deconv_channels"] = 6
 
 train_dict["folder_X"] = "./data_dir/norm_MR/regular/"
 train_dict["folder_Y"] = "./data_dir/norm_CT/regular/"
@@ -90,7 +91,8 @@ model = SwinTransformer3D(
     norm_layer=nn.LayerNorm,
     patch_norm=True,
     frozen_stages=-1,
-    use_checkpoint=False)
+    use_checkpoint=False,
+    deconv_channels = train_dict["deconv_channels"])
 
 pretrain = torch.load("./pre_train/"+train_dict["pre_train"])
 pretrain_state = pretrain["state_dict"]
