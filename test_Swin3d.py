@@ -188,8 +188,8 @@ for idx_epoch in range(train_dict["epochs"]):
                 batch_x = torch.from_numpy(batch_x).float().to(device)
                 y_hat = model(batch_x).cpu().detach().numpy()
                 for idx_rz in range(cnt_channel):
-                    print("idx_rz", idx_rz)
-                    pred[:, :, idx_z-idx_rz] = np.squeeze(y_hat[:, 1, cnt_channel-idx_rz:, :])
+                    # print("idx_rz", idx_rz)
+                    pred[:, :, idx_z-idx_rz-1] = np.squeeze(y_hat[:, 1, cnt_channel-idx_rz-1:, :])
                 
             pred_file = nib.Nifti1Image(pred, x_file.affine, x_file.header)
             pred_name = train_dict["save_folder"]+"pred/"+file_name
