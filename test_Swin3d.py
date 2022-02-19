@@ -129,7 +129,7 @@ for idx_epoch in range(train_dict["epochs"]):
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
     package_test = [test_list, False, False, "test"]
 
-    for package in [package_train, package_val]:
+    for package in [package_test]:
 
         file_list = package[0]
         isTrain = package[1]
@@ -138,13 +138,9 @@ for idx_epoch in range(train_dict["epochs"]):
 
         model.eval()
 
-        random.shuffle(file_list)
-        idx_batch = 0
-        epoch_loss = np.zeros((len(file_list) // train_dict["batch"]))
-        idx_bloss = 0
+        # random.shuffle(file_list)
 
         # n c d h w
-        x_data = nib.load(file_list[0]).get_fdata()
 
         for cnt_file, file_path in enumerate(file_list):
 
