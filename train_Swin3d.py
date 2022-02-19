@@ -74,44 +74,45 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Swin-B
-model = SwinTransformer3D(
-    pretrained=None,
-    pretrained2d=True,
-    patch_size=(2,4,4),
-    in_chans=3,
-    embed_dim=128,
-    depths=[2, 2, 18, 2],
-    num_heads=[4, 8, 16, 32],
-    window_size=(16,7,7),
-    mlp_ratio=4.,
-    qkv_bias=True,
-    qk_scale=None,
-    drop_rate=0.,
-    attn_drop_rate=0.,
-    drop_path_rate=0.2,
-    norm_layer=nn.LayerNorm,
-    patch_norm=True,
-    frozen_stages=-1,
-    use_checkpoint=False,
-    deconv_channels = 6)
+# model = SwinTransformer3D(
+#     pretrained=None,
+#     pretrained2d=True,
+#     patch_size=(2,4,4),
+#     in_chans=3,
+#     embed_dim=128,
+#     depths=[2, 2, 18, 2],
+#     num_heads=[4, 8, 16, 32],
+#     window_size=(16,7,7),
+#     mlp_ratio=4.,
+#     qkv_bias=True,
+#     qk_scale=None,
+#     drop_rate=0.,
+#     attn_drop_rate=0.,
+#     drop_path_rate=0.2,
+#     norm_layer=nn.LayerNorm,
+#     patch_norm=True,
+#     frozen_stages=-1,
+#     use_checkpoint=False,
+#     deconv_channels = 6)
 
-pretrain = torch.load("./pre_train/"+train_dict["pre_train"], map_location=torch.device('cpu'))
-pretrain_state = pretrain["state_dict"]
-pretrain_state_keys = pretrain_state.keys()
-model_state_keys = model.state_dict().keys()
-new_model_state = {}
+# pretrain = torch.load("./pre_train/"+train_dict["pre_train"], map_location=torch.device('cpu'))
+# pretrain_state = pretrain["state_dict"]
+# pretrain_state_keys = pretrain_state.keys()
+# model_state_keys = model.state_dict().keys()
+# new_model_state = {}
 
-del pretrain
-gc.collect()
-torch.cuda.empty_cache()
+# del pretrain
+# gc.collect()
+# torch.cuda.empty_cache()
 
-for model_key in model_state_keys:
-    if "backbone."+model_key in pretrain_state_keys:
-        new_model_state[model_key] = pretrain_state["backbone."+model_key]
-    else:
-        new_model_state[model_key] = model.state_dict()[model_key]
+# for model_key in model_state_keys:
+#     if "backbone."+model_key in pretrain_state_keys:
+#         new_model_state[model_key] = pretrain_state["backbone."+model_key]
+#     else:
+#         new_model_state[model_key] = model.state_dict()[model_key]
 
-model.load_state_dict(new_model_state)
+# model.load_state_dict(new_model_state)
+model = torch.load(train_dict["save_folder"]+"model_best_096.pth", map_location=torch.device('cpu'))
 
 # model = nn.DataParallel(model)
 model.train()
@@ -154,7 +155,8 @@ np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 best_val_loss = 1e6
 # wandb.watch(model)
 
-for idx_epoch in range(train_dict["epochs"]):
+for idx_epoch_new in range(train_dict["epochs"]):
+    idx_epoch = idx_epoch_new + 100
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
     package_train = [train_list, True, False, "train"]
