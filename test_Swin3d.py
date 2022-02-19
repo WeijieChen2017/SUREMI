@@ -151,7 +151,6 @@ for idx_epoch in range(train_dict["epochs"]):
             len_z = x_data.shape[2]
             idx_z = 0
 
-
             pred = np.zeros(x_data.shape)
 
             batch_x = np.zeros((1, 3, train_dict["channel"], x_data.shape[0], x_data.shape[1]))
@@ -177,16 +176,20 @@ for idx_epoch in range(train_dict["epochs"]):
                 cnt_channel += 1
                 if cnt_channel == train_dict["channel"]:
                     # slices fill a full batch
-                    y_hat = model(batch_x)
+                    batch_x = torch.from_numpy(batch_x).float().to(device)
+                    y_hat = model(batch_x).cpu().detach().numpy()
+                    batch_x = np.zeros((1, 3, train_dict["channel"], x_data.shape[0], x_data.shape[1]))
                     for idx_rz in range(train_dict["channel"]):
-                        pred[:, :, idx_z-idx_rz] = np.squeeze(batch_x[:, 1, train_dict["channel"]-idx_rz:, :])
+                        pred[:, :, idx_z-idx_rz] = np.squeeze(y_hat[:, 1, train_dict["channel"]-idx_rz:, :])
                     cnt_channel = 0
 
             if cnt_channel > 0:
-                y_hat = model(batch_x)
+
+                batch_x = torch.from_numpy(batch_x).float().to(device)
+                y_hat = model(batch_x).cpu().detach().numpy()
                 for idx_rz in range(train_dict["channel"]):
-                    pred[:, :, idx_z-idx_rz] = np.squeeze(batch_x[:, 1, train_dict["channel"]-idx_rz:, :])
-            
+                    pred[:, :, idx_z-idx_rz] = np.squeeze(y_hat[:, 1, train_dict["channel"]-idx_rz:, :])
+                
             pred_file = nib.Nifti1Image(pred, x_file.affine, x_file.header)
             pred_name = train_dict["save_folder"]+"pred/"+file_name
             nib.save(pred_file, pred_name)
