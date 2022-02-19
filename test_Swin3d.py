@@ -180,6 +180,7 @@ for idx_epoch in range(train_dict["epochs"]):
                     y_hat = model(batch_x).cpu().detach().numpy()
                     batch_x = np.zeros((1, 3, train_dict["channel"], x_data.shape[0], x_data.shape[1]))
                     for idx_rz in range(train_dict["channel"]):
+                        print(idx_z-idx_rz, train_dict["channel"]-idx_rz)
                         pred[:, :, idx_z-idx_rz] = np.squeeze(y_hat[:, 1, train_dict["channel"]-idx_rz:, :])
                     cnt_channel = 0
 
