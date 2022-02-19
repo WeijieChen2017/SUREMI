@@ -125,73 +125,72 @@ np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 best_val_loss = 1e6
 # wandb.watch(model)
 
-for idx_epoch in range(train_dict["epochs"]):
-    print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
-    package_test = [test_list, False, False, "test"]
+# print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
+package_test = [test_list, False, False, "test"]
 
-    for package in [package_test]:
+for package in [package_test]:
 
-        file_list = package[0]
-        isTrain = package[1]
-        isVal = package[2]
-        iter_tag = package[3]
+    file_list = package[0]
+    isTrain = package[1]
+    isVal = package[2]
+    iter_tag = package[3]
 
-        model.eval()
+    model.eval()
 
-        # random.shuffle(file_list)
+    # random.shuffle(file_list)
 
-        # n c d h w
+    # n c d h w
 
-        for cnt_file, file_path in enumerate(file_list):
+    for cnt_file, file_path in enumerate(file_list):
 
-            x_path = file_path
-            file_name = os.path.basename(file_path)
-            x_file = nib.load(x_path)
-            x_data = x_file.get_fdata()
-            len_z = x_data.shape[2]
-            idx_z = 0
+        x_path = file_path
+        file_name = os.path.basename(file_path)
+        x_file = nib.load(x_path)
+        x_data = x_file.get_fdata()
+        len_z = x_data.shape[2]
+        idx_z = 0
 
-            pred = np.zeros(x_data.shape)
+        pred = np.zeros(x_data.shape)
 
-            batch_x = np.zeros((1, 3, train_dict["channel"], x_data.shape[0], x_data.shape[1]))
-            cnt_channel = 0
+        batch_x = np.zeros((1, 3, train_dict["channel"], x_data.shape[0], x_data.shape[1]))
+        cnt_channel = 0
 
-            while idx_z < len_z:
+        while idx_z < len_z:
 
-                # print("idx_z:", idx_z, "cnt_channe;", cnt_channel)
-                if idx_z == 0:
-                    batch_x[:, 0, cnt_channel, :, :] = x_data[:, :, 0]
-                    batch_x[:, 1, cnt_channel, :, :] = x_data[:, :, 0]
-                    batch_x[:, 2, cnt_channel, :, :] = x_data[:, :, 1]
-                elif idx_z == len_z - 1:
-                    batch_x[:, 0, cnt_channel, :, :] = x_data[:, :, len_z - 2]
-                    batch_x[:, 1, cnt_channel, :, :] = x_data[:, :, len_z - 1]
-                    batch_x[:, 2, cnt_channel, :, :] = x_data[:, :, len_z - 1]
-                else:
-                    batch_x[:, 0, cnt_channel, :, :] = x_data[:, :, idx_z-1]
-                    batch_x[:, 1, cnt_channel, :, :] = x_data[:, :, idx_z]
-                    batch_x[:, 2, cnt_channel, :, :] = x_data[:, :, idx_z+1]
+            # print("idx_z:", idx_z, "cnt_channe;", cnt_channel)
+            if idx_z == 0:
+                batch_x[:, 0, cnt_channel, :, :] = x_data[:, :, 0]
+                batch_x[:, 1, cnt_channel, :, :] = x_data[:, :, 0]
+                batch_x[:, 2, cnt_channel, :, :] = x_data[:, :, 1]
+            elif idx_z == len_z - 1:
+                batch_x[:, 0, cnt_channel, :, :] = x_data[:, :, len_z - 2]
+                batch_x[:, 1, cnt_channel, :, :] = x_data[:, :, len_z - 1]
+                batch_x[:, 2, cnt_channel, :, :] = x_data[:, :, len_z - 1]
+            else:
+                batch_x[:, 0, cnt_channel, :, :] = x_data[:, :, idx_z-1]
+                batch_x[:, 1, cnt_channel, :, :] = x_data[:, :, idx_z]
+                batch_x[:, 2, cnt_channel, :, :] = x_data[:, :, idx_z+1]
 
-                idx_z += 1
-                cnt_channel += 1
-                if cnt_channel == train_dict["channel"]:
-                    # slices fill a full batch
-                    batch_x = torch.from_numpy(batch_x).float().to(device)
-                    y_hat = model(batch_x).cpu().detach().numpy()
-                    batch_x = np.zeros((1, 3, train_dict["channel"], x_data.shape[0], x_data.shape[1]))
-                    for idx_rz in range(train_dict["channel"]):
-                        # print("idx_rz", idx_z-idx_rz-1, train_dict["channel"]-idx_rz-1)
-                        pred[:, :, idx_z-idx_rz-1] = np.squeeze(y_hat[:, 1, train_dict["channel"]-idx_rz-1, :, :])
-                    cnt_channel = 0
-
-            if cnt_channel > 0:
+            idx_z += 1
+            cnt_channel += 1
+            if cnt_channel == train_dict["channel"]:
+                # slices fill a full batch
                 batch_x = torch.from_numpy(batch_x).float().to(device)
                 y_hat = model(batch_x).cpu().detach().numpy()
-                for idx_rz in range(cnt_channel):
-                    # print("idx_rz", idx_rz)
-                    pred[:, :, idx_z-idx_rz-1] = np.squeeze(y_hat[:, 1, cnt_channel-idx_rz-1, :, :])
-                
-            pred_file = nib.Nifti1Image(pred, x_file.affine, x_file.header)
-            pred_name = train_dict["save_folder"]+"pred/"+file_name
-            nib.save(pred_file, pred_name)
-            print(pred_name)
+                batch_x = np.zeros((1, 3, train_dict["channel"], x_data.shape[0], x_data.shape[1]))
+                for idx_rz in range(train_dict["channel"]):
+                    # print("idx_rz", idx_z-idx_rz-1, train_dict["channel"]-idx_rz-1)
+                    pred[:, :, idx_z-idx_rz-1] = np.squeeze(y_hat[:, 1, train_dict["channel"]-idx_rz-1, :, :])
+                cnt_channel = 0
+
+        if cnt_channel > 0:
+            batch_x = torch.from_numpy(batch_x).float().to(device)
+            y_hat = model(batch_x).cpu().detach().numpy()
+            for idx_rz in range(cnt_channel):
+                # print("idx_rz", idx_rz)
+                pred[:, :, idx_z-idx_rz-1] = np.squeeze(y_hat[:, 1, cnt_channel-idx_rz-1, :, :])
+            
+        pred_file = nib.Nifti1Image(pred, x_file.affine, x_file.header)
+        pred_name = train_dict["save_folder"]+"pred/"+file_name
+        nib.save(pred_file, pred_name)
+        print(pred_name)
