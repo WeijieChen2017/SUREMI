@@ -86,8 +86,8 @@ model = VRT(
     deformable_groups=16
     )
 
-pretrain = torch.load("./pre_train/"+train_dict["pre_train"], map_location=torch.device('cpu'))
-model.load_state_dict(pretrain["params"])
+# pretrain = torch.load("./pre_train/"+train_dict["pre_train"], map_location=torch.device('cpu'))
+# model.load_state_dict(pretrain["params"])
 # pretrain_state = pretrain["state_dict"]
 # pretrain_state_keys = pretrain_state.keys()
 # model_state_keys = model.state_dict().keys()
