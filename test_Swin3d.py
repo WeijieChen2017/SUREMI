@@ -159,8 +159,8 @@ for idx_epoch in range(train_dict["epochs"]):
 
             while idx_z < len_z:
 
+                print(idx_z, cnt_channel)
                 if idx_z == 0:
-                    print(idx_z, cnt_channel)
                     batch_x[:, 0, cnt_channel, :, :] = x_data[:, :, 0]
                     batch_x[:, 1, cnt_channel, :, :] = x_data[:, :, 0]
                     batch_x[:, 2, cnt_channel, :, :] = x_data[:, :, 1]
