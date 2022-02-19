@@ -158,7 +158,7 @@ for idx_epoch in range(train_dict["epochs"]):
 
             while idx_z < len_z:
 
-                print(idx_z, cnt_channel)
+                print("idx_z:", idx_z, "cnt_channe;", cnt_channel)
                 if idx_z == 0:
                     batch_x[:, 0, cnt_channel, :, :] = x_data[:, :, 0]
                     batch_x[:, 1, cnt_channel, :, :] = x_data[:, :, 0]
@@ -180,15 +180,15 @@ for idx_epoch in range(train_dict["epochs"]):
                     y_hat = model(batch_x).cpu().detach().numpy()
                     batch_x = np.zeros((1, 3, train_dict["channel"], x_data.shape[0], x_data.shape[1]))
                     for idx_rz in range(train_dict["channel"]):
-                        print(idx_z-idx_rz-1, train_dict["channel"]-idx_rz-1)
+                        print("idx_rz", idx_z-idx_rz-1, train_dict["channel"]-idx_rz-1)
                         pred[:, :, idx_z-idx_rz-1] = np.squeeze(y_hat[:, 1, train_dict["channel"]-idx_rz-1, :, :])
                     cnt_channel = 0
 
             if cnt_channel > 0:
-
                 batch_x = torch.from_numpy(batch_x).float().to(device)
                 y_hat = model(batch_x).cpu().detach().numpy()
                 for idx_rz in range(cnt_channel):
+                    print("idx_rz", idx_rz)
                     pred[:, :, idx_z-idx_rz] = np.squeeze(y_hat[:, 1, cnt_channel-idx_rz:, :])
                 
             pred_file = nib.Nifti1Image(pred, x_file.affine, x_file.header)
