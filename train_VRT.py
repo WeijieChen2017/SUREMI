@@ -86,24 +86,24 @@ model = VRT(
     deformable_groups=16
     )
 
-# pretrain = torch.load("./pre_train/"+train_dict["pre_train"], map_location=torch.device('cpu'))
-# model.load_state_dict(pretrain["params"])
-# pretrain_state = pretrain["state_dict"]
-# pretrain_state_keys = pretrain_state.keys()
-# model_state_keys = model.state_dict().keys()
-# new_model_state = {}
+pretrain = torch.load("./pre_train/"+train_dict["pre_train"], map_location=torch.device('cpu'))
+model.load_state_dict(pretrain["params"])
+pretrain_state = pretrain["state_dict"]
+pretrain_state_keys = pretrain_state.keys()
+model_state_keys = model.state_dict().keys()
+new_model_state = {}
 
-# del pretrain
-# gc.collect()
-# torch.cuda.empty_cache()
+del pretrain
+gc.collect()
+torch.cuda.empty_cache()
 
-# for model_key in model_state_keys:
-#     if "backbone."+model_key in pretrain_state_keys:
-#         new_model_state[model_key] = pretrain_state["backbone."+model_key]
-#     else:
-#         new_model_state[model_key] = model.state_dict()[model_key]
+for model_key in model_state_keys:
+    if "backbone."+model_key in pretrain_state_keys:
+        new_model_state[model_key] = pretrain_state["backbone."+model_key]
+    else:
+        new_model_state[model_key] = model.state_dict()[model_key]
 
-# model.load_state_dict(new_model_state)
+model.load_state_dict(new_model_state)
 
 # model = nn.DataParallel(model)
 model.train()
