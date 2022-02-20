@@ -112,7 +112,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 #         new_model_state[model_key] = model.state_dict()[model_key]
 
 # model.load_state_dict(new_model_state)
-model = torch.load(train_dict["save_folder"]+"model_best_096.pth", map_location=torch.device('cpu'))
+model = torch.load(train_dict["save_folder"]+"model_best_195.pth", map_location=torch.device('cpu'))
 
 # model = nn.DataParallel(model)
 model.train()
@@ -156,7 +156,7 @@ best_val_loss = 1e6
 # wandb.watch(model)
 
 for idx_epoch_new in range(train_dict["epochs"]):
-    idx_epoch = idx_epoch_new + 100
+    idx_epoch = idx_epoch_new + 200
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
     package_train = [train_list, True, False, "train"]
