@@ -87,7 +87,7 @@ model = VRT(
     )
 
 pretrain = torch.load("./pre_train/"+train_dict["pre_train"], map_location=torch.device('cpu'))
-model.load_state_dict(pretrain["params"])
+# model.load_state_dict(pretrain["params"])
 pretrain_state = pretrain["state_dict"]
 pretrain_state_keys = pretrain_state.keys()
 model_state_keys = model.state_dict().keys()
@@ -184,6 +184,7 @@ for idx_epoch in range(train_dict["epochs"]):
             y_file = nib.load(y_path)
             x_data = x_file.get_fdata()
             y_data = y_file.get_fdata()
+            x_data = x_data / np.amax(x_data)
 
             for idx_batch in range(train_dict["batch"]):
 
@@ -202,7 +203,7 @@ for idx_epoch in range(train_dict["epochs"]):
                     print("H:", h_offset, h_offset+train_dict["input_size"][1])
                     print("W:", w_offset, w_offset+train_dict["input_size"][2])
                     print("Z:", z_center-1, z_center+2)
-                    
+
                     batch_x[idx_batch, idx_channel, 0, :, :] = x_slice[:, :, 0]
                     batch_x[idx_batch, idx_channel, 1, :, :] = x_slice[:, :, 1]
                     batch_x[idx_batch, idx_channel, 2, :, :] = x_slice[:, :, 2]
@@ -228,9 +229,9 @@ for idx_epoch in range(train_dict["epochs"]):
         np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), case_loss)
 
         if isVal:
-            np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_x.npy".format(idx_epoch+1, file_name), batch_x.cpu().detach().numpy())
-            np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_y.npy".format(idx_epoch+1, file_name), batch_y.cpu().detach().numpy())
-            np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_"+iter_tag+"_z.npy".format(idx_epoch+1, file_name), y_hat.cpu().detach().numpy())
+            np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_x.npy", batch_x.cpu().detach().numpy())
+            np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_y.npy", batch_y.cpu().detach().numpy())
+            np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_z.npy", y_hat.cpu().detach().numpy())
 
             if np.mean(case_loss) < best_val_loss:
                 # save the best model
