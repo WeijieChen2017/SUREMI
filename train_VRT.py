@@ -170,6 +170,7 @@ for idx_epoch in range(train_dict["epochs"]):
         case_loss = np.zeros((len(file_list)))
 
         # b, d, c, h, w
+        # N, D, C, H, W
         x_data = nib.load(file_list[0]).get_fdata()
 
         for cnt_file, file_path in enumerate(file_list):
@@ -197,6 +198,10 @@ for idx_epoch in range(train_dict["epochs"]):
                     z_center = (z_offset + idx_channel) * 3 + 1
                     x_slice = x_data[h_offset:h_offset+train_dict["input_size"][1], w_offset:w_offset+train_dict["input_size"][2], z_center-1:z_center+2]
                     y_slice = y_data[h_offset:h_offset+train_dict["input_size"][1], w_offset:w_offset+train_dict["input_size"][2], z_center-1:z_center+2]
+                    
+                    print("H:", h_offset, h_offset+train_dict["input_size"][1])
+                    print("W:", w_offset, w_offset+train_dict["input_size"][2])
+                    print("Z:", z_center-1, z_center+2)
                     
                     batch_x[idx_batch, idx_channel, 0, :, :] = x_slice[:, :, 0]
                     batch_x[idx_batch, idx_channel, 1, :, :] = x_slice[:, :, 1]
