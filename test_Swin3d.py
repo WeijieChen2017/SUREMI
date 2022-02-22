@@ -34,7 +34,7 @@ train_dict["deconv_channels"] = 6
 
 train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
 train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
-train_dict["pre_train"] = "model_best_096.pth"
+train_dict["pre_train"] = "model_best_282.pth"
 train_dict["val_ratio"] = 0.3
 train_dict["test_ratio"] = 0.2
 
