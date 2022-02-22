@@ -13,9 +13,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 from timm.models.layers import trunc_normal_, DropPath
 
-from mmcv_custom import load_checkpoint
-from mmseg.utils import get_root_logger
-from mmseg.models.builder import BACKBONES
+# from mmcv_custom import load_checkpoint
+# from mmseg.utils import get_root_logger
+# from mmseg.models.builder import BACKBONES
 
 
 class Block(nn.Module):
