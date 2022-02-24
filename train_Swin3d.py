@@ -25,7 +25,7 @@ train_dict["seed"] = 426
 train_dict["channel"] = 18 # 18*3 = 42 slices
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
-train_dict["gpu_ids"] = [0]
+train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 100
 train_dict["batch"] = 1
 train_dict["dropout"] = 0
