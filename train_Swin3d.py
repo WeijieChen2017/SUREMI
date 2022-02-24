@@ -22,7 +22,7 @@ train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 train_dict["project_name"] = "Swin3d_Iman"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
-train_dict["channel"] = 18
+train_dict["channel"] = 18 # 18*3 = 42 slices
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
 train_dict["gpu_ids"] = [0]
@@ -74,26 +74,26 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Swin-B
-# model = SwinTransformer3D(
-#     pretrained=None,
-#     pretrained2d=True,
-#     patch_size=(2,4,4),
-#     in_chans=3,
-#     embed_dim=128,
-#     depths=[2, 2, 18, 2],
-#     num_heads=[4, 8, 16, 32],
-#     window_size=(16,7,7),
-#     mlp_ratio=4.,
-#     qkv_bias=True,
-#     qk_scale=None,
-#     drop_rate=0.,
-#     attn_drop_rate=0.,
-#     drop_path_rate=0.2,
-#     norm_layer=nn.LayerNorm,
-#     patch_norm=True,
-#     frozen_stages=-1,
-#     use_checkpoint=False,
-#     deconv_channels = 6)
+model = SwinTransformer3D(
+    pretrained=None,
+    pretrained2d=True,
+    patch_size=(2,4,4),
+    in_chans=3,
+    embed_dim=128,
+    depths=[2, 2, 18, 2],
+    num_heads=[4, 8, 16, 32],
+    window_size=(16,7,7),
+    mlp_ratio=4.,
+    qkv_bias=True,
+    qk_scale=None,
+    drop_rate=0.,
+    attn_drop_rate=0.,
+    drop_path_rate=0.2,
+    norm_layer=nn.LayerNorm,
+    patch_norm=True,
+    frozen_stages=-1,
+    use_checkpoint=False,
+    deconv_channels = 6)
 
 # pretrain = torch.load("./pre_train/"+train_dict["pre_train"], map_location=torch.device('cpu'))
 # pretrain_state = pretrain["state_dict"]
@@ -112,7 +112,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 #         new_model_state[model_key] = model.state_dict()[model_key]
 
 # model.load_state_dict(new_model_state)
-model = torch.load(train_dict["save_folder"]+"model_best_195.pth", map_location=torch.device('cpu'))
+# model = torch.load(train_dict["save_folder"]+"model_best_195.pth", map_location=torch.device('cpu'))
 
 # model = nn.DataParallel(model)
 model.train()
