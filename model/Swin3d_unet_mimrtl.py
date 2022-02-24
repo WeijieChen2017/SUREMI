@@ -724,7 +724,7 @@ class SwinTransformer3D(nn.Module):
         x_list.append(x)
 
         for data in x_list:
-        	print(x.size())
+        	print(data.size())
         # x_list = [
         #     B-128-15-64-64,
         #     B-256-15-32-32,
