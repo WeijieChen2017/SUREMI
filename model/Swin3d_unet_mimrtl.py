@@ -704,33 +704,33 @@ class SwinTransformer3D(nn.Module):
 
     def forward(self, x):
         """Forward function."""
-        # print(x.size())
-        x_list = [x]
-        x = self.patch_embed(x)
-        x_list.append(x)
-        x = self.pos_drop(x)
-        x_list.append(x)
-        
 
+        # torch.Size([1, 3, 18, 256, 256])
+        x = self.patch_embed(x)
+        # torch.Size([1, 128, 9, 64, 64])
+        x = self.pos_drop(x)
+        # torch.Size([1, 128, 9, 64, 64])
+        
+        x_list  = [x]
         for layer in self.encoder_layers:
             x = layer(x.contiguous())
             x_list.append(x)
+            # torch.Size([1, 256, 9, 32, 32])
+            # torch.Size([1, 512, 9, 16, 16])
+            # torch.Size([1, 1024, 9, 8, 8])
+            # torch.Size([1, 1024, 9, 8, 8])
+
 
         # print(x.size())
         x = rearrange(x, 'n c d h w -> n d h w c')
         x = self.norm(x)
         x = rearrange(x, 'n d h w c -> n c d h w')
-
         x_list.append(x)
-
+        # torch.Size([1, 1024, 9, 8, 8])
+        
+        # x_list = 64, 32, 16, 8, 8, 8 
         for data in x_list:
-        	print(data.size())
-        # x_list = [
-        #     B-128-15-64-64,
-        #     B-256-15-32-32,
-        #     B-512-15-16-16, 
-        #     B-1024-15-8-8
-        # ]
+            print(data.size())
 
         return None
 
