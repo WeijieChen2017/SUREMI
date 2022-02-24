@@ -273,7 +273,7 @@ class SwinTransformerBlock3D(nn.Module):
 
 
 class PatchMerging(nn.Module):
-    """ Patch UnMerging Layer
+    """ Patch Merging Layer
     Args:
         dim (int): Number of input channels.
         norm_layer (nn.Module, optional): Normalization layer.  Default: nn.LayerNorm
@@ -711,10 +711,6 @@ class SwinTransformer3D(nn.Module):
             # print("ConvUp:", z.size())
 
         z = self.out_conv(z)
-
-        # del x_list
-
-        # torch.cuda.empty_cache()
 
         return z
 

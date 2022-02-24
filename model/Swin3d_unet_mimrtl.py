@@ -318,8 +318,8 @@ class PatchMerging(nn.Module):
     def __init__(self, dim, norm_layer=nn.LayerNorm):
         super().__init__()
         self.dim = dim
-        self.reduction = nn.Linear(4 * dim, 2 * dim, bias=False)
-        self.norm = norm_layer(4 * dim)
+        self.reduction = nn.Linear(8 * dim, 2 * dim, bias=False)
+        self.norm = norm_layer(8 * dim)
 
     def forward(self, x):
         """ Forward function.
@@ -329,15 +329,19 @@ class PatchMerging(nn.Module):
         B, D, H, W, C = x.shape
 
         # padding
-        pad_input = (H % 2 == 1) or (W % 2 == 1)
+        pad_input = (H % 2 == 1) or (W % 2 == 1) or (D % 2 == 1)
         if pad_input:
-            x = F.pad(x, (0, 0, 0, W % 2, 0, H % 2))
+            x = F.pad(x, (0, 0, 0, W % 2, 0, H % 2, 0, D%2)) # dim=-1, dim=-2, dim=-3
 
-        x0 = x[:, :, 0::2, 0::2, :]  # B D H/2 W/2 C
-        x1 = x[:, :, 1::2, 0::2, :]  # B D H/2 W/2 C
-        x2 = x[:, :, 0::2, 1::2, :]  # B D H/2 W/2 C
-        x3 = x[:, :, 1::2, 1::2, :]  # B D H/2 W/2 C
-        x = torch.cat([x0, x1, x2, x3], -1)  # B D H/2 W/2 4*C
+        x000 = x[:, 0::2, 0::2, 0::2, :]
+        x001 = x[:, 0::2, 0::2, 1::2, :]
+        x010 = x[:, 0::2, 1::2, 0::2, :]
+        x011 = x[:, 0::2, 1::2, 1::2, :]
+        x100 = x[:, 1::2, 0::2, 0::2, :]
+        x101 = x[:, 1::2, 0::2, 1::2, :]
+        x110 = x[:, 1::2, 1::2, 0::2, :]
+        x111 = x[:, 1::2, 1::2, 1::2, :]
+        x = torch.cat([x000, x001, x010, x011, x100, x101, x110, x111], -1)  # B D/2 H/2 W/2 8*C
 
         x = self.norm(x)
         x = self.reduction(x)
@@ -383,7 +387,7 @@ class BasicLayer(nn.Module):
                  dim,
                  depth,
                  num_heads,
-                 window_size=(1,7,7),
+                 window_size=(7,7,7),
                  mlp_ratio=4.,
                  qkv_bias=False,
                  qk_scale=None,
@@ -517,7 +521,7 @@ class SwinTransformer3D(nn.Module):
                  embed_dim=96,
                  depths=[2, 2, 6, 2],
                  num_heads=[3, 6, 12, 24],
-                 window_size=(2,7,7),
+                 window_size=(7,7,7),
                  mlp_ratio=4.,
                  qkv_bias=True,
                  qk_scale=None,
