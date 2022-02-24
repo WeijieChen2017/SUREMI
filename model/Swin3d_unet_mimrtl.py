@@ -272,6 +272,43 @@ class SwinTransformerBlock3D(nn.Module):
         return x
 
 
+class PatchUnMerging(nn.Module):
+    """ Patch Merging Layer
+    Args:
+        dim (int): Number of input channels.
+        norm_layer (nn.Module, optional): Normalization layer.  Default: nn.LayerNorm
+    """
+    def __init__(self, dim, norm_layer=nn.LayerNorm):
+        super().__init__()
+        self.dim = dim
+        self.reduction = nn.Linear(4 * dim, 2 * dim, bias=False)
+        self.norm = norm_layer(4 * dim)
+
+    def forward(self, x):
+        """ Forward function.
+        Args:
+            x: Input feature, tensor size (B, D, H, W, C).
+        """
+        B, D, H, W, C = x.shape
+
+        x0 = x[:, :, :, :, C//4 * 0 : C//4 * 1]
+        x1 = x[:, :, :, :, C//4 * 1 : C//4 * 2]
+        x2 = x[:, :, :, :, C//4 * 2 : C//4 * 3]
+        x3 = x[:, :, :, :, C//4 * 3 : C//4 * 4]
+
+        new_x = torch.zeros([B, D, H*2, W*2, C//4], dtype=torch.float)
+
+        new_x[:, :, 0::2, 0::2, :] = x0  # B D H/2 W/2 C
+        new_x[:, :, 1::2, 0::2, :] = x1  # B D H/2 W/2 C
+        new_x[:, :, 0::2, 1::2, :] = x2  # B D H/2 W/2 C
+        new_x[:, :, 1::2, 1::2, :] = x3  # B D H/2 W/2 C
+
+        new_x = self.norm(new_x)
+        new_x = self.reduction(new_x)
+
+        return new_x
+
+
 class PatchMerging(nn.Module):
     """ Patch UnMerging Layer
     Args:
@@ -515,7 +552,7 @@ class SwinTransformer3D(nn.Module):
         dpr = [x.item() for x in torch.linspace(0, drop_path_rate, sum(depths))]  # stochastic depth decay rule
 
         # build layers
-        self.layers = nn.ModuleList()
+        self.encoder_layers = nn.ModuleList()
         for i_layer in range(self.num_layers):
             layer = BasicLayer(
                 dim=int(embed_dim * 2**i_layer),
@@ -531,7 +568,7 @@ class SwinTransformer3D(nn.Module):
                 norm_layer=norm_layer,
                 downsample=PatchMerging if i_layer<self.num_layers-1 else None,
                 use_checkpoint=use_checkpoint)
-            self.layers.append(layer)
+            self.encoder_layers.append(layer)
 
         self.num_features = int(embed_dim * 2**(self.num_layers-1))
 
@@ -541,32 +578,25 @@ class SwinTransformer3D(nn.Module):
         self._freeze_stages()
 
 
-        # Add ConvUp and UpConv for image generation
+        # self.decode_layers = nn.ModuleList()
+        # for i_layer in range(self.num_layers):
+        #     layer = BasicLayer_deconv(
+        #         dim=int(embed_dim * 2**i_layer),
+        #         depth=depths[i_layer],
+        #         num_heads=num_heads[i_layer],
+        #         window_size=window_size,
+        #         mlp_ratio=mlp_ratio,
+        #         qkv_bias=qkv_bias,
+        #         qk_scale=qk_scale,
+        #         drop=drop_rate,
+        #         attn_drop=attn_drop_rate,
+        #         drop_path=dpr[sum(depths[:i_layer]):sum(depths[:i_layer + 1])],
+        #         norm_layer=norm_layer,
+        #         downsample=PatchMerging if i_layer<self.num_layers-1 else None,
+        #         use_checkpoint=use_checkpoint)
+        #     self.decode_layers.append(layer)
+        # self.decode_layers.reverse()
 
-        self.conv_up = nn.ModuleList()
-        for i_conv_up in range(self.num_layers):
-            layer = ConvUp(
-                in_channels = 2 ** (i_conv_up+self.deconv_channels+2),
-                out_channels = 2 ** (i_conv_up+self.deconv_channels))
-            self.conv_up.append(layer)
-
-        self.up_conv = nn.ModuleList()
-        for i_up_conv in range(self.num_layers):
-            layer = UpConv(
-                in_channels = 2 ** (i_up_conv+self.deconv_channels+1),
-                out_channels = 2 ** (i_up_conv+self.deconv_channels+1))
-            self.up_conv.append(layer)
-        
-        self.bottleneck_up = nn.ConvTranspose3d(
-            in_channels = 2**(self.num_layers+self.deconv_channels), 
-            out_channels = 2**(self.num_layers+self.deconv_channels), 
-            kernel_size=2, 
-            stride=2)
-
-        self.out_conv = OutConv(
-            in_channels = 2**(self.num_layers+self.deconv_channels-4),
-            out_channels = in_chans
-            )
 
     def _freeze_stages(self):
         if self.frozen_stages >= 0:
@@ -577,7 +607,7 @@ class SwinTransformer3D(nn.Module):
         if self.frozen_stages >= 1:
             self.pos_drop.eval()
             for i in range(0, self.frozen_stages):
-                m = self.layers[i]
+                m = self.encoder_layers[i]
                 m.eval()
                 for param in m.parameters():
                     param.requires_grad = False
@@ -675,22 +705,26 @@ class SwinTransformer3D(nn.Module):
     def forward(self, x):
         """Forward function."""
         # print(x.size())
-
-        x = self.patch_embed(x)
-        x = self.pos_drop(x)
-
         x_list = [x]
+        x = self.patch_embed(x)
+        x_list.append(x)
+        x = self.pos_drop(x)
+        x_list.append(x)
+        
 
-        for layer in self.layers:
+        for layer in self.encoder_layers:
             x = layer(x.contiguous())
             x_list.append(x)
-
 
         # print(x.size())
         x = rearrange(x, 'n c d h w -> n d h w c')
         x = self.norm(x)
         x = rearrange(x, 'n d h w c -> n c d h w')
 
+        x_list.append(x)
+
+        for data in x_list:
+        	print(x.size())
         # x_list = [
         #     B-128-15-64-64,
         #     B-256-15-32-32,
@@ -698,25 +732,7 @@ class SwinTransformer3D(nn.Module):
         #     B-1024-15-8-8
         # ]
 
-        z = self.bottleneck_up(x)
-
-        # print("bottleneck:", z.size())
-
-        for iz in reversed(range(self.num_layers)):
-            # print(x_list[iz].size())
-            u = self.up_conv[iz](x_list[iz])
-            # print("UpConv:", u.size())
-            u = torch.cat([u, z], dim=1)
-            z = self.conv_up[iz](u)
-            # print("ConvUp:", z.size())
-
-        z = self.out_conv(z)
-
-        # del x_list
-
-        # torch.cuda.empty_cache()
-
-        return z
+        return None
 
     def train(self, mode=True):
         """Convert the model into training mode while keep layers freezed."""
