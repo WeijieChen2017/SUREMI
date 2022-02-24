@@ -192,7 +192,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             x_path = file_path
             y_path = file_path.replace("MR", "CT")
             file_name = os.path.basename(file_path)
-            print(iter_tag+" ===> Epoch[{:03d}]: --->".format(idx_epoch+1), x_path, "<---", end="")
+            print(iter_tag+" ===> Epoch[{:03d}]: --->".format(idx_epoch+1), x_path, "<---")
             x_file = nib.load(x_path)
             y_file = nib.load(y_path)
             x_data = x_file.get_fdata()
@@ -213,6 +213,8 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 idx_batch = 0
                 batch_x = torch.from_numpy(batch_x).float().to(device)
                 batch_y = torch.from_numpy(batch_y).float().to(device)
+                print("batch_x:", batch_x.size())
+                print("batch_y:", batch_y.size())
                 
                 optimizer.zero_grad()
                 y_hat = model(batch_x)
