@@ -22,7 +22,7 @@ train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 train_dict["project_name"] = "Swin3d_Iman_v2"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
-train_dict["channel"] = 18 # 18*3 = 42 slices
+train_dict["channel"] = 8 # 18*3 = 42 slices
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
 train_dict["gpu_ids"] = [7]
@@ -77,7 +77,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = SwinTransformer3D(
     pretrained=None,
     pretrained2d=True,
-    patch_size=(1,2,2),
+    patch_size=(2,2,2),
     in_chans=3,
     embed_dim=64,
     depths=[2, 4, 4, 2],
