@@ -720,7 +720,7 @@ class SwinTransformer3D(nn.Module):
             # torch.Size([1, 1024, 9, 8, 8])
             # torch.Size([1, 1024, 9, 8, 8])
 
-
+        x_list.pop() # 8->8 tf3d block does not contain norm_layer
         # print(x.size())
         x = rearrange(x, 'n c d h w -> n d h w c')
         x = self.norm(x)
@@ -728,9 +728,15 @@ class SwinTransformer3D(nn.Module):
         x_list.append(x)
         # torch.Size([1, 1024, 9, 8, 8])
         
-        # x_list = 64, 32, 16, 8, 8, 8 
-        for data in x_list:
-            print(data.size())
+        # x_list 
+        # torch.Size([1, 32, 4, 256, 256])
+        # torch.Size([1, 64, 4, 128, 128])
+        # torch.Size([1, 128, 4, 64, 64])
+        # torch.Size([1, 256, 4, 32, 32])
+        # torch.Size([1, 256, 4, 32, 32])
+        # torch.Size([1, 256, 4, 32, 32])
+        for layer in self.deconv_layers:
+
 
         return None
 
