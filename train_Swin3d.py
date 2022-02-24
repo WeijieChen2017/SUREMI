@@ -19,7 +19,7 @@ from model import SwinTransformer3D
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Swin3d_Iman"
+train_dict["project_name"] = "Swin3d_Iman_v2"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["channel"] = 18 # 18*3 = 42 slices
