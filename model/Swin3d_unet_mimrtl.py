@@ -818,21 +818,17 @@ class SwinTransformer3D(nn.Module):
             # torch.Size([1, 1024, 9, 8, 8])
 
         x_list.pop() # 8->8 tf3d block does not contain layer norm
+        x_list.reverse()
         # print(x.size())
         x = rearrange(x, 'n c d h w -> n d h w c')
         x = self.norm(x)
         x = rearrange(x, 'n d h w c -> n c d h w')
-        x_list.append(x)
         # torch.Size([1, 1024, 9, 8, 8])
         
-        for layer in self.decoder_layers:
+        for idx, layer in enumerate(self.decoder_layers):
             print("Decoder: ", x.size())
-            x = layer(x.contiguous())
-            x_list.append(x)
-
-        for data in x_list:
-            print(data.size())
-        print("End")
+            print(x.size(), x_list[idx])
+            x = layer(x.contiguous(), x_list[idx])
 
         # x_list 
         # torch.Size([1, 16, 64, 64, 64])
