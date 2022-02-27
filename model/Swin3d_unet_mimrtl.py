@@ -525,9 +525,9 @@ class BasicLayer_up(nn.Module):
 
         B, C, D, H, W = x.shape
         window_size, shift_size = get_window_size((D,H,W), self.window_size, self.shift_size)
-        print(self.dim, x.size(), skip_x.size(), torch.cat([x, skip_x], 1).size())
-        x = self.proj(torch.cat([x, skip_x], 1))
         x = rearrange(x, 'b c d h w -> b d h w c')
+        skip_x = rearrange(skip_x, 'b c d h w -> b d h w c')
+        x = self.proj(torch.cat([x, skip_x], -1))
         Dp = int(np.ceil(D / window_size[0])) * window_size[0]
         Hp = int(np.ceil(H / window_size[1])) * window_size[1]
         Wp = int(np.ceil(W / window_size[2])) * window_size[2]
