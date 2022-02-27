@@ -281,8 +281,8 @@ class PatchUnMerging(nn.Module):
     def __init__(self, dim, norm_layer=nn.LayerNorm):
         super().__init__()
         self.dim = dim
-        self.reduction = nn.Linear(4 * dim, 2 * dim, bias=False)
-        self.norm = norm_layer(4 * dim)
+        self.reduction = nn.Linear(dim // 8, dim // 2, bias=False)
+        self.norm = norm_layer(dim // 8)
 
     def forward(self, x):
         """ Forward function.
