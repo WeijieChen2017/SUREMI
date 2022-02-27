@@ -404,7 +404,7 @@ class BasicLayer(nn.Module):
         x = x_list[0]
         x = rearrange(x, 'b c d h w -> b d h w c')
         if len(x_list) > 1:
-            for skip_x in x_list[1:]:
+            for skip_x in x_list[0:]:
                 skip_x = rearrange(skip_x, 'b c d h w -> b d h w c')
                 x = torch.cat([x, skip_x], -1)
         x = rearrange(x, 'b d h w c -> b c d h w')
