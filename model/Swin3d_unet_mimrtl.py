@@ -311,6 +311,7 @@ class PatchUnMerging(nn.Module):
         new_x[:, 1::2, 1::2, 0::2, :] = x110
         new_x[:, 1::2, 1::2, 1::2, :] = x111
 
+        print("New x:", new_x.size(), self.dim)
         new_x = self.norm(new_x)
         new_x = self.reduction(new_x)
 
