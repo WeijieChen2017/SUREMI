@@ -511,8 +511,6 @@ class BasicLayer_up(nn.Module):
                 use_checkpoint=use_checkpoint,
             )
             for i in range(depth)])
-        
-        print(dim, upsample)
         self.upsample = upsample
         if self.upsample is not None:
             self.upsample = upsample(dim=dim, norm_layer=norm_layer)
@@ -677,7 +675,6 @@ class SwinTransformer3D(nn.Module):
         self.decoder_layers = nn.ModuleList()
         for idx in range(self.num_layers):
             i_layer = self.num_layers - idx - 1
-            print(i_layer, embed_dim * 2**i_layer, i_layer<self.num_layers-1)
             layer = BasicLayer_up(
                 dim=int(embed_dim * 2**i_layer),
                 depth=depths[i_layer],
