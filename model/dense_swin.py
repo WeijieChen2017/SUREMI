@@ -399,7 +399,7 @@ class BasicLayer(nn.Module):
 
         print("x_list:", end="")
         for ob_x in x_list:
-            print(ob_x.size, end="")
+            print(ob_x.size(), end="")
 
         x = x_list[0]
         if len(x_list) > 1:
