@@ -81,7 +81,7 @@ model = SwinTransformer3D(
     in_chans=1,
     embed_dim=8,
     depths=[2, 4, 8, 4, 2],
-    num_heads=[4, 8, 8, 16, 16],
+    num_heads=[4, 4, 8, 8, 16],
     window_size=(7,7,7),
     mlp_ratio=4.,
     qkv_bias=True,
@@ -241,6 +241,6 @@ for idx_epoch in range(train_dict["epochs"]):
                 torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch+1))
                 print("Checkpoint saved at Epoch {:03d}".format(idx_epoch+1))
                 best_val_loss = np.mean(case_loss)
-                
+
         del batch_x, batch_y
         torch.cuda.empty_cache()
