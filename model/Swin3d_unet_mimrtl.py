@@ -214,7 +214,6 @@ class SwinTransformerBlock3D(nn.Module):
     def forward_part1(self, x, mask_matrix):
         B, D, H, W, C = x.shape
         window_size, shift_size = get_window_size((D, H, W), self.window_size, self.shift_size)
-        print(x.size(), self.dim)
         x = self.norm1(x)
         # pad feature maps to multiples of window size
         pad_l = pad_t = pad_d0 = 0
@@ -311,7 +310,6 @@ class PatchUnMerging(nn.Module):
         new_x[:, 1::2, 1::2, 0::2, :] = x110
         new_x[:, 1::2, 1::2, 1::2, :] = x111
 
-        print("New x:", new_x.size(), self.dim)
         new_x = self.norm(new_x)
         new_x = self.reduction(new_x)
 
