@@ -1,3 +1,4 @@
+import gc
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -835,6 +836,9 @@ class SwinTransformer3D(nn.Module):
             x = layer(x.contiguous(), x_list[idx].contiguous())
 
         del x_list
+        gc.collect()
+        torch.cuda.empty_cache()
+
         # x_list 
         # torch.Size([1, 16, 64, 64, 64])
         # torch.Size([1, 32, 32, 32, 32])
