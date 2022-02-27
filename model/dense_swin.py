@@ -348,7 +348,7 @@ class BasicLayer(nn.Module):
                  num_heads,
                  window_size=(7,7,7),
                  mlp_ratio=4.,
-                 channel_k=8
+                 channel_k=8,
                  qkv_bias=False,
                  qk_scale=None,
                  drop=0.,
@@ -386,7 +386,7 @@ class BasicLayer(nn.Module):
             self.downsample = downsample(dim=dim, norm_layer=norm_layer)
 
         self.proj = nn.Sequential(
-            # nn.Conv3d(dim, dim, kernel_size=1, stride=1),
+            nn.Conv3d(dim, dim, kernel_size=1, stride=1),
             nn.Conv3d(dim, channel_k, kernel_size=1, stride=1)
             )
 
@@ -461,7 +461,7 @@ class PatchEmbed3D(nn.Module):
         return x
 
 # @BACKBONES.register_module()
-class SwinTransformer3D(nn.Module):
+class DenseSwinTransformer3D(nn.Module):
     """ Swin Transformer backbone.
         A PyTorch impl of : `Swin Transformer: Hierarchical Vision Transformer using Shifted Windows`  -
           https://arxiv.org/pdf/2103.14030
@@ -686,5 +686,5 @@ class SwinTransformer3D(nn.Module):
 
     def train(self, mode=True):
         """Convert the model into training mode while keep layers freezed."""
-        super(SwinTransformer3D, self).train(mode)
+        super(DenseSwinTransformer3D, self).train(mode)
         self._freeze_stages()
