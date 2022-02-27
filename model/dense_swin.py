@@ -401,16 +401,7 @@ class BasicLayer(nn.Module):
         # for ob_x in x_list:
         #     print(ob_x.size(), end="")
 
-        x = x_list[0]
-        print("Module")
-        print(x.size())
-        x = rearrange(x, 'b c d h w -> b d h w c')
-        if len(x_list) > 1:
-            for skip_x in x_list[0:]:
-                print(skip_x.size())
-                skip_x = rearrange(skip_x, 'b c d h w -> b d h w c')
-                x = torch.cat([x, skip_x], -1)
-        x = rearrange(x, 'b d h w c -> b c d h w')
+        x = torch.cat(x_list, 1)
         x = self.proj(x)
 
         B, C, D, H, W = x.shape
