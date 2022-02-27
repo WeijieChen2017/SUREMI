@@ -390,7 +390,7 @@ class BasicLayer(nn.Module):
             nn.Conv3d(dim, channel_k, kernel_size=1, stride=1)
             )
 
-    def forward(self, x, x_list):
+    def forward(self, x_list):
         """ Forward function.
         Args:
             x: Input feature, tensor size (B, C, D, H, W).
