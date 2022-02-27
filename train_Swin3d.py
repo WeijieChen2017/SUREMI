@@ -230,7 +230,7 @@ for idx_epoch in range(train_dict["epochs"]):
             if isTrain:
                 loss.backward()
                 optimizer.step()
-            case_loss[cnt_file] = loss.item().cpu().detach().numpy()
+            case_loss[cnt_file] = loss.item()
             print("Loss: ", case_loss[cnt_file])
 
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
