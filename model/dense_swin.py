@@ -680,6 +680,7 @@ class DenseSwinTransformer3D(nn.Module):
         x_list  = [x]
         for layer in self.encoder_layers:
             x = layer(x_list)
+            print("x:", x.size())
             x_list.append(x.contiguous())
             for ele in x_list:
                 print(ele.size())
