@@ -396,12 +396,18 @@ class BasicLayer(nn.Module):
             x: Input feature, tensor size (B, C, D, H, W).
         """
         # calculate attention mask for SW-MSA
+
+        print("x_list:", end="")
+        for ob_x in x_list:
+            print(ob_x.size, end="")
+
         x = x_list[0]
         if len(x_list) > 1:
             for skip_x in x_list:
                 x = torch.cat([x, skip_x], 1)
 
         x = self.proj(x)
+        print(x.size())
         B, C, D, H, W = x.shape
         window_size, shift_size = get_window_size((D,H,W), self.window_size, self.shift_size)
         x = rearrange(x, 'b c d h w -> b d h w c')
