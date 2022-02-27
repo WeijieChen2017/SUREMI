@@ -695,6 +695,11 @@ class SwinTransformer3D(nn.Module):
                 use_checkpoint=use_checkpoint)
             self.decoder_layers.append(layer)
 
+        self.out_conv = nn.Sequential(
+            nn.Conv3d(embed_dim, embed_dim, kernel_size=patch_size, stride=patch_size)
+            nn.Conv3d(embed_dim, in_chans, kernel_size=patch_size, stride=patch_size)
+            )
+
     def _freeze_stages(self):
         if self.frozen_stages >= 0:
             self.patch_embed.eval()
@@ -826,7 +831,7 @@ class SwinTransformer3D(nn.Module):
         # torch.Size([1, 1024, 9, 8, 8])
         
         for idx, layer in enumerate(self.decoder_layers):
-            print("Decoder: ",x.size(), x_list[idx].size())
+            # print("Decoder: ",x.size(), x_list[idx].size())
             x = layer(x.contiguous(), x_list[idx].contiguous())
 
         # x_list 
@@ -838,7 +843,7 @@ class SwinTransformer3D(nn.Module):
         # torch.Size([1, 256, 4, 4, 4])
 
 
-        return None
+        return self.out_conv(x)
 
     def train(self, mode=True):
         """Convert the model into training mode while keep layers freezed."""
