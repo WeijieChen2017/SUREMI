@@ -828,7 +828,7 @@ class SwinTransformer3D(nn.Module):
         for idx, layer in enumerate(self.decoder_layers):
             print("Decoder: ", x.size())
             print(x.size(), x_list[idx])
-            x = layer(x.contiguous(), x_list[idx])
+            x = layer(x.contiguous(), x_list[idx].size())
 
         # x_list 
         # torch.Size([1, 16, 64, 64, 64])
