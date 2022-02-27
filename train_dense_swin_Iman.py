@@ -13,7 +13,7 @@ import torch
 import torchvision
 import requests
 
-from model import SwinTransformer3D
+from model import DenseSwinTransformer3D
 
 # ==================== dict and config ====================
 
@@ -74,7 +74,7 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Swin-B
-model = SwinTransformer3D(
+model = DenseSwinTransformer3D(
     pretrained=None,
     pretrained2d=True,
     patch_size=(1,1,1),
