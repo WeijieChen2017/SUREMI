@@ -9,6 +9,7 @@ from .suremi_models import suremi
 
 # from .Swin3d_openmmlab import SwinTransformer3D
 from .Swin3d_unet_mimrtl import SwinTransformer3D
+from .dense_swin import DenseSwinTransformer3D
 
 from .VRT_ETH import VRT
 from .ConvNext_meta import ConvNeXt
