@@ -165,7 +165,7 @@ for idx_epoch in range(train_dict["epochs"]):
 
     if idx_epoch > 0:
         print("Load the previous model.")
-        model = torch.load(train_dict["save_folder"]+"model_best_curr.pth").train()
+        model = torch.load(train_dict["save_folder"]+"model_best_curr.pth")
         model = model.to(device)
 
     for package in [package_train, package_val]:
