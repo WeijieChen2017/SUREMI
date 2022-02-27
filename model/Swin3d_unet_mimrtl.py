@@ -666,7 +666,7 @@ class SwinTransformer3D(nn.Module):
 
         self.decode_layers = nn.ModuleList()
         for idx in range(self.num_layers):
-            i_layer = self.num_layers - idx
+            i_layer = self.num_layers - idx - 1
             layer = BasicLayer_up(
                 dim=int(embed_dim * 2**i_layer),
                 depth=depths[i_layer],
