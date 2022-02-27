@@ -665,7 +665,8 @@ class SwinTransformer3D(nn.Module):
 
 
         self.decode_layers = nn.ModuleList()
-        for i_layer in range(self.num_layers):
+        for idx in range(self.num_layers):
+            i_layer = self.num_layers - idx
             layer = BasicLayer_up(
                 dim=int(embed_dim * 2**i_layer),
                 depth=depths[i_layer],
@@ -681,8 +682,6 @@ class SwinTransformer3D(nn.Module):
                 upsample=PatchUnMerging if i_layer<self.num_layers-1 else None,
                 use_checkpoint=use_checkpoint)
             self.decode_layers.append(layer)
-        self.decode_layers.reverse()
-
 
     def _freeze_stages(self):
         if self.frozen_stages >= 0:
