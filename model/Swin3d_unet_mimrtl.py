@@ -503,6 +503,7 @@ class BasicLayer_up(nn.Module):
             )
             for i in range(depth)])
         
+        print(dim, upsample)
         self.upsample = upsample
         if self.upsample is not None:
             self.upsample = upsample(dim=dim, norm_layer=norm_layer)
