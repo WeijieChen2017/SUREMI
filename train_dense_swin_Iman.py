@@ -30,7 +30,7 @@ train_dict["epochs"] = 100
 train_dict["batch"] = 1
 train_dict["dropout"] = 0
 train_dict["model_term"] = "DenseSwinTransformer3D"
-train_dict["channel_k"] = 16
+train_dict["channel_k"] = 8
 
 train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
 train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
