@@ -834,6 +834,7 @@ class SwinTransformer3D(nn.Module):
             # print("Decoder: ",x.size(), x_list[idx].size())
             x = layer(x.contiguous(), x_list[idx].contiguous())
 
+        del x_list
         # x_list 
         # torch.Size([1, 16, 64, 64, 64])
         # torch.Size([1, 32, 32, 32, 32])
