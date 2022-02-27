@@ -81,7 +81,7 @@ model = SwinTransformer3D(
     in_chans=1,
     embed_dim=8,
     depths=[2, 4, 8, 4, 2],
-    num_heads=[4, 8, 8, 16, 16],
+    num_heads=[4, 4, 8, 16, 16],
     window_size=(7,7,7),
     mlp_ratio=4.,
     qkv_bias=True,
@@ -216,8 +216,8 @@ for idx_epoch in range(train_dict["epochs"]):
 
             batch_x = torch.from_numpy(batch_x).float().to(device)
             batch_y = torch.from_numpy(batch_y).float().to(device)
-            print("batch_x:", batch_x.size())
-            print("batch_y:", batch_y.size())
+            # print("batch_x:", batch_x.size())
+            # print("batch_y:", batch_y.size())
                 
             optimizer.zero_grad()
             y_hat = model(batch_x)
