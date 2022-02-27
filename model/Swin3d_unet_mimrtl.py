@@ -696,7 +696,7 @@ class SwinTransformer3D(nn.Module):
             self.decoder_layers.append(layer)
 
         self.out_conv = nn.Sequential(
-            nn.Conv3d(embed_dim, embed_dim, kernel_size=patch_size, stride=patch_size)
+            nn.Conv3d(embed_dim, embed_dim, kernel_size=patch_size, stride=patch_size),
             nn.Conv3d(embed_dim, in_chans, kernel_size=patch_size, stride=patch_size)
             )
 
