@@ -678,7 +678,7 @@ class SwinTransformer3D(nn.Module):
                 attn_drop=attn_drop_rate,
                 drop_path=dpr[sum(depths[:i_layer]):sum(depths[:i_layer + 1])],
                 norm_layer=norm_layer,
-                downsample=PatchUnMerging if i_layer<self.num_layers-1 else None,
+                upsample=PatchUnMerging if i_layer<self.num_layers-1 else None,
                 use_checkpoint=use_checkpoint)
             self.decode_layers.append(layer)
         self.decode_layers.reverse()
