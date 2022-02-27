@@ -734,14 +734,15 @@ class SwinTransformer3D(nn.Module):
         
         for data in x_list:
             print(data.size())
+        print("End")
 
         # x_list 
-        # torch.Size([1, 128, 9, 64, 64])
-        # torch.Size([1, 256, 9, 32, 32])
-        # torch.Size([1, 512, 9, 16, 16])
-        # torch.Size([1, 1024, 9, 8, 8])
-        # torch.Size([1, 1024, 9, 8, 8])
-        # torch.Size([1, 1024, 9, 8, 8])
+        # torch.Size([1, 16, 64, 64, 64])
+        # torch.Size([1, 32, 32, 32, 32])
+        # torch.Size([1, 64, 16, 16, 16])
+        # torch.Size([1, 128, 8, 8, 8])
+        # torch.Size([1, 256, 4, 4, 4])
+        # torch.Size([1, 256, 4, 4, 4])
 
         # for layer in self.deconv_layers:
 
