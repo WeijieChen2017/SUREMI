@@ -513,7 +513,7 @@ class BasicLayer_up(nn.Module):
         if self.upsample is not None:
             self.upsample = upsample(dim=dim, norm_layer=norm_layer)
 
-        self.proj = 
+        # self.proj = 
 
     def forward(self, x, skip_x):
         """ Forward function.
