@@ -407,7 +407,7 @@ class BasicLayer(nn.Module):
         x = rearrange(x, 'b c d h w -> b d h w c')
         x = self.norm1(x)
         x = rearrange(x, 'b d h w c -> b c d h w')
-        x = self.act1(x)
+        x = self.acti1(x)
         # x = self.proj(x)
         # print(x.size())
 
