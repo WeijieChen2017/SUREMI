@@ -528,7 +528,7 @@ class DenseSwinTransformer3D(nn.Module):
         self.encoder_layers = nn.ModuleList()
         for i_layer in range(self.num_layers):
             layer = BasicLayer(
-                dim=channel_k * (i_layer + 1),
+                dim=embed_dim * (i_layer + 1),
                 depth=depths[i_layer],
                 num_heads=num_heads[i_layer],
                 window_size=window_size,
