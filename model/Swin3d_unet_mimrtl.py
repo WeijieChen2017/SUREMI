@@ -834,6 +834,7 @@ class SwinTransformer3D(nn.Module):
             # print("Decoder: ",x.size(), x_list[idx].size())
             x = layer(x.contiguous(), x_list[idx].contiguous())
 
+        x_list.detach()
         del x_list
         gc.collect()
         torch.cuda.empty_cache()
