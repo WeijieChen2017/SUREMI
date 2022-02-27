@@ -385,7 +385,7 @@ class BasicLayer(nn.Module):
         if self.downsample is not None:
             self.downsample = downsample(dim=dim, norm_layer=norm_layer)
 
-        self.conv1 = nn.Conv3d(dim*channel_k, dim, kernel_size=1, stride=1)
+        self.conv1 = nn.Conv3d(channel_k, dim, kernel_size=1, stride=1)
         self.norm1 = norm_layer
         self.acti1 = nn.GELU
 
@@ -541,7 +541,7 @@ class DenseSwinTransformer3D(nn.Module):
                 num_heads=num_heads[i_layer],
                 window_size=window_size,
                 mlp_ratio=mlp_ratio,
-                channel_k=embed_dim,
+                channel_k=embed_dim * (i_layer+1),
                 qkv_bias=qkv_bias,
                 qk_scale=qk_scale,
                 drop=drop_rate,
