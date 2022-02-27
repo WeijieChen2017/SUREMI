@@ -80,8 +80,8 @@ model = SwinTransformer3D(
     patch_size=(1,1,1),
     in_chans=1,
     embed_dim=8,
-    depths=[2, 4, 4, 8, 8],
-    num_heads=[4, 8, 8, 16, 16],
+    depths=[2, 4, 4, 4, 8],
+    num_heads=[4, 8, 8, 8, 16],
     window_size=(7,7,7),
     mlp_ratio=4.,
     qkv_bias=True,
@@ -164,7 +164,8 @@ for idx_epoch in range(train_dict["epochs"]):
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
     if idx_epoch > 0:
-        model = torch.load(train_dict["save_folder"]+"model_best_{:03d}.pth".format(best_epoch), map_location=torch.device('cpu')).train()
+        print("Load the previous model.")
+        model = torch.load(train_dict["save_folder"]+"model_best_curr.pth").train()
         model = model.to(device)
 
     for package in [package_train, package_val]:
@@ -241,6 +242,7 @@ for idx_epoch in range(train_dict["epochs"]):
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_y.npy", batch_y.cpu().detach().numpy())
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_z.npy", y_hat.cpu().detach().numpy())
 
+            torch.save(model, train_dict["save_folder"]+"model_best_curr.pth")
             if np.mean(case_loss) < best_val_loss:
                 # save the best model
                 best_epoch = idx_epoch + 1
