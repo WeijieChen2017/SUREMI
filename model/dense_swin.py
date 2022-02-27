@@ -553,7 +553,7 @@ class DenseSwinTransformer3D(nn.Module):
                 use_checkpoint=use_checkpoint)
             self.encoder_layers.append(layer)
 
-        self.num_features = int(embed_dim * 2**(self.num_layers-1))
+        self.num_features = int(embed_dim)
 
         # add a norm layer for each output
         self.norm = norm_layer(self.num_features)
