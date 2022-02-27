@@ -681,6 +681,8 @@ class DenseSwinTransformer3D(nn.Module):
         for layer in self.encoder_layers:
             x = layer(x_list)
             x_list.append(x.contiguous())
+            for ele in x_list:
+                print(ele.size())
 
         x = rearrange(x, 'n c d h w -> n d h w c')
         x = self.norm(x)
