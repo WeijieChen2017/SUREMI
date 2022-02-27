@@ -158,8 +158,8 @@ best_val_loss = 1e6
 for idx_epoch in range(train_dict["epochs"]):
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
-    package_train = [train_list, True, False, "train"]
-    package_val = [val_list, False, True, "val"]
+    package_train = [train_list[:10], True, False, "train"]
+    package_val = [val_list[:10], False, True, "val"]
     # package_test = [test_list, False, False, "test"]
 
     for package in [package_train, package_val]:
