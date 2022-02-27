@@ -385,10 +385,9 @@ class BasicLayer(nn.Module):
         if self.downsample is not None:
             self.downsample = downsample(dim=dim, norm_layer=norm_layer)
 
-        # self.proj = nn.Sequential(
-        #     nn.Conv3d(dim, dim, kernel_size=1, stride=1),
-        #     nn.Conv3d(dim, channel_k, kernel_size=1, stride=1)
-        #     )
+        self.conv1 = nn.Conv3d(dim*channel_k, dim, kernel_size=1, stride=1)
+        self.norm1 = norm_layer
+        self.acti1 = nn.GELU
 
     def forward(self, x_list):
         """ Forward function.
@@ -403,6 +402,11 @@ class BasicLayer(nn.Module):
 
         x = torch.cat(x_list, 1)
         print(x.size())
+        x = self.conv1(x)
+        x = rearrange(x, 'b c d h w -> b d h w c')
+        x = self.norm1(x)
+        x = rearrange(x, 'b d h w c -> b c d h w')
+        x = self.act1(x)
         # x = self.proj(x)
         # print(x.size())
 
@@ -532,7 +536,7 @@ class DenseSwinTransformer3D(nn.Module):
         self.encoder_layers = nn.ModuleList()
         for i_layer in range(self.num_layers):
             layer = BasicLayer(
-                dim=embed_dim * (i_layer + 1),
+                dim=embed_dim,
                 depth=depths[i_layer],
                 num_heads=num_heads[i_layer],
                 window_size=window_size,
