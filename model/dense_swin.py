@@ -402,7 +402,9 @@ class BasicLayer(nn.Module):
         #     print(ob_x.size(), end="")
 
         x = torch.cat(x_list, 1)
+        print(x.size())
         x = self.proj(x)
+        print(x.size())
 
         B, C, D, H, W = x.shape
         window_size, shift_size = get_window_size((D,H,W), self.window_size, self.shift_size)
