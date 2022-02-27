@@ -165,7 +165,7 @@ for idx_epoch in range(train_dict["epochs"]):
 
     if idx_epoch > 0:
         print("Load the previous model.")
-        model = torch.load(train_dict["save_folder"]+"model_best_curr.pth")
+        model = torch.load(train_dict["save_folder"]+"model_best_curr.pth", map_location=torch.device('cpu'))
         model = model.to(device)
 
     for package in [package_train, package_val]:
@@ -230,7 +230,7 @@ for idx_epoch in range(train_dict["epochs"]):
             if isTrain:
                 loss.backward()
                 optimizer.step()
-            case_loss[cnt_file] = loss.item()
+            case_loss[cnt_file] = loss.item().cpu().detach().numpy()
             print("Loss: ", case_loss[cnt_file])
 
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
