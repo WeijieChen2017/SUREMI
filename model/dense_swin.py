@@ -402,14 +402,16 @@ class BasicLayer(nn.Module):
         #     print(ob_x.size(), end="")
 
         x = x_list[0]
+        x = rearrange(x, 'b c d h w -> b d h w c')
         if len(x_list) > 1:
             for skip_x in x_list[1:]:
-                x = torch.cat([x, skip_x], 1)
-
+                skip_x = rearrange(skip_x, 'b c d h w -> b d h w c')
+                x = torch.cat([x, skip_x], -1)
         x = self.proj(x)
-        B, C, D, H, W = x.shape
+
+        B, D, H, W, C = x.shape
         window_size, shift_size = get_window_size((D,H,W), self.window_size, self.shift_size)
-        x = rearrange(x, 'b c d h w -> b d h w c')
+        # x = rearrange(x, 'b c d h w -> b d h w c')
         Dp = int(np.ceil(D / window_size[0])) * window_size[0]
         Hp = int(np.ceil(H / window_size[1])) * window_size[1]
         Wp = int(np.ceil(W / window_size[2])) * window_size[2]
@@ -677,7 +679,6 @@ class DenseSwinTransformer3D(nn.Module):
         x_list  = [x]
         for layer in self.encoder_layers:
             x = layer(x_list)
-            print(x.size(), print(len(x_list)))
             x_list.append(x.contiguous())
 
         x = rearrange(x, 'n c d h w -> n d h w c')
