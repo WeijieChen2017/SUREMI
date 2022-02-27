@@ -681,15 +681,15 @@ class DenseSwinTransformer3D(nn.Module):
         x_list  = [x]
         for layer in self.encoder_layers:
             x = layer(x_list)
-            print("x:", x.size())
             x_list.append(x.contiguous())
-            for ele in x_list:
-                print(ele.size())
 
         x = rearrange(x, 'n c d h w -> n d h w c')
         x = self.norm(x)
         x = rearrange(x, 'n d h w c -> n c d h w')
-        # torch.Size([1, 1024, 9, 8, 8])
+
+        del x_list
+        gc.collect()
+        torch.cuda.empty_cache()
 
         return self.out_conv(x)
 
