@@ -386,8 +386,8 @@ class BasicLayer(nn.Module):
             self.downsample = downsample(dim=dim, norm_layer=norm_layer)
 
         self.conv1 = nn.Conv3d(channel_k, dim, kernel_size=1, stride=1)
-        self.norm1 = norm_layer
-        self.acti1 = nn.GELU
+        self.norm1 = norm_layer(dim)
+        self.acti1 = nn.GELU()
 
     def forward(self, x_list):
         """ Forward function.
@@ -403,6 +403,7 @@ class BasicLayer(nn.Module):
         x = torch.cat(x_list, 1)
         print(x.size())
         x = self.conv1(x)
+        print(x.size())
         x = rearrange(x, 'b c d h w -> b d h w c')
         x = self.norm1(x)
         x = rearrange(x, 'b d h w c -> b c d h w')
