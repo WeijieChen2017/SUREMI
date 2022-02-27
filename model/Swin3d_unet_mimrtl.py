@@ -513,7 +513,7 @@ class BasicLayer_up(nn.Module):
         if self.upsample is not None:
             self.upsample = upsample(dim=dim, norm_layer=norm_layer)
 
-        # self.proj = 
+        self.proj = nn.Linear(dim*2, dim)
 
     def forward(self, x, skip_x):
         """ Forward function.
@@ -525,9 +525,8 @@ class BasicLayer_up(nn.Module):
         B, C, D, H, W = x.shape
         window_size, shift_size = get_window_size((D,H,W), self.window_size, self.shift_size)
 
+        x = self.proj(torch.cat([x, skip_x], -1))
         x = rearrange(x, 'b c d h w -> b d h w c')
-        skip_x = rearrange(skip_x, 'b c d h w -> b d h w c')
-        print(skip_x.size())
         Dp = int(np.ceil(D / window_size[0])) * window_size[0]
         Hp = int(np.ceil(H / window_size[1])) * window_size[1]
         Wp = int(np.ceil(W / window_size[2])) * window_size[2]
