@@ -401,9 +401,7 @@ class BasicLayer(nn.Module):
         #     print(ob_x.size(), end="")
 
         x = torch.cat(x_list, 1)
-        print(x.size())
         x = self.conv1(x)
-        print(x.size())
         x = rearrange(x, 'b c d h w -> b d h w c')
         x = self.norm1(x)
         x = rearrange(x, 'b d h w c -> b c d h w')
