@@ -502,8 +502,7 @@ class DenseSwinTransformer3D(nn.Module):
                  norm_layer=nn.LayerNorm,
                  patch_norm=False,
                  frozen_stages=-1,
-                 use_checkpoint=False,
-                 channel_k=8):
+                 use_checkpoint=False):
         super().__init__()
 
         self.pretrained = pretrained
@@ -514,7 +513,6 @@ class DenseSwinTransformer3D(nn.Module):
         self.frozen_stages = frozen_stages
         self.window_size = window_size
         self.patch_size = patch_size
-        self.channel_k = channel_k
 
         # split image into non-overlapping patches
         self.patch_embed = PatchEmbed3D(
@@ -535,7 +533,7 @@ class DenseSwinTransformer3D(nn.Module):
                 num_heads=num_heads[i_layer],
                 window_size=window_size,
                 mlp_ratio=mlp_ratio,
-                channel_k=channel_k,
+                channel_k=embed_dim,
                 qkv_bias=qkv_bias,
                 qk_scale=qk_scale,
                 drop=drop_rate,

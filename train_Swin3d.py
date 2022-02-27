@@ -79,9 +79,9 @@ model = SwinTransformer3D(
     pretrained2d=True,
     patch_size=(1,1,1),
     in_chans=1,
-    embed_dim=16,
-    depths=[4, 8, 8, 16, 16],
-    num_heads=[4, 4, 8, 16, 16],
+    embed_dim=8,
+    depths=[2, 2, 4, 4, 8],
+    num_heads=[4, 4, 8, 8, 16],
     window_size=(7,7,7),
     mlp_ratio=4.,
     qkv_bias=True,
@@ -156,8 +156,8 @@ best_val_loss = 1e6
 best_epoch = 0
 # wandb.watch(model)
 
-package_train = [train_list, True, False, "train"]
-package_val = [val_list, False, True, "val"]
+package_train = [train_list[:10], True, False, "train"]
+package_val = [val_list[:10], False, True, "val"]
 # package_test = [test_list, False, False, "test"]
 
 for idx_epoch in range(train_dict["epochs"]):

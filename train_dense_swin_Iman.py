@@ -30,7 +30,7 @@ train_dict["epochs"] = 100
 train_dict["batch"] = 1
 train_dict["dropout"] = 0
 train_dict["model_term"] = "DenseSwinTransformer3D"
-train_dict["channel_k"] = 8
+train_dict["channel_k"] = 16
 
 train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
 train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
@@ -79,7 +79,7 @@ model = DenseSwinTransformer3D(
     pretrained2d=True,
     patch_size=(1,1,1),
     in_chans=1,
-    embed_dim=16,
+    embed_dim=train_dict["channel_k"],
     depths=[8, 8, 8, 8, 8],
     num_heads=[8, 8, 8, 8, 8],
     window_size=(7,7,7),
@@ -92,8 +92,7 @@ model = DenseSwinTransformer3D(
     norm_layer=nn.LayerNorm,
     patch_norm=True,
     frozen_stages=-1,
-    use_checkpoint=False,
-    channel_k = train_dict["channel_k"])
+    use_checkpoint=False)
 
 # pretrain = torch.load("./pre_train/"+train_dict["pre_train"], map_location=torch.device('cpu'))
 # pretrain_state = pretrain["state_dict"]
