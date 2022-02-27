@@ -385,10 +385,10 @@ class BasicLayer(nn.Module):
         if self.downsample is not None:
             self.downsample = downsample(dim=dim, norm_layer=norm_layer)
 
-        self.proj = nn.Sequential(
-            nn.Conv3d(dim, dim, kernel_size=1, stride=1),
-            nn.Conv3d(dim, channel_k, kernel_size=1, stride=1)
-            )
+        # self.proj = nn.Sequential(
+        #     nn.Conv3d(dim, dim, kernel_size=1, stride=1),
+        #     nn.Conv3d(dim, channel_k, kernel_size=1, stride=1)
+        #     )
 
     def forward(self, x_list):
         """ Forward function.
@@ -403,8 +403,8 @@ class BasicLayer(nn.Module):
 
         x = torch.cat(x_list, 1)
         print(x.size())
-        x = self.proj(x)
-        print(x.size())
+        # x = self.proj(x)
+        # print(x.size())
 
         B, C, D, H, W = x.shape
         window_size, shift_size = get_window_size((D,H,W), self.window_size, self.shift_size)
