@@ -252,4 +252,5 @@ for idx_epoch in range(train_dict["epochs"]):
                 del model
 
         del batch_x, batch_y
+        gc.collect()
         torch.cuda.empty_cache()
