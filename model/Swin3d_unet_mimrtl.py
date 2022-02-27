@@ -491,6 +491,7 @@ class BasicLayer_up(nn.Module):
         self.shift_size = tuple(i // 2 for i in window_size)
         self.depth = depth
         self.use_checkpoint = use_checkpoint
+        self.dim = dim
 
         # build blocks
         self.blocks = nn.ModuleList([
@@ -513,7 +514,7 @@ class BasicLayer_up(nn.Module):
         if self.upsample is not None:
             self.upsample = upsample(dim=dim, norm_layer=norm_layer)
 
-        self.proj = nn.Linear(dim*2, dim)
+        self.proj = nn.Linear(self.dim*2, self.dim)
 
     def forward(self, x, skip_x):
         """ Forward function.
@@ -524,7 +525,7 @@ class BasicLayer_up(nn.Module):
 
         B, C, D, H, W = x.shape
         window_size, shift_size = get_window_size((D,H,W), self.window_size, self.shift_size)
-
+        print(self.dim, x.size(), skip_x.size())
         x = self.proj(torch.cat([x, skip_x], -1))
         x = rearrange(x, 'b c d h w -> b d h w c')
         Dp = int(np.ceil(D / window_size[0])) * window_size[0]
