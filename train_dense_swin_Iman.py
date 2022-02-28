@@ -111,7 +111,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 #         new_model_state[model_key] = model.state_dict()[model_key]
 
 # model.load_state_dict(new_model_state)
-model = torch.load(train_dict["save_folder"]+"model_best_curr.pth", map_location=torch.device('cpu'))
+model = torch.load(train_dict["save_folder"]+"model_.pth", map_location=torch.device('cpu'))
 
 # model = nn.DataParallel(model)
 model.train()
@@ -237,7 +237,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_y.npy", batch_y.cpu().detach().numpy())
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_z.npy", y_hat.cpu().detach().numpy())
 
-            torch.save(model, train_dict["save_folder"]+"model_.pth".format(idx_epoch + 1))
+            torch.save(model, train_dict["save_folder"]+"model_best_curr.pth".format(idx_epoch + 1))
             if np.mean(case_loss) < best_val_loss:
                 # save the best model
                 torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch + 1))
