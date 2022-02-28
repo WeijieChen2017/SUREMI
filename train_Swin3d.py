@@ -74,26 +74,26 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Swin-B
-model = SwinTransformer3D(
-    pretrained=None,
-    pretrained2d=True,
-    patch_size=(1,1,1),
-    in_chans=1,
-    embed_dim=8,
-    depths=[2, 2, 4, 4, 8],
-    num_heads=[4, 4, 8, 8, 16],
-    window_size=(7,7,7),
-    mlp_ratio=4.,
-    qkv_bias=True,
-    qk_scale=None,
-    drop_rate=0.,
-    attn_drop_rate=0.,
-    drop_path_rate=0.2,
-    norm_layer=nn.LayerNorm,
-    patch_norm=True,
-    frozen_stages=-1,
-    use_checkpoint=False,
-    deconv_channels = 6)
+# model = SwinTransformer3D(
+#     pretrained=None,
+#     pretrained2d=True,
+#     patch_size=(1,1,1),
+#     in_chans=1,
+#     embed_dim=8,
+#     depths=[2, 2, 4, 4, 8],
+#     num_heads=[4, 4, 8, 8, 16],
+#     window_size=(7,7,7),
+#     mlp_ratio=4.,
+#     qkv_bias=True,
+#     qk_scale=None,
+#     drop_rate=0.,
+#     attn_drop_rate=0.,
+#     drop_path_rate=0.2,
+#     norm_layer=nn.LayerNorm,
+#     patch_norm=True,
+#     frozen_stages=-1,
+#     use_checkpoint=False,
+#     deconv_channels = 6)
 
 # pretrain = torch.load("./pre_train/"+train_dict["pre_train"], map_location=torch.device('cpu'))
 # pretrain_state = pretrain["state_dict"]
@@ -112,7 +112,7 @@ model = SwinTransformer3D(
 #         new_model_state[model_key] = model.state_dict()[model_key]
 
 # model.load_state_dict(new_model_state)
-# model = torch.load(train_dict["save_folder"]+"model_best_195.pth", map_location=torch.device('cpu'))
+model = torch.load(train_dict["save_folder"]+"model_best_curr.pth", map_location=torch.device('cpu'))
 
 # model = nn.DataParallel(model)
 model.train()
@@ -152,7 +152,7 @@ np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 
 # ==================== training ====================
 
-best_val_loss = 1e6
+best_val_loss = 0.0018349092755523438
 best_epoch = 0
 # wandb.watch(model)
 
@@ -160,7 +160,8 @@ package_train = [train_list[:10], True, False, "train"]
 package_val = [val_list[:10], False, True, "val"]
 # package_test = [test_list, False, False, "test"]
 
-for idx_epoch in range(train_dict["epochs"]):
+for idx_epoch_new in range(train_dict["epochs"]):
+    idx_epoch = idx_epoch_new + 100
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
     for package in [package_train, package_val]:
