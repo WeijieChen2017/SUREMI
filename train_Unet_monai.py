@@ -74,13 +74,12 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Swin-B
-net = UNet( spatial_dims=3,
+model = UNet( spatial_dims=3,
             in_channels=1,
             out_channels=1,
             channels=(4, 8, 16, 32),
             strides=(2, 2, 2),
-            num_res_units=2
-        )
+            num_res_units=2)
 
 # model = nn.DataParallel(model)
 model.train()
