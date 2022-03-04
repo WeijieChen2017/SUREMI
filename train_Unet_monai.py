@@ -13,7 +13,7 @@ import torch
 import torchvision
 import requests
 
-import monai.networks.nets.unet as unet
+import monai.networks.nets.unet.UNet as UNet
 
 # ==================== dict and config ====================
 
@@ -74,7 +74,7 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Swin-B
-net = unet( spatial_dims=3,
+net = UNet( spatial_dims=3,
             in_channels=1,
             out_channels=1,
             channels=(4, 8, 16, 32),
