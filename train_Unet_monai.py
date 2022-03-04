@@ -27,7 +27,7 @@ train_dict["seed"] = 426
 train_dict["input_size"] = [96, 96, 96]
 train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 100
-train_dict["batch"] = 32
+train_dict["batch"] = 16
 train_dict["dropout"] = 0
 train_dict["model_term"] = "Monai_Unet3d"
 train_dict["deconv_channels"] = 6
@@ -77,7 +77,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = UNet( spatial_dims=3,
             in_channels=1,
             out_channels=1,
-            channels=(4, 8, 16, 32, 64),
+            channels=(64, 128, 256, 512),
             strides=(2, 2, 2),
             num_res_units=3)
 
