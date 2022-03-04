@@ -13,7 +13,7 @@ import torch
 import torchvision
 import requests
 
-import monai.networks.nets.unet.UNet as UNet
+from monai.networks.nets.unet import UNet as UNet
 
 # ==================== dict and config ====================
 
