@@ -4,8 +4,8 @@ import glob
 import copy
 import os
 
-n_epoch = 300
-folder = "./project_dir/Swin3d_Iman/"
+n_epoch = 100
+folder = "./project_dir/Swin3d_Iman_v2/"
 
 stage_hub = []
 npy_list = sorted(glob.glob(folder+"loss/epoch_loss_*.npy"))
@@ -42,6 +42,6 @@ plt.xlabel("epoch")
 plt.ylabel("loss")
 plt.yscale("log")
 plt.legend(legend_list)
-plt.title("Training curve")
+plt.title("Training curve of "+folder.split("/")[-1])
 
 plt.savefig(folder + "loss_{}.jpg".format(n_epoch))
