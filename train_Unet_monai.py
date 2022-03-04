@@ -74,7 +74,7 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Swin-B
-net = UNet( spatial_dims=3,
+net = unet( spatial_dims=3,
             in_channels=1,
             out_channels=1,
             channels=(4, 8, 16, 32),
@@ -120,7 +120,7 @@ np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 
 # ==================== training ====================
 
-best_val_loss = 0.0018349092755523438
+best_val_loss = 1
 best_epoch = 0
 # wandb.watch(model)
 
@@ -129,7 +129,7 @@ package_val = [val_list[:10], False, True, "val"]
 # package_test = [test_list, False, False, "test"]
 
 for idx_epoch_new in range(train_dict["epochs"]):
-    idx_epoch = idx_epoch_new + 100
+    idx_epoch = idx_epoch_new
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
     for package in [package_train, package_val]:
