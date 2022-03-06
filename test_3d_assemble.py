@@ -97,8 +97,8 @@ for cnt_file, file_path in enumerate(file_list):
     pad_y_hat = np.zeros(pad_y_data.shape)
 
     for ix in range((ax+test_dict["input_size"][0])//test_dict["eval_step"][0]-2):
-        for ix in range((ay+test_dict["input_size"][1])//test_dict["eval_step"][1]-2):
-            for ix in range((az+test_dict["input_size"][2])//test_dict["eval_step"][2]-2):
+        for iy in range((ay+test_dict["input_size"][1])//test_dict["eval_step"][1]-2):
+            for iz in range((az+test_dict["input_size"][2])//test_dict["eval_step"][2]-2):
                 sx = ix * test_dict["eval_step"][0]
                 sy = iy * test_dict["eval_step"][1]
                 sz = iz * test_dict["eval_step"][2]
