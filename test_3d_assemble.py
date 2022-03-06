@@ -62,7 +62,6 @@ X_list = data_div['test_list_X']
 
 # wandb.watch(model)
 
-package_test = [test_list, False, False, "test"]
 file_list = X_list
 iter_tag = "test"
 cnt_total_file = len(file_list)
