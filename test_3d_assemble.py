@@ -110,8 +110,8 @@ for cnt_file, file_path in enumerate(file_list):
                 batch_x = np.zeros((1, 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
                 batch_y = np.zeros((1, 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
 
-                batch_x = pad_x_data[sx:ex, sy:ey, sz:ez]
-                batch_x = pad_x_data[sx:ex, sy:ey, sz:ez]
+                batch_x[0, 0, :] = pad_x_data[sx:ex, sy:ey, sz:ez]
+                batch_x[0, 0, :] = pad_x_data[sx:ex, sy:ey, sz:ez]
 
                 batch_x = torch.from_numpy(batch_x).float().to(device)
                 batch_y = torch.from_numpy(batch_y).float().to(device)
