@@ -42,6 +42,6 @@ plt.xlabel("epoch")
 plt.ylabel("loss")
 plt.yscale("log")
 plt.legend(legend_list)
-plt.title("Training curve of "+folder.split("/")[-1])
+plt.title("Training curve of "+folder.split("/")[-2])
 
 plt.savefig(folder + "loss_{}.jpg".format(n_epoch))
