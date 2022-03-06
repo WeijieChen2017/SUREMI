@@ -117,7 +117,7 @@ for cnt_file, file_path in enumerate(file_list):
                 batch_y = torch.from_numpy(batch_y).float().to(device)
         
                 batch_z = model(batch_x)
-                loss = criterion(batch_y, batch_z)
+                loss = loss_func(batch_y, batch_z)
                 case_loss += loss.item
                 
                 pad_y_hat[sx:ex, sy:ey, sz:ez] += batch_z.cpu().detach().numpy()
