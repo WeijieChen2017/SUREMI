@@ -85,7 +85,7 @@ for cnt_file, file_path in enumerate(file_list):
     x_file = nib.load(x_path)
     y_file = nib.load(y_path)
     x_data = x_file.get_fdata()
-    x_data = x_data / np.amax(x_data)
+    # x_data = x_data / np.amax(x_data)
     y_data = y_file.get_fdata()
     ax, ay, az = x_data.shape
     case_loss = 0
