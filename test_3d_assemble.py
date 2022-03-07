@@ -90,7 +90,7 @@ for cnt_file, file_path in enumerate(file_list):
     x_file = nib.load(x_path)
     y_file = nib.load(y_path)
     x_data = x_file.get_fdata()
-    x_data = x_data / np.amax(x_data)
+    # x_data = x_data / np.amax(x_data)
     y_data = y_file.get_fdata()
     ax, ay, az = x_data.shape
     case_loss = 0
@@ -173,7 +173,7 @@ for cnt_file, file_path in enumerate(file_list):
                           int(ins_y-step_y):int(step_y-ins_y),
                           int(ins_z-step_z):int(step_z-ins_z)]
 
-    test_file = nib.Nifti1Image(pad_y_hat, x_file.affine, x_file.header)
+    # test_file = nib.Nifti1Image(pad_y_hat, x_file.affine, x_file.header)
     test_save_name = train_dict["save_folder"]+"pred/"+file_name
     nib.save(test_file, test_save_name)
 
