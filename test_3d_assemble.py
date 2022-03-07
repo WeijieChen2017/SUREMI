@@ -20,7 +20,7 @@ from model import SwinTransformer3D
 test_dict = {}
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-test_dict["project_name"] = "Unet_Monai_Iman"
+test_dict["project_name"] = "Swin3d_Iman_v2"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [7]
 test_dict["eval_step"] = [32, 32, 32] # <= input_size
