@@ -132,7 +132,7 @@ for cnt_file, file_path in enumerate(file_list):
                 batch_z = model(batch_x)
                 loss = loss_func(batch_z, batch_y)
                 case_loss += loss.item()
-                print(batch_z)
+                # print(batch_z)
                 
                 # pad_y_hat[sx:ex, sy:ey, sz:ez] += np.squeeze(batch_z.cpu().detach().numpy())
                 batch_z = np.squeeze(batch_z.cpu().detach().numpy())
