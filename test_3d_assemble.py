@@ -51,7 +51,8 @@ model = torch.load(model_list[-1], map_location=torch.device('cpu'))
 print("--->", model_list[-1], " is loaded.")
 
 model = model.to(device)
-loss_func = getattr(nn, train_dict['loss_term'])
+# loss_func = getattr(nn, train_dict['loss_term'])
+loss_func = nn.SmoothL1Loss()
 
 # ==================== data division ====================
 
