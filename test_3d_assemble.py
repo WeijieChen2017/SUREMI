@@ -108,6 +108,7 @@ for cnt_file, file_path in enumerate(file_list):
     step_y_cnt = (ay+ins_y)//step_y-2
     step_z_cnt = (az+ins_z)//step_z-2
     cnt_cube_y_hat = np.zeros(((ax+ins_x)//step_x, (ay+ins_y)//step_y, (az+ins_z)//step_z), dtype=np.int32)
+    print(pad_y_hat.shape)
 
     for ix in range(step_x_cnt):
         for iy in range(step_y_cnt):
@@ -167,7 +168,7 @@ for cnt_file, file_path in enumerate(file_list):
     total_loss += case_loss
     print(" ->", train_dict['loss_term'], case_loss)
 
-    print(pad_y_hat)
+    print(pad_y_hat.shape)
     if test_dict["fusion_method"] == "median":
         pad_y_hat = np.median(pad_y_hat, axis=0)
     if test_dict["fusion_method"] == "mean":
