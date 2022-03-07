@@ -24,6 +24,8 @@ test_dict["project_name"] = "Unet_Monai_Iman"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [7]
 test_dict["eval_step"] = [32, 32, 32] # <= input_size
+test_dict["eval_file_cnt"] = 16
+test_dict["fusion_method"] = "median" # sum or median
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
 
@@ -57,7 +59,7 @@ loss_func = nn.SmoothL1Loss()
 # ==================== data division ====================
 
 data_div = np.load(os.path.join(test_dict["save_folder"], "data_division.npy"), allow_pickle=True)[()]
-X_list = data_div['test_list_X']
+X_list = data_div['test_list_X'][:test_dict["eval_file_cnt"]]
 
 # ==================== Evaluating ====================
 
@@ -68,6 +70,11 @@ iter_tag = "test"
 cnt_total_file = len(file_list)
 total_loss = 0
 model.eval()
+
+cnt_each_cube = 1
+cnt_each_cube *= test_dict["input_size"][0]//test_dict["eval_step"][0]
+cnt_each_cube *= test_dict["input_size"][1]//test_dict["eval_step"][1]
+cnt_each_cube *= test_dict["input_size"][2]//test_dict["eval_step"][2]
 
 for cnt_file, file_path in enumerate(file_list):
     
@@ -96,7 +103,9 @@ for cnt_file, file_path in enumerate(file_list):
                                  (test_dict["input_size"][2] - test_dict["eval_step"][2],
                                   test_dict["input_size"][2] - test_dict["eval_step"][2])), 'constant')
 
-    pad_y_hat = np.zeros(pad_y_data.shape)
+    
+    pad_y_hat = np.zeros((cnt_each_cube, pad_y_data.shape[0], pad_y_data.shape[1], pad_y_data.shape[2]))
+    cnt_cube_y_hat = np.zeros(pad_y_hat.shape)
 
     for ix in range((ax+test_dict["input_size"][0])//test_dict["eval_step"][0]-2):
         for iy in range((ay+test_dict["input_size"][1])//test_dict["eval_step"][1]-2):
@@ -123,7 +132,15 @@ for cnt_file, file_path in enumerate(file_list):
                 loss = loss_func(batch_z, batch_y)
                 case_loss += loss.item()
                 
-                pad_y_hat[sx:ex, sy:ey, sz:ez] += np.squeeze(batch_z.cpu().detach().numpy())
+                # pad_y_hat[sx:ex, sy:ey, sz:ez] += np.squeeze(batch_z.cpu().detach().numpy())
+                detach_batch_z = np.squeeze(batch_z.cpu().detach().numpy())
+                for iix in range(train_dict["input_size"][0]):
+                    for iiy in range(train_dict["input_size"][1]):
+                        for iiz in range(train_dict["input_size"][2]):
+                            curr_idx = cnt_cube_y_hat[sx+iix, sy+iiy, sz+iiz]
+                            pad_y_hat[curr_idx, sx+iix, sy+iiy, sz+iiz] = detach_batch_z[iix, iiy, iiz]
+                            cnt_cube_y_hat[sx+iix, sy+iiy, sz+iiz] += 1
+
                 del batch_x, batch_y
                 gc.collect()
                 torch.cuda.empty_cache()
@@ -132,11 +149,10 @@ for cnt_file, file_path in enumerate(file_list):
     total_loss += case_loss
     print(" ->", train_dict['loss_term'], case_loss)
 
-    cnt_each_cube = 1
-    cnt_each_cube *= test_dict["input_size"][0]//test_dict["eval_step"][0]
-    cnt_each_cube *= test_dict["input_size"][1]//test_dict["eval_step"][1]
-    cnt_each_cube *= test_dict["input_size"][2]//test_dict["eval_step"][2]
-    pad_y_hat /= cnt_each_cube
+    if test_dict["fusion_method"] == "median":
+        pad_y_hat = np.squeeze(np.median(pad_y_hat), axis=0)
+    if test_dict["fusion_method"] == "mean":
+        pad_y_hat = np.squeeze(np.mean(pad_y_hat), axis=0)    
 
     pad_y_hat = pad_y_hat[test_dict["input_size"][0]-test_dict["eval_step"][0]:test_dict["eval_step"][0]-test_dict["input_size"][0],
                           test_dict["input_size"][1]-test_dict["eval_step"][1]:test_dict["eval_step"][1]-test_dict["input_size"][1],
