@@ -19,7 +19,7 @@ from monai.networks.nets.unet import UNet as UNet
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Unet_Monai_Iman"
+train_dict["project_name"] = "Unet_Monai_Iman_wide"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
@@ -31,6 +31,16 @@ train_dict["batch"] = 16
 train_dict["dropout"] = 0
 train_dict["model_term"] = "Monai_Unet3d"
 train_dict["deconv_channels"] = 6
+
+train_dict["model_related"] = {}
+train_dict["model_related"]["spatial_dims"] = 3
+train_dict["model_related"]["in_channels"] = 1
+train_dict["model_related"]["out_channels"] = 1
+train_dict["model_related"]["channels"] = (128, 256, 512)
+train_dict["model_related"]["strides"] = (2, 2, 2)
+train_dict["model_related"]["num_res_units"] = 4
+            
+
 
 train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
 train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
@@ -74,12 +84,12 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Swin-B
-model = UNet( spatial_dims=3,
-            in_channels=1,
-            out_channels=1,
-            channels=(64, 128, 256, 512),
-            strides=(2, 2, 2),
-            num_res_units=3)
+model = UNet( spatial_dims=train_dict["model_related"]["spatial_dims"],
+            in_channels=train_dict["model_related"]["in_channels"],
+            out_channels=train_dict["model_related"]["out_channels"],
+            channels=train_dict["model_related"]["channels"],
+            strides=train_dict["model_related"]["strides"],
+            num_res_units=train_dict["model_related"]["num_res_units"])
 
 # model = nn.DataParallel(model)
 model.train()
