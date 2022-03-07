@@ -161,11 +161,13 @@ for cnt_file, file_path in enumerate(file_list):
     total_loss += case_loss
     print(" ->", train_dict['loss_term'], case_loss)
 
+    print(pad_y_hat.shape)
     if test_dict["fusion_method"] == "median":
         pad_y_hat = np.squeeze(np.median(pad_y_hat), axis=0)
     if test_dict["fusion_method"] == "mean":
         pad_y_hat = np.squeeze(np.mean(pad_y_hat), axis=0)    
 
+    print(pad_y_hat.shape)
     print(int(ins_x-step_x), int(step_x-ins_x))
     print(int(ins_y-step_y), int(step_y-ins_y))
     print(int(ins_z-step_z), int(step_z-ins_z))
