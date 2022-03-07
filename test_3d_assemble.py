@@ -20,14 +20,15 @@ from model import SwinTransformer3D
 test_dict = {}
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-test_dict["project_name"] = "DenseSwin3d_Iman_v1"
+test_dict["project_name"] = "Swin3d_Iman_v2"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
-test_dict["gpu_ids"] = [6]
-test_dict["eval_step"] = [24, 24, 24] # <= input_size
+test_dict["gpu_ids"] = [7]
+test_dict["eval_step"] = [32, 32, 32] # <= input_size
 test_dict["eval_file_cnt"] = 16
 test_dict["fusion_method"] = "median" # sum or median
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
+print("input size:", train_dict["input_size"])
 
 test_dict["seed"] = train_dict["seed"]
 test_dict["input_size"] = train_dict["input_size"]
@@ -108,7 +109,7 @@ for cnt_file, file_path in enumerate(file_list):
     step_y_cnt = (ay+ins_y)//step_y-2
     step_z_cnt = (az+ins_z)//step_z-2
     cnt_cube_y_hat = np.zeros(((ax+ins_x)//step_x, (ay+ins_y)//step_y, (az+ins_z)//step_z), dtype=np.int32)
-    print(pad_y_hat.shape)
+    # print(pad_y_hat.shape)
 
     for ix in range(step_x_cnt):
         for iy in range(step_y_cnt):
@@ -168,7 +169,7 @@ for cnt_file, file_path in enumerate(file_list):
     total_loss += case_loss
     print(" ->", train_dict['loss_term'], case_loss)
 
-    print(pad_y_hat.shape)
+    # print(pad_y_hat.shape)
     # if test_dict["fusion_method"] == "median":
     #     pad_y_hat = np.median(pad_y_hat, axis=0)
     # if test_dict["fusion_method"] == "mean":
@@ -180,7 +181,7 @@ for cnt_file, file_path in enumerate(file_list):
                               int(ins_y-step_y):int(step_y-ins_y),
                               int(ins_z-step_z):int(step_z-ins_z)]
 
-    print(pad_y_hat.shape)
+    # print(pad_y_hat.shape)
     test_file = nib.Nifti1Image(pad_y_hat, x_file.affine, x_file.header)
     test_save_name = train_dict["save_folder"]+"pred/"+file_name
     nib.save(test_file, test_save_name)
