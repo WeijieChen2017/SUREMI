@@ -140,7 +140,7 @@ for cnt_file, file_path in enumerate(file_list):
                             print("-"*60)
                             curr_idx = cnt_cube_y_hat[sx+iix, sy+iiy, sz+iiz]
                             print(curr_idx, sx+iix, sy+iiy, sz+iiz)
-                            print(iix, iiy, iiz)
+                            # print(iix, iiy, iiz)
                             pad_y_hat[curr_idx, sx+iix, sy+iiy, sz+iiz] = detach_batch_z[iix, iiy, iiz]
                             cnt_cube_y_hat[sx+iix, sy+iiy, sz+iiz] += 1
 
