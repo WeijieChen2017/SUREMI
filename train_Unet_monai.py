@@ -19,7 +19,7 @@ from monai.networks.nets.unet import UNet as UNet
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Unet_Monai_Iman_long"
+train_dict["project_name"] = "Unet_Monai_Iman_reverse"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
@@ -36,7 +36,7 @@ train_dict["model_related"] = {}
 train_dict["model_related"]["spatial_dims"] = 3
 train_dict["model_related"]["in_channels"] = 1
 train_dict["model_related"]["out_channels"] = 1
-train_dict["model_related"]["channels"] = (64, 128, 128, 256, 256)
+train_dict["model_related"]["channels"] = (512, 256, 128, 64)
 train_dict["model_related"]["strides"] = (2, 2, 2)
 train_dict["model_related"]["num_res_units"] = 3
             
