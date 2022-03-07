@@ -137,12 +137,12 @@ for cnt_file, file_path in enumerate(file_list):
                 for iix in range(train_dict["input_size"][0]):
                     for iiy in range(train_dict["input_size"][1]):
                         for iiz in range(train_dict["input_size"][2]):
-                            # print("-"*60)
-                            # print(sx+iix, sy+iiy, sz+iiz)
-                            # print(cnt_cube_y_hat.shape)
+                            print("-"*60)
+                            print(sx+iix, sy+iiy, sz+iiz)
+                            print(cnt_cube_y_hat.shape)
                             curr_idx = cnt_cube_y_hat[sx+iix, sy+iiy, sz+iiz]
-                            # print(curr_idx)
-                            # print(iix, iiy, iiz)
+                            print(curr_idx)
+                            print(iix, iiy, iiz)
                             pad_y_hat[curr_idx, sx+iix, sy+iiy, sz+iiz] = detach_batch_z[iix, iiy, iiz]
                             cnt_cube_y_hat[sx+iix, sy+iiy, sz+iiz] += 1
 
