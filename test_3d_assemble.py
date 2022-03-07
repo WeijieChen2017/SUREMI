@@ -137,6 +137,7 @@ for cnt_file, file_path in enumerate(file_list):
                 for iix in range(train_dict["input_size"][0]):
                     for iiy in range(train_dict["input_size"][1]):
                         for iiz in range(train_dict["input_size"][2]):
+                            print("-"*60)
                             curr_idx = cnt_cube_y_hat[sx+iix, sy+iiy, sz+iiz]
                             print(curr_idx, sx+iix, sy+iiy, sz+iiz)
                             print(iix, iiy, iiz)
