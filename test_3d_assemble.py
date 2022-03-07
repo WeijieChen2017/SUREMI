@@ -166,10 +166,10 @@ for cnt_file, file_path in enumerate(file_list):
     if test_dict["fusion_method"] == "mean":
         pad_y_hat = np.squeeze(np.mean(pad_y_hat), axis=0)    
 
+    print(type(ins_x-step_x), ins_x-step_x)
     pad_y_hat = pad_y_hat[ins_x-step_x:step_x-ins_x,
                           ins_y-step_y:step_y-ins_y,
-                          ins_z-step_z:step_z-ins_z,
-                          ]
+                          ins_z-step_z:step_z-ins_z]
 
     test_file = nib.Nifti1Image(pad_y_hat, x_file.affine, x_file.header)
     test_save_name = train_dict["save_folder"]+"pred/"+file_name
