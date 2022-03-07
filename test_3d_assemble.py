@@ -120,7 +120,7 @@ for cnt_file, file_path in enumerate(file_list):
                 batch_z = model(batch_x)
                 # print(batch_z.size(), batch_y.size())
                 loss = loss_func(batch_z, batch_y)
-                case_loss += loss.item
+                case_loss += loss.item()
                 
                 pad_y_hat[sx:ex, sy:ey, sz:ez] += batch_z.cpu().detach().numpy()
                 del batch_x, batch_y
