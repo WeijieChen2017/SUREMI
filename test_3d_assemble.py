@@ -87,6 +87,7 @@ for cnt_file, file_path in enumerate(file_list):
     x_data = x_file.get_fdata()
     x_data = x_data / np.amax(x_data)
     y_data = y_file.get_fdata()
+    print(x_data.shape)
     ax, ay, az = x_data.shape
     case_loss = 0
 
