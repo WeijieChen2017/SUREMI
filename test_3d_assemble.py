@@ -23,7 +23,7 @@ test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 test_dict["project_name"] = "Swin3d_Iman_v2"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [7]
-test_dict["eval_step"] = [32, 32, 32] # <= input_size
+test_dict["eval_step"] = [24, 24, 24] # <= input_size
 test_dict["eval_file_cnt"] = 16
 test_dict["fusion_method"] = "median" # sum or median
 
