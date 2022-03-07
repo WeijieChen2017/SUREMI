@@ -134,9 +134,9 @@ for cnt_file, file_path in enumerate(file_list):
                 for iix in range(ins_x//step_x):
                     for iiy in range(ins_y//step_y):
                         for iiz in range(ins_z//step_z):
-                            print()
-                            print(step_x_cnt, step_y_cnt, step_z_cnt)
-                            print(ins_x//step_x, ins_y//step_z, ins_y//step_z)
+                            # print()
+                            # print(step_x_cnt, step_y_cnt, step_z_cnt)
+                            # print(ins_x//step_x, ins_y//step_z, ins_y//step_z)
                             curr_idx = cnt_cube_y_hat[ix+iix, iy+iiy, iz+iiz]
                             bz_x = step_x * iix
                             bz_y = step_y * iiy
