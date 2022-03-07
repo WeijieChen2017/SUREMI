@@ -163,9 +163,9 @@ for cnt_file, file_path in enumerate(file_list):
 
     print(pad_y_hat.shape)
     if test_dict["fusion_method"] == "median":
-        pad_y_hat = np.squeeze(np.median(pad_y_hat), axis=0)
+        pad_y_hat = np.squeeze(np.median(pad_y_hat, axis=0))
     if test_dict["fusion_method"] == "mean":
-        pad_y_hat = np.squeeze(np.mean(pad_y_hat), axis=0)    
+        pad_y_hat = np.squeeze(np.mean(pad_y_hat, axis=0))
 
     print(pad_y_hat.shape)
     print(int(ins_x-step_x), int(step_x-ins_x))
