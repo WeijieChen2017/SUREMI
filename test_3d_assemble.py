@@ -174,8 +174,10 @@ for cnt_file, file_path in enumerate(file_list):
     #     pad_y_hat = np.median(pad_y_hat, axis=0)
     # if test_dict["fusion_method"] == "mean":
     #     pad_y_hat = np.mean(pad_y_hat, axis=0)
-
-    pad_y_hat = np.median(pad_y_hat, axis=0)
+    if cnt_each_cube < 8:
+        pad_y_hat = np.mean(pad_y_hat, axis=0)
+    else:
+        pad_y_hat = np.median(pad_y_hat, axis=0)
     if np.abs(ins_x-step_x) > 0:
         pad_y_hat = pad_y_hat[int(ins_x-step_x):int(step_x-ins_x),
                               int(ins_y-step_y):int(step_y-ins_y),
