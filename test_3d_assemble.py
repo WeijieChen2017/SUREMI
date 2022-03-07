@@ -104,9 +104,8 @@ for cnt_file, file_path in enumerate(file_list):
                                  (test_dict["input_size"][2] - test_dict["eval_step"][2],
                                   test_dict["input_size"][2] - test_dict["eval_step"][2])), 'constant')
 
-    
-    pad_y_hat = np.zeros((cnt_each_cube, pad_y_data.shape[0], pad_y_data.shape[1], pad_y_data.shape[2]))
     cnt_cube_y_hat = np.zeros(pad_y_hat.shape)
+    pad_y_hat = np.zeros((cnt_each_cube, pad_y_data.shape[0], pad_y_data.shape[1], pad_y_data.shape[2]))
 
     for ix in range((ax+test_dict["input_size"][0])//test_dict["eval_step"][0]-2):
         for iy in range((ay+test_dict["input_size"][1])//test_dict["eval_step"][1]-2):
@@ -138,11 +137,11 @@ for cnt_file, file_path in enumerate(file_list):
                 for iix in range(train_dict["input_size"][0]):
                     for iiy in range(train_dict["input_size"][1]):
                         for iiz in range(train_dict["input_size"][2]):
-                            print("-"*60)
-                            print(sx+iix, sy+iiy, sz+iiz)
-                            print(cnt_cube_y_hat.shape)
+                            # print("-"*60)
+                            # print(sx+iix, sy+iiy, sz+iiz)
+                            # print(cnt_cube_y_hat.shape)
                             curr_idx = cnt_cube_y_hat[sx+iix, sy+iiy, sz+iiz]
-                            print(curr_idx)
+                            # print(curr_idx)
                             # print(iix, iiy, iiz)
                             pad_y_hat[curr_idx, sx+iix, sy+iiy, sz+iiz] = detach_batch_z[iix, iiy, iiz]
                             cnt_cube_y_hat[sx+iix, sy+iiy, sz+iiz] += 1
