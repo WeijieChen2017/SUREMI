@@ -103,7 +103,7 @@ for cnt_file, file_path in enumerate(file_list):
     step_x_cnt = (ax+ins_x)//step_x-2
     step_y_cnt = (ay+ins_y)//step_y-2
     step_z_cnt = (az+ins_z)//step_z-2
-    cnt_cube_y_hat = np.zeros((step_x_cnt, step_y_cnt, step_z_cnt), dtype=np.int32)
+    cnt_cube_y_hat = np.zeros(((ax+ins_x)//step_x, (ay+ins_y)//step_y, (az+ins_z)//step_z), dtype=np.int32)
 
     for ix in range(step_x_cnt):
         for iy in range(step_y_cnt):
