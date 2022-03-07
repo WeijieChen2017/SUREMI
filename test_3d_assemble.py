@@ -87,7 +87,6 @@ for cnt_file, file_path in enumerate(file_list):
     x_data = x_file.get_fdata()
     x_data = x_data / np.amax(x_data)
     y_data = y_file.get_fdata()
-    # print(x_data.shape)
     ax, ay, az = x_data.shape
     case_loss = 0
 
@@ -128,7 +127,6 @@ for cnt_file, file_path in enumerate(file_list):
                 batch_y = torch.from_numpy(batch_y).float().to(device)
         
                 batch_z = model(batch_x)
-                # print(batch_z.size(), batch_y.size())
                 loss = loss_func(batch_z, batch_y)
                 case_loss += loss.item()
                 
@@ -137,12 +135,7 @@ for cnt_file, file_path in enumerate(file_list):
                 for iix in range(train_dict["input_size"][0]):
                     for iiy in range(train_dict["input_size"][1]):
                         for iiz in range(train_dict["input_size"][2]):
-                            print("-"*60)
-                            print(sx+iix, sy+iiy, sz+iiz)
-                            print(cnt_cube_y_hat.shape)
                             curr_idx = cnt_cube_y_hat[sx+iix, sy+iiy, sz+iiz]
-                            print(curr_idx)
-                            print(iix, iiy, iiz)
                             pad_y_hat[curr_idx, sx+iix, sy+iiy, sz+iiz] = detach_batch_z[iix, iiy, iiz]
                             cnt_cube_y_hat[sx+iix, sy+iiy, sz+iiz] += 1
 
