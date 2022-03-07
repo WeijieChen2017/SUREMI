@@ -167,6 +167,7 @@ for cnt_file, file_path in enumerate(file_list):
     total_loss += case_loss
     print(" ->", train_dict['loss_term'], case_loss)
 
+    print(pad_y_hat)
     if test_dict["fusion_method"] == "median":
         pad_y_hat = np.median(pad_y_hat, axis=0)
     if test_dict["fusion_method"] == "mean":
