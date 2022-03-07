@@ -53,7 +53,7 @@ model_list = sorted(glob.glob(os.path.join(test_dict["save_folder"], "model_best
 if "curr" in model_list[-1]:
     print("Remove model_best_curr")
     model_list.pop()
-target_model = "./project_dir/DenseSwin3d_Iman_v1/model_best_086.pth"
+target_model = test_dict["save_folder"]+"model_best_086.pth"
 model = torch.load(target_model, map_location=torch.device('cpu'))
 print("--->", target_model, " is loaded.")
 
