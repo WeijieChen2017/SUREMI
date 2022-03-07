@@ -59,7 +59,7 @@ loss_func = nn.SmoothL1Loss()
 # ==================== data division ====================
 
 data_div = np.load(os.path.join(test_dict["save_folder"], "data_division.npy"), allow_pickle=True)[()]
-X_list = data_div['test_list_X'][:test_dict["eval_file_cnt"]]
+X_list = data_div['test_list_X'][6:test_dict["eval_file_cnt"]]
 
 # ==================== Evaluating ====================
 
@@ -85,7 +85,7 @@ for cnt_file, file_path in enumerate(file_list):
     x_file = nib.load(x_path)
     y_file = nib.load(y_path)
     x_data = x_file.get_fdata()
-    # x_data = x_data / np.amax(x_data)
+    x_data = x_data / np.amax(x_data)
     y_data = y_file.get_fdata()
     ax, ay, az = x_data.shape
     case_loss = 0
@@ -137,6 +137,8 @@ for cnt_file, file_path in enumerate(file_list):
                 for iix in range(train_dict["input_size"][0]):
                     for iiy in range(train_dict["input_size"][1]):
                         for iiz in range(train_dict["input_size"][2]):
+                            print(curr_idx, sx+iix, sy+iiy, sz+iiz)
+                            print(iix, iiy, iiz)
                             curr_idx = cnt_cube_y_hat[sx+iix, sy+iiy, sz+iiz]
                             pad_y_hat[curr_idx, sx+iix, sy+iiy, sz+iiz] = detach_batch_z[iix, iiy, iiz]
                             cnt_cube_y_hat[sx+iix, sy+iiy, sz+iiz] += 1
