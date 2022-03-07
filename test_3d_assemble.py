@@ -69,12 +69,14 @@ file_list = X_list
 iter_tag = "test"
 cnt_total_file = len(file_list)
 total_loss = 0
+step_x, step_y, step_z = test_dict["eval_step"]
+ins_x, ins_y, ins_z = test_dict["input_size"]
 model.eval()
 
 cnt_each_cube = 1
-cnt_each_cube *= test_dict["input_size"][0]//test_dict["eval_step"][0]
-cnt_each_cube *= test_dict["input_size"][1]//test_dict["eval_step"][1]
-cnt_each_cube *= test_dict["input_size"][2]//test_dict["eval_step"][2]
+cnt_each_cube *= ins_x//step_x
+cnt_each_cube *= ins_y//step_y
+cnt_each_cube *= ins_z//step_z
 
 for cnt_file, file_path in enumerate(file_list):
     
@@ -90,35 +92,32 @@ for cnt_file, file_path in enumerate(file_list):
     ax, ay, az = x_data.shape
     case_loss = 0
 
-    pad_x_data = np.pad(x_data, ((test_dict["input_size"][0] - test_dict["eval_step"][0],
-                                  test_dict["input_size"][0] - test_dict["eval_step"][0]),
-                                 (test_dict["input_size"][1] - test_dict["eval_step"][1],
-                                  test_dict["input_size"][1] - test_dict["eval_step"][1]),
-                                 (test_dict["input_size"][2] - test_dict["eval_step"][2],
-                                  test_dict["input_size"][2] - test_dict["eval_step"][2])), 'constant')
-    pad_y_data = np.pad(y_data, ((test_dict["input_size"][0] - test_dict["eval_step"][0],
-                                  test_dict["input_size"][0] - test_dict["eval_step"][0]),
-                                 (test_dict["input_size"][1] - test_dict["eval_step"][1],
-                                  test_dict["input_size"][1] - test_dict["eval_step"][1]),
-                                 (test_dict["input_size"][2] - test_dict["eval_step"][2],
-                                  test_dict["input_size"][2] - test_dict["eval_step"][2])), 'constant')
+    pad_x_data = np.pad(x_data, ((ins_x - step_x, ins_x - step_x),
+                                 (ins_y - step_y, ins_y - step_y),
+                                 (ins_z - step_z, ins_z - step_z)), 'constant')
+    pad_y_data = np.pad(y_data, ((ins_x - step_x, ins_x - step_x),
+                                 (ins_y - step_y, ins_y - step_y),
+                                 (ins_z - step_z, ins_z - step_z)), 'constant')
 
-    cnt_cube_y_hat = np.zeros(pad_y_data.shape, dtype=np.int32)
     pad_y_hat = np.zeros((cnt_each_cube, pad_y_data.shape[0], pad_y_data.shape[1], pad_y_data.shape[2]))
+    step_x_cnt = (ax+ins_x)//step_x-2
+    step_y_cnt = (ay+ins_y)//step_y-2
+    step_z_cnt = (az+ins_z)//step_z-2
+    cnt_cube_y_hat = np.zeros((step_x_cnt, step_y_cnt, step_z_cnt), dtype=np.int32)
 
-    for ix in range((ax+test_dict["input_size"][0])//test_dict["eval_step"][0]-2):
-        for iy in range((ay+test_dict["input_size"][1])//test_dict["eval_step"][1]-2):
-            for iz in range((az+test_dict["input_size"][2])//test_dict["eval_step"][2]-2):
-                sx = ix * test_dict["eval_step"][0]
-                sy = iy * test_dict["eval_step"][1]
-                sz = iz * test_dict["eval_step"][2]
+    for ix in range(step_x_cnt):
+        for iy in range(step_y_cnt):
+            for iz in range(step_z_cnt):
+                sx = ix * step_x
+                sy = iy * step_y
+                sz = iz * step_z
 
-                ex = sx + +test_dict["input_size"][0]
-                ey = sy + +test_dict["input_size"][0]
-                ez = sz + +test_dict["input_size"][0]
+                ex = sx + +ins_x
+                ey = sy + +ins_x
+                ez = sz + +ins_x
 
-                batch_x = np.zeros((1, 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
-                batch_y = np.zeros((1, 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
+                batch_x = np.zeros((1, 1, ins_x, ins_y, ins_z))
+                batch_y = np.zeros((1, 1, ins_x, ins_y, ins_z))
 
                 batch_x[0, 0, :] = pad_x_data[sx:ex, sy:ey, sz:ez]
                 batch_x[0, 0, :] = pad_x_data[sx:ex, sy:ey, sz:ez]
@@ -131,13 +130,25 @@ for cnt_file, file_path in enumerate(file_list):
                 case_loss += loss.item()
                 
                 # pad_y_hat[sx:ex, sy:ey, sz:ez] += np.squeeze(batch_z.cpu().detach().numpy())
-                detach_batch_z = np.squeeze(batch_z.cpu().detach().numpy())
-                for iix in range(train_dict["input_size"][0]):
-                    for iiy in range(train_dict["input_size"][1]):
-                        for iiz in range(train_dict["input_size"][2]):
-                            curr_idx = cnt_cube_y_hat[sx+iix, sy+iiy, sz+iiz]
-                            pad_y_hat[curr_idx, sx+iix, sy+iiy, sz+iiz] = detach_batch_z[iix, iiy, iiz]
-                            cnt_cube_y_hat[sx+iix, sy+iiy, sz+iiz] += 1
+                batch_z = np.squeeze(batch_z.cpu().detach().numpy())
+                for iix in range(ins_x//step_x):
+                    for iiy in range(ins_y//step_y):
+                        for iiz in range(ins_z//step_z):
+                            curr_idx = cnt_cube_y_hat[ix+iix, iy+iiy, iz+iiz]
+                            bz_x = step_x * iix
+                            bz_y = step_y * iiy
+                            bz_z = step_z * iiz
+                            cube_batch_z = batch_z[bz_x:bz_x+step_x,
+                                                   bz_y:bz_y+step_y,
+                                                   bz_z:bz_z+step_z]
+                            pyh_x = sx+bz_x
+                            pyh_y = sy+bz_y
+                            pyh_z = sz+bz_z
+                            pad_y_hat[curr_idx, pyh_x:pyh_x+step_x,
+                                                pyh_y:pyh_y+step_y,
+                                                pyh_z:pyh_z+step_z] = cube_batch_z
+
+                            cnt_cube_y_hat[ix+iix, iy+iiy, iz+iiz] += 1
 
                 del batch_x, batch_y
                 gc.collect()
@@ -152,9 +163,9 @@ for cnt_file, file_path in enumerate(file_list):
     if test_dict["fusion_method"] == "mean":
         pad_y_hat = np.squeeze(np.mean(pad_y_hat), axis=0)    
 
-    pad_y_hat = pad_y_hat[test_dict["input_size"][0]-test_dict["eval_step"][0]:test_dict["eval_step"][0]-test_dict["input_size"][0],
-                          test_dict["input_size"][1]-test_dict["eval_step"][1]:test_dict["eval_step"][1]-test_dict["input_size"][1],
-                          test_dict["input_size"][2]-test_dict["eval_step"][2]:test_dict["eval_step"][2]-test_dict["input_size"][2],
+    pad_y_hat = pad_y_hat[ins_x-step_x:step_x-ins_x,
+                          ins_y-step_y:step_y-ins_y,
+                          ins_z-step_z:step_z-ins_z,
                           ]
 
     test_file = nib.Nifti1Image(pad_y_hat, x_file.affine, x_file.header)
