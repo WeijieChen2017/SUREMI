@@ -161,7 +161,7 @@ for cnt_file, file_path in enumerate(file_list):
                 del batch_x, batch_y
                 gc.collect()
                 torch.cuda.empty_cache()
-                print()
+                # print()
 
     case_loss /= (ix*iy*iz) # maximum ix/iy/iz after iteration
     total_loss += case_loss
@@ -172,7 +172,6 @@ for cnt_file, file_path in enumerate(file_list):
     if test_dict["fusion_method"] == "mean":
         pad_y_hat = np.mean(pad_y_hat, axis=0)
 
-    print(np.std(pad_y_hat))
     pad_y_hat = pad_y_hat[int(ins_x-step_x):int(step_x-ins_x),
                           int(ins_y-step_y):int(step_y-ins_y),
                           int(ins_z-step_z):int(step_z-ins_z)]
