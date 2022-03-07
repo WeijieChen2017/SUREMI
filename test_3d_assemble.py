@@ -162,6 +162,7 @@ for cnt_file, file_path in enumerate(file_list):
     print(" ->", train_dict['loss_term'], case_loss)
 
     print(pad_y_hat.shape)
+    print(test_dict["fusion_method"])
     if test_dict["fusion_method"] == "median":
         print("Median!")
         print(np.median(pad_y_hat, axis=0).shape)
@@ -169,11 +170,8 @@ for cnt_file, file_path in enumerate(file_list):
     if test_dict["fusion_method"] == "mean":
         pad_y_hat = np.mean(pad_y_hat, axis=0)
 
+    pad_y_hat = np.median(pad_y_hat, axis=0)
     print(pad_y_hat.shape)
-    print(int(ins_x-step_x), int(step_x-ins_x))
-    print(int(ins_y-step_y), int(step_y-ins_y))
-    print(int(ins_z-step_z), int(step_z-ins_z))
-    
     pad_y_hat = pad_y_hat[int(ins_x-step_x):int(step_x-ins_x),
                           int(ins_y-step_y):int(step_y-ins_y),
                           int(ins_z-step_z):int(step_z-ins_z)]
