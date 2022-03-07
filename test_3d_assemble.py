@@ -59,7 +59,7 @@ loss_func = nn.SmoothL1Loss()
 # ==================== data division ====================
 
 data_div = np.load(os.path.join(test_dict["save_folder"], "data_division.npy"), allow_pickle=True)[()]
-X_list = data_div['test_list_X'][6:test_dict["eval_file_cnt"]]
+X_list = data_div['test_list_X'][:test_dict["eval_file_cnt"]]
 
 # ==================== Evaluating ====================
 
