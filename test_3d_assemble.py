@@ -176,7 +176,7 @@ for cnt_file, file_path in enumerate(file_list):
                           int(ins_y-step_y):int(step_y-ins_y),
                           int(ins_z-step_z):int(step_z-ins_z)]
 
-    print(pad_y_hat)
+    print(pad_y_hat.shape)
     test_file = nib.Nifti1Image(pad_y_hat, x_file.affine, x_file.header)
     test_save_name = train_dict["save_folder"]+"pred/"+file_name
     nib.save(test_file, test_save_name)
