@@ -122,7 +122,7 @@ for cnt_file, file_path in enumerate(file_list):
                 loss = loss_func(batch_z, batch_y)
                 case_loss += loss.item()
                 
-                pad_y_hat[sx:ex, sy:ey, sz:ez] += batch_z.cpu().detach().numpy()
+                pad_y_hat[sx:ex, sy:ey, sz:ez] += np.squeeze(batch_z.cpu().detach().numpy())
                 del batch_x, batch_y
                 gc.collect()
                 torch.cuda.empty_cache()
