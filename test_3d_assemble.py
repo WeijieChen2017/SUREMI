@@ -23,7 +23,7 @@ test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 test_dict["project_name"] = "Unet_Monai_Iman"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [7]
-test_dict["eval_step"] = [16, 16, 16] # <= input_size
+test_dict["eval_step"] = [32, 32, 32] # <= input_size
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
 
@@ -78,6 +78,7 @@ for cnt_file, file_path in enumerate(file_list):
     x_file = nib.load(x_path)
     y_file = nib.load(y_path)
     x_data = x_file.get_fdata()
+    x_data = x_data / np.amax(x_data)
     y_data = y_file.get_fdata()
     ax, ay, az = x_data.shape
     case_loss = 0
