@@ -87,7 +87,7 @@ for cnt_file, file_path in enumerate(file_list):
     x_data = x_file.get_fdata()
     x_data = x_data / np.amax(x_data)
     y_data = y_file.get_fdata()
-    print(x_data.shape)
+    # print(x_data.shape)
     ax, ay, az = x_data.shape
     case_loss = 0
 
@@ -104,7 +104,7 @@ for cnt_file, file_path in enumerate(file_list):
                                  (test_dict["input_size"][2] - test_dict["eval_step"][2],
                                   test_dict["input_size"][2] - test_dict["eval_step"][2])), 'constant')
 
-    cnt_cube_y_hat = np.zeros(pad_y_hat.shape)
+    cnt_cube_y_hat = np.zeros(pad_y_data.shape)
     pad_y_hat = np.zeros((cnt_each_cube, pad_y_data.shape[0], pad_y_data.shape[1], pad_y_data.shape[2]))
 
     for ix in range((ax+test_dict["input_size"][0])//test_dict["eval_step"][0]-2):
