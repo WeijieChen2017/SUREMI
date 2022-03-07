@@ -23,7 +23,7 @@ test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 test_dict["project_name"] = "DenseSwin3d_Iman_v1"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [6]
-test_dict["eval_step"] = [16, 16, 16] # <= input_size
+test_dict["eval_step"] = [24, 24, 24] # <= input_size
 test_dict["eval_file_cnt"] = 16
 test_dict["fusion_method"] = "median" # sum or median
 
@@ -175,9 +175,10 @@ for cnt_file, file_path in enumerate(file_list):
     #     pad_y_hat = np.mean(pad_y_hat, axis=0)
 
     pad_y_hat = np.median(pad_y_hat, axis=0)
-    pad_y_hat = pad_y_hat[int(ins_x-step_x):int(step_x-ins_x),
-                          int(ins_y-step_y):int(step_y-ins_y),
-                          int(ins_z-step_z):int(step_z-ins_z)]
+    if np.abs(ins_x-step_x) > 0:
+        pad_y_hat = pad_y_hat[int(ins_x-step_x):int(step_x-ins_x),
+                              int(ins_y-step_y):int(step_y-ins_y),
+                              int(ins_z-step_z):int(step_z-ins_z)]
 
     print(pad_y_hat.shape)
     test_file = nib.Nifti1Image(pad_y_hat, x_file.affine, x_file.header)
