@@ -34,8 +34,8 @@ train_dict["model_related"] = {}
 train_dict["model_related"]["cx"] = 32
 cx = train_dict["model_related"]["cx"]
 train_dict["model_related"]["input_dims"] = [cx**3, cx**3]
-train_dict["model_related"]["hidden_size"] = 200
-train_dict["model_related"]["embed_dim"] = 200
+train_dict["model_related"]["hidden_size"] = 180
+train_dict["model_related"]["embed_dim"] = 180
 train_dict["model_related"]["output_dim"] = cx**3*2
 train_dict["model_related"]["num_heads"] = 8
 train_dict["model_related"]["attn_dropout"] = 0.0
@@ -178,7 +178,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             x_path = file_path
             y_path = file_path.replace("MR", "CT")
             file_name = os.path.basename(file_path)
-            print(iter_tag + " ===> Epoch[{:03d}]: --->".format(idx_epoch+1), x_path, "<---", end="")
+            print(iter_tag + " ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: --->".format(idx_epoch+1, cnt_file+1, total_file), file_name, "<---", end="")
             x_file = nib.load(x_path)
             y_file = nib.load(y_path)
             x_data = x_file.get_fdata()
