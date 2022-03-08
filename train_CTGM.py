@@ -35,7 +35,7 @@ train_dict["model_related"]["cx"] = 32
 cx = train_dict["model_related"]["cx"]
 train_dict["model_related"]["input_dims"] = [cx**3, cx**3]
 train_dict["model_related"]["hidden_size"] = 512
-train_dict["model_related"]["embed_dim"] = 80
+train_dict["model_related"]["embed_dim"] = 240
 train_dict["model_related"]["output_dim"] = cx**3*2
 train_dict["model_related"]["num_heads"] = 8
 train_dict["model_related"]["attn_dropout"] = 0.0
@@ -231,17 +231,18 @@ for idx_epoch_new in range(train_dict["epochs"]):
         print("  Loss: ", np.mean(case_loss))
         np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), case_loss)
 
-        if isVal:
+        # if isVal:
+
+        if idx_epoch % 50 == 1:
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_x.npy", batch_x.cpu().detach().numpy())
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_y.npy", batch_y.cpu().detach().numpy())
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_z.npy", y_hat.cpu().detach().numpy())
-
-            torch.save(model, train_dict["save_folder"]+"model_.pth".format(idx_epoch + 1))
-            if np.mean(case_loss) < best_val_loss:
-                # save the best model
-                torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch + 1))
-                print("Checkpoint saved at Epoch {:03d}".format(idx_epoch + 1))
-                best_val_loss = np.mean(case_loss)
+            torch.save(model, train_dict["save_folder"]+"model_{:03d}.pth".format(idx_epoch + 1))
+        # if np.mean(case_loss) < best_val_loss:
+        #     # save the best model
+        #     torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch + 1))
+        #     print("Checkpoint saved at Epoch {:03d}".format(idx_epoch + 1))
+        #     best_val_loss = np.mean(case_loss)
 
         del batch_x, batch_y
         gc.collect()
