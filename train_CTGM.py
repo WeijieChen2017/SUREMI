@@ -45,8 +45,8 @@ train_dict["model_related"]["out_dropout"] = 0.0
 train_dict["model_related"]["layers"] = 2
 train_dict["model_related"]["attn_mask"] = False
 
-train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
-train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
+train_dict["folder_X"] = "./data_dir/Iman_MR/kspace/"
+train_dict["folder_Y"] = "./data_dir/Iman_CT/kspace/"
 # train_dict["pre_train"] = "swin_base_patch244_window1677_kinetics400_22k.pth"
 train_dict["val_ratio"] = 0.3
 train_dict["test_ratio"] = 0.2
@@ -222,6 +222,6 @@ for idx_epoch_new in range(train_dict["epochs"]):
         #     print("Checkpoint saved at Epoch {:03d}".format(idx_epoch + 1))
         #     best_val_loss = np.mean(case_loss)
 
-        # del batch_x, batch_y
-        # gc.collect()
-        # torch.cuda.empty_cache()
+        del batch_x, batch_y
+        gc.collect()
+        torch.cuda.empty_cache()
