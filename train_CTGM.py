@@ -82,7 +82,7 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Swin-B
-cx = 16
+cx = 32
 
 model = CTGM( 
     input_dims=[cx**3, cx**3],
@@ -183,7 +183,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
             xy_book = []
             for data in [x_data, y_data]:
-                book = np.zeros((16*16*12, cx*cx*cx*2))
+                book = np.zeros((256//cx*256//cx*192//cx, cx*cx*cx*2))
                 az = data.shape[2]
                 pad_data = np.pad(data, ((0,0),(0,0),((192-az)//2, (192-az)//2)), 'constant')
                 cnt_cube = 0
