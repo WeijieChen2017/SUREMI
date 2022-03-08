@@ -192,14 +192,14 @@ class TransformerGenerationModel(nn.Module):
         time_step, batch_size, n_features = x.shape
         input_a = x[:, :, :n_features//2].view(-1, 1, n_features//2)
         input_b = x[:, :, n_features//2:].view(-1, 1, n_features//2)
-        print(input_a.size(), input_b.size()) # torch.Size([384, 1, 32768])
+        # print(input_a.size(), input_b.size()) # torch.Size([384, 1, 32768])
         # input_a, input_b = self.conv(input_a, input_b)
-        print(input_a.size(), input_b.size()) # torch.Size([384, 130688])
+        # print(input_a.size(), input_b.size()) # torch.Size([384, 130688])
         # input_a = input_a.reshape(-1, batch_size, self.d_a)
         # input_b = input_b.reshape(-1, batch_size, self.d_b)
-        print(input_a.size(), input_b.size()) # torch.Size([384, 1, 130688])
+        # print(input_a.size(), input_b.size()) # torch.Size([384, 1, 130688])
         input_a, input_b = self.proj_enc(input_a, input_b)
-        print(input_a.size(), input_b.size()) # torch.Size([384, 1, 240])
+        # print(input_a.size(), input_b.size()) # torch.Size([384, 1, 240])
         # Pass the input through individual transformers
         h_as, h_bs = self.trans_encoder(input_a, input_b)
 
