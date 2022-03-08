@@ -8,8 +8,8 @@ import nibabel as nib
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 
-train_dict["folder_X"] = "./data_dir/norm_MR/norm/"
-train_dict["folder_Y"] = "./data_dir/norm_CT/norm/"
+train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
+train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
 train_dict["new_modality"] = "kspace"
 train_dict["old_modality"] = "norm"
 if not os.path.exists(train_dict["folder_X"].replace(train_dict["old_modality"], train_dict["new_modality"])):
@@ -67,7 +67,7 @@ for cnt_file, file_path in enumerate(X_list):
 
     np.save(x_save_name, x_book)
     np.save(y_save_name, y_book)
-    print(x_book.shape)
+    print(x_save_name, x_book.shape)
 
 
 
