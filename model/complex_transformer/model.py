@@ -8,7 +8,7 @@ from torch import nn
 import torch.nn.functional as F
 import numpy as np
 from .modules.transformer import TransformerEncoder, TransformerDecoder
-from models import *
+# from models import *
 from utils import count_parameters
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

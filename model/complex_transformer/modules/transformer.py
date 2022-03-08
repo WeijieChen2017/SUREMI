@@ -4,7 +4,7 @@ from torch.nn import Parameter
 import torch.nn.functional as F
 from .position_embedding import SinusoidalPositionalEmbedding
 from .multihead_attention import MultiheadAttention
-from models import *
+# from .models import *
 import math
 
 
