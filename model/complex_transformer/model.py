@@ -115,33 +115,33 @@ class TransformerModel(nn.Module):
 class TransformerGenerationModel(nn.Module):
     def __init__(self, input_dims, hidden_size, embed_dim, output_dim, num_heads, attn_dropout, relu_dropout, res_dropout, out_dropout, layers, attn_mask=False, src_mask=False, tgt_mask=False):
         super(TransformerGenerationModel, self).__init__()
-        # self.conv = ComplexSequential(
-        #     ComplexConv1d(in_channels=1, out_channels=16, kernel_size=6, stride=1),
-        #     ComplexBatchNorm1d(16),
-        #     ComplexReLU(),
-        #     ComplexMaxPool1d(2, stride=2),
+        self.conv = ComplexSequential(
+            ComplexConv1d(in_channels=1, out_channels=16, kernel_size=6, stride=1),
+            ComplexBatchNorm1d(16),
+            ComplexReLU(),
+            ComplexMaxPool1d(2, stride=2),
 
-        #     ComplexConv1d(in_channels=16, out_channels=32, kernel_size=3, stride=1),
-        #     ComplexBatchNorm1d(32),
-        #     ComplexReLU(),
-        #     ComplexMaxPool1d(2, stride=2),
+            ComplexConv1d(in_channels=16, out_channels=32, kernel_size=3, stride=1),
+            ComplexBatchNorm1d(32),
+            ComplexReLU(),
+            ComplexMaxPool1d(2, stride=2),
 
-        #     ComplexConv1d(in_channels=32, out_channels=64, kernel_size=3, stride=1),
-        #     ComplexBatchNorm1d(64),
-        #     ComplexReLU(),
-        #     ComplexMaxPool1d(2, stride=2),
+            ComplexConv1d(in_channels=32, out_channels=64, kernel_size=3, stride=1),
+            ComplexBatchNorm1d(64),
+            ComplexReLU(),
+            ComplexMaxPool1d(2, stride=2),
 
-        #     ComplexConv1d(in_channels=64, out_channels=64, kernel_size=3, stride=1),
-        #     ComplexBatchNorm1d(64),
-        #     ComplexReLU(),
-        #     ComplexMaxPool1d(2, stride=2),
+            ComplexConv1d(in_channels=64, out_channels=64, kernel_size=3, stride=1),
+            ComplexBatchNorm1d(64),
+            ComplexReLU(),
+            ComplexMaxPool1d(2, stride=2),
 
-        #     ComplexConv1d(in_channels=64, out_channels=128, kernel_size=3, stride=1),
-        #     ComplexBatchNorm1d(128),
-        #     ComplexReLU(),
-        #     ComplexMaxPool1d(2, stride=2),
-        #     ComplexFlatten(),
-        #     )
+            ComplexConv1d(in_channels=64, out_channels=128, kernel_size=3, stride=1),
+            ComplexBatchNorm1d(128),
+            ComplexReLU(),
+            ComplexMaxPool1d(2, stride=2),
+            ComplexFlatten(),
+            )
         [self.orig_d_a, self.orig_d_b] = input_dims
         assert self.orig_d_a == self.orig_d_b
         channels = ((((((((((self.orig_d_a -6)//1+1 -2)//2+1 -3)//1+1 -2)//2+1 
@@ -190,8 +190,8 @@ class TransformerGenerationModel(nn.Module):
         time_step, batch_size, n_features = x.shape
         input_a = x[:, :, :n_features//2].view(-1, 1, n_features//2)
         input_b = x[:, :, n_features//2:].view(-1, 1, n_features//2)
-        print(input_a.size(), input_b.size())
-        # input_a, input_b = self.conv(input_a, input_b)
+        # print(input_a.size(), input_b.size())
+        input_a, input_b = self.conv(input_a, input_b)
         input_a = input_a.reshape(-1, batch_size, self.d_a)
         input_b = input_b.reshape(-1, batch_size, self.d_b)
         input_a, input_b = self.proj_enc(input_a, input_b)
