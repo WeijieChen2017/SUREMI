@@ -19,7 +19,7 @@ from model import ComplexTransformerGenerationModel as CTGM
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "CTGM_v1"
+train_dict["project_name"] = "CTGM_v2"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_size"] = [256, 256, 192]
@@ -34,19 +34,19 @@ train_dict["model_related"] = {}
 train_dict["model_related"]["cx"] = 32
 cx = train_dict["model_related"]["cx"]
 train_dict["model_related"]["input_dims"] = [cx**3, cx**3]
-train_dict["model_related"]["hidden_size"] = 480
-train_dict["model_related"]["embed_dim"] = 240
+train_dict["model_related"]["hidden_size"] = 2048
+train_dict["model_related"]["embed_dim"] = 2048
 train_dict["model_related"]["output_dim"] = cx**3*2
-train_dict["model_related"]["num_heads"] = 8
+train_dict["model_related"]["num_heads"] = cx
 train_dict["model_related"]["attn_dropout"] = 0.0
 train_dict["model_related"]["relu_dropout"] = 0.0
 train_dict["model_related"]["res_dropout"] = 0.0
 train_dict["model_related"]["out_dropout"] = 0.0
-train_dict["model_related"]["layers"] = 2
+train_dict["model_related"]["layers"] = 6
 train_dict["model_related"]["attn_mask"] = False
 
-train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
-train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
+train_dict["folder_X"] = "./data_dir/Iman_MR/kspace/"
+train_dict["folder_Y"] = "./data_dir/Iman_CT/kspace/"
 # train_dict["pre_train"] = "swin_base_patch244_window1677_kinetics400_22k.pth"
 train_dict["val_ratio"] = 0.3
 train_dict["test_ratio"] = 0.2
@@ -117,8 +117,8 @@ optimizer = torch.optim.AdamW(
 
 # ==================== data division ====================
 
-X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
-Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
+X_list = sorted(glob.glob(train_dict["folder_X"]+"*.npy"))
+Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.npy"))
 
 selected_list = np.asarray(X_list)
 np.random.shuffle(selected_list)
@@ -171,7 +171,6 @@ for idx_epoch_new in range(train_dict["epochs"]):
         case_loss = np.zeros((len(file_list)))
 
         # N, C, D, H, W
-        x_data = nib.load(file_list[0]).get_fdata()
 
         for cnt_file, file_path in enumerate(file_list):
             
@@ -181,32 +180,11 @@ for idx_epoch_new in range(train_dict["epochs"]):
             y_path = file_path.replace("MR", "CT")
             file_name = os.path.basename(file_path)
             print(iter_tag + " ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: --->".format(idx_epoch+1, cnt_file+1, total_file), file_name, "<---", end="")
-            x_file = nib.load(x_path)
-            y_file = nib.load(y_path)
-            x_data = x_file.get_fdata()
-            y_data = y_file.get_fdata()
-            # 256, 256, max 172
-            # 32, 32, 32
-            # 8, 8, 6
+            x_data = np.load(x_path)
+            y_data = np.load(y_path)
 
-            xy_book = []
-            for data in [x_data, y_data]:
-                book = np.zeros((num_vocab, cx*cx*cx*2))
-                dz = data.shape[2]
-                pad_data = np.pad(data, ((0,0),(0,0),((az-dz)//2, (az-dz)//2)), 'constant')
-                cnt_cube = 0
-                for ix in range(ax//cx):
-                    for iy in range(ay//cx):
-                        for iz in range(az//cx):
-                            cube = pad_data[ix*cx:ix*cx+cx, iy*cx:iy*cx+cx, iz*cx:iz*cx+cx]
-                            k_cube = np.fft.fftshift(np.fft.fftn(cube))
-                            book[cnt_cube, :cx*cx*cx] = np.ravel(k_cube).real
-                            book[cnt_cube, cx*cx*cx:] = np.ravel(k_cube).imag
-                            cnt_cube += 1
-                xy_book.append(book)
-
-            x_book = np.expand_dims(xy_book[0], axis=1)
-            y_book = np.expand_dims(xy_book[1], axis=1)
+            x_book = np.expand_dims(x_data, axis=1)
+            y_book = np.expand_dims(y_data, axis=1)
 
             batch_x = torch.from_numpy(x_book).float().to(device)
             batch_y = torch.from_numpy(y_book).float().to(device)
@@ -233,7 +211,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
         # if isVal:
 
-        if idx_epoch % 50 == 1:
+        if idx_epoch % 10 == 1:
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_x.npy", batch_x.cpu().detach().numpy())
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_y.npy", batch_y.cpu().detach().numpy())
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_z.npy", y_hat.cpu().detach().numpy())
