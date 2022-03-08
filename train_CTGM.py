@@ -82,11 +82,13 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Swin-B
+cx = 16
+
 model = CTGM( 
-    input_dims=[32768, 32768],
+    input_dims=[cx**3, cx**3],
     hidden_size=1024,
     embed_dim=320,
-    output_dim=32768,
+    output_dim=cx**3,
     num_heads=8,
     attn_dropout=0.0,
     relu_dropout=0.0,
@@ -181,17 +183,17 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
             xy_book = []
             for data in [x_data, y_data]:
-                book = np.zeros((8*8*6, 32768*2))
+                book = np.zeros((16*16*12, cx*cx*cx*2))
                 az = data.shape[2]
                 pad_data = np.pad(data, ((0,0),(0,0),((192-az)//2, (192-az)//2)), 'constant')
                 cnt_cube = 0
-                for ix in range(8):
-                    for iy in range(8):
-                        for iz in range(6):
-                            cube = pad_data[ix*32:ix*32+32, iy*32:iy*32+32, iz*32:iz*32+32]
+                for ix in range(256//cx):
+                    for iy in range(256//cx):
+                        for iz in range(192//cx):
+                            cube = pad_data[ix*cx:ix*cx+cx, iy*cx:iy*cx+cx, iz*cx:iz*cx+cx]
                             k_cube = np.fft.fftshift(np.fft.fftn(cube))
-                            book[cnt_cube, :32768] = np.ravel(k_cube).real
-                            book[cnt_cube, 32768:] = np.ravel(k_cube).imag
+                            book[cnt_cube, :cx*cx*cx] = np.ravel(k_cube).real
+                            book[cnt_cube, cx*cx*cx:] = np.ravel(k_cube).imag
                             cnt_cube += 1
                 xy_book.append(book)
 
