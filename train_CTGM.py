@@ -143,7 +143,8 @@ best_val_loss = 1
 best_epoch = 0
 # wandb.watch(model)
 
-package_train = [train_list[:10], True, False, "train"]
+# package_train = [train_list[:10], True, False, "train"]
+package_train = [train_list[:10], True, True, "train"]
 package_val = [val_list, False, True, "val"]
 # package_test = [test_list, False, False, "test"]
 
@@ -153,7 +154,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
     idx_epoch = idx_epoch_new
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
-    for package in [package_train, package_val]:
+    for package in [package_train]: # , package_val
 
         file_list = package[0]
         isTrain = package[1]
