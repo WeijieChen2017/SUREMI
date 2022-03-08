@@ -34,8 +34,8 @@ train_dict["model_related"] = {}
 train_dict["model_related"]["cx"] = 32
 cx = train_dict["model_related"]["cx"]
 train_dict["model_related"]["input_dims"] = [cx**3, cx**3]
-train_dict["model_related"]["hidden_size"] = 480
-train_dict["model_related"]["embed_dim"] = 240
+train_dict["model_related"]["hidden_size"] = 512
+train_dict["model_related"]["embed_dim"] = 256
 train_dict["model_related"]["output_dim"] = cx**3*2
 train_dict["model_related"]["num_heads"] = 8
 train_dict["model_related"]["attn_dropout"] = 0.0
@@ -117,8 +117,8 @@ optimizer = torch.optim.AdamW(
 
 # ==================== data division ====================
 
-X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
-Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
+X_list = sorted(glob.glob(train_dict["folder_X"]+"*.npy"))
+Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.npy"))
 
 selected_list = np.asarray(X_list)
 np.random.shuffle(selected_list)
@@ -181,32 +181,11 @@ for idx_epoch_new in range(train_dict["epochs"]):
             y_path = file_path.replace("MR", "CT")
             file_name = os.path.basename(file_path)
             print(iter_tag + " ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: --->".format(idx_epoch+1, cnt_file+1, total_file), file_name, "<---", end="")
-            x_file = nib.load(x_path)
-            y_file = nib.load(y_path)
-            x_data = x_file.get_fdata()
-            y_data = y_file.get_fdata()
-            # 256, 256, max 172
-            # 32, 32, 32
-            # 8, 8, 6
+            x_data = np.load(x_path)
+            y_data = np.load(y_path)
 
-            xy_book = []
-            for data in [x_data, y_data]:
-                book = np.zeros((num_vocab, cx*cx*cx*2))
-                dz = data.shape[2]
-                pad_data = np.pad(data, ((0,0),(0,0),((az-dz)//2, (az-dz)//2)), 'constant')
-                cnt_cube = 0
-                for ix in range(ax//cx):
-                    for iy in range(ay//cx):
-                        for iz in range(az//cx):
-                            cube = pad_data[ix*cx:ix*cx+cx, iy*cx:iy*cx+cx, iz*cx:iz*cx+cx]
-                            k_cube = np.fft.fftshift(np.fft.fftn(cube))
-                            book[cnt_cube, :cx*cx*cx] = np.ravel(k_cube).real
-                            book[cnt_cube, cx*cx*cx:] = np.ravel(k_cube).imag
-                            cnt_cube += 1
-                xy_book.append(book)
-
-            x_book = np.expand_dims(xy_book[0], axis=1)
-            y_book = np.expand_dims(xy_book[1], axis=1)
+            x_book = np.expand_dims(x_data, axis=1)
+            y_book = np.expand_dims(y_data, axis=1)
 
             batch_x = torch.from_numpy(x_book).float().to(device)
             batch_y = torch.from_numpy(y_book).float().to(device)
