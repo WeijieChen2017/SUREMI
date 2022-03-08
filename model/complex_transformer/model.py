@@ -190,8 +190,9 @@ class TransformerGenerationModel(nn.Module):
         time_step, batch_size, n_features = x.shape
         input_a = x[:, :, :n_features//2].view(-1, 1, n_features//2)
         input_b = x[:, :, n_features//2:].view(-1, 1, n_features//2)
-        # print(input_a.size(), input_b.size())
+        print(input_a.size(), input_b.size())
         input_a, input_b = self.conv(input_a, input_b)
+        print(input_a.size(), input_b.size())
         input_a = input_a.reshape(-1, batch_size, self.d_a)
         input_b = input_b.reshape(-1, batch_size, self.d_b)
         input_a, input_b = self.proj_enc(input_a, input_b)
