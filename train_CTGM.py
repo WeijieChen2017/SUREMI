@@ -86,7 +86,7 @@ cx = 32
 
 model = CTGM( 
     input_dims=[cx**3, cx**3],
-    hidden_size=1024,
+    hidden_size=768,
     embed_dim=320,
     output_dim=cx**3*2,
     num_heads=8,
@@ -205,8 +205,8 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 
             optimizer.zero_grad()
             y_hat = model(batch_x, batch_y)
-            print("Yhat size: ", y_hat.size())
-            print("Ytrue size: ", batch_y.size())
+            # print("Yhat size: ", y_hat.size())
+            # print("Ytrue size: ", batch_y.size())
             loss = criterion(y_hat, batch_y)
             if isTrain:
                 loss.backward()
