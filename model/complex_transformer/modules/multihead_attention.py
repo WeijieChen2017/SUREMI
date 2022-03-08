@@ -128,7 +128,7 @@ class MultiheadAttention(nn.Module):
                 assert False
 
         attn_weights = (attn_weights - torch.min(attn_weights)) / (torch.max(attn_weights) - torch.min(attn_weights))
-        attn_weights = F.dropout(attn_weights, p=self.attn_dropout, training=self.training)
+        # attn_weights = F.dropout(attn_weights, p=self.attn_dropout, training=self.training)
 
         attn = torch.bmm(attn_weights, v)
         assert list(attn.size()) == [bsz * self.num_heads, tgt_len, self.head_dim]
