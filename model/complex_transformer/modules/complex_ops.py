@@ -1,4 +1,5 @@
 from torch import nn
+from torch.nn.parameter import Parameter
 
 class ComplexSequential(nn.Sequential):
     def forward(self, input_r, input_t):
