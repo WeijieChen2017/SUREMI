@@ -19,26 +19,31 @@ from model import ComplexTransformerGenerationModel as CTGM
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "CTGM_mse"
+train_dict["project_name"] = "CTGM_v2"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
-train_dict["input_size"] = [96, 96, 96]
+train_dict["input_size"] = [256, 256, 192]
+ax, ay, az = train_dict["input_size"]
 train_dict["gpu_ids"] = [7]
-train_dict["epochs"] = 100
-train_dict["batch"] = 16
+train_dict["epochs"] = 2000
+train_dict["batch"] = 1
 train_dict["dropout"] = 0
-train_dict["model_term"] = "Monai_Unet3d"
-train_dict["deconv_channels"] = 6
+train_dict["model_term"] = "ComplexTransformerGenerationModel"
 
 train_dict["model_related"] = {}
-train_dict["model_related"]["spatial_dims"] = 3
-train_dict["model_related"]["in_channels"] = 1
-train_dict["model_related"]["out_channels"] = 1
-train_dict["model_related"]["channels"] = (128, 128, 128, 128)
-train_dict["model_related"]["strides"] = (2, 2, 2)
-train_dict["model_related"]["num_res_units"] = 3
-            
-
+train_dict["model_related"]["cx"] = 32
+cx = train_dict["model_related"]["cx"]
+train_dict["model_related"]["input_dims"] = [cx**3, cx**3]
+train_dict["model_related"]["hidden_size"] = 200
+train_dict["model_related"]["embed_dim"] = 200
+train_dict["model_related"]["output_dim"] = cx**3*2
+train_dict["model_related"]["num_heads"] = 8
+train_dict["model_related"]["attn_dropout"] = 0.0
+train_dict["model_related"]["relu_dropout"] = 0.0
+train_dict["model_related"]["res_dropout"] = 0.0
+train_dict["model_related"]["out_dropout"] = 0.0
+train_dict["model_related"]["layers"] = 2
+train_dict["model_related"]["attn_mask"] = False
 
 train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
 train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
@@ -82,20 +87,19 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Swin-B
-cx = 32
 
 model = CTGM( 
-    input_dims=[cx**3, cx**3],
-    hidden_size=240,
-    embed_dim=240,
-    output_dim=cx**3*2,
-    num_heads=8,
-    attn_dropout=0.0,
-    relu_dropout=0.0,
-    res_dropout=0.0,
-    out_dropout=0.0,
-    layers=2,
-    attn_mask=False)
+    input_dims=train_dict["model_related"]["input_dims"],
+    hidden_size=train_dict["model_related"]["hidden_size"],
+    embed_dim=train_dict["model_related"]["embed_dim"],
+    output_dim=ctrain_dict["model_related"]["output_dim"],
+    num_heads=train_dict["model_related"]["num_heads"],
+    attn_dropout=train_dict["model_related"]["attn_dropout"],
+    relu_dropout=train_dict["model_related"]["relu_dropout"],
+    res_dropout=train_dict["model_related"]["res_dropout"],
+    out_dropout=train_dict["model_related"]["out_dropout"],
+    layers=train_dict["model_related"]["layers"],
+    attn_mask=train_dict["model_related"]["attn_mask"])
 
 # model = nn.DataParallel(model)
 model.train()
@@ -143,6 +147,8 @@ package_train = [train_list, True, False, "train"]
 package_val = [val_list, False, True, "val"]
 # package_test = [test_list, False, False, "test"]
 
+num_vocab = (ax//cx) * (ay//cx) * (az//cx)
+
 for idx_epoch_new in range(train_dict["epochs"]):
     idx_epoch = idx_epoch_new
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
@@ -183,13 +189,13 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
             xy_book = []
             for data in [x_data, y_data]:
-                book = np.zeros((256//cx*256//cx*192//cx, cx*cx*cx*2))
-                az = data.shape[2]
-                pad_data = np.pad(data, ((0,0),(0,0),((192-az)//2, (192-az)//2)), 'constant')
+                book = np.zeros((num_vocab, cx*cx*cx*2))
+                dz = data.shape[2]
+                pad_data = np.pad(data, ((0,0),(0,0),((az-dz)//2, (az-dz)//2)), 'constant')
                 cnt_cube = 0
-                for ix in range(256//cx):
-                    for iy in range(256//cx):
-                        for iz in range(192//cx):
+                for ix in range(ax//cx):
+                    for iy in range(ay//cx):
+                        for iz in range(az//cx):
                             cube = pad_data[ix*cx:ix*cx+cx, iy*cx:iy*cx+cx, iz*cx:iz*cx+cx]
                             k_cube = np.fft.fftshift(np.fft.fftn(cube))
                             book[cnt_cube, :cx*cx*cx] = np.ravel(k_cube).real
