@@ -83,7 +83,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Swin-B
 model = CTGM( 
-    input_dims=[16384, 16384],
+    input_dims=[32768, 32768],
     hidden_size=2048,
     embed_dim=320,
     output_dim=32768,
@@ -175,30 +175,31 @@ for idx_epoch_new in range(train_dict["epochs"]):
             y_file = nib.load(y_path)
             x_data = x_file.get_fdata()
             y_data = y_file.get_fdata()
-            x_data = x_data / np.amax(x_data)
+            # 256, 256, max 172
+            # 32, 32, 32
+            # 8, 8, 6
 
-            for idx_batch in range(train_dict["batch"]):
+            xy_book = []
+            for data in [x_data, y_data]:
+                book = np.zeros((8*8*6, 32768*2))
+                az = data.shape[2]
+                pad_data = np.pad(data, ((0,0),(0,0),((192-az)//2, (192-az)//2)), 'constant')
+                cnt_cube = 0
+                for ix in range(8):
+                    for iy in range(8):
+                        for iz in range(6):
+                            cube = pad_data[ix*32:ix*32+32, iy*32:iy*32+32, iz*32:iz*32+32]
+                            k_cube = np.fft.fftshift(np.fft.fftn(cube))
+                            book[cnt_cube, :32768] = np.ravel(k_cube).real
+                            book[cnt_cube, 32768:] = np.ravel(k_cube).imag
+                            cnt_cube += 1
+                xy_book.append(book)
 
-                batch_x = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
-                batch_y = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
+            x_book = np.expand_dims(xy_book[0], axis=1)
+            y_book = np.expand_dims(xy_book[1], axis=1)
 
-                d0_offset = np.random.randint(x_data.shape[0] - train_dict["input_size"][1])
-                d1_offset = np.random.randint(x_data.shape[1] - train_dict["input_size"][2])
-                d2_offset = np.random.randint(x_data.shape[2] - train_dict["input_size"][0])
-
-                x_slice = x_data[d0_offset:d0_offset+train_dict["input_size"][0],
-                                 d1_offset:d1_offset+train_dict["input_size"][1],
-                                 d2_offset:d2_offset+train_dict["input_size"][2]
-                                 ]
-                y_slice = y_data[d0_offset:d0_offset+train_dict["input_size"][0],
-                                 d1_offset:d1_offset+train_dict["input_size"][1],
-                                 d2_offset:d2_offset+train_dict["input_size"][2]
-                                 ]
-                batch_x[idx_batch, 0, :, :, :] = x_slice
-                batch_y[idx_batch, 0, :, :, :] = y_slice
-
-            batch_x = torch.from_numpy(batch_x).float().to(device)
-            batch_y = torch.from_numpy(batch_y).float().to(device)
+            batch_x = torch.from_numpy(x_book).float().to(device)
+            batch_y = torch.from_numpy(y_book).float().to(device)
                 
             optimizer.zero_grad()
             y_hat = model(batch_x)
