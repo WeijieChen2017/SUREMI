@@ -222,6 +222,6 @@ for idx_epoch_new in range(train_dict["epochs"]):
         #     print("Checkpoint saved at Epoch {:03d}".format(idx_epoch + 1))
         #     best_val_loss = np.mean(case_loss)
 
-        del batch_x, batch_y
-        gc.collect()
-        torch.cuda.empty_cache()
+        # del batch_x, batch_y
+        # gc.collect()
+        # torch.cuda.empty_cache()
