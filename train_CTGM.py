@@ -202,7 +202,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             batch_y = torch.from_numpy(y_book).float().to(device)
                 
             optimizer.zero_grad()
-            y_hat = model(batch_x)
+            y_hat = model(batch_x, batch_y)
             # print("Yhat size: ", y_hat.size())
             loss = criterion(y_hat, batch_y)
             if isTrain:
