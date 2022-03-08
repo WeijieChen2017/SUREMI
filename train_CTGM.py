@@ -84,7 +84,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # Swin-B
 model = CTGM( 
     input_dims=[32768, 32768],
-    hidden_size=2048,
+    hidden_size=1024,
     embed_dim=320,
     output_dim=32768,
     num_heads=8,
