@@ -146,7 +146,9 @@ class TransformerGenerationModel(nn.Module):
         assert self.orig_d_a == self.orig_d_b
         channels = ((((((((((self.orig_d_a -6)//1+1 -2)//2+1 -3)//1+1 -2)//2+1 
             -3)//1+1 -2)//2+1 -3)//1+1 -2)//2+1 -3)//1+1 -2)//2+1
-        self.d_a, self.d_b = 128*channels, 128*channels
+        # self.d_a, self.d_b = 128*channels, 128*channels
+        self.d_a = self.orig_d_a
+        self.d_b = self.orig_d_b
         final_out = embed_dim * 2
         h_out = hidden_size
         self.num_heads = num_heads
@@ -190,14 +192,14 @@ class TransformerGenerationModel(nn.Module):
         time_step, batch_size, n_features = x.shape
         input_a = x[:, :, :n_features//2].view(-1, 1, n_features//2)
         input_b = x[:, :, n_features//2:].view(-1, 1, n_features//2)
-        print(input_a.size(), input_b.size())
+        print(input_a.size(), input_b.size()) # torch.Size([384, 1, 32768])
         input_a, input_b = self.conv(input_a, input_b)
-        print(input_a.size(), input_b.size())
+        print(input_a.size(), input_b.size()) # torch.Size([384, 130688])
         input_a = input_a.reshape(-1, batch_size, self.d_a)
         input_b = input_b.reshape(-1, batch_size, self.d_b)
-        print(input_a.size(), input_b.size())
+        print(input_a.size(), input_b.size()) # torch.Size([384, 1, 130688])
         input_a, input_b = self.proj_enc(input_a, input_b)
-        print(input_a.size(), input_b.size())
+        print(input_a.size(), input_b.size()) # torch.Size([384, 1, 240])
         # Pass the input through individual transformers
         h_as, h_bs = self.trans_encoder(input_a, input_b)
 
