@@ -15,7 +15,7 @@ from .modules.complex_ops import *
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 class TransformerModel(nn.Module):
