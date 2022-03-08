@@ -9,7 +9,10 @@ import torch.nn.functional as F
 import numpy as np
 from .modules.transformer import TransformerEncoder, TransformerDecoder
 # from models import *
-from utils import count_parameters
+# from utils import count_parameters
+
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
