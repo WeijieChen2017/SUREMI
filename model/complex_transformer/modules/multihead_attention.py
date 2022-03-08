@@ -84,8 +84,9 @@ class MultiheadAttention(nn.Module):
             k = self.in_proj_k(key)
             v = self.in_proj_v(value)
         # scaling q 
-        print(q.size(), self.scaling)
-        q *= self.scaling
+        # print(q.size(), self.scaling)
+        q = torch.mul(q, self.scaling)
+        # q *= self.scaling
 
         # extending k, v by one time step at the end, with self.bias_k and self.bias_v 
         if self.bias_k is not None:
