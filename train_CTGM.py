@@ -82,7 +82,7 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Swin-B
-cx = 32
+cx = 16
 
 model = CTGM( 
     input_dims=[cx**3, cx**3],
