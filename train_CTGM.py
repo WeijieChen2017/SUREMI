@@ -94,7 +94,7 @@ model = CTGM(
     relu_dropout=0.0,
     res_dropout=0.0,
     out_dropout=0.0,
-    layers=6,
+    layers=4,
     attn_mask=False)
 
 # model = nn.DataParallel(model)
