@@ -86,7 +86,7 @@ cx = 32
 
 model = CTGM( 
     input_dims=[cx**3, cx**3],
-    hidden_size=320,
+    hidden_size=240,
     embed_dim=240,
     output_dim=cx**3*2,
     num_heads=8,
