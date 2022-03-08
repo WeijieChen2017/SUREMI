@@ -86,15 +86,15 @@ cx = 32
 
 model = CTGM( 
     input_dims=[cx**3, cx**3],
-    hidden_size=512,
-    embed_dim=240,
+    hidden_size=1024,
+    embed_dim=320,
     output_dim=cx**3*2,
-    num_heads=6,
+    num_heads=8,
     attn_dropout=0.0,
     relu_dropout=0.0,
     res_dropout=0.0,
     out_dropout=0.0,
-    layers=4,
+    layers=3,
     attn_mask=False)
 
 # model = nn.DataParallel(model)
