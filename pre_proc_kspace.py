@@ -10,7 +10,7 @@ train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 
 train_dict["folder_X"] = "./data_dir/norm_MR/norm/"
 train_dict["folder_Y"] = "./data_dir/norm_CT/norm/"
-train_dict["old_modality"] = "kspace"
+train_dict["new_modality"] = "kspace"
 train_dict["old_modality"] = "norm"
 if not os.path.exists(train_dict["folder_X"].replace(train_dict["old_modality"], train_dict["new_modality"])):
     os.makedirs(train_dict["folder_X"].replace(train_dict["old_modality"], train_dict["new_modality"]))
