@@ -5,7 +5,7 @@ import copy
 import os
 
 n_epoch = 100
-folder = "./project_dir/Swin3d_Iman_v2/"
+folder = "./project_dir/Unet_Monai_Iman/"
 
 stage_hub = []
 npy_list = sorted(glob.glob(folder+"loss/epoch_loss_*.npy"))
