@@ -34,7 +34,7 @@ train_dict["model_related"] = {}
 train_dict["model_related"]["cx"] = 32
 cx = train_dict["model_related"]["cx"]
 train_dict["model_related"]["input_dims"] = [cx**3, cx**3]
-train_dict["model_related"]["hidden_size"] = 2048
+train_dict["model_related"]["hidden_size"] = 1024
 train_dict["model_related"]["embed_dim"] = 256
 train_dict["model_related"]["output_dim"] = cx**3*2
 train_dict["model_related"]["num_heads"] = cx
@@ -42,7 +42,7 @@ train_dict["model_related"]["attn_dropout"] = 0.0
 train_dict["model_related"]["relu_dropout"] = 0.0
 train_dict["model_related"]["res_dropout"] = 0.0
 train_dict["model_related"]["out_dropout"] = 0.0
-train_dict["model_related"]["layers"] = 6
+train_dict["model_related"]["layers"] = 4
 train_dict["model_related"]["attn_mask"] = False
 
 train_dict["folder_X"] = "./data_dir/Iman_MR/kspace/"
