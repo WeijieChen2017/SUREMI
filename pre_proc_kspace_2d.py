@@ -52,7 +52,7 @@ for cnt_file, file_path in enumerate(X_list):
             cnt_patch = 0
             for ix in range(ax//cx):
                 for iy in range(ay//cx):
-                    patch = data[ix*cx:ix*cx+cx, iy*cx:iy*cx+cx]
+                    patch = data[ix*cx:ix*cx+cx, iy*cx:iy*cx+cx, iz]
                     k_patch = np.fft.fftshift(np.fft.fftn(patch))
                     print(patch.shape, k_patch.shape, ix*cx, ix*cx+cx, iy*cx, iy*cx+cx)
                     book[iz, cnt_patch, :cx*cx] = np.ravel(k_patch).real
