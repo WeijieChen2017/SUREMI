@@ -92,6 +92,7 @@ class MultiheadAttention(nn.Module):
         if self.bias_k is not None:
             assert self.bias_v is not None
 
+            print(l.size(), self.bias_k.repeat(1, bsz, 1).size())
             k = torch.cat([k, self.bias_k.repeat(1, bsz, 1)])
             v = torch.cat([v, self.bias_v.repeat(1, bsz, 1)])
 
