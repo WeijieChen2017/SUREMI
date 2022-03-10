@@ -207,7 +207,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     
                 optimizer.zero_grad()
                 # print(batch_x.size(), batch_y.size())
-                y_hat = model(batch_x, batch_y)
+                y_hat = model(batch_x, batch_y).contiguous()
                 # print("Yhat size: ", y_hat.size(), end="   ")
                 # print("Ytrue size: ", batch_y.size())
                 loss = criterion(y_hat, batch_y)
