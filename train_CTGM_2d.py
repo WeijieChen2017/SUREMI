@@ -19,24 +19,24 @@ from model import ComplexTransformerGenerationModel as CTGM
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "CTGM_v1"
+train_dict["project_name"] = "CTGM_2d_v1"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
-train_dict["input_size"] = [256, 256, 192]
-ax, ay, az = train_dict["input_size"]
-train_dict["gpu_ids"] = [6]
+train_dict["input_size"] = [256, 256]
+ax, ay = train_dict["input_size"]
+train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 2000
-train_dict["batch"] = 1
+train_dict["batch"] = 16
 train_dict["dropout"] = 0
 train_dict["model_term"] = "ComplexTransformerGenerationModel"
 
 train_dict["model_related"] = {}
 train_dict["model_related"]["cx"] = 32
 cx = train_dict["model_related"]["cx"]
-train_dict["model_related"]["input_dims"] = [cx**3, cx**3]
-train_dict["model_related"]["hidden_size"] = 2048
-train_dict["model_related"]["embed_dim"] = 2048
-train_dict["model_related"]["output_dim"] = cx**3*2
+train_dict["model_related"]["input_dims"] = [cx**2, cx**2]
+train_dict["model_related"]["hidden_size"] = 1024
+train_dict["model_related"]["embed_dim"] = 1024
+train_dict["model_related"]["output_dim"] = cx**2*2
 train_dict["model_related"]["num_heads"] = cx
 train_dict["model_related"]["attn_dropout"] = 0.0
 train_dict["model_related"]["relu_dropout"] = 0.0
@@ -45,8 +45,8 @@ train_dict["model_related"]["out_dropout"] = 0.0
 train_dict["model_related"]["layers"] = 6
 train_dict["model_related"]["attn_mask"] = False
 
-train_dict["folder_X"] = "./data_dir/Iman_MR/kspace/"
-train_dict["folder_Y"] = "./data_dir/Iman_CT/kspace/"
+train_dict["folder_X"] = "./data_dir/Iman_MR/kspace_2d/"
+train_dict["folder_Y"] = "./data_dir/Iman_CT/kspace_2d/"
 # train_dict["pre_train"] = "swin_base_patch244_window1677_kinetics400_22k.pth"
 train_dict["val_ratio"] = 0.3
 train_dict["test_ratio"] = 0.2
@@ -148,7 +148,7 @@ package_train = [train_list, True, True, "train"]
 package_val = [val_list, False, True, "val"]
 # package_test = [test_list, False, False, "test"]
 
-num_vocab = (ax//cx) * (ay//cx) * (az//cx)
+num_vocab = (ax//cx) * (ay//cx)
 
 for idx_epoch_new in range(train_dict["epochs"]):
     idx_epoch = idx_epoch_new
@@ -170,7 +170,9 @@ for idx_epoch_new in range(train_dict["epochs"]):
         
         case_loss = np.zeros((len(file_list)))
 
-        # N, C, D, H, W
+        """
+        x should have dimension [seq_len, batch_size, n_features] (i.e., L, N, C).
+        """
 
         for cnt_file, file_path in enumerate(file_list):
             
@@ -182,22 +184,39 @@ for idx_epoch_new in range(train_dict["epochs"]):
             print(iter_tag + " ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: --->".format(idx_epoch+1, cnt_file+1, total_file), file_name, "<---", end="")
             x_data = np.load(x_path)
             y_data = np.load(y_path)
+            dz = x_data.shape[0]
+            z_list = list(range(dz))
+            random.shuffle(z_list)
+            # batch_per_step = train_dict["batch"]
+            batch_per_step = dz
+            batch_loss = np.zeros((dz // batch_per_step))
 
-            x_book = np.expand_dims(x_data, axis=1)
-            y_book = np.expand_dims(y_data, axis=1)
+            for ib in range(dz // batch_per_step):
 
-            batch_x = torch.from_numpy(x_book).float().to(device)
-            batch_y = torch.from_numpy(y_book).float().to(device)
-                
-            optimizer.zero_grad()
-            y_hat = model(batch_x, batch_y)
-            # print("Yhat size: ", y_hat.size())
-            # print("Ytrue size: ", batch_y.size())
-            loss = criterion(y_hat, batch_y)
-            if isTrain:
-                loss.backward()
-                optimizer.step()
-            case_loss[cnt_file] = loss.item()
+                batch_x = np.zeros((num_vocab, batch_per_step, cx**2))
+                batch_y = np.zeros((num_vocab, batch_per_step, cx**2))
+
+                for iz in range(batch_per_step):
+
+                    batch_offset = ib * batch_per_step
+
+                    batch_x[:, iz, :] = np.expand_dims(np.squeeze(x_data[z_list[iz+batch_offset], :, :]), axis=1)
+                    batch_y[:, iz, :] = np.expand_dims(np.squeeze(y_data[z_list[iz+batch_offset], :, :]), axis=1)
+
+                batch_x = torch.from_numpy(x_book).float().to(device)
+                batch_y = torch.from_numpy(y_book).float().to(device)
+                    
+                optimizer.zero_grad()
+                y_hat = model(batch_x, batch_y)
+                # print("Yhat size: ", y_hat.size())
+                # print("Ytrue size: ", batch_y.size())
+                loss = criterion(y_hat, batch_y)
+                if isTrain:
+                    loss.backward()
+                    optimizer.step()
+                batch_loss[ib] = loss.item()
+
+            case_loss[cnt_file] = np.mean(batch_loss)
             print("Loss: ", case_loss[cnt_file])
 
             if cnt_file < len(file_list)-1:

@@ -19,12 +19,12 @@ from model import ComplexTransformerGenerationModel as CTGM
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "CTGM_v4_mse_256"
+train_dict["project_name"] = "CTGM_v2"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_size"] = [256, 256, 192]
 ax, ay, az = train_dict["input_size"]
-train_dict["gpu_ids"] = [5]
+train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 2000
 train_dict["batch"] = 1
 train_dict["dropout"] = 0
@@ -34,15 +34,15 @@ train_dict["model_related"] = {}
 train_dict["model_related"]["cx"] = 32
 cx = train_dict["model_related"]["cx"]
 train_dict["model_related"]["input_dims"] = [cx**3, cx**3]
-train_dict["model_related"]["hidden_size"] = 256
-train_dict["model_related"]["embed_dim"] = 256
+train_dict["model_related"]["hidden_size"] = 2048
+train_dict["model_related"]["embed_dim"] = 2048
 train_dict["model_related"]["output_dim"] = cx**3*2
 train_dict["model_related"]["num_heads"] = cx
 train_dict["model_related"]["attn_dropout"] = 0.0
 train_dict["model_related"]["relu_dropout"] = 0.0
 train_dict["model_related"]["res_dropout"] = 0.0
 train_dict["model_related"]["out_dropout"] = 0.0
-train_dict["model_related"]["layers"] = 4
+train_dict["model_related"]["layers"] = 6
 train_dict["model_related"]["attn_mask"] = False
 
 train_dict["folder_X"] = "./data_dir/Iman_MR/kspace/"
