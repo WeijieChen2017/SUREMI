@@ -203,11 +203,11 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     batch_x[:, iz, :] = np.squeeze(x_data[z_list[iz+batch_offset], :, :])
                     batch_y[:, iz, :] = np.squeeze(y_data[z_list[iz+batch_offset], :, :])
 
-                batch_x = torch.from_numpy(batch_x).float().to(device)
-                batch_y = torch.from_numpy(batch_y).float().to(device)
+                batch_x = torch.from_numpy(batch_x).float().to(device).contiguous()
+                batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
                     
                 optimizer.zero_grad()
-                print(batch_x.size(), batch_y.size())
+                # print(batch_x.size(), batch_y.size())
                 y_hat = model(batch_x, batch_y)
                 # print("Yhat size: ", y_hat.size(), end="   ")
                 # print("Ytrue size: ", batch_y.size())
