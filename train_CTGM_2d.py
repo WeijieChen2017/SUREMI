@@ -193,8 +193,8 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
             for ib in range(dz // batch_per_step):
 
-                batch_x = np.zeros((num_vocab, batch_per_step, cx**2))
-                batch_y = np.zeros((num_vocab, batch_per_step, cx**2))
+                batch_x = np.zeros((num_vocab, batch_per_step, cx**2*2))
+                batch_y = np.zeros((num_vocab, batch_per_step, cx**2*2))
 
                 for iz in range(batch_per_step):
 
