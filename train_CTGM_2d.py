@@ -195,13 +195,12 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                 batch_x = np.zeros((num_vocab, batch_per_step, cx**2*2))
                 batch_y = np.zeros((num_vocab, batch_per_step, cx**2*2))
+                batch_offset = ib * batch_per_step
 
                 for iz in range(batch_per_step):
 
-                    batch_offset = ib * batch_per_step
-
-                    batch_x[:, iz, :] = np.squeeze(x_data[z_list[iz+batch_offset], :, :])
-                    batch_y[:, iz, :] = np.squeeze(y_data[z_list[iz+batch_offset], :, :])
+                    batch_x[:, iz, :] = x_data[z_list[iz+batch_offset], :, :]
+                    batch_y[:, iz, :] = y_data[z_list[iz+batch_offset], :, :]
 
                 batch_x = torch.from_numpy(batch_x).float().to(device).contiguous()
                 batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
