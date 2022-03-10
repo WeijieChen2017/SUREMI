@@ -21,7 +21,7 @@ X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
 Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
 
 train_dict["input_size"] = [256, 256]
-ax, ay, az = train_dict["input_size"]
+ax, ay = train_dict["input_size"]
 train_dict["cx"] = 32
 cx = train_dict["cx"]
 
