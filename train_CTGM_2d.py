@@ -187,8 +187,8 @@ for idx_epoch_new in range(train_dict["epochs"]):
             dz = x_data.shape[0]
             z_list = list(range(dz))
             random.shuffle(z_list)
-            # batch_per_step = train_dict["batch"]
-            batch_per_step = dz
+            batch_per_step = train_dict["batch"]
+            # batch_per_step = dz
             batch_loss = np.zeros((dz // batch_per_step))
 
             for ib in range(dz // batch_per_step):
