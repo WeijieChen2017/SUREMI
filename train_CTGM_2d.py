@@ -206,7 +206,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
                     
                 optimizer.zero_grad()
-                print(batch_x.size(), batch_y.size())
+                # print(batch_x.size(), batch_y.size())
                 y_hat = model(batch_x, batch_y)
                 # print("Yhat size: ", y_hat.size(), end="   ")
                 # print("Ytrue size: ", batch_y.size())
