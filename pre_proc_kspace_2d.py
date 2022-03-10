@@ -54,9 +54,9 @@ for cnt_file, file_path in enumerate(X_list):
                 for iy in range(ay//cx):
                     patch = data[ix*cx:ix*cx+cx, iy*cx:iy*cx+cx]
                     k_patch = np.fft.fftshift(np.fft.fftn(patch))
-                    book[iz, cnt_cube, :cx*cx] = np.ravel(k_patch).real
-                    book[iz, cnt_cube, cx*cx:] = np.ravel(k_patch).imag
-                    cnt_cube += 1
+                    book[iz, cnt_patch, :cx*cx] = np.ravel(k_patch).real
+                    book[iz, cnt_patch, cx*cx:] = np.ravel(k_patch).imag
+                    cnt_patch += 1
         xy_book.append(book)
 
     x_book = xy_book[0]
