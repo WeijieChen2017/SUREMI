@@ -66,7 +66,7 @@ class MultiheadAttention(nn.Module):
         assert key.size() == value.size()
 
         aved_state = None
-        print(k.size(), "<--->", end="")
+        # print(k.size(), "<--->", end="")
         # projecting q, k, v 
         if qkv_same:
             # self-attention
