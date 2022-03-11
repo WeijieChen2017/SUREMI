@@ -66,7 +66,7 @@ class MultiheadAttention(nn.Module):
         assert key.size() == value.size()
 
         aved_state = None
-
+        print(k.size(), "<--->", end="")
         # projecting q, k, v 
         if qkv_same:
             # self-attention
@@ -88,11 +88,13 @@ class MultiheadAttention(nn.Module):
         q = torch.mul(q, self.scaling)
         # q *= self.scaling
 
+        print("   ", qkv_same, kv_same, k.size())
         # extending k, v by one time step at the end, with self.bias_k and self.bias_v 
         if self.bias_k is not None:
             assert self.bias_v is not None
 
-            print(k.size(), self.bias_k.repeat(1, bsz, 1).size())
+            # print(k.size(), self.bias_k.repeat(1, bsz, 1).size())
+            # self.bias_k = Parameter(torch.Tensor(1, 1, embed_dim))
             k = torch.cat([k, self.bias_k.repeat(1, bsz, 1)])
             v = torch.cat([v, self.bias_v.repeat(1, bsz, 1)])
 
