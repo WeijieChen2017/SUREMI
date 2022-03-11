@@ -88,7 +88,7 @@ class MultiheadAttention(nn.Module):
         q = torch.mul(q, self.scaling)
         # q *= self.scaling
 
-        print("   ", qkv_same, kv_same, k.size(), query.size())
+        print("   ", qkv_same, kv_same, k.size(), query.size(), key.size(), value.size())
         # extending k, v by one time step at the end, with self.bias_k and self.bias_v 
         if self.bias_k is not None:
             assert self.bias_v is not None
