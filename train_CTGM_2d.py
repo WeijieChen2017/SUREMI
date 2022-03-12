@@ -26,7 +26,7 @@ train_dict["input_size"] = [256, 256]
 ax, ay = train_dict["input_size"]
 train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 2000
-train_dict["batch"] = 16
+train_dict["batch"] = 32
 train_dict["dropout"] = 0
 train_dict["model_term"] = "ComplexTransformerGenerationModel"
 
@@ -154,7 +154,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
     idx_epoch = idx_epoch_new
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
-    for package in [package_train]: # , package_val
+    for package in [package_train, package_val]: # , package_val
 
         file_list = package[0]
         isTrain = package[1]
@@ -181,7 +181,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             x_path = file_path
             y_path = file_path.replace("MR", "CT")
             file_name = os.path.basename(file_path)
-            print(iter_tag + " ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: --->".format(idx_epoch+1, cnt_file+1, total_file), file_name, "<---") # , end=""
+            print(iter_tag + " ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: --->".format(idx_epoch+1, cnt_file+1, total_file), file_name, "<---", end="") #
             x_data = np.load(x_path)
             y_data = np.load(y_path)
             dz = x_data.shape[0]
@@ -228,18 +228,19 @@ for idx_epoch_new in range(train_dict["epochs"]):
         print("  Loss: ", np.mean(case_loss))
         np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), case_loss)
 
-        # if isVal:
 
-        if idx_epoch % 10 == 1:
-            np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_x.npy", batch_x.cpu().detach().numpy())
-            np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_y.npy", batch_y.cpu().detach().numpy())
-            np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_z.npy", y_hat.cpu().detach().numpy())
-            torch.save(model, train_dict["save_folder"]+"model_{:03d}.pth".format(idx_epoch + 1))
-        # if np.mean(case_loss) < best_val_loss:
-        #     # save the best model
-        #     torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch + 1))
-        #     print("Checkpoint saved at Epoch {:03d}".format(idx_epoch + 1))
-        #     best_val_loss = np.mean(case_loss)
+
+        # if idx_epoch % 10 == 1:
+        #     np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_x.npy", batch_x.cpu().detach().numpy())
+        #     np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_y.npy", batch_y.cpu().detach().numpy())
+        #     np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_z.npy", y_hat.cpu().detach().numpy())
+        #     torch.save(model, train_dict["save_folder"]+"model_{:03d}.pth".format(idx_epoch + 1))
+        if isVal:
+            if np.mean(case_loss) < best_val_loss:
+                # save the best model
+                torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch + 1))
+                print("Checkpoint saved at Epoch {:03d}".format(idx_epoch + 1))
+                best_val_loss = np.mean(case_loss)
 
         del batch_x, batch_y
         gc.collect()
