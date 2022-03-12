@@ -24,7 +24,7 @@ train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_size"] = [256, 256]
 ax, ay = train_dict["input_size"]
-train_dict["gpu_ids"] = [7]
+train_dict["gpu_ids"] = [6]
 train_dict["epochs"] = 2000
 train_dict["batch"] = 16
 train_dict["dropout"] = 0
@@ -51,7 +51,7 @@ train_dict["folder_Y"] = "./data_dir/Iman_CT/kspace_2d/"
 train_dict["val_ratio"] = 0.3
 train_dict["test_ratio"] = 0.2
 
-train_dict["loss_term"] = "SmoothL1Loss"
+train_dict["loss_term"] = "MSELoss"
 train_dict["optimizer"] = "AdamW"
 train_dict["opt_lr"] = 1e-3 # default
 train_dict["opt_betas"] = (0.9, 0.999) # default
@@ -102,7 +102,7 @@ model = CTGM(
 # model = nn.DataParallel(model)
 model.train()
 model = model.to(device)
-criterion = nn.SmoothL1Loss()
+criterion = nn.MSELoss()
 
 optimizer = torch.optim.AdamW(
     model.parameters(),
@@ -137,7 +137,7 @@ np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 
 # ==================== training ====================
 
-best_val_loss = 1
+best_val_loss = 1000
 best_epoch = 0
 # wandb.watch(model)
 
