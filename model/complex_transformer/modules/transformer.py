@@ -49,12 +49,12 @@ class TransformerEncoder(nn.Module):
             input_A: real part of input signal.
             input_B: imaginary part of input signal.
         """
-        print("Line 52 Encoder:", input_A.size(), input_B.size())
+        # print("Line 52 Encoder:", input_A.size(), input_B.size())
         input_A = self.scale_embed_position_dropout(input_A)
         input_B = self.scale_embed_position_dropout(input_B)
         # For each transformer encoder layer:
         for layer in self.layers:
-            print("Encoder:", input_A.size(), input_B.size())
+            # print("Encoder:", input_A.size(), input_B.size())
             input_A, input_B = layer(input_A, input_B)
         return input_A, input_B
 
@@ -277,7 +277,7 @@ class TransformerDecoderLayer(nn.Module):
         ## Attention Part
         # Residual and Layer Norm
 
-        print("Line 278:", x_A.size(), x_B.size(), enc_A.size(), enc_B.size())
+        # print("Line 278:", x_A.size(), x_B.size(), enc_A.size(), enc_B.size())
 
         residual_A = x_A
         residual_B = x_B
@@ -312,7 +312,7 @@ class TransformerDecoderLayer(nn.Module):
         residual_A = x_A
         residual_B = x_B
         
-        print("Line 313:", x_A.size(), x_B.size(), enc_A.size(), enc_B.size())
+        # print("Line 313:", x_A.size(), x_B.size(), enc_A.size(), enc_B.size())
 
         # Attention between encoder and decoder 
         x_acc, _ = self.attn(x_A, enc_A, enc_A) 
