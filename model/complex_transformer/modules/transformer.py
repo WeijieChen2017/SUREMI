@@ -49,11 +49,12 @@ class TransformerEncoder(nn.Module):
             input_A: real part of input signal.
             input_B: imaginary part of input signal.
         """
+        print("Line 52 Encoder:", input_A.size(), input_B.size())
         input_A = self.scale_embed_position_dropout(input_A)
         input_B = self.scale_embed_position_dropout(input_B)
         # For each transformer encoder layer:
         for layer in self.layers:
-            # print("Encoder:", input_A.size(), input_B.size())
+            print("Encoder:", input_A.size(), input_B.size())
             input_A, input_B = layer(input_A, input_B)
         return input_A, input_B
 
