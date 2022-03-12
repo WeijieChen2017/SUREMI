@@ -275,7 +275,7 @@ class TransformerDecoderLayer(nn.Module):
         ## Attention Part
         # Residual and Layer Norm
 
-        print(x_A.size(), x_B.size(), enc_A.size(), enc_B.size())
+        print("Line 278:", x_A.size(), x_B.size(), enc_A.size(), enc_B.size())
 
         residual_A = x_A
         residual_B = x_B
@@ -310,7 +310,7 @@ class TransformerDecoderLayer(nn.Module):
         residual_A = x_A
         residual_B = x_B
         
-        print(x_A.size(), x_B.size(), enc_A.size(), enc_B.size())
+        print("Line 313:", x_A.size(), x_B.size(), enc_A.size(), enc_B.size())
 
         # Attention between encoder and decoder 
         x_acc, _ = self.attn(x_A, enc_A, enc_A) 
