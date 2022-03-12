@@ -202,6 +202,7 @@ class TransformerGenerationModel(nn.Module):
         # print(input_a.size(), input_b.size()) # torch.Size([384, 1, 240])
         # Pass the input through individual transformers
         h_as, h_bs = self.trans_encoder(input_a, input_b)
+        print("Line 205:", "h_as", h_as.size(), "h_bs", h_bs.size())
 
         if y is not None:
             seq_len, batch_size, n_features2 = y.shape 
