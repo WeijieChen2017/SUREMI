@@ -134,44 +134,34 @@ for cnt_file, file_path in enumerate(file_list):
     az = dz // (cx*cx)
     z_list = list(range(dz))
     pred_vol = np.zeros((256, 256, az))
-    cnt_z = 0
-    ix = 0
-    iy = 0
 
     for iz in range(dz):
 
         pred_img = np.zeros((256, 256))
 
-        batch_x = np.zeros((1, 1, cx**2*2))
-        batch_y = np.zeros((1, 1, cx**2*2))
+        batch_x = np.zeros((1, num_vocab, cx**2*2))
+        batch_y = np.zeros((1, num_vocab, cx**2*2))
 
-        batch_x[0, 0, :] = x_data[iz, :, :]
-        batch_y[0, 0, :] = y_data[iz, :, :]
+        batch_x[0, :, :] = x_data[iz, :, :]
+        batch_y[0, :, :] = y_data[iz, :, :]
 
         batch_x = torch.from_numpy(batch_x).float().to(device).contiguous()
         batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
             
         y_hat = model(batch_x, batch_y).detach().cpu().numpy()
         print(y_hat.shape)
-        y_hat_real = np.squeeze(y_hat[:, :, :cx**2])
-        y_hat_imag = np.squeeze(y_hat[:, :, cx**2:])
+        y_hat_real = np.squeeze(y_hat[:, :, :cx**2]).reshape(ax//cx, ay//cx, cx**2)
+        y_hat_imag = np.squeeze(y_hat[:, :, cx**2:]).reshape(ax//cx, ay//cx, cx**2)
 
-        pred_cplx = np.vectorize(complex)(y_hat_real, y_hat_imag).reshape((cx, cx))
-        # print(pred_cplx.shape)
-        patch = np.fft.ifftn(np.fft.ifftshift(pred_cplx))
-        pred_img[ix*cx:ix*cx+cx, iy*cx:iy*cx+cx] = patch
+        for ix in range(ax//cx):
+            for iy in range(ay//cx):
+                patch_real = y_hat_real[ix, iy, :]
+                pathc_imag = y_hat_imag[ix, iy, :]
+                pred_cplx = np.vectorize(complex)(patch_real, pathc_imag).reshape((cx, cx))
+                patch = np.fft.ifftn(np.fft.ifftshift(pred_cplx))
+                pred_img[ix*cx:ix*cx+cx, iy*cx:iy*cx+cx] = pred_cplx
 
-        iy += 1
-
-        if iy == ay // cx:
-            iy = 0
-            ix += 1
-
-        if ix == ax // cx:
-            ix = 0
-            iy = 0
-            pred_vol[:, :, cnt_z] = pred_img
-            cnt_z += 1
+        pred_vol[:, :, iz] = pred_img
 
     file_CT = nib.load("./data_dir/Iman_CT/norm/"+file_name.replace("npy", "nii.gz"))
     pred_file = nib.Nifti1Image(pred_vol, file_CT.affine, file_CT.header)
