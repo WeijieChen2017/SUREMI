@@ -142,11 +142,11 @@ for cnt_file, file_path in enumerate(file_list):
 
         pred_img = np.zeros((256, 256))
 
-        # batch_x = np.zeros((num_vocab, 1, cx**2*2))
-        # batch_x = np.zeros((num_vocab, 1, cx**2*2))
+        batch_x = np.zeros((num_vocab, 1, cx**2*2))
+        batch_x = np.zeros((num_vocab, 1, cx**2*2))
 
-        batch_x[:, :, :] = np.newaxis(x_data[iz, :, :], 1)
-        batch_y[:, :, :] = np.newaxis(y_data[iz, :, :], 1)
+        batch_x[:, 0, :] = x_data[iz, :, :]
+        batch_y[:, 0, :] = y_data[iz, :, :]
 
         batch_x = torch.from_numpy(batch_x).float().to(device).contiguous()
         batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
