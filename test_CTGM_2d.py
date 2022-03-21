@@ -142,19 +142,21 @@ for cnt_file, file_path in enumerate(file_list):
 
         pred_img = np.zeros((256, 256))
 
-        batch_x = np.zeros((num_vocab, 1, cx**2*2))
-        batch_y = np.zeros((num_vocab, 1, cx**2*2))
+        batch_x = np.zeros((1, 1, cx**2*2))
+        batch_y = np.zeros((1, 1, cx**2*2))
 
-        batch_x[:, 0, :] = x_data[iz, :, :]
-        batch_y[:, 0, :] = y_data[iz, :, :]
+        batch_x[0, 0, :] = x_data[iz, :, :]
+        batch_y[0, 0, :] = y_data[iz, :, :]
 
         batch_x = torch.from_numpy(batch_x).float().to(device).contiguous()
         batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
             
         y_hat = model(batch_x, batch_y).detach().cpu().numpy()
-        print(y_hat.shape)
+        # print(y_hat.shape)
+        # y_hat_real = np.squeeze(y_hat[:, :, :cx**2])
+        # y_hat_imag = np.squeeze(y_hat[:, :, cx**2:])
 
-        pred_cplx = np.vectorize(complex)(y_hat[...,0], y_hat[...,1]).reshape((cx, cx))
+        pred_cplx = np.vectorize(complex)(y_hat[...,:cx**2], y_hat[...,cx**2:]).reshape((cx, cx))
         # print(pred_cplx.shape)
         patch = np.fft.ifftn(np.fft.ifftshift(pred_cplx))
         pred_img[ix*cx:ix*cx+cx, iy*cx:iy*cx+cx] = patch
