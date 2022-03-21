@@ -158,7 +158,7 @@ for cnt_file, file_path in enumerate(file_list):
                 pathc_imag = y_hat_imag[ix, iy, :]
                 pred_cplx = np.vectorize(complex)(patch_real, pathc_imag).reshape((cx, cx))
                 patch = np.fft.ifftn(np.fft.ifftshift(pred_cplx))
-                pred_img[ix*cx:ix*cx+cx, iy*cx:iy*cx+cx] = pred_cplx
+                pred_img[ix*cx:ix*cx+cx, iy*cx:iy*cx+cx] = patch
 
         pred_vol[:, :, iz] = pred_img
 
