@@ -54,6 +54,7 @@ if "curr" in model_list[-1]:
     model_list.pop()
 # target_model = test_dict["save_folder"]+"model_best_086.pth"
 target_model = model_list[:-1]
+print(target_model)
 model = torch.load(target_model, map_location=torch.device('cpu'))
 print("--->", target_model, " is loaded.")
 
