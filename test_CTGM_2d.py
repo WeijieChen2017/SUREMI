@@ -111,7 +111,7 @@ X_list = data_div['test_list_X'][:test_dict["eval_file_cnt"]]
 
 num_vocab = (ax//cx) * (ay//cx)
 
-file_list = test_list
+file_list = X_list
 
 model.eval()
 
