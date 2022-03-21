@@ -130,12 +130,11 @@ for cnt_file, file_path in enumerate(file_list):
     print(" ===> [{:03d}]/[{:03d}]: --->".format(cnt_file+1, total_file), file_name, "<---", end="") #
     x_data = np.load(x_path)
     y_data = np.load(y_path)
-    dz = x_data.shape[0]
-    az = dz // (cx*cx)
-    z_list = list(range(dz))
+    az = x_data.shape[0]
+    z_list = list(range(az))
     pred_vol = np.zeros((256, 256, az))
 
-    for iz in range(dz):
+    for iz in range(az):
 
         pred_img = np.zeros((256, 256))
 
