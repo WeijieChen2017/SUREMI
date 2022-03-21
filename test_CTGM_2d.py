@@ -143,7 +143,7 @@ for cnt_file, file_path in enumerate(file_list):
         pred_img = np.zeros((256, 256))
 
         batch_x = np.zeros((num_vocab, 1, cx**2*2))
-        batch_x = np.zeros((num_vocab, 1, cx**2*2))
+        batch_y = np.zeros((num_vocab, 1, cx**2*2))
 
         batch_x[:, 0, :] = x_data[iz, :, :]
         batch_y[:, 0, :] = y_data[iz, :, :]
