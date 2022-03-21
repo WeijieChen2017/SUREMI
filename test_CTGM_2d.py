@@ -152,11 +152,11 @@ for cnt_file, file_path in enumerate(file_list):
         batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
             
         y_hat = model(batch_x, batch_y).detach().cpu().numpy()
-        # print(y_hat.shape)
-        # y_hat_real = np.squeeze(y_hat[:, :, :cx**2])
-        # y_hat_imag = np.squeeze(y_hat[:, :, cx**2:])
+        print(y_hat.shape)
+        y_hat_real = np.squeeze(y_hat[:, :, :cx**2])
+        y_hat_imag = np.squeeze(y_hat[:, :, cx**2:])
 
-        pred_cplx = np.vectorize(complex)(y_hat[...,:cx**2], y_hat[...,cx**2:]).reshape((cx, cx))
+        pred_cplx = np.vectorize(complex)(y_hat_real, y_hat_imag).reshape((cx, cx))
         # print(pred_cplx.shape)
         patch = np.fft.ifftn(np.fft.ifftshift(pred_cplx))
         pred_img[ix*cx:ix*cx+cx, iy*cx:iy*cx+cx] = patch
