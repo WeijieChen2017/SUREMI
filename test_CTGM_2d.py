@@ -151,7 +151,7 @@ for cnt_file, file_path in enumerate(file_list):
         batch_x = torch.from_numpy(batch_x).float().to(device).contiguous()
         batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
             
-        y_hat = model(batch_x, batch_y)
+        y_hat = model(batch_x, batch_y).detach().cpu().numpy()
 
         pred_cplx = np.vectorize(complex)(y_hat[...,0], y_hat[...,1])
         patch = np.fft.ifftn(np.fft.ifftshift(pred_cplx))
