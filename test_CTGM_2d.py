@@ -152,6 +152,7 @@ for cnt_file, file_path in enumerate(file_list):
         batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
             
         y_hat = model(batch_x, batch_y).detach().cpu().numpy()
+        print(y_hat)
 
         pred_cplx = np.vectorize(complex)(y_hat[...,0], y_hat[...,1]).reshape((cx, cx))
         # print(pred_cplx.shape)
