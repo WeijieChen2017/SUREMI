@@ -153,7 +153,8 @@ for cnt_file, file_path in enumerate(file_list):
             
         y_hat = model(batch_x, batch_y).detach().cpu().numpy()
 
-        pred_cplx = np.vectorize(complex)(y_hat[...,0], y_hat[...,1])
+        pred_cplx = np.vectorize(complex)(y_hat[...,0], y_hat[...,1]).reshape((cx, cx))
+        # print(pred_cplx.shape)
         patch = np.fft.ifftn(np.fft.ifftshift(pred_cplx))
         pred_img[ix*cx:ix*cx+cx, iy*cx:iy*cx+cx] = patch
 
