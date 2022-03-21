@@ -32,6 +32,7 @@ print("input size:", train_dict["input_size"])
 test_dict["seed"] = train_dict["seed"]
 test_dict["input_size"] = train_dict["input_size"]
 ax, ay = test_dict["input_size"]
+cx = 32
 
 for path in [test_dict["save_folder"], test_dict["save_folder"]+"pred/"]:
     if not os.path.exists(path):
