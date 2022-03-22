@@ -154,8 +154,8 @@ for cnt_file, file_path in enumerate(file_list):
         y_hat_real = np.squeeze(y_hat[:, :, :cx**2]).reshape(ax//cx, ay//cx, cx**2)
         y_hat_imag = np.squeeze(y_hat[:, :, cx**2:]).reshape(ax//cx, ay//cx, cx**2)
 
-        y_gt_real = np.squeeze(batch_y[:, :, :cx**2]).reshape(ax//cx, ay//cx, cx**2)
-        y_gt_imag = np.squeeze(batch_y[:, :, cx**2:]).reshape(ax//cx, ay//cx, cx**2)
+        y_gt_real = np.squeeze(batch_y.detach().cpu().numpy()[:, :, :cx**2]).reshape(ax//cx, ay//cx, cx**2)
+        y_gt_imag = np.squeeze(batch_y.detach().cpu().numpy()[:, :, cx**2:]).reshape(ax//cx, ay//cx, cx**2)
         
         for ix in range(ax//cx):
             for iy in range(ay//cx):
@@ -177,6 +177,7 @@ for cnt_file, file_path in enumerate(file_list):
     file_CT = nib.load("./data_dir/Iman_CT/norm/"+file_name.replace("npy", "nii.gz"))
     pred_file = nib.Nifti1Image(pred_vol, file_CT.affine, file_CT.header)
     pred_name = test_dict["save_folder"]+"pred/"+file_name.replace("npy", "nii.gz")
+    print(pred_name)
     nib.save(pred_file, pred_name)
 
     pred_file = nib.Nifti1Image(pred_gt, file_CT.affine, file_CT.header)
