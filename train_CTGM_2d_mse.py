@@ -105,7 +105,7 @@ model = CTGM(
 # model = nn.DataParallel(model)
 model.train()
 # model = nn.DataParallel(model)
-dist.init_process_group(backend="nccl", world_size=-1, rank=-1, init_method='env')
+# dist.init_process_group(backend="nccl", world_size=-1, rank=-1, init_method='env')
 model = DistributedDataParallel(model) # device_ids will include all GPU devices by default
 model = model.to(device)
 criterion = nn.MSELoss()
@@ -147,8 +147,8 @@ best_val_loss = 1000
 best_epoch = 0
 # wandb.watch(model)
 
-# package_train = [train_list[:1], True, False, "train"]
-package_train = [train_list, True, True, "train"]
+package_train = [train_list[:4], True, False, "train"]
+# package_train = [train_list, True, True, "train"]
 package_val = [val_list, False, True, "val"]
 # package_test = [test_list, False, False, "test"]
 
@@ -180,54 +180,56 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
         for cnt_file, file_path in enumerate(file_list):
             
-            total_file = len(file_list)
-            
-            x_path = file_path
-            y_path = file_path.replace("MR", "CT")
-            file_name = os.path.basename(file_path)
-            print(iter_tag + " ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: --->".format(idx_epoch+1, cnt_file+1, total_file), file_name, "<---") #
-            x_data = np.load(x_path)
-            y_data = np.load(y_path)
-            dz = x_data.shape[0]
-            z_list = list(range(dz))
-            random.shuffle(z_list)
-            batch_per_step = train_dict["batch"]
-            # batch_per_step = dz
-            batch_loss = np.zeros((dz // batch_per_step))
+            if cnt_file // 4 == os.environ['LOCAL_RANK']:
 
-            for ib in range(dz // batch_per_step):
+                total_file = len(file_list)
+                
+                x_path = file_path
+                y_path = file_path.replace("MR", "CT")
+                file_name = os.path.basename(file_path)
+                print(iter_tag + " ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: --->".format(idx_epoch+1, cnt_file+1, total_file), file_name, "<---") #
+                x_data = np.load(x_path)
+                y_data = np.load(y_path)
+                dz = x_data.shape[0]
+                z_list = list(range(dz))
+                random.shuffle(z_list)
+                batch_per_step = train_dict["batch"]
+                # batch_per_step = dz
+                batch_loss = np.zeros((dz // batch_per_step))
 
-                batch_x = np.zeros((num_vocab, batch_per_step, cx**2*2))
-                batch_y = np.zeros((num_vocab, batch_per_step, cx**2*2))
-                batch_offset = ib * batch_per_step
+                for ib in range(dz // batch_per_step):
 
-                for iz in range(batch_per_step):
+                    batch_x = np.zeros((num_vocab, batch_per_step, cx**2*2))
+                    batch_y = np.zeros((num_vocab, batch_per_step, cx**2*2))
+                    batch_offset = ib * batch_per_step
 
-                    batch_x[:, iz, :] = x_data[z_list[iz+batch_offset], :, :]
-                    batch_y[:, iz, :] = y_data[z_list[iz+batch_offset], :, :]
+                    for iz in range(batch_per_step):
 
-                batch_x = torch.from_numpy(batch_x).float().cuda(non_blocking=True).contiguous()
-                batch_y = torch.from_numpy(batch_y).float().cuda(non_blocking=True).contiguous()
-                    
-                optimizer.zero_grad()
-                # print(batch_x.size(), batch_y.size())
-                # y_hat = model(batch_x, batch_y)
-                y_hat = model(batch_x, max_len=num_vocab)
-                # print("Yhat size: ", y_hat.size(), end="   ")
-                # print("Ytrue size: ", batch_y.size())
-                loss = criterion(y_hat, batch_y)
-                if isTrain:
-                    loss.backward()
-                    optimizer.step()
-                batch_loss[ib] = loss.item()
+                        batch_x[:, iz, :] = x_data[z_list[iz+batch_offset], :, :]
+                        batch_y[:, iz, :] = y_data[z_list[iz+batch_offset], :, :]
 
-            case_loss[cnt_file] = np.mean(batch_loss)
-            print("Loss: ", case_loss[cnt_file])
+                    batch_x = torch.from_numpy(batch_x).float().cuda(non_blocking=True).contiguous()
+                    batch_y = torch.from_numpy(batch_y).float().cuda(non_blocking=True).contiguous()
+                        
+                    optimizer.zero_grad()
+                    # print(batch_x.size(), batch_y.size())
+                    # y_hat = model(batch_x, batch_y)
+                    y_hat = model(batch_x, max_len=num_vocab)
+                    # print("Yhat size: ", y_hat.size(), end="   ")
+                    # print("Ytrue size: ", batch_y.size())
+                    loss = criterion(y_hat, batch_y)
+                    if isTrain:
+                        loss.backward()
+                        optimizer.step()
+                    batch_loss[ib] = loss.item()
 
-            if cnt_file < len(file_list)-1:
-                del batch_x, batch_y
-                gc.collect()
-                torch.cuda.empty_cache()
+                case_loss[cnt_file] = np.mean(batch_loss)
+                print("Loss: ", case_loss[cnt_file])
+
+                if cnt_file < len(file_list)-1:
+                    del batch_x, batch_y
+                    gc.collect()
+                    torch.cuda.empty_cache()
 
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
         print("  Loss: ", np.mean(case_loss))
