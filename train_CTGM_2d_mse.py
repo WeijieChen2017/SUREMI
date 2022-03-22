@@ -102,8 +102,8 @@ model = CTGM(
 # model = nn.DataParallel(model)
 model.train()
 # model = nn.DataParallel(model)
-torch.distributed.init_process_group(backend="nccl", rank=0, world_size=1)
-model = DistributedDataParallel(model) # device_ids will include all GPU devices by default
+# torch.distributed.init_process_group(backend="nccl", rank=0, world_size=1)
+# model = DistributedDataParallel(model) # device_ids will include all GPU devices by default
 model = model.to(device)
 criterion = nn.MSELoss()
 
