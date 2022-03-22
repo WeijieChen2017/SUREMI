@@ -131,6 +131,7 @@ for cnt_file, file_path in enumerate(file_list):
     x_data = np.load(x_path)
     y_data = np.load(y_path)
     az = x_data.shape[0]
+    # book = np.zeros((dz, num_vocab, cx*cx*2))
     z_list = list(range(az))
     pred_vol = np.zeros((256, 256, az))
     pred_gt = np.zeros((256, 256, az))
@@ -150,8 +151,8 @@ for cnt_file, file_path in enumerate(file_list):
         batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
             
         # y_hat = model(batch_x, batch_y).detach().cpu().numpy()
-        y_hat = model(batch_x, max_len=1).detach().cpu().numpy()
-        print(y_hat.shape)
+        y_hat = model(batch_x, max_len=num_vocab).detach().cpu().numpy()
+        # print(y_hat.shape)
         y_hat_real = np.squeeze(y_hat[:, :, :cx**2]).reshape(ax//cx, ay//cx, cx**2)
         y_hat_imag = np.squeeze(y_hat[:, :, cx**2:]).reshape(ax//cx, ay//cx, cx**2)
 
