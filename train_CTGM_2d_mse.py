@@ -181,7 +181,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
         for cnt_file, file_path in enumerate(file_list):
             
-            if cnt_file // 4 == os.environ['LOCAL_RANK']:
+            if cnt_file % 4 == os.environ['LOCAL_RANK']:
 
                 total_file = len(file_list)
                 
