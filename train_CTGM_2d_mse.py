@@ -26,7 +26,7 @@ train_dict["input_size"] = [256, 256]
 ax, ay = train_dict["input_size"]
 train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 2000
-train_dict["batch"] = 4
+train_dict["batch"] = 1
 train_dict["dropout"] = 0
 train_dict["model_term"] = "ComplexTransformerGenerationModel"
 
