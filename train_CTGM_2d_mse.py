@@ -104,8 +104,8 @@ model = CTGM(
 # model = nn.DataParallel(model)
 model.train()
 # model = nn.DataParallel(model)
-dist.init_process_group(backend="nccl")
-# model = DistributedDataParallel(model) # device_ids will include all GPU devices by default
+dist.init_process_group(backend="nccl", world_size=-1, rank=-1, init_method='env')
+model = DistributedDataParallel(model) # device_ids will include all GPU devices by default
 model = model.to(device)
 criterion = nn.MSELoss()
 
@@ -205,8 +205,8 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     batch_x[:, iz, :] = x_data[z_list[iz+batch_offset], :, :]
                     batch_y[:, iz, :] = y_data[z_list[iz+batch_offset], :, :]
 
-                batch_x = torch.from_numpy(batch_x).float().to(device).contiguous()
-                batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
+                batch_x = torch.from_numpy(batch_x).float().cuda(non_blocking=True).contiguous()
+                batch_y = torch.from_numpy(batch_y).float().cuda(non_blocking=True).contiguous()
                     
                 optimizer.zero_grad()
                 # print(batch_x.size(), batch_y.size())
