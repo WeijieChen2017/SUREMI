@@ -133,10 +133,12 @@ for cnt_file, file_path in enumerate(file_list):
     az = x_data.shape[0]
     z_list = list(range(az))
     pred_vol = np.zeros((256, 256, az))
+    pred_gt = np.zeros((256, 256, az))
 
     for iz in range(az):
 
         pred_img = np.zeros((256, 256))
+        pred_img_gt = np.zeros((256, 256))
 
         batch_x = np.zeros((1, num_vocab, cx**2*2))
         batch_y = np.zeros((1, num_vocab, cx**2*2))
@@ -152,6 +154,9 @@ for cnt_file, file_path in enumerate(file_list):
         y_hat_real = np.squeeze(y_hat[:, :, :cx**2]).reshape(ax//cx, ay//cx, cx**2)
         y_hat_imag = np.squeeze(y_hat[:, :, cx**2:]).reshape(ax//cx, ay//cx, cx**2)
 
+        y_gt_real = np.squeeze(batch_y[:, :, :cx**2]).reshape(ax//cx, ay//cx, cx**2)
+        y_gt_imag = np.squeeze(batch_y[:, :, cx**2:]).reshape(ax//cx, ay//cx, cx**2)
+        
         for ix in range(ax//cx):
             for iy in range(ay//cx):
                 patch_real = y_hat_real[ix, iy, :]
@@ -160,9 +165,20 @@ for cnt_file, file_path in enumerate(file_list):
                 patch = np.fft.ifftn(np.fft.ifftshift(pred_cplx))
                 pred_img[ix*cx:ix*cx+cx, iy*cx:iy*cx+cx] = patch.real
 
+                patch_gt_real = y_gt_real[ix, iy, :]
+                pathc_gt_imag = y_gt_imag[ix, iy, :]
+                pred_gt_cplx = np.vectorize(complex)(patch_gt_real, pathc_gt_imag).reshape((cx, cx))
+                patch_gt = np.fft.ifftn(np.fft.ifftshift(pred_gt_cplx))
+                pred_img_gt[ix*cx:ix*cx+cx, iy*cx:iy*cx+cx] = patch_gt.real
+
         pred_vol[:, :, iz] = pred_img
+        pred_gt[:, :, iz] = pred_img_gt       
 
     file_CT = nib.load("./data_dir/Iman_CT/norm/"+file_name.replace("npy", "nii.gz"))
     pred_file = nib.Nifti1Image(pred_vol, file_CT.affine, file_CT.header)
     pred_name = test_dict["save_folder"]+"pred/"+file_name.replace("npy", "nii.gz")
+    nib.save(pred_file, pred_name)
+
+    pred_file = nib.Nifti1Image(pred_gt, file_CT.affine, file_CT.header)
+    pred_name = test_dict["save_folder"]+"pred/"+file_name.replace(".npy", "_gt.nii.gz")
     nib.save(pred_file, pred_name)
