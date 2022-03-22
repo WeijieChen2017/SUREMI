@@ -13,23 +13,20 @@ import torch
 import torchvision
 import requests
 
-# import torch.distributed as dist
-
-
 from model import ComplexTransformerGenerationModel as CTGM
 
 # ==================== dict and config ====================
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "CTGM_2d_v3_mse_max_len"
+train_dict["project_name"] = "CTGM_2d_v2_mse"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_size"] = [256, 256]
 ax, ay = train_dict["input_size"]
 train_dict["gpu_ids"] = [7]
-train_dict["epochs"] = 2000
-train_dict["batch"] = 1
+train_dict["epochs"] = 500
+train_dict["batch"] = 16
 train_dict["dropout"] = 0
 train_dict["model_term"] = "ComplexTransformerGenerationModel"
 
@@ -83,31 +80,29 @@ np.save(train_dict["save_folder"]+"dict.npy", train_dict)
 
 # ==================== basic settings ====================
 
-# np.random.seed(train_dict["seed"])
+np.random.seed(train_dict["seed"])
 gpu_list = ','.join(str(x) for x in train_dict["gpu_ids"])
 os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-print("Local rank:", os.environ['LOCAL_RANK'])
 
-model = CTGM( 
-    input_dims=train_dict["model_related"]["input_dims"],
-    hidden_size=train_dict["model_related"]["hidden_size"],
-    embed_dim=train_dict["model_related"]["embed_dim"],
-    output_dim=train_dict["model_related"]["output_dim"],
-    num_heads=train_dict["model_related"]["num_heads"],
-    attn_dropout=train_dict["model_related"]["attn_dropout"],
-    relu_dropout=train_dict["model_related"]["relu_dropout"],
-    res_dropout=train_dict["model_related"]["res_dropout"],
-    out_dropout=train_dict["model_related"]["out_dropout"],
-    layers=train_dict["model_related"]["layers"],
-    attn_mask=train_dict["model_related"]["attn_mask"])
+# model = CTGM( 
+#     input_dims=train_dict["model_related"]["input_dims"],
+#     hidden_size=train_dict["model_related"]["hidden_size"],
+#     embed_dim=train_dict["model_related"]["embed_dim"],
+#     output_dim=train_dict["model_related"]["output_dim"],
+#     num_heads=train_dict["model_related"]["num_heads"],
+#     attn_dropout=train_dict["model_related"]["attn_dropout"],
+#     relu_dropout=train_dict["model_related"]["relu_dropout"],
+#     res_dropout=train_dict["model_related"]["res_dropout"],
+#     out_dropout=train_dict["model_related"]["out_dropout"],
+#     layers=train_dict["model_related"]["layers"],
+#     attn_mask=train_dict["model_related"]["attn_mask"])
+
+model = torch.load(train_dict["save_folder"]+"model_best_102.pth")
 
 # model = nn.DataParallel(model)
 model.train()
-# model = nn.DataParallel(model)
-# dist.init_process_group(backend="nccl", world_size=-1, rank=-1, init_method='env')
-# model = dist.DistributedDataParallel(model) # device_ids will include all GPU devices by default
 model = model.to(device)
 criterion = nn.MSELoss()
 
@@ -148,15 +143,15 @@ best_val_loss = 1000
 best_epoch = 0
 # wandb.watch(model)
 
-package_train = [train_list[:8], True, False, "train"]
-# package_train = [train_list, True, True, "train"]
+# package_train = [train_list[:1], True, False, "train"]
+package_train = [train_list, True, True, "train"]
 package_val = [val_list, False, True, "val"]
 # package_test = [test_list, False, False, "test"]
 
 num_vocab = (ax//cx) * (ay//cx)
 
 for idx_epoch_new in range(train_dict["epochs"]):
-    idx_epoch = idx_epoch_new
+    idx_epoch = idx_epoch_new + 108
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
     for package in [package_train, package_val]: # , package_val
@@ -181,16 +176,12 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
         for cnt_file, file_path in enumerate(file_list):
             
-            # print(cnt_file % 4)
-
-            # if cnt_file % 4 == os.environ['LOCAL_RANK']:
-
             total_file = len(file_list)
             
             x_path = file_path
             y_path = file_path.replace("MR", "CT")
             file_name = os.path.basename(file_path)
-            print(iter_tag + " ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: --->".format(idx_epoch+1, cnt_file+1, total_file), file_name, "<---") #
+            print(iter_tag + " ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: --->".format(idx_epoch+1, cnt_file+1, total_file), file_name, "<---", end="") #
             x_data = np.load(x_path)
             y_data = np.load(y_path)
             dz = x_data.shape[0]
@@ -211,13 +202,12 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     batch_x[:, iz, :] = x_data[z_list[iz+batch_offset], :, :]
                     batch_y[:, iz, :] = y_data[z_list[iz+batch_offset], :, :]
 
-                batch_x = torch.from_numpy(batch_x).float().cuda(non_blocking=True).contiguous()
-                batch_y = torch.from_numpy(batch_y).float().cuda(non_blocking=True).contiguous()
+                batch_x = torch.from_numpy(batch_x).float().to(device).contiguous()
+                batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
                     
                 optimizer.zero_grad()
                 # print(batch_x.size(), batch_y.size())
-                # y_hat = model(batch_x, batch_y)
-                y_hat = model(batch_x, max_len=num_vocab)
+                y_hat = model(batch_x, batch_y)
                 # print("Yhat size: ", y_hat.size(), end="   ")
                 # print("Ytrue size: ", batch_y.size())
                 loss = criterion(y_hat, batch_y)
@@ -252,6 +242,6 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 print("Checkpoint saved at Epoch {:03d}".format(idx_epoch + 1))
                 best_val_loss = np.mean(case_loss)
 
-        # del batch_x, batch_y
+        del batch_x, batch_y
         gc.collect()
         torch.cuda.empty_cache()
