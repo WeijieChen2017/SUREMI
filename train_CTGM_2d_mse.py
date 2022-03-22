@@ -13,7 +13,8 @@ import torch
 import torchvision
 import requests
 
-import torch.distributed as dist
+# import torch.distributed as dist
+
 
 from model import ComplexTransformerGenerationModel as CTGM
 
@@ -106,7 +107,7 @@ model = CTGM(
 model.train()
 # model = nn.DataParallel(model)
 # dist.init_process_group(backend="nccl", world_size=-1, rank=-1, init_method='env')
-model = dist.DistributedDataParallel(model) # device_ids will include all GPU devices by default
+# model = dist.DistributedDataParallel(model) # device_ids will include all GPU devices by default
 model = model.to(device)
 criterion = nn.MSELoss()
 
