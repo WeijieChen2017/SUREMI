@@ -82,11 +82,12 @@ np.save(train_dict["save_folder"]+"dict.npy", train_dict)
 
 # ==================== basic settings ====================
 
-np.random.seed(train_dict["seed"])
+# np.random.seed(train_dict["seed"])
 gpu_list = ','.join(str(x) for x in train_dict["gpu_ids"])
 os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print("Local rank:", os.environ['LOCAL_RANK'])
 
 model = CTGM( 
     input_dims=train_dict["model_related"]["input_dims"],
@@ -104,8 +105,8 @@ model = CTGM(
 # model = nn.DataParallel(model)
 model.train()
 # model = nn.DataParallel(model)
-# dist.init_process_group(backend="nccl", world_size=-1, rank=-1, init_method='env')
-# model = DistributedDataParallel(model) # device_ids will include all GPU devices by default
+dist.init_process_group(backend="nccl", world_size=-1, rank=-1, init_method='env')
+model = DistributedDataParallel(model) # device_ids will include all GPU devices by default
 model = model.to(device)
 criterion = nn.MSELoss()
 
