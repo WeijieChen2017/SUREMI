@@ -19,12 +19,12 @@ from model import ComplexTransformerGenerationModel as CTGM
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "CTGM_2d_v2_mse"
+train_dict["project_name"] = "CTGM_2d_v3_mse_max_len"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_size"] = [256, 256]
 ax, ay = train_dict["input_size"]
-train_dict["gpu_ids"] = [6]
+train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 2000
 train_dict["batch"] = 16
 train_dict["dropout"] = 0
@@ -205,7 +205,8 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     
                 optimizer.zero_grad()
                 # print(batch_x.size(), batch_y.size())
-                y_hat = model(batch_x, batch_y)
+                # y_hat = model(batch_x, batch_y)
+                y_hat = model(batch_x, max_len=num_vocab)
                 # print("Yhat size: ", y_hat.size(), end="   ")
                 # print("Ytrue size: ", batch_y.size())
                 loss = criterion(y_hat, batch_y)
