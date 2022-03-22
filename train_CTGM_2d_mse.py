@@ -27,7 +27,7 @@ train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_size"] = [256, 256]
 ax, ay = train_dict["input_size"]
-train_dict["gpu_ids"] = [1, 2, 6, 7]
+train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 2000
 train_dict["batch"] = 1
 train_dict["dropout"] = 0
@@ -181,58 +181,58 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
         for cnt_file, file_path in enumerate(file_list):
             
-            print(cnt_file % 4)
+            # print(cnt_file % 4)
 
-            if cnt_file % 4 == os.environ['LOCAL_RANK']:
+            # if cnt_file % 4 == os.environ['LOCAL_RANK']:
 
-                total_file = len(file_list)
-                
-                x_path = file_path
-                y_path = file_path.replace("MR", "CT")
-                file_name = os.path.basename(file_path)
-                print(iter_tag + " ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: --->".format(idx_epoch+1, cnt_file+1, total_file), file_name, "<---") #
-                x_data = np.load(x_path)
-                y_data = np.load(y_path)
-                dz = x_data.shape[0]
-                z_list = list(range(dz))
-                random.shuffle(z_list)
-                batch_per_step = train_dict["batch"]
-                # batch_per_step = dz
-                batch_loss = np.zeros((dz // batch_per_step))
+            total_file = len(file_list)
+            
+            x_path = file_path
+            y_path = file_path.replace("MR", "CT")
+            file_name = os.path.basename(file_path)
+            print(iter_tag + " ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: --->".format(idx_epoch+1, cnt_file+1, total_file), file_name, "<---") #
+            x_data = np.load(x_path)
+            y_data = np.load(y_path)
+            dz = x_data.shape[0]
+            z_list = list(range(dz))
+            random.shuffle(z_list)
+            batch_per_step = train_dict["batch"]
+            # batch_per_step = dz
+            batch_loss = np.zeros((dz // batch_per_step))
 
-                for ib in range(dz // batch_per_step):
+            for ib in range(dz // batch_per_step):
 
-                    batch_x = np.zeros((num_vocab, batch_per_step, cx**2*2))
-                    batch_y = np.zeros((num_vocab, batch_per_step, cx**2*2))
-                    batch_offset = ib * batch_per_step
+                batch_x = np.zeros((num_vocab, batch_per_step, cx**2*2))
+                batch_y = np.zeros((num_vocab, batch_per_step, cx**2*2))
+                batch_offset = ib * batch_per_step
 
-                    for iz in range(batch_per_step):
+                for iz in range(batch_per_step):
 
-                        batch_x[:, iz, :] = x_data[z_list[iz+batch_offset], :, :]
-                        batch_y[:, iz, :] = y_data[z_list[iz+batch_offset], :, :]
+                    batch_x[:, iz, :] = x_data[z_list[iz+batch_offset], :, :]
+                    batch_y[:, iz, :] = y_data[z_list[iz+batch_offset], :, :]
 
-                    batch_x = torch.from_numpy(batch_x).float().cuda(non_blocking=True).contiguous()
-                    batch_y = torch.from_numpy(batch_y).float().cuda(non_blocking=True).contiguous()
-                        
-                    optimizer.zero_grad()
-                    # print(batch_x.size(), batch_y.size())
-                    # y_hat = model(batch_x, batch_y)
-                    y_hat = model(batch_x, max_len=num_vocab)
-                    # print("Yhat size: ", y_hat.size(), end="   ")
-                    # print("Ytrue size: ", batch_y.size())
-                    loss = criterion(y_hat, batch_y)
-                    if isTrain:
-                        loss.backward()
-                        optimizer.step()
-                    batch_loss[ib] = loss.item()
+                batch_x = torch.from_numpy(batch_x).float().cuda(non_blocking=True).contiguous()
+                batch_y = torch.from_numpy(batch_y).float().cuda(non_blocking=True).contiguous()
+                    
+                optimizer.zero_grad()
+                # print(batch_x.size(), batch_y.size())
+                # y_hat = model(batch_x, batch_y)
+                y_hat = model(batch_x, max_len=num_vocab)
+                # print("Yhat size: ", y_hat.size(), end="   ")
+                # print("Ytrue size: ", batch_y.size())
+                loss = criterion(y_hat, batch_y)
+                if isTrain:
+                    loss.backward()
+                    optimizer.step()
+                batch_loss[ib] = loss.item()
 
-                case_loss[cnt_file] = np.mean(batch_loss)
-                print("Loss: ", case_loss[cnt_file])
+            case_loss[cnt_file] = np.mean(batch_loss)
+            print("Loss: ", case_loss[cnt_file])
 
-                if cnt_file < len(file_list)-1:
-                    del batch_x, batch_y
-                    gc.collect()
-                    torch.cuda.empty_cache()
+            if cnt_file < len(file_list)-1:
+                del batch_x, batch_y
+                gc.collect()
+                torch.cuda.empty_cache()
 
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
         print("  Loss: ", np.mean(case_loss))
