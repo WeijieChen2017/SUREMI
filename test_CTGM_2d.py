@@ -150,8 +150,8 @@ for cnt_file, file_path in enumerate(file_list):
         batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
             
         # y_hat = model(batch_x, batch_y).detach().cpu().numpy()
-        y_hat = model(batch_x).detach().cpu().numpy()
-        # print(y_hat.shape)
+        y_hat = model(batch_x, max_len=1).detach().cpu().numpy()
+        print(y_hat.shape)
         y_hat_real = np.squeeze(y_hat[:, :, :cx**2]).reshape(ax//cx, ay//cx, cx**2)
         y_hat_imag = np.squeeze(y_hat[:, :, cx**2:]).reshape(ax//cx, ay//cx, cx**2)
 
@@ -178,9 +178,9 @@ for cnt_file, file_path in enumerate(file_list):
     file_CT = nib.load("./data_dir/Iman_CT/norm/"+file_name.replace("npy", "nii.gz"))
     pred_file = nib.Nifti1Image(pred_vol, file_CT.affine, file_CT.header)
     pred_name = test_dict["save_folder"]+"pred/"+file_name.replace("npy", "nii.gz")
-    print(pred_name)
     nib.save(pred_file, pred_name)
 
     pred_file = nib.Nifti1Image(pred_gt, file_CT.affine, file_CT.header)
     pred_name = test_dict["save_folder"]+"pred/"+file_name.replace(".npy", "_gt.nii.gz")
     nib.save(pred_file, pred_name)
+    print(pred_name)
