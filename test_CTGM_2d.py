@@ -23,7 +23,7 @@ test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 test_dict["project_name"] = "CTGM_2d_v2_mse"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
-test_dict["gpu_ids"] = [7]
+test_dict["gpu_ids"] = [6]
 test_dict["eval_file_cnt"] = 16
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
