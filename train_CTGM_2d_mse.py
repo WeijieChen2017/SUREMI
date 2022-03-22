@@ -24,7 +24,7 @@ train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_size"] = [256, 256]
 ax, ay = train_dict["input_size"]
-train_dict["gpu_ids"] = [7]
+train_dict["gpu_ids"] = [0, 1, 6, 7]
 train_dict["epochs"] = 2000
 train_dict["batch"] = 1
 train_dict["dropout"] = 0
@@ -101,6 +101,7 @@ model = CTGM(
 
 # model = nn.DataParallel(model)
 model.train()
+model = nn.DataParallel(model)
 model = model.to(device)
 criterion = nn.MSELoss()
 
