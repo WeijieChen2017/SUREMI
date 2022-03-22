@@ -148,7 +148,7 @@ best_val_loss = 1000
 best_epoch = 0
 # wandb.watch(model)
 
-package_train = [train_list[:4], True, False, "train"]
+package_train = [train_list[:8], True, False, "train"]
 # package_train = [train_list, True, True, "train"]
 package_val = [val_list, False, True, "val"]
 # package_test = [test_list, False, False, "test"]
