@@ -75,6 +75,7 @@ np.random.seed(train_dict["seed"])
 # print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 
 local_rank = int(os.environ["LOCAL_RANK"])
+os.environ['CUDA_VISIBLE_DEVICES'] = local_rank
 torch.cuda.set_device(local_rank)
 dist.init_process_group(backend='nccl')
 device = torch.device("cuda", local_rank)
@@ -94,8 +95,7 @@ print("Local rank:", local_rank)
 #     attn_mask=train_dict["model_related"]["attn_mask"])
 
 model = torch.load(train_dict["save_folder"]+"model_best_102.pth")
-model = DDP(model, device_ids=[local_rank], output_device=local_rank,
-            broadcast_buffers=False)
+model = DDP(model, device_ids=[local_rank], output_device=local_rank)
 print("The model has been set at", local_rank)
 
 # model = nn.DataParallel(model)
