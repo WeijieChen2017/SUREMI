@@ -15,6 +15,7 @@ import requests
 
 from model import ComplexTransformerGenerationModel as CTGM
 from torch.nn.parallel import DistributedDataParallel as DDP
+import torch.distributed as dist
 # ==================== dict and config ====================
 
 train_dict = {}
