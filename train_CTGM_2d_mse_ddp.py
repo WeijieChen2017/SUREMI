@@ -70,14 +70,15 @@ np.save(train_dict["save_folder"]+"dict.npy", train_dict)
 # ==================== basic settings ====================
 
 np.random.seed(train_dict["seed"])
-gpu_list = ','.join(str(x) for x in train_dict["gpu_ids"])
-os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
-print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
+# gpu_list = ','.join(str(x) for x in train_dict["gpu_ids"])
+# os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
+# print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 
 local_rank = int(os.environ["LOCAL_RANK"])
 torch.cuda.set_device(local_rank)
 dist.init_process_group(backend='nccl')
 device = torch.device("cuda", local_rank)
+print("Local rank:", local_rank)
 
 # model = CTGM( 
 #     input_dims=train_dict["model_related"]["input_dims"],
