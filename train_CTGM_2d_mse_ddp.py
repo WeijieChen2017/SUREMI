@@ -95,6 +95,7 @@ print("Local rank:", local_rank)
 
 model = torch.load(train_dict["save_folder"]+"model_best_102.pth")
 model = DDP(model, device_ids=[local_rank], output_device=local_rank)
+print("The model has been set at", local_rank)
 
 # model = nn.DataParallel(model)
 model.train()
