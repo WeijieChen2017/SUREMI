@@ -94,7 +94,7 @@ print("Local rank:", local_rank)
 #     attn_mask=train_dict["model_related"]["attn_mask"])
 
 model = torch.load(train_dict["save_folder"]+"model_best_102.pth")
-model = DDP(model, device_ids=[local_rank], output_device=local_rank)
+model = DDP(model, device_ids=[local_rank]) # , output_device=local_rank
 
 # model = nn.DataParallel(model)
 model.train()
