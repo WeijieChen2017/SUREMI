@@ -214,7 +214,7 @@ def demo_basic(rank, world_size):
                     dist.all_reduce(loss, op=dist.ReduceOp.SUM)
                     loss /= world_size
                     batch_loss[ib] = loss.item()
-                    print(rank, loss.item())
+                    # print(rank, loss.item())
 
             mesg = "~Epoch[{:03d}]~ ".format(idx_epoch+1)
             mesg = mesg+iter_tag+" [{:03d}]/[{:03d}]:".format(idx_file_group+1, total_group)
