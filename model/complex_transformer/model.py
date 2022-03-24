@@ -185,7 +185,7 @@ class TransformerGenerationModel(nn.Module):
         return TransformerDecoder(embed_dim=self.embed_dim, num_heads=self.num_heads, layers=self.layers, src_attn_dropout=self.attn_dropout, 
             relu_dropout=self.relu_dropout, res_dropout=self.res_dropout, tgt_attn_dropout=self.attn_dropout)
             
-    def forward(self, x, y=None, max_len=None, rank=0):
+    def forward(self, x, y=None, max_len=None):
         """
         x should have dimension [seq_len, batch_size, n_features] (i.e., L, N, C).
         """
@@ -214,8 +214,8 @@ class TransformerGenerationModel(nn.Module):
             y_a = y[:-1, :, :self.orig_d_a]                               # truncate last target 
             y_b = y[:-1, :, self.orig_d_a: self.orig_d_a + self.orig_d_b] # truncate last target 
 
-            sos_a = torch.zeros(1, batch_size, n_features).to(rank)
-            sos_b = torch.zeros(1, batch_size, n_features).to(rank)
+            sos_a = torch.zeros(1, batch_size, n_features).to(x.device)
+            sos_b = torch.zeros(1, batch_size, n_features).to(x.device)
             y_a = torch.cat([sos_a, y_a], dim=0)    # add <sos> to front 
             y_b = torch.cat([sos_b, y_b], dim=0)    # add <sos> to front 
 
@@ -226,8 +226,8 @@ class TransformerGenerationModel(nn.Module):
             output = self.out_fc2(self.out_dropout(F.relu(self.out_fc1(out_concat))))
 
         elif max_len is not None:
-            dec_a = torch.zeros(1, batch_size, n_features//2).to(rank)
-            dec_b = torch.zeros(1, batch_size, n_features//2).to(rank)
+            dec_a = torch.zeros(1, batch_size, n_features//2).to(x.device)
+            dec_b = torch.zeros(1, batch_size, n_features//2).to(x.device)
             dec_a, dec_b = self.proj_dec(dec_a, dec_b)
 
             dec_a, dec_b = self.trans_decoder(input_A=dec_a, input_B=dec_b, enc_A=h_as, enc_B=h_bs) 

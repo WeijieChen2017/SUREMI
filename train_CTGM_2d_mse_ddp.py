@@ -187,7 +187,7 @@ def demo_basic(rank, world_size):
 
                     optimizer.zero_grad()
                     # print(batch_x.size(), batch_y.size())
-                    y_hat = ddp_model(batch_x, batch_y, rank=rank).to(rank)
+                    y_hat = ddp_model(batch_x, batch_y).to(rank)
                     # print("Yhat size: ", y_hat.size(), end="   ")
                     # print("Ytrue size: ", batch_y.size())
                     loss = criterion(y_hat, batch_y)
