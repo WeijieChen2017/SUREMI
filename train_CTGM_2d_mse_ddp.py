@@ -132,8 +132,9 @@ def demo_basic(rank, world_size):
 
     for idx_epoch_new in range(train_dict["epochs"]):
         idx_epoch = idx_epoch_new + 102
-        print("~Epoch[{:03d}]~".format(idx_epoch+1))
 
+        print("~Epoch[{:03d}]~".format(idx_epoch+1))
+        
         for package in [package_train, package_val]: # , package_val
 
             file_list = package[0]
@@ -157,8 +158,6 @@ def demo_basic(rank, world_size):
 
             for idx_file_group in range(len(file_list)//world_size):
 
-                print(iter_tag + " [{:03d}]/[{:03d}]:".format(idx_file_group+1, total_group)) #
-                
                 file_path = file_list[idx_file_group * 4 + rank]
                 x_path = file_path
                 y_path = file_path.replace("MR", "CT")
@@ -188,7 +187,7 @@ def demo_basic(rank, world_size):
 
                     optimizer.zero_grad()
                     # print(batch_x.size(), batch_y.size())
-                    y_hat = model(batch_x, batch_y)
+                    y_hat = ddp_model(batch_x, batch_y)
                     # print("Yhat size: ", y_hat.size(), end="   ")
                     # print("Ytrue size: ", batch_y.size())
                     loss = criterion(y_hat, batch_y)
@@ -201,7 +200,10 @@ def demo_basic(rank, world_size):
                     loss /= world_size
                     batch_loss[ib] = loss.item()
 
-            print("-> Loss: ", np.mean(case_loss))
+            mesg = "~Epoch[{:03d}]~ ".format(idx_epoch+1)
+            mesg = mesg+iter_tag+" [{:03d}]/[{:03d}]:".format(idx_file_group+1, total_group)
+            mesg = mesg+"-> Loss: ", np.mean(case_loss)
+            print(mesg)
             np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}_rank{:01d}.npy".format(idx_epoch+1, rank), case_loss)
 
             if isVal:
