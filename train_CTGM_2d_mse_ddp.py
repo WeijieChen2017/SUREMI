@@ -13,9 +13,12 @@ import torch
 import torchvision
 import requests
 
-from model import ComplexTransformerGenerationModel as CTGM
+import torch.multiprocessing as mp
 from torch.nn.parallel import DistributedDataParallel as DDP
 import torch.distributed as dist
+
+from model import ComplexTransformerGenerationModel as CTGM
+
 
 def run_demo(demo_fn, world_size):
     mp.spawn(demo_fn,
