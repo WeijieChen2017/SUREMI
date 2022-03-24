@@ -153,6 +153,7 @@ if __name__ == "__main__":
     os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
     print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
     n_gpus = torch.cuda.device_count()
+    print(n_gpus)
     assert n_gpus >= 2, f"Requires at least 2 GPUs to run, but got {n_gpus}"
     world_size = n_gpus
     run_demo(demo_basic, world_size)
