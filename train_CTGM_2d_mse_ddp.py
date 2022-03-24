@@ -182,12 +182,12 @@ def demo_basic(rank, world_size):
                         batch_x[:, iz, :] = x_data[z_list[iz+batch_offset], :, :]
                         batch_y[:, iz, :] = y_data[z_list[iz+batch_offset], :, :]
 
-                    batch_x = torch.from_numpy(batch_x).float().to(rank).contiguous()
-                    batch_y = torch.from_numpy(batch_y).float().to(rank).contiguous()
+                    batch_x = torch.from_numpy(batch_x).float().to(rank) # .contiguous()
+                    batch_y = torch.from_numpy(batch_y).float().to(rank) # .contiguous()
 
                     optimizer.zero_grad()
                     # print(batch_x.size(), batch_y.size())
-                    y_hat = ddp_model(batch_x, batch_y)
+                    y_hat = ddp_model(batch_x, batch_y).to(rank)
                     # print("Yhat size: ", y_hat.size(), end="   ")
                     # print("Ytrue size: ", batch_y.size())
                     loss = criterion(y_hat, batch_y)

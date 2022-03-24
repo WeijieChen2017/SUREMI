@@ -603,8 +603,8 @@ def buffered_future_mask(tensor, tensor2=None):
     if tensor2 is not None:
         dim2 = tensor2.size(0)
     future_mask = torch.tril(fill_with_one(torch.ones(dim1, dim2)), 0)
-    if tensor.is_cuda:
-        future_mask = future_mask.cuda()
+    # if tensor.is_cuda:
+    #     future_mask = future_mask.cuda()
     return future_mask[:dim1, :dim2]
 
 
