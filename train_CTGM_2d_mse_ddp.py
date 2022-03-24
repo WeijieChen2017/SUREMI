@@ -23,10 +23,6 @@ import torch.distributed as dist
 os.environ['MASTER_ADDR'] = 'localhost'
 os.environ['MASTER_PORT'] = '12355'
 
-# initialize the process group
-dist.init_process_group("nccl", rank=rank, world_size=world_size)
-
-
 # ==================== dict and config ====================
 
 train_dict = {}
@@ -36,7 +32,7 @@ train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_size"] = [256, 256]
 ax, ay = train_dict["input_size"]
-# train_dict["gpu_ids"] = [1,2,4,6]
+train_dict["gpu_ids"] = [1,3,4,6]
 train_dict["epochs"] = 600
 train_dict["batch"] = 16 * 4
 train_dict["dropout"] = 0
@@ -126,6 +122,20 @@ np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 #     out_dropout=train_dict["model_related"]["out_dropout"],
 #     layers=train_dict["model_related"]["layers"],
 #     attn_mask=train_dict["model_related"]["attn_mask"])
+
+
+# ==================== DDP training ====================
+# initialize the process group
+gpu_list = ','.join(str(x) for x in train_dict["gpu_ids"])
+os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
+print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
+n_gpus = torch.cuda.device_count()
+assert n_gpus >= 2, f"Requires at least 2 GPUs to run, but got {n_gpus}"
+world_size = len(train_dict["gpu_ids"])
+dist.init_process_group("nccl", rank=rank, world_size=world_size)
+run_demo(demo_basic, world_size)
+
+
 
 def run_demo(demo_fn, world_size):
     mp.spawn(demo_fn,
@@ -248,14 +258,5 @@ def demo_basic(rank, world_size):
                     best_val_loss = np.mean(case_loss)
 
     cleanup()
-
-
-gpu_list = ','.join(str(x) for x in [1,3,4,6])
-os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
-print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
-n_gpus = torch.cuda.device_count()
-assert n_gpus >= 2, f"Requires at least 2 GPUs to run, but got {n_gpus}"
-world_size = n_gpus
-run_demo(demo_basic, world_size)
 
 
