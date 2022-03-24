@@ -149,7 +149,7 @@ def demo_model_parallel(rank, world_size):
 
 
 if __name__ == "__main__":
-    os.environ['CUDA_VISIBLE_DEVICES'] = [1,2,3,4]
+    os.environ['CUDA_VISIBLE_DEVICES'] = "1,2,3,4"
     print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
     n_gpus = torch.cuda.device_count()
     assert n_gpus >= 2, f"Requires at least 2 GPUs to run, but got {n_gpus}"
