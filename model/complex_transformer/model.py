@@ -115,37 +115,37 @@ class TransformerModel(nn.Module):
 class TransformerGenerationModel(nn.Module):
     def __init__(self, input_dims, hidden_size, embed_dim, output_dim, num_heads, attn_dropout, relu_dropout, res_dropout, out_dropout, layers, attn_mask=False, src_mask=False, tgt_mask=False):
         super(TransformerGenerationModel, self).__init__()
-        self.conv = ComplexSequential(
-            ComplexConv1d(in_channels=1, out_channels=16, kernel_size=6, stride=1),
-            ComplexBatchNorm1d(16),
-            ComplexReLU(),
-            ComplexMaxPool1d(2, stride=2),
+        # self.conv = ComplexSequential(
+        #     ComplexConv1d(in_channels=1, out_channels=16, kernel_size=6, stride=1),
+        #     ComplexBatchNorm1d(16),
+        #     ComplexReLU(),
+        #     ComplexMaxPool1d(2, stride=2),
 
-            ComplexConv1d(in_channels=16, out_channels=32, kernel_size=3, stride=1),
-            ComplexBatchNorm1d(32),
-            ComplexReLU(),
-            ComplexMaxPool1d(2, stride=2),
+        #     ComplexConv1d(in_channels=16, out_channels=32, kernel_size=3, stride=1),
+        #     ComplexBatchNorm1d(32),
+        #     ComplexReLU(),
+        #     ComplexMaxPool1d(2, stride=2),
 
-            ComplexConv1d(in_channels=32, out_channels=64, kernel_size=3, stride=1),
-            ComplexBatchNorm1d(64),
-            ComplexReLU(),
-            ComplexMaxPool1d(2, stride=2),
+        #     ComplexConv1d(in_channels=32, out_channels=64, kernel_size=3, stride=1),
+        #     ComplexBatchNorm1d(64),
+        #     ComplexReLU(),
+        #     ComplexMaxPool1d(2, stride=2),
 
-            ComplexConv1d(in_channels=64, out_channels=64, kernel_size=3, stride=1),
-            ComplexBatchNorm1d(64),
-            ComplexReLU(),
-            ComplexMaxPool1d(2, stride=2),
+        #     ComplexConv1d(in_channels=64, out_channels=64, kernel_size=3, stride=1),
+        #     ComplexBatchNorm1d(64),
+        #     ComplexReLU(),
+        #     ComplexMaxPool1d(2, stride=2),
 
-            ComplexConv1d(in_channels=64, out_channels=128, kernel_size=3, stride=1),
-            ComplexBatchNorm1d(128),
-            ComplexReLU(),
-            ComplexMaxPool1d(2, stride=2),
-            ComplexFlatten(),
-            )
+        #     ComplexConv1d(in_channels=64, out_channels=128, kernel_size=3, stride=1),
+        #     ComplexBatchNorm1d(128),
+        #     ComplexReLU(),
+        #     ComplexMaxPool1d(2, stride=2),
+        #     ComplexFlatten(),
+        #     )
         [self.orig_d_a, self.orig_d_b] = input_dims
         assert self.orig_d_a == self.orig_d_b
-        channels = ((((((((((self.orig_d_a -6)//1+1 -2)//2+1 -3)//1+1 -2)//2+1 
-            -3)//1+1 -2)//2+1 -3)//1+1 -2)//2+1 -3)//1+1 -2)//2+1
+        # channels = ((((((((((self.orig_d_a -6)//1+1 -2)//2+1 -3)//1+1 -2)//2+1 
+        #     -3)//1+1 -2)//2+1 -3)//1+1 -2)//2+1 -3)//1+1 -2)//2+1
         # self.d_a, self.d_b = 128*channels, 128*channels
         self.d_a = self.orig_d_a
         self.d_b = self.orig_d_b
@@ -211,8 +211,8 @@ class TransformerGenerationModel(nn.Module):
             seq_len, batch_size, n_features2 = y.shape 
             n_features = n_features2 // 2
 
-            y_a = y[:-1, :, :self.orig_d_a]                               # truncate last target 
-            y_b = y[:-1, :, self.orig_d_a: self.orig_d_a + self.orig_d_b] # truncate last target 
+            y_a = y[:, :, :self.orig_d_a]                               # truncate last target 
+            y_b = y[:, :, self.orig_d_a: self.orig_d_a + self.orig_d_b] # truncate last target 
 
             # sos_a = torch.zeros(1, batch_size, n_features).to(x.device)
             # sos_b = torch.zeros(1, batch_size, n_features).to(x.device)
@@ -235,7 +235,7 @@ class TransformerGenerationModel(nn.Module):
 
             for i in range(max_len - 1):
                 dec_a, dec_b = self.trans_decoder(input_A=y_a, input_B=y_b, enc_A=h_as, enc_B=h_bs)
-                y_a, y_b = torch.cat([y_a, dec_a[-1].unsqueeze(0)], dim=0), torch.cat([y_b, dec_b[-1].unsqueeze(0)], dim=0)
+                y_a, y_b = torch.cat([y_a, dec_a.unsqueeze(0)], dim=0), torch.cat([y_b, dec_b.unsqueeze(0)], dim=0)
             out_concat = torch.cat([y_a, y_b], dim=-1)
             
             output = self.out_fc2(self.out_dropout(F.relu(self.out_fc1(out_concat))))
