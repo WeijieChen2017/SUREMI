@@ -214,10 +214,10 @@ class TransformerGenerationModel(nn.Module):
             y_a = y[:-1, :, :self.orig_d_a]                               # truncate last target 
             y_b = y[:-1, :, self.orig_d_a: self.orig_d_a + self.orig_d_b] # truncate last target 
 
-            sos_a = torch.zeros(1, batch_size, n_features).to(x.device)
-            sos_b = torch.zeros(1, batch_size, n_features).to(x.device)
-            y_a = torch.cat([sos_a, y_a], dim=0)    # add <sos> to front 
-            y_b = torch.cat([sos_b, y_b], dim=0)    # add <sos> to front 
+            # sos_a = torch.zeros(1, batch_size, n_features).to(x.device)
+            # sos_b = torch.zeros(1, batch_size, n_features).to(x.device)
+            # y_a = torch.cat([sos_a, y_a], dim=0)    # add <sos> to front 
+            # y_b = torch.cat([sos_b, y_b], dim=0)    # add <sos> to front 
 
             y_a, y_b = self.proj_dec(y_a, y_b)
             out_as, out_bs = self.trans_decoder(input_A=y_a, input_B=y_b, enc_A=h_as, enc_B=h_bs)
