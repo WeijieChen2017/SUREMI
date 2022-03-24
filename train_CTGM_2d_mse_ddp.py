@@ -151,127 +151,127 @@ def demo_basic(rank, world_size):
     cleanup()
 
 
+if __name__ == "__main__":
 
 
 
+    # ==================== DDP setting ====================
 
-# ==================== DDP setting ====================
+    os.environ['MASTER_ADDR'] = 'localhost'
+    os.environ['MASTER_PORT'] = '12355'
 
-os.environ['MASTER_ADDR'] = 'localhost'
-os.environ['MASTER_PORT'] = '12355'
+    # ==================== dict and config ====================
 
-# ==================== dict and config ====================
+    train_dict = {}
+    train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
+    train_dict["project_name"] = "CTGM_2d_v2_mse_102_ddp"
+    train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
+    train_dict["seed"] = 426
+    train_dict["input_size"] = [256, 256]
+    ax, ay = train_dict["input_size"]
+    train_dict["gpu_ids"] = [1,3,4,6]
+    train_dict["epochs"] = 600
+    train_dict["batch"] = 16 * 4
+    train_dict["dropout"] = 0
+    train_dict["model_term"] = "ComplexTransformerGenerationModel"
 
-train_dict = {}
-train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "CTGM_2d_v2_mse_102_ddp"
-train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
-train_dict["seed"] = 426
-train_dict["input_size"] = [256, 256]
-ax, ay = train_dict["input_size"]
-train_dict["gpu_ids"] = [1,3,4,6]
-train_dict["epochs"] = 600
-train_dict["batch"] = 16 * 4
-train_dict["dropout"] = 0
-train_dict["model_term"] = "ComplexTransformerGenerationModel"
+    train_dict["model_related"] = {}
+    train_dict["model_related"]["cx"] = 32
+    cx = train_dict["model_related"]["cx"]
+    train_dict["model_related"]["input_dims"] = [cx**2, cx**2]
+    train_dict["model_related"]["hidden_size"] = 1024
+    train_dict["model_related"]["embed_dim"] = 1024
+    train_dict["model_related"]["output_dim"] = cx**2*2
+    train_dict["model_related"]["num_heads"] = cx
+    train_dict["model_related"]["attn_dropout"] = 0.0
+    train_dict["model_related"]["relu_dropout"] = 0.0
+    train_dict["model_related"]["res_dropout"] = 0.0
+    train_dict["model_related"]["out_dropout"] = 0.0
+    train_dict["model_related"]["layers"] = 6
+    train_dict["model_related"]["attn_mask"] = False
 
-train_dict["model_related"] = {}
-train_dict["model_related"]["cx"] = 32
-cx = train_dict["model_related"]["cx"]
-train_dict["model_related"]["input_dims"] = [cx**2, cx**2]
-train_dict["model_related"]["hidden_size"] = 1024
-train_dict["model_related"]["embed_dim"] = 1024
-train_dict["model_related"]["output_dim"] = cx**2*2
-train_dict["model_related"]["num_heads"] = cx
-train_dict["model_related"]["attn_dropout"] = 0.0
-train_dict["model_related"]["relu_dropout"] = 0.0
-train_dict["model_related"]["res_dropout"] = 0.0
-train_dict["model_related"]["out_dropout"] = 0.0
-train_dict["model_related"]["layers"] = 6
-train_dict["model_related"]["attn_mask"] = False
+    train_dict["folder_X"] = "./data_dir/Iman_MR/kspace_2d/"
+    train_dict["folder_Y"] = "./data_dir/Iman_CT/kspace_2d/"
+    # train_dict["pre_train"] = "swin_base_patch244_window1677_kinetics400_22k.pth"
+    train_dict["val_ratio"] = 0.3
+    train_dict["test_ratio"] = 0.2
 
-train_dict["folder_X"] = "./data_dir/Iman_MR/kspace_2d/"
-train_dict["folder_Y"] = "./data_dir/Iman_CT/kspace_2d/"
-# train_dict["pre_train"] = "swin_base_patch244_window1677_kinetics400_22k.pth"
-train_dict["val_ratio"] = 0.3
-train_dict["test_ratio"] = 0.2
+    train_dict["loss_term"] = "MSELoss"
+    train_dict["optimizer"] = "AdamW"
+    train_dict["opt_lr"] = 1e-3 # default
+    train_dict["opt_betas"] = (0.9, 0.999) # default
+    train_dict["opt_eps"] = 1e-8 # default
+    train_dict["opt_weight_decay"] = 0.01 # default
+    train_dict["amsgrad"] = False # default
 
-train_dict["loss_term"] = "MSELoss"
-train_dict["optimizer"] = "AdamW"
-train_dict["opt_lr"] = 1e-3 # default
-train_dict["opt_betas"] = (0.9, 0.999) # default
-train_dict["opt_eps"] = 1e-8 # default
-train_dict["opt_weight_decay"] = 0.01 # default
-train_dict["amsgrad"] = False # default
+    for path in [train_dict["save_folder"], train_dict["save_folder"]+"npy/", train_dict["save_folder"]+"loss/"]:
+        if not os.path.exists(path):
+            os.mkdir(path)
 
-for path in [train_dict["save_folder"], train_dict["save_folder"]+"npy/", train_dict["save_folder"]+"loss/"]:
-    if not os.path.exists(path):
-        os.mkdir(path)
+    np.save(train_dict["save_folder"]+"dict.npy", train_dict)
+    np.random.seed(train_dict["seed"])
+    best_val_loss = 3
 
-np.save(train_dict["save_folder"]+"dict.npy", train_dict)
-np.random.seed(train_dict["seed"])
-best_val_loss = 3
+    # ==================== data division ====================
 
-# ==================== data division ====================
+    X_list = sorted(glob.glob(train_dict["folder_X"]+"*.npy"))
+    Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.npy"))
 
-X_list = sorted(glob.glob(train_dict["folder_X"]+"*.npy"))
-Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.npy"))
+    selected_list = np.asarray(X_list)
+    np.random.shuffle(selected_list)
+    selected_list = list(selected_list)
 
-selected_list = np.asarray(X_list)
-np.random.shuffle(selected_list)
-selected_list = list(selected_list)
+    val_list = selected_list[:int(len(selected_list)*train_dict["val_ratio"])]
+    val_list.sort()
+    test_list = selected_list[-int(len(selected_list)*train_dict["test_ratio"]):]
+    test_list.sort()
+    train_list = list(set(selected_list) - set(val_list) - set(test_list))
+    train_list.sort()
 
-val_list = selected_list[:int(len(selected_list)*train_dict["val_ratio"])]
-val_list.sort()
-test_list = selected_list[-int(len(selected_list)*train_dict["test_ratio"]):]
-test_list.sort()
-train_list = list(set(selected_list) - set(val_list) - set(test_list))
-train_list.sort()
-
-data_division_dict = {
-    "train_list_X" : train_list,
-    "val_list_X" : val_list,
-    "test_list_X" : test_list}
-np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
-
-
-# ==================== basic settings ====================
-
-# gpu_list = ','.join(str(x) for x in train_dict["gpu_ids"])
-# os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
-# print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
-
-# local_rank = int(os.environ["LOCAL_RANK"])
-# torch.cuda.set_device(local_rank)
-# dist.init_process_group(backend='nccl')
-# device = torch.device("cuda", local_rank, world_size=4)
-# print("Local rank:", local_rank)
-
-# model = CTGM( 
-#     input_dims=train_dict["model_related"]["input_dims"],
-#     hidden_size=train_dict["model_related"]["hidden_size"],
-#     embed_dim=train_dict["model_related"]["embed_dim"],
-#     output_dim=train_dict["model_related"]["output_dim"],
-#     num_heads=train_dict["model_related"]["num_heads"],
-#     attn_dropout=train_dict["model_related"]["attn_dropout"],
-#     relu_dropout=train_dict["model_related"]["relu_dropout"],
-#     res_dropout=train_dict["model_related"]["res_dropout"],
-#     out_dropout=train_dict["model_related"]["out_dropout"],
-#     layers=train_dict["model_related"]["layers"],
-#     attn_mask=train_dict["model_related"]["attn_mask"])
+    data_division_dict = {
+        "train_list_X" : train_list,
+        "val_list_X" : val_list,
+        "test_list_X" : test_list}
+    np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 
 
-# ==================== DDP training ====================
-# initialize the process group
-gpu_list = ','.join(str(x) for x in train_dict["gpu_ids"])
-os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
-os.environ['NCCL_DEBUG'] = "INFO"
-print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
-n_gpus = torch.cuda.device_count()
-assert n_gpus >= 2, f"Requires at least 2 GPUs to run, but got {n_gpus}"
-world_size = len(train_dict["gpu_ids"])
-# dist.init_process_group("nccl", rank=world_size, world_size=world_size)
-run_demo(demo_basic, world_size)
+    # ==================== basic settings ====================
+
+    # gpu_list = ','.join(str(x) for x in train_dict["gpu_ids"])
+    # os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
+    # print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
+
+    # local_rank = int(os.environ["LOCAL_RANK"])
+    # torch.cuda.set_device(local_rank)
+    # dist.init_process_group(backend='nccl')
+    # device = torch.device("cuda", local_rank, world_size=4)
+    # print("Local rank:", local_rank)
+
+    # model = CTGM( 
+    #     input_dims=train_dict["model_related"]["input_dims"],
+    #     hidden_size=train_dict["model_related"]["hidden_size"],
+    #     embed_dim=train_dict["model_related"]["embed_dim"],
+    #     output_dim=train_dict["model_related"]["output_dim"],
+    #     num_heads=train_dict["model_related"]["num_heads"],
+    #     attn_dropout=train_dict["model_related"]["attn_dropout"],
+    #     relu_dropout=train_dict["model_related"]["relu_dropout"],
+    #     res_dropout=train_dict["model_related"]["res_dropout"],
+    #     out_dropout=train_dict["model_related"]["out_dropout"],
+    #     layers=train_dict["model_related"]["layers"],
+    #     attn_mask=train_dict["model_related"]["attn_mask"])
+
+
+    # ==================== DDP training ====================
+    # initialize the process group
+    gpu_list = ','.join(str(x) for x in train_dict["gpu_ids"])
+    os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
+    os.environ['NCCL_DEBUG'] = "INFO"
+    print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
+    n_gpus = torch.cuda.device_count()
+    assert n_gpus >= 2, f"Requires at least 2 GPUs to run, but got {n_gpus}"
+    world_size = len(train_dict["gpu_ids"])
+    # dist.init_process_group("nccl", rank=world_size, world_size=world_size)
+    run_demo(demo_basic, world_size)
 
 
 
