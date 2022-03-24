@@ -123,7 +123,7 @@ def demo_basic(rank, world_size):
         attn_mask=train_dict["model_related"]["attn_mask"]
     ).to(rank)
 
-    ddp_model = DDP(model, device_ids=[rank], find_unused_parameters=True)
+    ddp_model = DDP(model, device_ids=[rank]) # , find_unused_parameters=True
     print("The model has been set at", rank)
     model.train()
     criterion = nn.MSELoss()
@@ -148,7 +148,7 @@ def demo_basic(rank, world_size):
     for idx_epoch_new in range(train_dict["epochs"]):
         idx_epoch = idx_epoch_new + 0
 
-        print("~Epoch[{:03d}]~".format(idx_epoch+1))
+        # print("~Epoch[{:03d}]~".format(idx_epoch+1))
         
         for package in [package_train, package_val]: # , package_val
 
@@ -214,6 +214,7 @@ def demo_basic(rank, world_size):
                     dist.all_reduce(loss, op=dist.ReduceOp.SUM)
                     loss /= world_size
                     batch_loss[ib] = loss.item()
+                    print(rank, loss.item())
 
             mesg = "~Epoch[{:03d}]~ ".format(idx_epoch+1)
             mesg = mesg+iter_tag+" [{:03d}]/[{:03d}]:".format(idx_file_group+1, total_group)

@@ -233,7 +233,7 @@ class TransformerGenerationModel(nn.Module):
             dec_a, dec_b = self.trans_decoder(input_A=dec_a, input_B=dec_b, enc_A=h_as, enc_B=h_bs) 
             y_a, y_b = dec_a, dec_b
 
-            for i in range(max_len - 1):
+            for i in range(max_len):
                 dec_a, dec_b = self.trans_decoder(input_A=y_a, input_B=y_b, enc_A=h_as, enc_B=h_bs)
                 y_a, y_b = torch.cat([y_a, dec_a.unsqueeze(0)], dim=0), torch.cat([y_b, dec_b.unsqueeze(0)], dim=0)
             out_concat = torch.cat([y_a, y_b], dim=-1)
