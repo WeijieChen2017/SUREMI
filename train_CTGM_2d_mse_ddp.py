@@ -62,6 +62,24 @@ train_dict["opt_weight_decay"] = 0.01 # default
 train_dict["amsgrad"] = False # default
 
 
+X_list = sorted(glob.glob(train_dict["folder_X"]+"*.npy"))
+Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.npy"))
+
+selected_list = np.asarray(X_list)
+np.random.shuffle(selected_list)
+selected_list = list(selected_list)
+
+val_list = selected_list[:int(len(selected_list)*train_dict["val_ratio"])]
+val_list.sort()
+test_list = selected_list[-int(len(selected_list)*train_dict["test_ratio"]):]
+test_list.sort()
+train_list = list(set(selected_list) - set(val_list) - set(test_list))
+train_list.sort()
+
+data_division_dict = {
+    "train_list_X" : train_list,
+    "val_list_X" : val_list,
+    "test_list_X" : test_list}
 
 
 def run_demo(demo_fn, world_size):
@@ -258,24 +276,24 @@ if __name__ == "__main__":
 
     # ==================== data division ====================
 
-    X_list = sorted(glob.glob(train_dict["folder_X"]+"*.npy"))
-    Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.npy"))
+    # X_list = sorted(glob.glob(train_dict["folder_X"]+"*.npy"))
+    # Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.npy"))
 
-    selected_list = np.asarray(X_list)
-    np.random.shuffle(selected_list)
-    selected_list = list(selected_list)
+    # selected_list = np.asarray(X_list)
+    # np.random.shuffle(selected_list)
+    # selected_list = list(selected_list)
 
-    val_list = selected_list[:int(len(selected_list)*train_dict["val_ratio"])]
-    val_list.sort()
-    test_list = selected_list[-int(len(selected_list)*train_dict["test_ratio"]):]
-    test_list.sort()
-    train_list = list(set(selected_list) - set(val_list) - set(test_list))
-    train_list.sort()
+    # val_list = selected_list[:int(len(selected_list)*train_dict["val_ratio"])]
+    # val_list.sort()
+    # test_list = selected_list[-int(len(selected_list)*train_dict["test_ratio"]):]
+    # test_list.sort()
+    # train_list = list(set(selected_list) - set(val_list) - set(test_list))
+    # train_list.sort()
 
-    data_division_dict = {
-        "train_list_X" : train_list,
-        "val_list_X" : val_list,
-        "test_list_X" : test_list}
+    # data_division_dict = {
+    #     "train_list_X" : train_list,
+    #     "val_list_X" : val_list,
+    #     "test_list_X" : test_list}
     np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 
 
