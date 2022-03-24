@@ -128,6 +128,7 @@ def demo_basic(rank, world_size):
     package_val = [val_list, False, True, "val"]
     # package_test = [test_list, False, False, "test"]
 
+    num_vocab = (ax//cx) * (ay//cx)
 
     for idx_epoch_new in range(train_dict["epochs"]):
         idx_epoch = idx_epoch_new + 102
