@@ -21,7 +21,7 @@ from model import ComplexTransformerGenerationModel as CTGM
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "CTGM_2d_v2_mse_102_ddp"
+train_dict["project_name"] = "CTGM_2d_v4_mse_ddp"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_size"] = [256, 256]
@@ -239,7 +239,7 @@ if __name__ == "__main__":
     # ==================== DDP setting ====================
 
     os.environ['MASTER_ADDR'] = 'localhost'
-    os.environ['MASTER_PORT'] = '12355'
+    os.environ['MASTER_PORT'] = '12345'
 
     # ==================== dict and config ====================
 
