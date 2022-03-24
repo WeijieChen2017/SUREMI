@@ -131,7 +131,7 @@ def demo_basic(rank, world_size):
 
     for idx_epoch_new in range(train_dict["epochs"]):
         idx_epoch = idx_epoch_new + 102
-        print("~Epoch[{:03d}]~".format(idx_epoch+1), end="")
+        print("~Epoch[{:03d}]~".format(idx_epoch+1))
 
         for package in [package_train, package_val]: # , package_val
 
@@ -156,9 +156,9 @@ def demo_basic(rank, world_size):
 
             for idx_file_group in range(len(file_list)//world_size):
 
-                print(iter_tag + " [{:03d}]/[{:03d}]:".format(idx_file_group+1, total_group), end=" ") #
+                print(iter_tag + " [{:03d}]/[{:03d}]:".format(idx_file_group+1, total_group)) #
                 
-                file_path = idx_file_group * train_dict["cnt_gpu"] + rank
+                file_path = idx_file_group * 4 + rank
                 x_path = file_path
                 y_path = file_path.replace("MR", "CT")
                 file_name = os.path.basename(file_path)
