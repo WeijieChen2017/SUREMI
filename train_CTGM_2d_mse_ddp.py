@@ -19,6 +19,50 @@ import torch.distributed as dist
 
 from model import ComplexTransformerGenerationModel as CTGM
 
+train_dict = {}
+train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
+train_dict["project_name"] = "CTGM_2d_v2_mse_102_ddp"
+train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
+train_dict["seed"] = 426
+train_dict["input_size"] = [256, 256]
+ax, ay = train_dict["input_size"]
+train_dict["gpu_ids"] = [1,3,4,6]
+train_dict["epochs"] = 600
+train_dict["batch"] = 16 * 4
+train_dict["dropout"] = 0
+train_dict["model_term"] = "ComplexTransformerGenerationModel"
+
+train_dict["model_related"] = {}
+train_dict["model_related"]["cx"] = 32
+cx = train_dict["model_related"]["cx"]
+train_dict["model_related"]["input_dims"] = [cx**2, cx**2]
+train_dict["model_related"]["hidden_size"] = 1024
+train_dict["model_related"]["embed_dim"] = 1024
+train_dict["model_related"]["output_dim"] = cx**2*2
+train_dict["model_related"]["num_heads"] = cx
+train_dict["model_related"]["attn_dropout"] = 0.0
+train_dict["model_related"]["relu_dropout"] = 0.0
+train_dict["model_related"]["res_dropout"] = 0.0
+train_dict["model_related"]["out_dropout"] = 0.0
+train_dict["model_related"]["layers"] = 6
+train_dict["model_related"]["attn_mask"] = False
+
+train_dict["folder_X"] = "./data_dir/Iman_MR/kspace_2d/"
+train_dict["folder_Y"] = "./data_dir/Iman_CT/kspace_2d/"
+# train_dict["pre_train"] = "swin_base_patch244_window1677_kinetics400_22k.pth"
+train_dict["val_ratio"] = 0.3
+train_dict["test_ratio"] = 0.2
+
+train_dict["loss_term"] = "MSELoss"
+train_dict["optimizer"] = "AdamW"
+train_dict["opt_lr"] = 1e-3 # default
+train_dict["opt_betas"] = (0.9, 0.999) # default
+train_dict["opt_eps"] = 1e-8 # default
+train_dict["opt_weight_decay"] = 0.01 # default
+train_dict["amsgrad"] = False # default
+
+
+
 
 def run_demo(demo_fn, world_size):
     mp.spawn(demo_fn,
@@ -162,47 +206,47 @@ if __name__ == "__main__":
 
     # ==================== dict and config ====================
 
-    train_dict = {}
-    train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-    train_dict["project_name"] = "CTGM_2d_v2_mse_102_ddp"
-    train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
-    train_dict["seed"] = 426
-    train_dict["input_size"] = [256, 256]
-    ax, ay = train_dict["input_size"]
-    train_dict["gpu_ids"] = [1,3,4,6]
-    train_dict["epochs"] = 600
-    train_dict["batch"] = 16 * 4
-    train_dict["dropout"] = 0
-    train_dict["model_term"] = "ComplexTransformerGenerationModel"
+    # train_dict = {}
+    # train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
+    # train_dict["project_name"] = "CTGM_2d_v2_mse_102_ddp"
+    # train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
+    # train_dict["seed"] = 426
+    # train_dict["input_size"] = [256, 256]
+    # ax, ay = train_dict["input_size"]
+    # train_dict["gpu_ids"] = [1,3,4,6]
+    # train_dict["epochs"] = 600
+    # train_dict["batch"] = 16 * 4
+    # train_dict["dropout"] = 0
+    # train_dict["model_term"] = "ComplexTransformerGenerationModel"
 
-    train_dict["model_related"] = {}
-    train_dict["model_related"]["cx"] = 32
-    cx = train_dict["model_related"]["cx"]
-    train_dict["model_related"]["input_dims"] = [cx**2, cx**2]
-    train_dict["model_related"]["hidden_size"] = 1024
-    train_dict["model_related"]["embed_dim"] = 1024
-    train_dict["model_related"]["output_dim"] = cx**2*2
-    train_dict["model_related"]["num_heads"] = cx
-    train_dict["model_related"]["attn_dropout"] = 0.0
-    train_dict["model_related"]["relu_dropout"] = 0.0
-    train_dict["model_related"]["res_dropout"] = 0.0
-    train_dict["model_related"]["out_dropout"] = 0.0
-    train_dict["model_related"]["layers"] = 6
-    train_dict["model_related"]["attn_mask"] = False
+    # train_dict["model_related"] = {}
+    # train_dict["model_related"]["cx"] = 32
+    # cx = train_dict["model_related"]["cx"]
+    # train_dict["model_related"]["input_dims"] = [cx**2, cx**2]
+    # train_dict["model_related"]["hidden_size"] = 1024
+    # train_dict["model_related"]["embed_dim"] = 1024
+    # train_dict["model_related"]["output_dim"] = cx**2*2
+    # train_dict["model_related"]["num_heads"] = cx
+    # train_dict["model_related"]["attn_dropout"] = 0.0
+    # train_dict["model_related"]["relu_dropout"] = 0.0
+    # train_dict["model_related"]["res_dropout"] = 0.0
+    # train_dict["model_related"]["out_dropout"] = 0.0
+    # train_dict["model_related"]["layers"] = 6
+    # train_dict["model_related"]["attn_mask"] = False
 
-    train_dict["folder_X"] = "./data_dir/Iman_MR/kspace_2d/"
-    train_dict["folder_Y"] = "./data_dir/Iman_CT/kspace_2d/"
-    # train_dict["pre_train"] = "swin_base_patch244_window1677_kinetics400_22k.pth"
-    train_dict["val_ratio"] = 0.3
-    train_dict["test_ratio"] = 0.2
+    # train_dict["folder_X"] = "./data_dir/Iman_MR/kspace_2d/"
+    # train_dict["folder_Y"] = "./data_dir/Iman_CT/kspace_2d/"
+    # # train_dict["pre_train"] = "swin_base_patch244_window1677_kinetics400_22k.pth"
+    # train_dict["val_ratio"] = 0.3
+    # train_dict["test_ratio"] = 0.2
 
-    train_dict["loss_term"] = "MSELoss"
-    train_dict["optimizer"] = "AdamW"
-    train_dict["opt_lr"] = 1e-3 # default
-    train_dict["opt_betas"] = (0.9, 0.999) # default
-    train_dict["opt_eps"] = 1e-8 # default
-    train_dict["opt_weight_decay"] = 0.01 # default
-    train_dict["amsgrad"] = False # default
+    # train_dict["loss_term"] = "MSELoss"
+    # train_dict["optimizer"] = "AdamW"
+    # train_dict["opt_lr"] = 1e-3 # default
+    # train_dict["opt_betas"] = (0.9, 0.999) # default
+    # train_dict["opt_eps"] = 1e-8 # default
+    # train_dict["opt_weight_decay"] = 0.01 # default
+    # train_dict["amsgrad"] = False # default
 
     for path in [train_dict["save_folder"], train_dict["save_folder"]+"npy/", train_dict["save_folder"]+"loss/"]:
         if not os.path.exists(path):
