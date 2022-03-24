@@ -158,7 +158,7 @@ def demo_basic(rank, world_size):
 
                 print(iter_tag + " [{:03d}]/[{:03d}]:".format(idx_file_group+1, total_group)) #
                 
-                file_path = idx_file_group * 4 + rank
+                file_path = file_list[idx_file_group * 4 + rank]
                 x_path = file_path
                 y_path = file_path.replace("MR", "CT")
                 file_name = os.path.basename(file_path)
