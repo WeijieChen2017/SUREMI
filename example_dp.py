@@ -149,7 +149,7 @@ def demo_model_parallel(rank, world_size):
 
 
 if __name__ == "__main__":
-    gpu_list = ','.join(str(x) for x in [1,2,3,4])
+    gpu_list = ','.join(str(x) for x in [1,3,4,6])
     os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
     print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
     n_gpus = torch.cuda.device_count()
