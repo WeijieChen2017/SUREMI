@@ -121,7 +121,7 @@ def demo_basic(rank, world_size):
         out_dropout=train_dict["model_related"]["out_dropout"],
         layers=train_dict["model_related"]["layers"],
         attn_mask=train_dict["model_related"]["attn_mask"]
-    )
+    ).to(rank)
 
     ddp_model = DDP(model, device_ids=[rank], find_unused_parameters=True)
     print("The model has been set at", rank)
