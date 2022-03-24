@@ -108,7 +108,7 @@ def demo_basic(rank, world_size):
     # create model and move it to GPU with id rank
 
     model = torch.load("./project_dir/CTGM_2d_v2_mse/model_best_102.pth").to(rank)
-    ddp_model = DDP(model, device_ids=[rank])
+    ddp_model = DDP(model, device_ids=[rank], find_unused_parameters=True)
     print("The model has been set at", rank)
     model.train()
     criterion = nn.MSELoss()
