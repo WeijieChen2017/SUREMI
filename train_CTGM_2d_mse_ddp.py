@@ -107,7 +107,22 @@ def demo_basic(rank, world_size):
 
     # create model and move it to GPU with id rank
 
-    model = torch.load("./project_dir/CTGM_2d_v2_mse/model_best_102.pth").to(rank)
+    # model = torch.load("./project_dir/CTGM_2d_v2_mse/model_best_102.pth").to(rank)
+
+    model = CTGM( 
+        input_dims=train_dict["model_related"]["input_dims"],
+        hidden_size=train_dict["model_related"]["hidden_size"],
+        embed_dim=train_dict["model_related"]["embed_dim"],
+        output_dim=train_dict["model_related"]["output_dim"],
+        num_heads=train_dict["model_related"]["num_heads"],
+        attn_dropout=train_dict["model_related"]["attn_dropout"],
+        relu_dropout=train_dict["model_related"]["relu_dropout"],
+        res_dropout=train_dict["model_related"]["res_dropout"],
+        out_dropout=train_dict["model_related"]["out_dropout"],
+        layers=train_dict["model_related"]["layers"],
+        attn_mask=train_dict["model_related"]["attn_mask"]
+    )
+
     ddp_model = DDP(model, device_ids=[rank], find_unused_parameters=True)
     print("The model has been set at", rank)
     model.train()
@@ -131,7 +146,7 @@ def demo_basic(rank, world_size):
     num_vocab = (ax//cx) * (ay//cx)
 
     for idx_epoch_new in range(train_dict["epochs"]):
-        idx_epoch = idx_epoch_new + 102
+        idx_epoch = idx_epoch_new + 0
 
         print("~Epoch[{:03d}]~".format(idx_epoch+1))
         
