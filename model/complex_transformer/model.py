@@ -185,7 +185,7 @@ class TransformerGenerationModel(nn.Module):
         return TransformerDecoder(embed_dim=self.embed_dim, num_heads=self.num_heads, layers=self.layers, src_attn_dropout=self.attn_dropout, 
             relu_dropout=self.relu_dropout, res_dropout=self.res_dropout, tgt_attn_dropout=self.attn_dropout)
             
-    def forward(self, x, rank, y=None, max_len=None):
+    def forward(self, x, y=None, max_len=None, rank=0):
         """
         x should have dimension [seq_len, batch_size, n_features] (i.e., L, N, C).
         """
