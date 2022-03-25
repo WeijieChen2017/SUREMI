@@ -229,12 +229,13 @@ def demo_basic(rank, world_size):
                 case_loss[idx_file_group * 4 + rank] = np.mean(batch_loss[:, rank])
                 print("----"*rank*3, "Line 230 at Rank ", rank, "with epoch ", idx_file_group * 4 + rank)
 
-            dist.barrier()
-            mesg = "~Epoch[{:03d}]~ ".format(idx_epoch+1)
-            mesg = mesg+"-> Loss: "+str(np.mean(case_loss))
-            print(mesg)
-            np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}_rank{:01d}.npy".format(idx_epoch+1, rank), case_loss)
-                
+            # dist.barrier()
+                if rank == 0:
+                mesg = "~Epoch[{:03d}]~ ".format(idx_epoch+1)
+                mesg = mesg+"-> Loss: "+str(np.mean(case_loss))
+                print(mesg)
+                np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}_rank{:01d}.npy".format(idx_epoch+1, rank), case_loss)
+                torch.save(model, train_dict["save_folder"]+"model_best_ddp_{:03d}_rank{}.pth".format(idx_epoch+1, rank))
 
             if isVal:
                 if np.mean(case_loss) < best_val_loss:
