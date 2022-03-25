@@ -229,7 +229,7 @@ def demo_basic(rank, world_size):
                 case_loss[idx_file_group * 4 + rank] = np.mean(batch_loss[:, rank])
                 print("----"*rank*3, "Line 230 at Rank ", rank, "with epoch ", idx_file_group * 4 + rank)
 
-            # dist.barrier()
+            dist.barrier()
             mesg = "~Epoch[{:03d}]~ ".format(idx_epoch+1)
             mesg = mesg+"-> Loss: "+str(np.mean(case_loss))
             print(mesg)
