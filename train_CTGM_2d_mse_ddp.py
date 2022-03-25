@@ -214,12 +214,14 @@ def demo_basic(rank, world_size):
                         loss.backward()
                         optimizer.step()
 
-                    dist.all_reduce(loss, op=dist.ReduceOp.SUM)
-                    loss /= world_size
+                    # loss_value = loss.item()
+                    # dist.all_reduce(loss, op=dist.ReduceOp.SUM)
+                    # loss /= world_size
                     batch_loss[ib] = loss.item()
                     # print(rank, loss.item())
 
                 mesg = "~Epoch[{:03d}]~ ".format(idx_epoch+1)
+                mesg = " at Rank {:01d} ".format(rank)
                 mesg = mesg+iter_tag+" [{:03d}]/[{:03d}]:".format(idx_file_group*4+rank+1, total_file)
                 mesg = mesg+"-> Loss: "+str(np.mean(batch_loss))
                 print(mesg)
