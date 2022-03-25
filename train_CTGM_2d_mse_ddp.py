@@ -176,6 +176,7 @@ def demo_basic(rank, world_size):
 
             for idx_file_group in range(len(file_list)//world_size):
 
+                print(rank, idx_file_group * 4 + rank)
                 file_path = file_list[idx_file_group * 4 + rank]
                 x_path = file_path
                 y_path = file_path.replace("MR", "CT")
