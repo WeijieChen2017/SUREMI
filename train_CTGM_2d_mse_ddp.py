@@ -76,8 +76,6 @@ test_list.sort()
 train_list = list(set(selected_list) - set(val_list) - set(test_list))
 train_list.sort()
 
-best_val_loss = 3
-
 data_division_dict = {
     "train_list_X" : train_list,
     "val_list_X" : val_list,
@@ -106,6 +104,8 @@ def setup(rank, world_size):
 def demo_basic(rank, world_size):
     print(f"Running basic DDP example on rank {rank}.")
     setup(rank, world_size)
+
+    best_val_loss = 3
 
     # create model and move it to GPU with id rank
 
@@ -141,8 +141,8 @@ def demo_basic(rank, world_size):
 
 
     # package_train = [train_list[:1], True, False, "train"]
-    package_train = [train_list, True, True, "train"]
-    package_val = [val_list, False, True, "val"]
+    package_train = [train_list[:30], True, True, "train"]
+    package_val = [val_list[:30], False, True, "val"]
     # package_test = [test_list, False, False, "test"]
 
     num_vocab = (ax//cx) * (ay//cx)
