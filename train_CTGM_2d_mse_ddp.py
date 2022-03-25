@@ -188,7 +188,7 @@ def demo_basic(rank, world_size):
                 random.shuffle(z_list)
                 batch_per_step = train_dict["batch"]
                 # batch_per_step = dz
-                batch_loss = np.zeros((dz // batch_per_step))
+                batch_loss = np.zeros((dz // batch_per_step, world_size))
 
                 for ib in range(dz // batch_per_step):
 
@@ -218,7 +218,7 @@ def demo_basic(rank, world_size):
                     # loss_value = loss.item()
                     # dist.all_reduce(loss, op=dist.ReduceOp.SUM)
                     # loss /= world_size
-                    batch_loss[ib] = loss.item()
+                    batch_loss[ib, rank] = loss.item()
                     # print(rank, loss.item())
 
                 mesg = "~Epoch[{:03d}]~ ".format(idx_epoch+1)
@@ -226,7 +226,7 @@ def demo_basic(rank, world_size):
                 mesg = mesg+iter_tag+" [{:03d}]/[{:03d}]:".format(idx_file_group*4+rank+1, total_file)
                 mesg = mesg+"-> Loss: "+str(np.mean(batch_loss))
                 print(mesg)
-                case_loss[idx_file_group * 4 + rank] = np.mean(batch_loss)
+                case_loss[idx_file_group * 4 + rank] = np.mean(batch_loss[:, rank])
 
             dist.barrier()
             mesg = "~Epoch[{:03d}]~ ".format(idx_epoch+1)
