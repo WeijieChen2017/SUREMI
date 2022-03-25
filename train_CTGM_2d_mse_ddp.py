@@ -76,6 +76,8 @@ test_list.sort()
 train_list = list(set(selected_list) - set(val_list) - set(test_list))
 train_list.sort()
 
+best_val_loss = 3
+
 data_division_dict = {
     "train_list_X" : train_list,
     "val_list_X" : val_list,
@@ -167,6 +169,7 @@ def demo_basic(rank, world_size):
             case_loss = np.zeros((len(file_list)))
             total_file = len(file_list)
             total_group = len(file_list)//world_size
+            case_loss = np.zeros(len(file_list)//world_size * world_size)
             """
             x should have dimension [seq_len, batch_size, n_features] (i.e., L, N, C).
             """
@@ -216,11 +219,12 @@ def demo_basic(rank, world_size):
                     batch_loss[ib] = loss.item()
                     # print(rank, loss.item())
 
-            mesg = "~Epoch[{:03d}]~ ".format(idx_epoch+1)
-            mesg = mesg+iter_tag+" [{:03d}]/[{:03d}]:".format(idx_file_group+1, total_group)
-            mesg = mesg+"-> Loss: ", np.mean(case_loss)
-            print(mesg)
-            np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}_rank{:01d}.npy".format(idx_epoch+1, rank), case_loss)
+                mesg = "~Epoch[{:03d}]~ ".format(idx_epoch+1)
+                mesg = mesg+iter_tag+" [{:03d}]/[{:03d}]:".format(idx_file_group+1, total_group)
+                mesg = mesg+"-> Loss: ", np.mean(batch_loss)
+                print(mesg)
+                np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}_rank{:01d}.npy".format(idx_epoch+1, rank), case_loss)
+                case_loss[idx_file_group * 4 + rank] = np.mean(batch_loss)
 
             if isVal:
                 if np.mean(case_loss) < best_val_loss:
@@ -291,7 +295,6 @@ if __name__ == "__main__":
 
     np.save(train_dict["save_folder"]+"dict.npy", train_dict)
     np.random.seed(train_dict["seed"])
-    best_val_loss = 3
 
     # ==================== data division ====================
 
