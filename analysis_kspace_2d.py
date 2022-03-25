@@ -45,7 +45,7 @@ for cnt_file, file_path in enumerate(X_list):
             real_part = np.squeeze(data[iz, :, :cx*cx])
             imag_part = np.squeeze(data[iz, :, cx*cx:])
 
-            cmplx = np.complex(real_part, imag_part)
+            cmplx = np.complex(np.ravel(real_part), np.ravel(imag_part))
             mag = np.abs(cmplx)
             ang = np.angle(cmplx)
 
