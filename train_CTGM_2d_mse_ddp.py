@@ -176,7 +176,7 @@ def demo_basic(rank, world_size):
 
             for idx_file_group in range(len(file_list)//world_size):
 
-                print("----"*rank, "Line 179 at Rank ", rank, "with epoch ", idx_file_group * 4 + rank)
+                print("----"*rank*3, "Line 179 at Rank ", rank, "with epoch ", idx_file_group * 4 + rank)
                 file_path = file_list[idx_file_group * 4 + rank]
                 x_path = file_path
                 y_path = file_path.replace("MR", "CT")
@@ -189,7 +189,7 @@ def demo_basic(rank, world_size):
                 batch_per_step = train_dict["batch"]
                 # batch_per_step = dz
                 batch_loss = np.zeros((dz // batch_per_step, world_size))
-                print("----"*rank, "Line 192 at Rank ", rank, "with epoch ", idx_file_group * 4 + rank)
+                print("----"*rank*3, "Line 192 at Rank ", rank, "with epoch ", idx_file_group * 4 + rank)
                 for ib in range(dz // batch_per_step):
 
                     batch_x = np.zeros((num_vocab, batch_per_step, cx**2*2))
@@ -203,33 +203,33 @@ def demo_basic(rank, world_size):
 
                     batch_x = torch.from_numpy(batch_x).float().to(rank) # .contiguous()
                     batch_y = torch.from_numpy(batch_y).float().to(rank) # .contiguous()
-                    print("----"*rank, "Line 206 at Rank ", rank, "with epoch ", idx_file_group * 4 + rank, "ib", ib)
+                    print("----"*rank*3, "Line 206 at Rank ", rank, "with epoch ", idx_file_group * 4 + rank, "ib", ib)
                     optimizer.zero_grad()
-                    # print(batch_x.size(), batch_y.size())
+                    print("----"*rank*3, "Line 208 at Rank ", rank, "with epoch ", idx_file_group * 4 + rank, "ib", ib)
                     y_hat = ddp_model(batch_x, batch_y).to(rank)
-                    # print("Yhat size: ", y_hat.size(), end="   ")
+                    print("----"*rank*3, "Line 210 at Rank ", rank, "with epoch ", idx_file_group * 4 + rank, "ib", ib)
                     # print("Ytrue size: ", batch_y.size())
                     loss = criterion(y_hat, batch_y)
-                    print("----"*rank, "Line 213 at Rank ", rank, "with epoch ", idx_file_group * 4 + rank, "ib", ib)
+                    print("----"*rank*3, "Line 213 at Rank ", rank, "with epoch ", idx_file_group * 4 + rank, "ib", ib)
                     if isTrain:
                         loss.backward()
                         optimizer.step()
-                    print("----"*rank, "Line 217 at Rank ", rank, "with epoch ", idx_file_group * 4 + rank, "ib", ib)
+                    print("----"*rank*3, "Line 217 at Rank ", rank, "with epoch ", idx_file_group * 4 + rank, "ib", ib)
                     # loss_value = loss.item()
                     # dist.all_reduce(loss, op=dist.ReduceOp.SUM)
                     # loss /= world_size
                     batch_loss[ib, rank] = loss.item()
                     # print(rank, loss.item())
-                print("----"*rank, "Line 223 at Rank ", rank, "with epoch ", idx_file_group * 4 + rank)
+                print("----"*rank*3, "Line 223 at Rank ", rank, "with epoch ", idx_file_group * 4 + rank)
                 mesg = "~Epoch[{:03d}]~ ".format(idx_epoch+1)
-                mesg = " at Rank {:01d} ".format(rank)
+                mesg = mesg+" at Rank {:01d} ".format(rank)
                 mesg = mesg+iter_tag+" [{:03d}]/[{:03d}]:".format(idx_file_group*4+rank+1, total_file)
                 mesg = mesg+"-> Loss: "+str(np.mean(batch_loss))
                 print(mesg)
                 case_loss[idx_file_group * 4 + rank] = np.mean(batch_loss[:, rank])
-                print("----"*rank, "Line 230 at Rank ", rank, "with epoch ", idx_file_group * 4 + rank)
+                print("----"*rank*3, "Line 230 at Rank ", rank, "with epoch ", idx_file_group * 4 + rank)
 
-            dist.barrier()
+            # dist.barrier()
             mesg = "~Epoch[{:03d}]~ ".format(idx_epoch+1)
             mesg = mesg+"-> Loss: "+str(np.mean(case_loss))
             print(mesg)
