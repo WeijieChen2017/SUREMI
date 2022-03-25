@@ -189,7 +189,7 @@ def demo_basic(rank, world_size):
                 batch_per_step = train_dict["batch"]
                 # batch_per_step = dz
                 batch_loss = np.zeros((dz // batch_per_step, world_size))
-
+                print("Line 192 at Rank ", rank, )
                 for ib in range(dz // batch_per_step):
 
                     batch_x = np.zeros((num_vocab, batch_per_step, cx**2*2))
@@ -203,30 +203,31 @@ def demo_basic(rank, world_size):
 
                     batch_x = torch.from_numpy(batch_x).float().to(rank) # .contiguous()
                     batch_y = torch.from_numpy(batch_y).float().to(rank) # .contiguous()
-
+                    print("Line 206 at Rank ", rank, )
                     optimizer.zero_grad()
                     # print(batch_x.size(), batch_y.size())
                     y_hat = ddp_model(batch_x, batch_y).to(rank)
                     # print("Yhat size: ", y_hat.size(), end="   ")
                     # print("Ytrue size: ", batch_y.size())
                     loss = criterion(y_hat, batch_y)
-
+                    print("Line 213 at Rank ", rank, )
                     if isTrain:
                         loss.backward()
                         optimizer.step()
-
+                    print("Line 217 at Rank ", rank, )
                     # loss_value = loss.item()
                     # dist.all_reduce(loss, op=dist.ReduceOp.SUM)
                     # loss /= world_size
                     batch_loss[ib, rank] = loss.item()
                     # print(rank, loss.item())
-
+                print("Line 223 at Rank ", rank, )
                 mesg = "~Epoch[{:03d}]~ ".format(idx_epoch+1)
                 mesg = " at Rank {:01d} ".format(rank)
                 mesg = mesg+iter_tag+" [{:03d}]/[{:03d}]:".format(idx_file_group*4+rank+1, total_file)
                 mesg = mesg+"-> Loss: "+str(np.mean(batch_loss))
                 print(mesg)
                 case_loss[idx_file_group * 4 + rank] = np.mean(batch_loss[:, rank])
+                print("Line 230 at Rank ", rank, )
 
             dist.barrier()
             mesg = "~Epoch[{:03d}]~ ".format(idx_epoch+1)
