@@ -152,7 +152,7 @@ def demo_basic(rank, world_size):
 
         # print("~Epoch[{:03d}]~".format(idx_epoch+1))
         
-        for package in [package_train, package_val]: # , package_val
+        for package in [package_train]: # , package_val
 
             file_list = package[0]
             isTrain = package[1]
