@@ -216,13 +216,14 @@ def demo_basic(rank, world_size):
 
                     dist.all_reduce(loss, op=dist.ReduceOp.SUM)
                     loss /= world_size
-                    batch_loss[ib] = loss.item()
+                    batch_loss[ib] = loss.item().cpu()
                     # print(rank, loss.item())
 
                 mesg = "~Epoch[{:03d}]~ ".format(idx_epoch+1)
                 mesg = mesg+iter_tag+" [{:03d}]/[{:03d}]:".format(idx_file_group*4+rank+1, total_file)
                 mesg = mesg+"-> Loss: "+str(np.mean(batch_loss))
                 print(mesg)
+                dist.barrier()
                 np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}_rank{:01d}.npy".format(idx_epoch+1, rank), case_loss)
                 case_loss[idx_file_group * 4 + rank] = np.mean(batch_loss)
 
