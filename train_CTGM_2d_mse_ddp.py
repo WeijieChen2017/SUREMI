@@ -141,8 +141,8 @@ def demo_basic(rank, world_size):
 
 
     # package_train = [train_list[:1], True, False, "train"]
-    package_train = [train_list[:30], True, False, "train"]
-    package_val = [val_list[:30], False, True, "val"]
+    package_train = [train_list, True, False, "train"]
+    package_val = [val_list, False, True, "val"]
     # package_test = [test_list, False, False, "test"]
 
     num_vocab = (ax//cx) * (ay//cx)
