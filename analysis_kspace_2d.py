@@ -24,8 +24,8 @@ num_vocab = (ax//cx) * (ay//cx)
 total_file = len(X_list)
 max_z = 200
 
-mag_table = np.zeros((total_file, max_z, 5)) # max, min, mean, std, z
-ang_table = np.zeros((total_file, max_z, 5)) # max, min, mean, std, z
+mag_table = np.zeros((total_file, max_z, 5, 2)) # max, min, mean, std, z, MR/CT
+ang_table = np.zeros((total_file, max_z, 5, 2)) # max, min, mean, std, z, MR/CT
 
 for cnt_file, file_path in enumerate(X_list):
 
@@ -33,13 +33,12 @@ for cnt_file, file_path in enumerate(X_list):
     x_path = file_path
     y_path = file_path.replace("MR", "CT")
     file_name = os.path.basename(file_path)
-    print(x_path)
     x_data = np.load(x_path)
     y_data = np.load(y_path)
 
     # book = np.zeros((dz, num_vocab, cx*cx*2))
     dz = x_data.shape[0]
-    for data in [x_data, y_data]:
+    for cnt, data in enumerate([x_data, y_data]):
         for iz in range(dz):
             # num_vocab, cx*cx
             real_part = np.squeeze(data[iz, :, :cx*cx])
@@ -49,17 +48,17 @@ for cnt_file, file_path in enumerate(X_list):
             mag = np.abs(cmplx)
             ang = np.angle(cmplx)
 
-            mag_table[cnt_file, iz, 0] = np.amax(mag)
-            mag_table[cnt_file, iz, 1] = np.amin(mag)
-            mag_table[cnt_file, iz, 2] = np.mean(mag)
-            mag_table[cnt_file, iz, 3] = np.std(mag)
-            mag_table[cnt_file, iz, 4] = dz
+            mag_table[cnt_file, iz, 0, cnt] = np.amax(mag)
+            mag_table[cnt_file, iz, 1, cnt] = np.amin(mag)
+            mag_table[cnt_file, iz, 2, cnt] = np.mean(mag)
+            mag_table[cnt_file, iz, 3, cnt] = np.std(mag)
+            mag_table[cnt_file, iz, 4, cnt] = dz
 
-            ang_table[cnt_file, iz, 0] = np.amax(ang)
-            ang_table[cnt_file, iz, 1] = np.amin(ang)
-            ang_table[cnt_file, iz, 2] = np.mean(ang)
-            ang_table[cnt_file, iz, 3] = np.std(ang)
-            ang_table[cnt_file, iz, 4] = dz
+            ang_table[cnt_file, iz, 0, cnt] = np.amax(ang)
+            ang_table[cnt_file, iz, 1, cnt] = np.amin(ang)
+            ang_table[cnt_file, iz, 2, cnt] = np.mean(ang)
+            ang_table[cnt_file, iz, 3, cnt] = np.std(ang)
+            ang_table[cnt_file, iz, 4, cnt] = dz
 
 
 np.save("mag_table.npy", mag_table)

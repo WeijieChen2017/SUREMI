@@ -47,8 +47,8 @@ train_dict["model_related"]["out_dropout"] = 0.0
 train_dict["model_related"]["layers"] = 6
 train_dict["model_related"]["attn_mask"] = False
 
-train_dict["folder_X"] = "./data_dir/Iman_MR/kspace_2d/"
-train_dict["folder_Y"] = "./data_dir/Iman_CT/kspace_2d/"
+train_dict["folder_X"] = "./data_dir/Iman_MR/kspace_2d_norm/"
+train_dict["folder_Y"] = "./data_dir/Iman_CT/kspace_2d_norm/"
 # train_dict["pre_train"] = "swin_base_patch244_window1677_kinetics400_22k.pth"
 train_dict["val_ratio"] = 0.3
 train_dict["test_ratio"] = 0.2
@@ -235,7 +235,7 @@ def demo_basic(rank, world_size):
                 mesg = mesg+"-> Loss: "+str(np.mean(case_loss))
                 print(mesg)
                 np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}_rank{:01d}.npy".format(idx_epoch+1, rank), case_loss)
-                torch.save(ddp_model, train_dict["save_folder"]+"Loss_{:6f}_model_best_ddp_{:03d}_rank{}.pth".format(np.mean(case_loss), idx_epoch+1, rank))
+                torch.save(ddp_model, train_dict["save_folder"]+"Ep{:03d}_model_best_ddp_Loss_{:6f}.pth".format(idx_epoch+1, np.mean(case_loss)))
 
             if isVal:
                 if np.mean(case_loss) < best_val_loss:
