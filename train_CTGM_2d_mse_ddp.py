@@ -235,7 +235,7 @@ def demo_basic(rank, world_size):
                 mesg = mesg+"-> Loss: "+str(np.mean(case_loss))
                 print(mesg)
                 np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}_rank{:01d}.npy".format(idx_epoch+1, rank), case_loss)
-                torch.save(ddp_model, train_dict["save_folder"]+"Ep{:03d}_model_best_ddp_Loss_{:6f}.pth".format(idx_epoch+1, np.mean(case_loss)))
+                torch.save(ddp_model, train_dict["save_folder"]+"Ep{:03d}_model_best_ddp_Loss_{:6e}.pth".format(idx_epoch+1, np.mean(case_loss)))
 
             if isVal:
                 if np.mean(case_loss) < best_val_loss:
