@@ -81,7 +81,7 @@ for cnt_file, file_path in enumerate(X_list):
 
     np.save(x_save_name, x_book)
     np.save(y_save_name, y_book)
-    print(x_save_name, x_book.shape)
+    print(x_save_name, x_book.shape, train_dict["norm_MR_mag"])
 
 
 
