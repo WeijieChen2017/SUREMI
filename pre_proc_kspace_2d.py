@@ -12,8 +12,8 @@ train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
 train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
 train_dict["new_modality"] = "kspace_2d_norm"
 train_dict["old_modality"] = "norm"
-train_dict["norm_MR_mag"] = 100
-train_dict["norm_CT_mag"] = 100
+train_dict["norm_MR_mag"] = 400
+train_dict["norm_CT_mag"] = 700
 if not os.path.exists(train_dict["folder_X"].replace(train_dict["old_modality"], train_dict["new_modality"])):
     os.makedirs(train_dict["folder_X"].replace(train_dict["old_modality"], train_dict["new_modality"]))
 if not os.path.exists(train_dict["folder_Y"].replace(train_dict["old_modality"], train_dict["new_modality"])):
