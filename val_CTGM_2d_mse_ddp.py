@@ -101,84 +101,82 @@ def setup(rank, world_size):
     dist.init_process_group("nccl", rank=rank, world_size=world_size)
 
 
-def demo_basic(rank, world_size):
+def demo_basic(rank, world_size, idx_epoch):
     print(f"Running basic DDP example on rank {rank}.")
     setup(rank, world_size)
 
-    for idx_epoch in range(46):
+    # best_val_loss = 3
 
-        # best_val_loss = 3
+    # create model and move it to GPU with id rank
 
-        # create model and move it to GPU with id rank
+    # model = torch.load("./project_dir/CTGM_2d_v2_mse/model_best_102.pth").to(rank)
 
-        # model = torch.load("./project_dir/CTGM_2d_v2_mse/model_best_102.pth").to(rank)
+    # Ep007_model_best_ddp_Loss_6.480955e-06.pth
+    model_path = glob.glob(train_dict["save_folder"]+"Ep{:03d}_model_best_ddp_Loss_*.pth".format(idx_epoch+1))[0]
+    model = torch.load(model_path).module.to(rank)
+    print("Load the model from ", model_path)
 
-        # Ep007_model_best_ddp_Loss_6.480955e-06.pth
-        model_path = glob.glob(train_dict["save_folder"]+"Ep{:03d}_model_best_ddp_Loss_*.pth".format(idx_epoch+1))[0]
-        model = torch.load(model_path).module.to(rank)
-        print("Load the model from ", model_path)
+    ddp_model = DDP(model, device_ids=[rank]) # , find_unused_parameters=True
+    print("The model has been set at", rank)
+    model.eval()
+    criterion = nn.MSELoss()
 
-        ddp_model = DDP(model, device_ids=[rank]) # , find_unused_parameters=True
-        print("The model has been set at", rank)
-        model.eval()
-        criterion = nn.MSELoss()
+    package_train = [train_list, True, False, "train"]
+    package_val = [val_list, False, True, "val"]
 
-        package_train = [train_list, True, False, "train"]
-        package_val = [val_list, False, True, "val"]
+    num_vocab = (ax//cx) * (ay//cx)
+    
+    for package in [package_val]: # , package_val
 
-        num_vocab = (ax//cx) * (ay//cx)
-        
-        for package in [package_val]: # , package_val
+        file_list = package[0]
+        isTrain = package[1]
+        isVal = package[2]
+        iter_tag = package[3]
+        case_loss = np.zeros((len(file_list)))
+        total_file = len(file_list)
+        total_group = len(file_list)//world_size
+        case_loss = np.zeros(len(file_list)//world_size * world_size)
+        """
+        x should have dimension [seq_len, batch_size, n_features] (i.e., L, N, C).
+        """
 
-            file_list = package[0]
-            isTrain = package[1]
-            isVal = package[2]
-            iter_tag = package[3]
-            case_loss = np.zeros((len(file_list)))
-            total_file = len(file_list)
-            total_group = len(file_list)//world_size
-            case_loss = np.zeros(len(file_list)//world_size * world_size)
-            """
-            x should have dimension [seq_len, batch_size, n_features] (i.e., L, N, C).
-            """
+        for idx_file_group in range(len(file_list)//world_size):
 
-            for idx_file_group in range(len(file_list)//world_size):
+            file_path = file_list[idx_file_group * 4 + rank]
+            x_path = file_path
+            y_path = file_path.replace("MR", "CT")
+            file_name = os.path.basename(file_path)
+            x_data = np.load(x_path)
+            y_data = np.load(y_path)
+            dz = x_data.shape[0]
+            z_list = list(range(dz))
+            random.shuffle(z_list)
+            batch_per_step = train_dict["batch"]
+            batch_loss = np.zeros((dz // batch_per_step, world_size))
+            for ib in range(dz // batch_per_step):
 
-                file_path = file_list[idx_file_group * 4 + rank]
-                x_path = file_path
-                y_path = file_path.replace("MR", "CT")
-                file_name = os.path.basename(file_path)
-                x_data = np.load(x_path)
-                y_data = np.load(y_path)
-                dz = x_data.shape[0]
-                z_list = list(range(dz))
-                random.shuffle(z_list)
-                batch_per_step = train_dict["batch"]
-                batch_loss = np.zeros((dz // batch_per_step, world_size))
-                for ib in range(dz // batch_per_step):
+                batch_x = np.zeros((num_vocab, batch_per_step, cx**2*2))
+                batch_y = np.zeros((num_vocab, batch_per_step, cx**2*2))
+                batch_offset = ib * batch_per_step
 
-                    batch_x = np.zeros((num_vocab, batch_per_step, cx**2*2))
-                    batch_y = np.zeros((num_vocab, batch_per_step, cx**2*2))
-                    batch_offset = ib * batch_per_step
+                for iz in range(batch_per_step):
 
-                    for iz in range(batch_per_step):
+                    batch_x[:, iz, :] = x_data[z_list[iz+batch_offset], :, :]
+                    batch_y[:, iz, :] = y_data[z_list[iz+batch_offset], :, :]
 
-                        batch_x[:, iz, :] = x_data[z_list[iz+batch_offset], :, :]
-                        batch_y[:, iz, :] = y_data[z_list[iz+batch_offset], :, :]
+                batch_x = torch.from_numpy(batch_x).float().to(rank) # .contiguous()
+                batch_y = torch.from_numpy(batch_y).float().to(rank) # .contiguous()
+                y_hat = ddp_model(batch_x, batch_y).to(rank)
+                loss = criterion(y_hat, batch_y)
+                batch_loss[ib, rank] = loss.item()
 
-                    batch_x = torch.from_numpy(batch_x).float().to(rank) # .contiguous()
-                    batch_y = torch.from_numpy(batch_y).float().to(rank) # .contiguous()
-                    y_hat = ddp_model(batch_x, batch_y).to(rank)
-                    loss = criterion(y_hat, batch_y)
-                    batch_loss[ib, rank] = loss.item()
+            case_loss[idx_file_group * 4 + rank] = np.mean(batch_loss[:, rank])
 
-                case_loss[idx_file_group * 4 + rank] = np.mean(batch_loss[:, rank])
-
-            if rank == 0:
-                mesg = "~Epoch[{:03d}]~ ".format(idx_epoch+1)
-                mesg = mesg+"-> Loss: "+str(np.mean(case_loss))
-                print(mesg)
-                np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}_rank{:01d}.npy".format(idx_epoch+1, rank), case_loss)
+        if rank == 0:
+            mesg = "~Epoch[{:03d}]~ ".format(idx_epoch+1)
+            mesg = mesg+"-> Loss: "+str(np.mean(case_loss))
+            print(mesg)
+            np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}_rank{:01d}.npy".format(idx_epoch+1, rank), case_loss)
 
     cleanup()
 
@@ -302,7 +300,8 @@ if __name__ == "__main__":
     assert n_gpus >= 2, f"Requires at least 2 GPUs to run, but got {n_gpus}"
     world_size = len(train_dict["gpu_ids"])
     # dist.init_process_group("nccl", rank=world_size, world_size=world_size)
-    run_demo(demo_basic, world_size)
+    for idx in range(46):
+        run_demo(demo_basic, world_size, idx)
 
 
 
