@@ -105,7 +105,7 @@ def demo_basic(rank, world_size):
     print(f"Running basic DDP example on rank {rank}.")
     setup(rank, world_size)
 
-    for idx_epoch in range(45):
+    for idx_epoch in range(46):
 
         # best_val_loss = 3
 
