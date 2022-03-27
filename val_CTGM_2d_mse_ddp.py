@@ -82,9 +82,9 @@ data_division_dict = {
     "test_list_X" : test_list}
 
 
-def run_demo(demo_fn, world_size):
+def run_demo(demo_fn, world_size, idx):
     mp.spawn(demo_fn,
-             args=(world_size,),
+             args=(world_size, idx),
              nprocs=world_size,
              join=True)
 
@@ -302,7 +302,6 @@ if __name__ == "__main__":
     # dist.init_process_group("nccl", rank=world_size, world_size=world_size)
     for idx in range(46):
         run_demo(demo_basic, world_size, idx)
-
 
 
 
