@@ -168,7 +168,6 @@ def demo_basic(rank, world_size):
 
                     batch_x = torch.from_numpy(batch_x).float().to(rank) # .contiguous()
                     batch_y = torch.from_numpy(batch_y).float().to(rank) # .contiguous()
-                    optimizer.zero_grad()
                     y_hat = ddp_model(batch_x, batch_y).to(rank)
                     loss = criterion(y_hat, batch_y)
                     batch_loss[ib, rank] = loss.item()
