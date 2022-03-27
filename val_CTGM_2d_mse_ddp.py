@@ -115,12 +115,12 @@ def demo_basic(rank, world_size):
 
         # Ep007_model_best_ddp_Loss_6.480955e-06.pth
         model_path = glob.glob(train_dict["save_folder"]+"Ep{:03d}_model_best_ddp_Loss_*.pth".format(idx_epoch+1))[0]
-        model = model.load(model_path)
+        model = torch.load(model_path).to(rank)
         print("Load the model from ", model_path)
 
-        ddp_model = DDP(model, device_ids=[rank]) # , find_unused_parameters=True
+        # ddp_model = DDP(model, device_ids=[rank]) # , find_unused_parameters=True
         print("The model has been set at", rank)
-        model.train()
+        model.eval()
         criterion = nn.MSELoss()
 
         package_train = [train_list, True, False, "train"]
