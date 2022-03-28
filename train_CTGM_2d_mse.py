@@ -19,7 +19,7 @@ from model import ComplexTransformerGenerationModel as CTGM
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "CTGM_2d_v2_mse"
+train_dict["project_name"] = "CTGM_2d_v5_mse_norm"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_size"] = [256, 256]
@@ -45,8 +45,8 @@ train_dict["model_related"]["out_dropout"] = 0.0
 train_dict["model_related"]["layers"] = 6
 train_dict["model_related"]["attn_mask"] = False
 
-train_dict["folder_X"] = "./data_dir/Iman_MR/kspace_2d/"
-train_dict["folder_Y"] = "./data_dir/Iman_CT/kspace_2d/"
+train_dict["folder_X"] = "./data_dir/Iman_MR/kspace_2d_norm/"
+train_dict["folder_Y"] = "./data_dir/Iman_CT/kspace_2d_norm/"
 # train_dict["pre_train"] = "swin_base_patch244_window1677_kinetics400_22k.pth"
 train_dict["val_ratio"] = 0.3
 train_dict["test_ratio"] = 0.2
@@ -86,20 +86,20 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-# model = CTGM( 
-#     input_dims=train_dict["model_related"]["input_dims"],
-#     hidden_size=train_dict["model_related"]["hidden_size"],
-#     embed_dim=train_dict["model_related"]["embed_dim"],
-#     output_dim=train_dict["model_related"]["output_dim"],
-#     num_heads=train_dict["model_related"]["num_heads"],
-#     attn_dropout=train_dict["model_related"]["attn_dropout"],
-#     relu_dropout=train_dict["model_related"]["relu_dropout"],
-#     res_dropout=train_dict["model_related"]["res_dropout"],
-#     out_dropout=train_dict["model_related"]["out_dropout"],
-#     layers=train_dict["model_related"]["layers"],
-#     attn_mask=train_dict["model_related"]["attn_mask"])
+model = CTGM( 
+    input_dims=train_dict["model_related"]["input_dims"],
+    hidden_size=train_dict["model_related"]["hidden_size"],
+    embed_dim=train_dict["model_related"]["embed_dim"],
+    output_dim=train_dict["model_related"]["output_dim"],
+    num_heads=train_dict["model_related"]["num_heads"],
+    attn_dropout=train_dict["model_related"]["attn_dropout"],
+    relu_dropout=train_dict["model_related"]["relu_dropout"],
+    res_dropout=train_dict["model_related"]["res_dropout"],
+    out_dropout=train_dict["model_related"]["out_dropout"],
+    layers=train_dict["model_related"]["layers"],
+    attn_mask=train_dict["model_related"]["attn_mask"])
 
-model = torch.load(train_dict["save_folder"]+"model_best_102.pth")
+# model = torch.load(train_dict["save_folder"]+"model_best_102.pth")
 
 # model = nn.DataParallel(model)
 model.train()
