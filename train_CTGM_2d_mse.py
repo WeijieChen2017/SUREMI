@@ -151,7 +151,7 @@ package_val = [val_list, False, True, "val"]
 num_vocab = (ax//cx) * (ay//cx)
 
 for idx_epoch_new in range(train_dict["epochs"]):
-    idx_epoch = idx_epoch_new + 108
+    idx_epoch = idx_epoch_new + 0
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
     for package in [package_train, package_val]: # , package_val
