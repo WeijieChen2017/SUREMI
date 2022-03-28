@@ -198,8 +198,8 @@ def demo_basic(rank, world_size, idx_epoch):
                         patch_gt = np.fft.ifftn(np.fft.ifftshift(pred_gt_cplx))
                         pred_img_gt[ix*cx:ix*cx+cx, iy*cx:iy*cx+cx] = patch_gt.real
 
-                pred_vol[:, :, iz] = pred_img
-                pred_gt[:, :, iz] = pred_img_gt  
+                pred_vol[:, :, ib] = pred_img
+                pred_gt[:, :, ib] = pred_img_gt  
 
             file_CT = nib.load("./data_dir/Iman_CT/norm/"+file_name.replace("npy", "nii.gz"))
             pred_file = nib.Nifti1Image(pred_vol, file_CT.affine, file_CT.header)
