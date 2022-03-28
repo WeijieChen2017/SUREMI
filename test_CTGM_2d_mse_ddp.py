@@ -82,9 +82,9 @@ data_division_dict = {
     "test_list_X" : test_list}
 
 
-def run_demo(demo_fn, world_size):
+def run_demo(demo_fn, world_size, idx):
     mp.spawn(demo_fn,
-             args=(world_size,),
+             args=(world_size, idx),
              nprocs=world_size,
              join=True)
 
