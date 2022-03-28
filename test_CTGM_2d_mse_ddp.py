@@ -159,6 +159,9 @@ def demo_basic(rank, world_size, idx_epoch):
             batch_loss = np.zeros((dz // batch_per_step, world_size))
             for ib in range(dz // batch_per_step):
 
+                pred_img = np.zeros((256, 256))
+                pred_img_gt = np.zeros((256, 256))
+                
                 batch_x = np.zeros((num_vocab, batch_per_step, cx**2*2))
                 batch_y = np.zeros((num_vocab, batch_per_step, cx**2*2))
                 batch_offset = ib * batch_per_step
@@ -184,12 +187,14 @@ def demo_basic(rank, world_size, idx_epoch):
                         patch_real = y_hat_real[ix, iy, :]
                         pathc_imag = y_hat_imag[ix, iy, :]
                         pred_cplx = np.vectorize(complex)(patch_real, pathc_imag).reshape((cx, cx))
+                        pred_cplx *= 700
                         patch = np.fft.ifftn(np.fft.ifftshift(pred_cplx))
                         pred_img[ix*cx:ix*cx+cx, iy*cx:iy*cx+cx] = patch.real
 
                         patch_gt_real = y_gt_real[ix, iy, :]
                         pathc_gt_imag = y_gt_imag[ix, iy, :]
                         pred_gt_cplx = np.vectorize(complex)(patch_gt_real, pathc_gt_imag).reshape((cx, cx))
+                        pred_gt_cplx *= 700
                         patch_gt = np.fft.ifftn(np.fft.ifftshift(pred_gt_cplx))
                         pred_img_gt[ix*cx:ix*cx+cx, iy*cx:iy*cx+cx] = patch_gt.real
 
