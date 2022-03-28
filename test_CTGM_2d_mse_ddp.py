@@ -123,10 +123,11 @@ def demo_basic(rank, world_size, idx_epoch):
 
     package_train = [train_list, True, False, "train"]
     package_val = [val_list, False, True, "val"]
+    package_test = [test_list, False, False, "test"]
 
     num_vocab = (ax//cx) * (ay//cx)
     
-    for package in [package_val]: # , package_val
+    for package in [package_test]: # , package_val
 
         file_list = package[0]
         isTrain = package[1]
@@ -150,7 +151,10 @@ def demo_basic(rank, world_size, idx_epoch):
             y_data = np.load(y_path)
             dz = x_data.shape[0]
             z_list = list(range(dz))
-            random.shuffle(z_list)
+            # random.shuffle(z_list)
+            pred_vol = np.zeros((256, 256, az))
+            pred_gt = np.zeros((256, 256, az))
+    
             batch_per_step = train_dict["batch"]
             batch_loss = np.zeros((dz // batch_per_step, world_size))
             for ib in range(dz // batch_per_step):
@@ -166,17 +170,42 @@ def demo_basic(rank, world_size, idx_epoch):
 
                 batch_x = torch.from_numpy(batch_x).float().to(rank) # .contiguous()
                 batch_y = torch.from_numpy(batch_y).float().to(rank) # .contiguous()
-                y_hat = ddp_model(batch_x, batch_y).to(rank)
-                loss = criterion(y_hat, batch_y)
-                batch_loss[ib, rank] = loss.item()
+                # y_hat = ddp_model(batch_x, batch_y).to(rank)
 
-            case_loss[idx_file_group * 4 + rank] = np.mean(batch_loss[:, rank])
+                y_hat = ddp_model(batch_x, batch_y).to(rank).detach().cpu().numpy()
+                y_hat_real = np.squeeze(y_hat[:, :, :cx**2]).reshape(ax//cx, ay//cx, cx**2)
+                y_hat_imag = np.squeeze(y_hat[:, :, cx**2:]).reshape(ax//cx, ay//cx, cx**2)
 
-        if rank == 0:
-            mesg = "~Epoch[{:03d}]~ ".format(idx_epoch+1)
-            mesg = mesg+"-> Loss: "+str(np.mean(case_loss))
-            print(mesg)
-            np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}_rank{:01d}.npy".format(idx_epoch+1, rank), case_loss)
+                y_gt_real = np.squeeze(batch_y.detach().cpu().numpy()[:, :, :cx**2]).reshape(ax//cx, ay//cx, cx**2)
+                y_gt_imag = np.squeeze(batch_y.detach().cpu().numpy()[:, :, cx**2:]).reshape(ax//cx, ay//cx, cx**2)
+                
+                for ix in range(ax//cx):
+                    for iy in range(ay//cx):
+                        patch_real = y_hat_real[ix, iy, :]
+                        pathc_imag = y_hat_imag[ix, iy, :]
+                        pred_cplx = np.vectorize(complex)(patch_real, pathc_imag).reshape((cx, cx))
+                        patch = np.fft.ifftn(np.fft.ifftshift(pred_cplx))
+                        pred_img[ix*cx:ix*cx+cx, iy*cx:iy*cx+cx] = patch.real
+
+                        patch_gt_real = y_gt_real[ix, iy, :]
+                        pathc_gt_imag = y_gt_imag[ix, iy, :]
+                        pred_gt_cplx = np.vectorize(complex)(patch_gt_real, pathc_gt_imag).reshape((cx, cx))
+                        patch_gt = np.fft.ifftn(np.fft.ifftshift(pred_gt_cplx))
+                        pred_img_gt[ix*cx:ix*cx+cx, iy*cx:iy*cx+cx] = patch_gt.real
+
+                pred_vol[:, :, iz] = pred_img
+                pred_gt[:, :, iz] = pred_img_gt  
+
+            file_CT = nib.load("./data_dir/Iman_CT/norm/"+file_name.replace("npy", "nii.gz"))
+            pred_file = nib.Nifti1Image(pred_vol, file_CT.affine, file_CT.header)
+            pred_name = test_dict["save_folder"]+"pred/"+file_name.replace("npy", "nii.gz")
+            nib.save(pred_file, pred_name)
+
+            pred_file = nib.Nifti1Image(pred_gt, file_CT.affine, file_CT.header)
+            pred_name = test_dict["save_folder"]+"pred/"+file_name.replace(".npy", "_gt.nii.gz")
+            nib.save(pred_file, pred_name)
+            print(pred_name)
+
 
     cleanup()
 
@@ -300,9 +329,6 @@ if __name__ == "__main__":
     assert n_gpus >= 2, f"Requires at least 2 GPUs to run, but got {n_gpus}"
     world_size = len(train_dict["gpu_ids"])
     # dist.init_process_group("nccl", rank=world_size, world_size=world_size)
-    for idx in range(46):
-        run_demo(demo_basic, world_size, idx)
-
-
+    run_demo(demo_basic, world_size, 44)
 
 
