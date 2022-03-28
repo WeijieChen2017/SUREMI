@@ -203,11 +203,11 @@ def demo_basic(rank, world_size, idx_epoch):
 
             file_CT = nib.load("./data_dir/Iman_CT/norm/"+file_name.replace("npy", "nii.gz"))
             pred_file = nib.Nifti1Image(pred_vol, file_CT.affine, file_CT.header)
-            pred_name = test_dict["save_folder"]+"pred/"+file_name.replace("npy", "nii.gz")
+            pred_name = train_dict["save_folder"]+"pred/"+file_name.replace("npy", "nii.gz")
             nib.save(pred_file, pred_name)
 
             pred_file = nib.Nifti1Image(pred_gt, file_CT.affine, file_CT.header)
-            pred_name = test_dict["save_folder"]+"pred/"+file_name.replace(".npy", "_gt.nii.gz")
+            pred_name = train_dict["save_folder"]+"pred/"+file_name.replace(".npy", "_gt.nii.gz")
             nib.save(pred_file, pred_name)
             print(pred_name)
 
@@ -334,6 +334,6 @@ if __name__ == "__main__":
     assert n_gpus >= 2, f"Requires at least 2 GPUs to run, but got {n_gpus}"
     world_size = len(train_dict["gpu_ids"])
     # dist.init_process_group("nccl", rank=world_size, world_size=world_size)
-    run_demo(demo_basic, world_size, 44)
+    run_demo(demo_basic, world_size, 43)
 
 
