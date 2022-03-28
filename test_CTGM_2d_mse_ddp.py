@@ -152,8 +152,8 @@ def demo_basic(rank, world_size, idx_epoch):
             dz = x_data.shape[0]
             z_list = list(range(dz))
             # random.shuffle(z_list)
-            pred_vol = np.zeros((256, 256, az))
-            pred_gt = np.zeros((256, 256, az))
+            pred_vol = np.zeros((256, 256, dz))
+            pred_gt = np.zeros((256, 256, dz))
     
             batch_per_step = train_dict["batch"]
             batch_loss = np.zeros((dz // batch_per_step, world_size))
