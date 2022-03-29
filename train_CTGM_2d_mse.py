@@ -8,13 +8,21 @@ import random
 import numpy as np
 import nibabel as nib
 import torch.nn as nn
-from scipy.stats import zscore
 
 import torch
 import torchvision
 import requests
 
 from model import ComplexTransformerGenerationModel as CTGM
+
+
+def zscore(data):
+    zmean = np.mean(data)
+    zstd = np.std(data)
+    print(data.shape, zmean, zstd)
+    return (data-zmean)/zstd
+
+
 
 # ==================== dict and config ====================
 
