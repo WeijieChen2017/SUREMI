@@ -206,11 +206,10 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     y_real = y_data[z_list[iz+batch_offset], :, :cx*cx]
                     y_imag = y_data[z_list[iz+batch_offset], :, cx*cx:]
 
-                    input_x = np.concatenate((zscore(x_real), zscore(x_imag)), axis=2)
-                    input_y = np.concatenate((zscore(y_real), zscore(y_imag)), axis=2)
-
-                    batch_x[:, iz, :] = input_x
-                    batch_y[:, iz, :] = input_y
+                    batch_x[:, iz, :cx*cx] = zscore(x_real)
+                    batch_x[:, iz, cx*cx:] = zscore(x_imag)
+                    batch_y[:, iz, :cx*cx] = zscore(y_real)
+                    batch_y[:, iz, cx*cx:] = zscore(y_imag)
 
                 batch_x = torch.from_numpy(batch_x).float().to(device).contiguous()
                 batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
