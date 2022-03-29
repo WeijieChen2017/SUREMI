@@ -8,6 +8,7 @@ import random
 import numpy as np
 import nibabel as nib
 import torch.nn as nn
+from scipy.stats import zscore
 
 import torch
 import torchvision
@@ -19,13 +20,13 @@ from model import ComplexTransformerGenerationModel as CTGM
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "CTGM_2d_v5_mse_norm"
+train_dict["project_name"] = "CTGM_2d_v7_mse_zscore"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
-train_dict["seed"] = 426
+train_dict["seed"] = 813
 train_dict["input_size"] = [256, 256]
 ax, ay = train_dict["input_size"]
 train_dict["gpu_ids"] = [7]
-train_dict["epochs"] = 500
+train_dict["epochs"] = 100
 train_dict["batch"] = 16
 train_dict["dropout"] = 0
 train_dict["model_term"] = "ComplexTransformerGenerationModel"
@@ -42,7 +43,7 @@ train_dict["model_related"]["attn_dropout"] = 0.0
 train_dict["model_related"]["relu_dropout"] = 0.0
 train_dict["model_related"]["res_dropout"] = 0.0
 train_dict["model_related"]["out_dropout"] = 0.0
-train_dict["model_related"]["layers"] = 6
+train_dict["model_related"]["layers"] = 4
 train_dict["model_related"]["attn_mask"] = False
 
 train_dict["folder_X"] = "./data_dir/Iman_MR/kspace_2d_norm/"
@@ -139,7 +140,7 @@ np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 
 # ==================== training ====================
 
-best_val_loss = 3
+best_val_loss = 1e-4
 best_epoch = 0
 # wandb.watch(model)
 
@@ -171,7 +172,8 @@ for idx_epoch_new in range(train_dict["epochs"]):
         case_loss = np.zeros((len(file_list)))
 
         """
-        x should have dimension [seq_len, batch_size, n_features] (i.e., L, N, C).
+        batch_x [seq_len, batch_size, n_features] (i.e., L, N, C).
+        x_data [batch_size, seq_len/num_vocab, n_features/cx*cx*2]
         """
 
         for cnt_file, file_path in enumerate(file_list):
@@ -199,8 +201,16 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                 for iz in range(batch_per_step):
 
-                    batch_x[:, iz, :] = x_data[z_list[iz+batch_offset], :, :]
-                    batch_y[:, iz, :] = y_data[z_list[iz+batch_offset], :, :]
+                    x_real = x_data[z_list[iz+batch_offset], :, :cx*cx]
+                    x_imag = x_data[z_list[iz+batch_offset], :, cx*cx:]
+                    y_real = y_data[z_list[iz+batch_offset], :, :cx*cx]
+                    y_imag = y_data[z_list[iz+batch_offset], :, cx*cx:]
+
+                    input_x = np.concatenate((zscore(x_real), zscore(x_imag)), axis=2)
+                    input_y = np.concatenate((zscore(y_real), zscore(y_imag)), axis=2)
+
+                    batch_x[:, iz, :] = input_x
+                    batch_y[:, iz, :] = input_y
 
                 batch_x = torch.from_numpy(batch_x).float().to(device).contiguous()
                 batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
