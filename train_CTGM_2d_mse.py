@@ -16,12 +16,16 @@ import requests
 from model import ComplexTransformerGenerationModel as CTGM
 
 
-def zscore(data):
-    zmean = np.mean(data)
-    zstd = np.std(data)
-    print(data.shape, zmean, zstd)
-    return (data-zmean)/zstd
+# def zscore(data):
+#     zmean = np.mean(data)
+#     zstd = np.std(data)
+#     print(data.shape, zmean, zstd)
+#     return (data-zmean)/zstd
 
+def self_pro(data):
+    zsum = np.sum(data)
+    print(zsum)
+    return data/zsum
 
 
 # ==================== dict and config ====================
@@ -214,10 +218,10 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     y_real = y_data[z_list[iz+batch_offset], :, :cx*cx]
                     y_imag = y_data[z_list[iz+batch_offset], :, cx*cx:]
 
-                    batch_x[:, iz, :cx*cx] = zscore(x_real)
-                    batch_x[:, iz, cx*cx:] = zscore(x_imag)
-                    batch_y[:, iz, :cx*cx] = zscore(y_real)
-                    batch_y[:, iz, cx*cx:] = zscore(y_imag)
+                    batch_x[:, iz, :cx*cx] = self_pro(x_real)
+                    batch_x[:, iz, cx*cx:] = self_pro(x_imag)
+                    batch_y[:, iz, :cx*cx] = self_pro(y_real)
+                    batch_y[:, iz, cx*cx:] = self_pro(y_imag)
 
                 batch_x = torch.from_numpy(batch_x).float().to(device).contiguous()
                 batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
