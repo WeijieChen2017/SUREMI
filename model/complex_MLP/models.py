@@ -1,6 +1,5 @@
-from .complexFunctions import ComplexLinear
+from .complexLayers import ComplexLinear
 
-# import torch
 from torch import nn
 
 class cMLP(nn.Module):
