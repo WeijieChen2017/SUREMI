@@ -124,7 +124,7 @@ np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 
 # ==================== training ====================
 
-best_val_loss = 1e-4
+best_val_loss = 100
 best_epoch = 0
 # wandb.watch(model)
 
