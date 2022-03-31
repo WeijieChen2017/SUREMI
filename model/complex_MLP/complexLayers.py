@@ -13,10 +13,10 @@ import torch
 from torch.nn import Module, Parameter, init
 from torch.nn import Conv2d, Linear, BatchNorm1d, BatchNorm2d
 from torch.nn import ConvTranspose2d
-<<<<<<< HEAD:complexPyTorch/complexLayers.py
+# <<<<<<< HEAD:complexPyTorch/complexLayers.py
 from .complexFunctions import complex_relu, complex_max_pool2d, complex_avg_pool2d
 from .complexFunctions import complex_dropout, complex_dropout2d
-=======
+# =======
 from complexFunctions import ( 
     complex_relu,
     complex_tanh,
@@ -27,7 +27,7 @@ from complexFunctions import (
     complex_dropout2d,
     complex_opposite,
 )
->>>>>>> d00e50c5d93386dd85b363a39c24cf783b7914aa:complexLayers.py
+# >>>>>>> d00e50c5d93386dd85b363a39c24cf783b7914aa:complexLayers.py
 
 def apply_complex(fr, fi, input, dtype = torch.complex64):
     return (fr(input.real)-fi(input.imag)).type(dtype) \
@@ -134,15 +134,25 @@ class ComplexConv2d(Module):
     def forward(self,input):    
         return apply_complex(self.conv_r, self.conv_i, input)
 
-class ComplexLinear(Module):
+# class ComplexLinear(Module):
 
+#     def __init__(self, in_features, out_features):
+#         super(ComplexLinear, self).__init__()
+#         self.fc_r = Linear(in_features, out_features)
+#         self.fc_i = Linear(in_features, out_features)
+
+#     def forward(self, input):
+#         return apply_complex(self.fc_r, self.fc_i, input)
+
+
+class ComplexLinear(nn.Module):
     def __init__(self, in_features, out_features):
         super(ComplexLinear, self).__init__()
-        self.fc_r = Linear(in_features, out_features)
-        self.fc_i = Linear(in_features, out_features)
-
-    def forward(self, input):
-        return apply_complex(self.fc_r, self.fc_i, input)
+        self.weight = nn.Parameter(torch.randn(in_features, out_features, dtype=torch.cfloat))
+        self.bias = nn.Parameter(torch.randn(out_features, dtype=torch.cfloat))
+    
+    def forward(self, x):
+        return torch.matmul(x, self.weight) + self.bias
 
 
 class NaiveComplexBatchNorm1d(Module):
