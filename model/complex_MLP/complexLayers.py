@@ -152,7 +152,9 @@ class ComplexLinear(Module):
         self.bias = Parameter(torch.randn(out_features, dtype=torch.cfloat))
     
     def forward(self, x):
-        return torch.matmul(x, self.weight) + self.bias
+        x = torch.matmul(x, self.weight)
+        x = torch.add(x, self.bias)
+        return x
 
 
 class NaiveComplexBatchNorm1d(Module):
