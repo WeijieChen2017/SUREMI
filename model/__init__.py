@@ -14,3 +14,4 @@ from .dense_swin import DenseSwinTransformer3D
 from .VRT_ETH import VRT
 from .ConvNext_meta import ConvNeXt
 from .complex_transformer.model import TransformerGenerationModel as ComplexTransformerGenerationModel
+from .complex_MLP.models import cMLP
