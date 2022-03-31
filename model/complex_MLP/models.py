@@ -12,10 +12,10 @@ class ComplexLinear(nn.Module):
         self.weights_init()
 
     def weights_init(self):
-        nn.init.xavier_uniform_(self.w_real.weight)
-        nn.init.xavier_uniform_(self.w_imag.weight)
-        nn.init.xavier_uniform_(self.b_real.weight)
-        nn.init.xavier_uniform_(self.b_imag.weight)        
+        nn.init.normal_(self.w_real.weight)
+        nn.init.normal_(self.w_imag.weight)
+        nn.init.normal_(self.b_real.weight)
+        nn.init.normal_(self.b_imag.weight)        
 
     def forward(self, x_real, x_imag):
         y_real = torch.matmul(x_real, self.w_real) - torch.matmul(x_imag, self.w_imag) + self.b_real.unsqueeze(0)
