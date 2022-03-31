@@ -7,12 +7,12 @@ class ComplexLinear(nn.Module):
         super(ComplexLinear, self).__init__()
         self.w_real = nn.Parameter(torch.randn(in_features, out_features, dtype=torch.float))
         self.w_imag = nn.Parameter(torch.randn(in_features, out_features, dtype=torch.float))
-        self.b_real = nn.Parameter(torch.randn(out_features, out_features, dtype=torch.float))
-        self.b_imag = nn.Parameter(torch.randn(out_features, out_features, dtype=torch.float))
+        self.b_real = nn.Parameter(torch.randn(out_features, dtype=torch.float))
+        self.b_imag = nn.Parameter(torch.randn(out_features, dtype=torch.float))
 
     def forward(self, x_real, x_imag):
-        y_real = torch.matmul(x_real, self.w_real) - torch.matmul(x_imag, self.w_imag) + self.b_real
-        y_imag = torch.matmul(x_real, self.w_imag) - torch.matmul(x_imag, self.w_real) + self.b_imag
+        y_real = torch.matmul(x_real, self.w_real) - torch.matmul(x_imag, self.w_imag) + self.b_real.unsqueeze(0)
+        y_imag = torch.matmul(x_real, self.w_imag) - torch.matmul(x_imag, self.w_real) + self.b_imag.unsqueeze(0)
         return y_real, y_imag
 
 
@@ -29,6 +29,7 @@ class cMLP(nn.Module):
         x_real = x[:, :self.dim]
         x_imag = x[:, self.dim:]
         # print(x_real.size(), x_imag.size())
+        # [B, D]
         x_real, x_imag = self.hidden_1(x_real, x_imag)
         # print(x_real.size(), x_imag.size())
         x_real, x_imag = self.hidden_2(x_real, x_imag)
