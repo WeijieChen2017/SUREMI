@@ -145,11 +145,11 @@ class ComplexConv2d(Module):
 #         return apply_complex(self.fc_r, self.fc_i, input)
 
 
-class ComplexLinear(nn.Module):
+class ComplexLinear(Module):
     def __init__(self, in_features, out_features):
         super(ComplexLinear, self).__init__()
-        self.weight = nn.Parameter(torch.randn(in_features, out_features, dtype=torch.cfloat))
-        self.bias = nn.Parameter(torch.randn(out_features, dtype=torch.cfloat))
+        self.weight = Parameter(torch.randn(in_features, out_features, dtype=torch.cfloat))
+        self.bias = Parameter(torch.randn(out_features, dtype=torch.cfloat))
     
     def forward(self, x):
         return torch.matmul(x, self.weight) + self.bias
