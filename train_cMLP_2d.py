@@ -180,22 +180,20 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
             for ib in range(dz // batch_per_step):
 
-                batch_x = np.zeros((num_vocab*batch_per_step, cx*cx))
-                batch_y = np.zeros((num_vocab*batch_per_step, cx*cx))
+                batch_x_real = np.zeros((num_vocab*batch_per_step, cx*cx*2))
+                batch_y_real = np.zeros((num_vocab*batch_per_step, cx*cx*2))
+
                 batch_offset = ib * batch_per_step
 
                 for iz in range(batch_per_step):
 
-                    x_real = x_data[z_list[iz+batch_offset], :, :cx*cx]
-                    x_imag = x_data[z_list[iz+batch_offset], :, cx*cx:]
-                    y_real = y_data[z_list[iz+batch_offset], :, :cx*cx]
-                    y_imag = y_data[z_list[iz+batch_offset], :, cx*cx:]
+                    x_real = x_data[z_list[iz+batch_offset], :, :cx*cx].reshape(num_vocab, cx*cx)
+                    x_imag = x_data[z_list[iz+batch_offset], :, cx*cx:].reshape(num_vocab, cx*cx)
+                    y_real = y_data[z_list[iz+batch_offset], :, :cx*cx].reshape(num_vocab, cx*cx)
+                    y_imag = y_data[z_list[iz+batch_offset], :, cx*cx:].reshape(num_vocab, cx*cx)
 
-                    x_c = np.vectorize(complex)(x_real, x_imag).reshape(num_vocab, cx*cx)
-                    y_c = np.vectorize(complex)(y_real, y_imag).reshape(num_vocab, cx*cx)
-
-                    batch_x[iz*num_vocab:(iz+1)*num_vocab, :] = x_c
-                    batch_y[iz*num_vocab:(iz+1)*num_vocab, :] = y_c
+                    batch_x[iz*num_vocab:(iz+1)*num_vocab, :] = np.squeeze(x_data[z_list[iz+batch_offset], :, :])
+                    batch_y[iz*num_vocab:(iz+1)*num_vocab, :] = np.squeeze(y_data[z_list[iz+batch_offset], :, :])
                     
                 batch_x = torch.from_numpy(batch_x).float().to(device).contiguous()
                 batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
