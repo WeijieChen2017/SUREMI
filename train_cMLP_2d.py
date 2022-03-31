@@ -19,7 +19,7 @@ from model import cMLP
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "CTGM_2d_v9_cMLP"
+train_dict["project_name"] = "CTGM_2d_v10_cMLP_mse"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 729
 train_dict["input_size"] = [256, 256]
@@ -87,7 +87,7 @@ model = cMLP(
 # model = nn.DataParallel(model)
 model.train()
 model = model.to(device)
-criterion = nn.SmoothL1Loss()
+criterion = nn.MSELoss()
 
 optimizer = torch.optim.AdamW(
     model.parameters(),
