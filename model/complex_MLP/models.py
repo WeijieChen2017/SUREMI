@@ -28,13 +28,13 @@ class cMLP(nn.Module):
     def forward(self, x):
         x_real = x[:, :self.dim]
         x_imag = x[:, self.dim:]
-        print(x_real.size(), x_imag.size())
+        # print(x_real.size(), x_imag.size())
         x_real, x_imag = self.hidden_1(x_real, x_imag)
-        print(x_real.size(), x_imag.size())
+        # print(x_real.size(), x_imag.size())
         x_real, x_imag = self.hidden_2(x_real, x_imag)
-        print(x_real.size(), x_imag.size())
+        # print(x_real.size(), x_imag.size())
         x_real, x_imag = self.out(x_real, x_imag)
-        print(x_real.size(), x_imag.size())
+        # print(x_real.size(), x_imag.size())
 
-        return torch.cat([x_real, x_imag], dim=0)
+        return torch.cat([x_real, x_imag], dim=-1)
 
