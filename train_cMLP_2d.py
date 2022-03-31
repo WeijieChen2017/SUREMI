@@ -80,10 +80,10 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 model = cMLP(
-    in_dim = train_dict["model_related"]["in_dim"],
+    dim = train_dict["model_related"]["dim"],
     mid_dim_1 = train_dict["model_related"]["mid_dim_1"],
-    mid_dim_2 = train_dict["model_related"]["mid_dim_2"],
-    out_dim = train_dict["model_related"]["out_dim"])
+    mid_dim_2 = train_dict["model_related"]["mid_dim_2"]
+    )
 
 # model = torch.load(train_dict["save_folder"]+"model_best_102.pth")
 
