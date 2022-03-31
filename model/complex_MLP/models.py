@@ -9,6 +9,13 @@ class ComplexLinear(nn.Module):
         self.w_imag = nn.Parameter(torch.randn(in_features, out_features, dtype=torch.float))
         self.b_real = nn.Parameter(torch.randn(out_features, dtype=torch.float))
         self.b_imag = nn.Parameter(torch.randn(out_features, dtype=torch.float))
+        self.weights_init()
+
+    def weights_init(self):
+        nn.init.xavier_uniform_(self.w_real.weight)
+        nn.init.xavier_uniform_(self.w_imag.weight)
+        nn.init.xavier_uniform_(self.b_real.weight)
+        nn.init.xavier_uniform_(self.b_imag.weight)        
 
     def forward(self, x_real, x_imag):
         y_real = torch.matmul(x_real, self.w_real) - torch.matmul(x_imag, self.w_imag) + self.b_real.unsqueeze(0)
@@ -32,14 +39,6 @@ class cMLP(nn.Module):
             for idx in range(len(self.mid_dim)-1)
         ])
         self.out_fc = ComplexLinear(in_features=self.mid_dim[-1], out_features=self.dim)
-
-        self.weights_init()
-
-    def weights_init(self):
-        nn.init.xavier_uniform_(self.in_fc.weight)
-        nn.init.xavier_uniform_(self.out_fc.weight)
-        for layer in self.hidden:
-            nn.init.xavier_uniform_(layer.weight)
 
     def forward(self, x):
         x_real = x[:, :self.dim]
