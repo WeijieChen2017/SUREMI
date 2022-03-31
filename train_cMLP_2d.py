@@ -195,7 +195,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     y_c = np.vectorize(complex)(y_real, y_imag).reshape(num_vocab, cx*cx)
 
                     batch_x[iz*num_vocab:(iz+1)*num_vocab, :] = x_c
-                    batch_y[iz*num_vocab:(iz+1)*num_vocab, :] = x_y
+                    batch_y[iz*num_vocab:(iz+1)*num_vocab, :] = y_c
                     
                 batch_x = torch.from_numpy(batch_x).float().to(device).contiguous()
                 batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
