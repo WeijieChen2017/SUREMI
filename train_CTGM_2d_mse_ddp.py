@@ -21,12 +21,12 @@ from model import ComplexTransformerGenerationModel as CTGM
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "CTGM_2d_v4_mse_ddp"
+train_dict["project_name"] = "CTGM_2d_v8_mse_maxlen_ddp"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_size"] = [256, 256]
 ax, ay = train_dict["input_size"]
-train_dict["gpu_ids"] = [1,2,3,4]
+train_dict["gpu_ids"] = [1,2,5,6]
 train_dict["epochs"] = 600
 train_dict["batch"] = 16
 train_dict["dropout"] = 0
@@ -206,7 +206,7 @@ def demo_basic(rank, world_size):
                     # print("----"*rank*3, "Line 206 at Rank ", rank, "with epoch ", idx_file_group * 4 + rank, "ib", ib)
                     optimizer.zero_grad()
                     # print("----"*rank*3, "Line 208 at Rank ", rank, "with epoch ", idx_file_group * 4 + rank, "ib", ib)
-                    y_hat = ddp_model(batch_x, batch_y).to(rank)
+                    y_hat = ddp_model(batch_x, max_len=num_vocab).to(rank) # , batch_y
                     # print("----"*rank*3, "Line 210 at Rank ", rank, "with epoch ", idx_file_group * 4 + rank, "ib", ib)
                     # print("Ytrue size: ", batch_y.size())
                     loss = criterion(y_hat, batch_y)
