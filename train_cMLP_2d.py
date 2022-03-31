@@ -33,10 +33,9 @@ train_dict["model_term"] = "ComplexTransformerGenerationModel"
 train_dict["model_related"] = {}
 train_dict["model_related"]["cx"] = 32
 cx = train_dict["model_related"]["cx"]
-train_dict["model_related"]["in_dim"] = cx*cx
+train_dict["model_related"]["dim"] = cx*cx
 train_dict["model_related"]["mid_dim_1"] = 1024
 train_dict["model_related"]["mid_dim_2"] = 1024
-train_dict["model_related"]["out_dim"] = cx*cx
 
 train_dict["folder_X"] = "./data_dir/Iman_MR/kspace_2d_norm/"
 train_dict["folder_Y"] = "./data_dir/Iman_CT/kspace_2d_norm/"

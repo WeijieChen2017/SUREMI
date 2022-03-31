@@ -18,12 +18,12 @@ class ComplexLinear(nn.Module):
 
 
 class cMLP(nn.Module):
-    def __init__(self, dim, mid_dim_1, mid_dim_2, dim):
+    def __init__(self, dim, mid_dim_1, mid_dim_2):
         super(cMLP, self).__init__()
         self.dim = dim
-        self.hidden_1 = ComplexLinear(in_dim, mid_dim_1)
+        self.hidden_1 = ComplexLinear(dim, mid_dim_1)
         self.hidden_2 = ComplexLinear(mid_dim_1, mid_dim_2)
-        self.out = ComplexLinear(mid_dim_2, out_dim)
+        self.out = ComplexLinear(mid_dim_2, dim)
 
     def forward(self, x):
         x_real = x[:, :self.dim]
