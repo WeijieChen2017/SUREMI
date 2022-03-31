@@ -26,8 +26,8 @@ class cMLP(nn.Module):
         self.out = ComplexLinear(mid_dim_2, out_dim)
 
     def forward(self, x):
-    	x_real = x[:, :self.dim]
-    	x_imag = x[:, self.dim:]
+        x_real = x[:, :self.dim]
+        x_imag = x[:, self.dim:]
         x_real, x_imag = self.hidden_1(x_real, x_imag)
         x_real, x_imag = self.hidden_2(x_real, x_imag)
         x_real, x_imag = self.out(x_real, x_imag)
