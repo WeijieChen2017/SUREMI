@@ -33,6 +33,14 @@ class cMLP(nn.Module):
         ])
         self.out_fc = ComplexLinear(in_features=self.mid_dim[-1], out_features=self.dim)
 
+        self.weights_init()
+
+    def weights_init(self):
+        nn.init.xavier_uniform_(self.in_fc.weight)
+        nn.init.xavier_uniform_(self.out_fc.weight)
+        for layer in self.hidden:
+            nn.init.xavier_uniform_(layer.weight)
+
     def forward(self, x):
         x_real = x[:, :self.dim]
         x_imag = x[:, self.dim:]
