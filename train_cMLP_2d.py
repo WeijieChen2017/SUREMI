@@ -179,8 +179,8 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
             for ib in range(dz // batch_per_step):
 
-                batch_x_real = np.zeros((num_vocab*batch_per_step, cx*cx*2))
-                batch_y_real = np.zeros((num_vocab*batch_per_step, cx*cx*2))
+                batch_x = np.zeros((num_vocab*batch_per_step, cx*cx*2))
+                batch_y = np.zeros((num_vocab*batch_per_step, cx*cx*2))
 
                 batch_offset = ib * batch_per_step
 
