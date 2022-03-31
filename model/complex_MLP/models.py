@@ -7,8 +7,8 @@ class ComplexLinear(nn.Module):
         super(ComplexLinear, self).__init__()
         self.w_real = nn.Parameter(torch.randn(in_features, out_features, dtype=torch.float))
         self.w_imag = nn.Parameter(torch.randn(in_features, out_features, dtype=torch.float))
-        self.b_real = nn.Parameter(torch.randn(in_features, out_features, dtype=torch.float))
-        self.b_imag = nn.Parameter(torch.randn(in_features, out_features, dtype=torch.float))
+        self.b_real = nn.Parameter(torch.randn(out_features, out_features, dtype=torch.float))
+        self.b_imag = nn.Parameter(torch.randn(out_features, out_features, dtype=torch.float))
 
     def forward(self, x_real, x_imag):
         y_real = torch.matmul(x_real, self.w_real) - torch.matmul(x_imag, self.w_imag) + self.b_real
