@@ -34,8 +34,7 @@ train_dict["model_related"] = {}
 train_dict["model_related"]["cx"] = 32
 cx = train_dict["model_related"]["cx"]
 train_dict["model_related"]["dim"] = cx*cx
-train_dict["model_related"]["mid_dim_1"] = 1024
-train_dict["model_related"]["mid_dim_2"] = 1024
+train_dict["model_related"]["mid_dim"] = [2048, 2048, 2048]
 
 train_dict["folder_X"] = "./data_dir/Iman_MR/kspace_2d_norm/"
 train_dict["folder_Y"] = "./data_dir/Iman_CT/kspace_2d_norm/"
@@ -80,8 +79,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 model = cMLP(
     dim = train_dict["model_related"]["dim"],
-    mid_dim_1 = train_dict["model_related"]["mid_dim_1"],
-    mid_dim_2 = train_dict["model_related"]["mid_dim_2"]
+    mid_dim = train_dict["model_related"]["mid_dim"]
     )
 
 # model = torch.load(train_dict["save_folder"]+"model_best_102.pth")

@@ -18,24 +18,28 @@ class ComplexLinear(nn.Module):
 
 
 class cMLP(nn.Module):
-    def __init__(self, dim, mid_dim_1, mid_dim_2):
+    def __init__(self, dim, mid_dim):
         super(cMLP, self).__init__()
         self.dim = dim
-        self.hidden_1 = ComplexLinear(dim, mid_dim_1)
-        self.hidden_2 = ComplexLinear(mid_dim_1, mid_dim_2)
-        self.out = ComplexLinear(mid_dim_2, dim)
+        self.mid_dim = mid_dim
+        self.in_fc = ComplexLinear(in_features=self.dim, out_features=self.mid_dim[0])
+        self.hidden = nn.ModuleList([])
+        self.hidden.extend([
+            ComplexLinear(
+                in_features=self.mid_dim[idx], 
+                out_features=self.mid_dim[idx+1]
+            )
+            for idx in range(len(self.mid_dim)-1)
+        ])
+        self.out_fc = ComplexLinear(in_features=self.mid_dim[-1], out_features=self.dim)
 
     def forward(self, x):
         x_real = x[:, :self.dim]
         x_imag = x[:, self.dim:]
-        # print(x_real.size(), x_imag.size())
-        # [B, D]
-        x_real, x_imag = self.hidden_1(x_real, x_imag)
-        # print(x_real.size(), x_imag.size())
-        x_real, x_imag = self.hidden_2(x_real, x_imag)
-        # print(x_real.size(), x_imag.size())
-        x_real, x_imag = self.out(x_real, x_imag)
-        # print(x_real.size(), x_imag.size())
+        x_real, x_imag = self.in_fc(x_real, x_imag)
+        for idx in range(len(self.mid_dim)-1):
+            x_real, x_imag = self.hidden[idx](x_real, x_imag)
+        x_real, x_imag = self.out_fc(x_real, x_imag)
 
         return torch.cat([x_real, x_imag], dim=-1)
 
