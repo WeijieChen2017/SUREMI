@@ -24,7 +24,7 @@ train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 729
 train_dict["input_size"] = [256, 256]
 ax, ay = train_dict["input_size"]
-train_dict["gpu_ids"] = [1]
+train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 100
 train_dict["batch"] = 16
 train_dict["dropout"] = 0
@@ -34,7 +34,7 @@ train_dict["model_related"] = {}
 train_dict["model_related"]["cx"] = 32
 cx = train_dict["model_related"]["cx"]
 train_dict["model_related"]["dim"] = cx*cx
-train_dict["model_related"]["mid_dim"] = [2048, 2048, 2048]
+train_dict["model_related"]["mid_dim"] = [2048, 2048]
 
 train_dict["folder_X"] = "./data_dir/Iman_MR/kspace_2d_norm/"
 train_dict["folder_Y"] = "./data_dir/Iman_CT/kspace_2d_norm/"
@@ -122,7 +122,7 @@ np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 
 # ==================== training ====================
 
-best_val_loss = 100
+best_val_loss = 1e6
 best_epoch = 0
 # wandb.watch(model)
 
