@@ -19,7 +19,7 @@ from model import cMLP
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "CTGM_2d_v9_cMLP_SL1"
+train_dict["project_name"] = "CTGM_2d_v10_cMLP_mse"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 729
 train_dict["input_size"] = [256, 256]
@@ -88,7 +88,7 @@ model = torch.load(train_dict["save_folder"]+"model_best_017.pth")
 model.train()
 model = model.to(device)
 # criterion = nn.MSELoss()
-criterion = nn.SmoothL1Loss()
+criterion = nn.MSELoss()
 
 optimizer = torch.optim.AdamW(
     model.parameters(),
@@ -123,7 +123,7 @@ np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 
 # ==================== training ====================
 
-best_val_loss = 22.101482501174463
+best_val_loss = 240.400559685447
 best_epoch = 0
 # wandb.watch(model)
 
