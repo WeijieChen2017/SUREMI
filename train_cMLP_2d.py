@@ -82,7 +82,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 #     mid_dim = train_dict["model_related"]["mid_dim"]
 #     )
 
-model = torch.load(train_dict["save_folder"]+"model_best_017.pth")
+model = torch.load(train_dict["save_folder"]+"model_best_016.pth")
 
 # model = nn.DataParallel(model)
 model.train()
