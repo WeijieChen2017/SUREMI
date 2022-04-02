@@ -24,7 +24,7 @@ train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 729
 train_dict["input_size"] = [256, 256]
 ax, ay = train_dict["input_size"]
-train_dict["gpu_ids"] = [7]
+train_dict["gpu_ids"] = [6]
 train_dict["epochs"] = 100
 train_dict["batch"] = 16
 train_dict["dropout"] = 0
@@ -77,12 +77,12 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-model = cMLP(
-    dim = train_dict["model_related"]["dim"],
-    mid_dim = train_dict["model_related"]["mid_dim"]
-    )
+# model = cMLP(
+#     dim = train_dict["model_related"]["dim"],
+#     mid_dim = train_dict["model_related"]["mid_dim"]
+#     )
 
-# model = torch.load(train_dict["save_folder"]+"model_best_102.pth")
+model = torch.load(train_dict["save_folder"]+"model_best_017.pth")
 
 # model = nn.DataParallel(model)
 model.train()
@@ -123,7 +123,7 @@ np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 
 # ==================== training ====================
 
-best_val_loss = 1e6
+best_val_loss = 22.101482501174463
 best_epoch = 0
 # wandb.watch(model)
 
@@ -135,7 +135,7 @@ package_val = [val_list, False, True, "val"]
 num_vocab = (ax//cx) * (ay//cx)
 
 for idx_epoch_new in range(train_dict["epochs"]):
-    idx_epoch = idx_epoch_new + 0
+    idx_epoch = idx_epoch_new + 18
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
     for package in [package_train, package_val]: # , package_val
