@@ -158,10 +158,14 @@ for cnt_file, file_path in enumerate(file_list):
         batch_x = torch.from_numpy(batch_x).float().to(device).contiguous()
         batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
             
-        y_hat = model(batch_x)
+        y_hat = model(batch_x).detach().cpu().numpy()
 
-        y_hat_real = np.squeeze(y_hat[:, :, :cx**2]).reshape(ax//cx, ay//cx, cx**2)
-        y_hat_imag = np.squeeze(y_hat[:, :, cx**2:]).reshape(ax//cx, ay//cx, cx**2)
+        print(y_hat.shape)
+
+        exit()
+
+        y_hat_real = np.squeeze(y_hat[:, :cx**2]).reshape(ax//cx, ay//cx, cx**2)
+        y_hat_imag = np.squeeze(y_hat[:, cx**2:]).reshape(ax//cx, ay//cx, cx**2)
 
         y_gt_real = np.squeeze(batch_y.detach().cpu().numpy()[:, :, :cx**2]).reshape(ax//cx, ay//cx, cx**2)
         y_gt_imag = np.squeeze(batch_y.detach().cpu().numpy()[:, :, cx**2:]).reshape(ax//cx, ay//cx, cx**2)
