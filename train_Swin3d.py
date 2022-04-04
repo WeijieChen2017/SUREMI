@@ -25,7 +25,7 @@ train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
 train_dict["input_size"] = [48, 48, 48]
-train_dict["gpu_ids"] = [6]
+train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 100
 train_dict["batch"] = 1
 train_dict["dropout"] = 0
@@ -112,7 +112,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 #         new_model_state[model_key] = model.state_dict()[model_key]
 
 # model.load_state_dict(new_model_state)
-model = torch.load(train_dict["save_folder"]+"model_best_curr.pth", map_location=torch.device('cpu'))
+model = torch.load(train_dict["save_folder"]+"model_best_086.pth", map_location=torch.device('cpu'))
 
 # model = nn.DataParallel(model)
 model.train()
@@ -121,7 +121,7 @@ criterion = nn.SmoothL1Loss()
 
 optimizer = torch.optim.AdamW(
     model.parameters(),
-    lr = train_dict["opt_lr"],
+    lr = train_dict["opt_lr"]*1e-2,
     betas = train_dict["opt_betas"],
     eps = train_dict["opt_eps"],
     weight_decay = train_dict["opt_weight_decay"],
