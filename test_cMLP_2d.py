@@ -132,20 +132,17 @@ for cnt_file, file_path in enumerate(file_list):
     x_data = np.load(x_path)
     y_data = np.load(y_path)
     dz = x_data.shape[0]
-    z_list = list(range(dz))
-    random.shuffle(z_list)
-    # batch_per_step = train_dict["batch"]
 
     batch_x = np.zeros((num_vocab*dz, cx*cx*2))
     batch_y = np.zeros((num_vocab*dz, cx*cx*2))
 
     for iz in range(dz):
 
-        batch_x[iz*num_vocab:(iz+1)*num_vocab, :] = np.squeeze(x_data[z_list[iz], :, :])
-        batch_y[iz*num_vocab:(iz+1)*num_vocab, :] = np.squeeze(y_data[z_list[iz], :, :])
+        batch_x[iz*num_vocab:(iz+1)*num_vocab, :] = np.squeeze(x_data[iz, :, :])
+        batch_y[iz*num_vocab:(iz+1)*num_vocab, :] = np.squeeze(y_data[iz, :, :])
             
-        batch_x = torch.from_numpy(batch_x).float().to(device).contiguous()
-        batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
+    batch_x = torch.from_numpy(batch_x).float().to(device).contiguous()
+    batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
             
     y_hat = model(batch_x).detach().cpu().numpy()
     batch_y = batch_y.detach().cpu().numpy()
