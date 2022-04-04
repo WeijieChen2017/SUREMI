@@ -21,9 +21,9 @@ from model import ComplexTransformerGenerationModel as CTGM
 test_dict = {}
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-test_dict["project_name"] = "CTGM_2d_v2_mse"
+test_dict["project_name"] = "CTGM_2d_v10_cMLP_mse"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
-test_dict["gpu_ids"] = [7]
+test_dict["gpu_ids"] = [2]
 test_dict["eval_file_cnt"] = 16
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
@@ -49,12 +49,12 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-model_list = sorted(glob.glob(os.path.join(test_dict["save_folder"], "model_best_*.pth")))
-if "curr" in model_list[-1]:
-    print("Remove model_best_curr")
-    model_list.pop()
-# target_model = test_dict["save_folder"]+"model_best_086.pth"
-target_model = model_list[-1]
+# model_list = sorted(glob.glob(os.path.join(test_dict["save_folder"], "model_best_*.pth")))
+# if "curr" in model_list[-1]:
+#     print("Remove model_best_curr")
+#     model_list.pop()
+target_model = test_dict["save_folder"]+"model_best_064.pth"
+# target_model = model_list[-1]
 model = torch.load(target_model, map_location=torch.device('cpu'))
 print("--->", target_model, " is loaded.")
 
@@ -122,38 +122,44 @@ x should have dimension [seq_len, batch_size, n_features] (i.e., L, N, C).
 """
 
 for cnt_file, file_path in enumerate(file_list):
-    
+            
     total_file = len(file_list)
+    
     x_path = file_path
     y_path = file_path.replace("MR", "CT")
     file_name = os.path.basename(file_path)
-    print(" ===> [{:03d}]/[{:03d}]: --->".format(cnt_file+1, total_file), file_name, "<---", end="") #
+    print(iter_tag + " ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: --->".format(idx_epoch+1, cnt_file+1, total_file), file_name, "<---", end="") #
     x_data = np.load(x_path)
     y_data = np.load(y_path)
-    az = x_data.shape[0]
-    # book = np.zeros((dz, num_vocab, cx*cx*2))
-    z_list = list(range(az))
-    pred_vol = np.zeros((256, 256, az))
-    pred_gt = np.zeros((256, 256, az))
-    
-    for iz in range(az):
+    dz = x_data.shape[0]
+    z_list = list(range(dz))
+    random.shuffle(z_list)
+    # batch_per_step = train_dict["batch"]
+    batch_per_step = dz
+    batch_loss = np.zeros((dz // batch_per_step))
 
-        # print()
-        pred_img = np.zeros((256, 256))
-        pred_img_gt = np.zeros((256, 256))
+    for ib in range(dz // batch_per_step):
 
-        batch_x = np.zeros((num_vocab, 1, cx**2*2))
-        batch_y = np.zeros((num_vocab, 1, cx**2*2))
+        batch_x = np.zeros((num_vocab*batch_per_step, cx*cx*2))
+        batch_y = np.zeros((num_vocab*batch_per_step, cx*cx*2))
 
-        batch_x[:, 0, :] = x_data[iz, :, :]
-        batch_y[:, 0, :] = y_data[iz, :, :]
+        batch_offset = ib * batch_per_step
 
+        for iz in range(batch_per_step):
+
+            # x_real = x_data[z_list[iz+batch_offset], :, :cx*cx].reshape(num_vocab, cx*cx)
+            # x_imag = x_data[z_list[iz+batch_offset], :, cx*cx:].reshape(num_vocab, cx*cx)
+            # y_real = y_data[z_list[iz+batch_offset], :, :cx*cx].reshape(num_vocab, cx*cx)
+            # y_imag = y_data[z_list[iz+batch_offset], :, cx*cx:].reshape(num_vocab, cx*cx)
+
+            batch_x[iz*num_vocab:(iz+1)*num_vocab, :] = np.squeeze(x_data[z_list[iz+batch_offset], :, :])
+            batch_y[iz*num_vocab:(iz+1)*num_vocab, :] = np.squeeze(y_data[z_list[iz+batch_offset], :, :])
+            
         batch_x = torch.from_numpy(batch_x).float().to(device).contiguous()
         batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
             
-        # y_hat = model(batch_x, batch_y).detach().cpu().numpy()
-        y_hat = model(batch_x, max_len=num_vocab).detach().cpu().numpy()
-        # print(y_hat.shape)
+        y_hat = model(batch_x)
+
         y_hat_real = np.squeeze(y_hat[:, :, :cx**2]).reshape(ax//cx, ay//cx, cx**2)
         y_hat_imag = np.squeeze(y_hat[:, :, cx**2:]).reshape(ax//cx, ay//cx, cx**2)
 
