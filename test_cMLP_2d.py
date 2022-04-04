@@ -128,7 +128,7 @@ for cnt_file, file_path in enumerate(file_list):
     x_path = file_path
     y_path = file_path.replace("MR", "CT")
     file_name = os.path.basename(file_path)
-    print(" ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: --->".format(idx_epoch+1, cnt_file+1, total_file), file_name, "<---", end="") #
+    print(" ===> [{:03d}]/[{:03d}]: --->".format(cnt_file+1, total_file), file_name, "<---", end="") #
     x_data = np.load(x_path)
     y_data = np.load(y_path)
     dz = x_data.shape[0]
