@@ -153,7 +153,7 @@ for cnt_file, file_path in enumerate(file_list):
         batch_x = torch.from_numpy(batch_x).float().to(device).contiguous()
         batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
             
-        y_hat = model(batch_x, batch_y).detach().cpu().numpy()
+        y_hat = model(batch_x).detach().cpu().numpy() #, batch_y
         # y_hat = model(batch_x, max_len=num_vocab).detach().cpu().numpy()
         # print(y_hat.shape)
         y_hat_real = np.squeeze(y_hat[:, :, :cx**2]).reshape(ax//cx, ay//cx, cx**2)
