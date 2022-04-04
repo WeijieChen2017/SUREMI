@@ -19,18 +19,18 @@ from model import VRT
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "VRT_Iman"
+train_dict["project_name"] = "VRT_Iman_v2"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
-train_dict["seed"] = 729
+train_dict["seed"] = 813
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
-train_dict["gpu_ids"] = [1]
+train_dict["gpu_ids"] = [3]
 train_dict["epochs"] = 100
 train_dict["batch"] = 1
 train_dict["dropout"] = 0
 train_dict["model_term"] = "VRT"
 train_dict["deconv_channels"] = 6
-train_dict["input_size"] = [6,64,64]
+train_dict["input_size"] = [6,192,192]
 
 train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
 train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
@@ -108,7 +108,7 @@ model.load_state_dict(pretrain["params"])
 # model = nn.DataParallel(model)
 model.train()
 model = model.to(device)
-criterion = nn.SmoothL1Loss()
+criterion = nn.MSELoss()
 
 optimizer = torch.optim.AdamW(
     model.parameters(),
@@ -184,7 +184,7 @@ for idx_epoch in range(train_dict["epochs"]):
             y_file = nib.load(y_path)
             x_data = x_file.get_fdata()
             y_data = y_file.get_fdata()
-            x_data = x_data / np.amax(x_data)
+            # x_data = x_data / np.amax(x_data)
 
             for idx_batch in range(train_dict["batch"]):
 
