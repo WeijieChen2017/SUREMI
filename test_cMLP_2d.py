@@ -133,8 +133,8 @@ for cnt_file, file_path in enumerate(file_list):
     y_data = np.load(y_path)
     dz = x_data.shape[0]
 
-    pred_vol = np.zeros((256, 256, az))
-    pred_gt = np.zeros((256, 256, az))
+    pred_vol = np.zeros((256, 256, dz))
+    pred_gt = np.zeros((256, 256, dz))
 
     pred_img = np.zeros((256, 256))
     pred_img_gt = np.zeros((256, 256))
