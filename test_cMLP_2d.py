@@ -135,40 +135,31 @@ for cnt_file, file_path in enumerate(file_list):
     z_list = list(range(dz))
     random.shuffle(z_list)
     # batch_per_step = train_dict["batch"]
-    batch_per_step = dz
-    batch_loss = np.zeros((dz // batch_per_step))
 
-    for ib in range(dz // batch_per_step):
+    batch_x = np.zeros((num_vocab*dz, cx*cx*2))
+    batch_y = np.zeros((num_vocab*dz, cx*cx*2))
 
-        batch_x = np.zeros((num_vocab*batch_per_step, cx*cx*2))
-        batch_y = np.zeros((num_vocab*batch_per_step, cx*cx*2))
+    for iz in range(dz):
 
-        batch_offset = ib * batch_per_step
-
-        for iz in range(batch_per_step):
-
-            # x_real = x_data[z_list[iz+batch_offset], :, :cx*cx].reshape(num_vocab, cx*cx)
-            # x_imag = x_data[z_list[iz+batch_offset], :, cx*cx:].reshape(num_vocab, cx*cx)
-            # y_real = y_data[z_list[iz+batch_offset], :, :cx*cx].reshape(num_vocab, cx*cx)
-            # y_imag = y_data[z_list[iz+batch_offset], :, cx*cx:].reshape(num_vocab, cx*cx)
-
-            batch_x[iz*num_vocab:(iz+1)*num_vocab, :] = np.squeeze(x_data[z_list[iz+batch_offset], :, :])
-            batch_y[iz*num_vocab:(iz+1)*num_vocab, :] = np.squeeze(y_data[z_list[iz+batch_offset], :, :])
+        batch_x[iz*num_vocab:(iz+1)*num_vocab, :] = np.squeeze(x_data[z_list[iz], :, :])
+        batch_y[iz*num_vocab:(iz+1)*num_vocab, :] = np.squeeze(y_data[z_list[iz], :, :])
             
         batch_x = torch.from_numpy(batch_x).float().to(device).contiguous()
         batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
             
-        y_hat = model(batch_x).detach().cpu().numpy()
+    y_hat = model(batch_x).detach().cpu().numpy()
+    batch_y = batch_y.detach().cpu().numpy()
 
-        print(y_hat.shape)
+    y_hat_real = np.zeros((ax//cx, ay//cx, cx**2))
+    y_hat_imag = np.zeros((ax//cx, ay//cx, cx**2))
 
-        exit()
+    for iz in range(dz):
 
-        y_hat_real = np.squeeze(y_hat[:, :cx**2]).reshape(ax//cx, ay//cx, cx**2)
-        y_hat_imag = np.squeeze(y_hat[:, cx**2:]).reshape(ax//cx, ay//cx, cx**2)
+        y_hat_real = np.squeeze(y_hat[iz*num_vocab:(iz+1)*num_vocab, :cx**2]).reshape(ax//cx, ay//cx, cx**2)
+        y_hat_imag = np.squeeze(y_hat[iz*num_vocab:(iz+1)*num_vocab, cx**2:]).reshape(ax//cx, ay//cx, cx**2)
 
-        y_gt_real = np.squeeze(batch_y.detach().cpu().numpy()[:, :, :cx**2]).reshape(ax//cx, ay//cx, cx**2)
-        y_gt_imag = np.squeeze(batch_y.detach().cpu().numpy()[:, :, cx**2:]).reshape(ax//cx, ay//cx, cx**2)
+        y_gt_real = np.squeeze(batch_y[iz*num_vocab:(iz+1)*num_vocab, :cx**2]).reshape(ax//cx, ay//cx, cx**2)
+        y_gt_imag = np.squeeze(batch_y[iz*num_vocab:(iz+1)*num_vocab, cx**2:]).reshape(ax//cx, ay//cx, cx**2)
         
         for ix in range(ax//cx):
             for iy in range(ay//cx):
