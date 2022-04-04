@@ -194,7 +194,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             y_file = nib.load(y_path)
             x_data = x_file.get_fdata()
             y_data = y_file.get_fdata()
-            x_data = x_data / np.amax(x_data)
+            # x_data = x_data / np.amax(x_data)
 
             for idx_batch in range(train_dict["batch"]):
 
