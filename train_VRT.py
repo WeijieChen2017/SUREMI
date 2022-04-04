@@ -30,7 +30,7 @@ train_dict["batch"] = 1
 train_dict["dropout"] = 0
 train_dict["model_term"] = "VRT"
 train_dict["deconv_channels"] = 6
-train_dict["input_size"] = [6,192,192]
+train_dict["input_size"] = [6,64,64]
 
 train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
 train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
@@ -74,20 +74,33 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # VRT-007-3motion-blur
+# model = VRT(
+#     upscale=1, 
+#     img_size=[6,192,192], 
+#     window_size=[6,8,8], 
+#     depths=[8,8,8,8,8,8,8, 4,4, 4,4],
+#     indep_reconsts=[9,10], 
+#     embed_dims=[96,96,96,96,96,96,96, 120,120, 120,120],
+#     num_heads=[6,6,6,6,6,6,6, 6,6, 6,6], 
+#     pa_frames=2, 
+#     deformable_groups=16
+#     )
+
 model = VRT(
     upscale=1, 
-    img_size=[6,192,192], 
+    img_size=[6,64,64], 
     window_size=[6,8,8], 
-    depths=[8,8,8,8,8,8,8, 4,4, 4,4],
+    depths=[8,8,8,8,8,8],
     indep_reconsts=[9,10], 
-    embed_dims=[96,96,96,96,96,96,96, 120,120, 120,120],
-    num_heads=[6,6,6,6,6,6,6, 6,6, 6,6], 
+    embed_dims=[96,96,96,96,96,96],
+    num_heads=[12,12,12,12,12,12], 
     pa_frames=2, 
     deformable_groups=16
     )
 
-pretrain = torch.load("./pre_train/"+train_dict["pre_train"], map_location=torch.device('cpu'))
-model.load_state_dict(pretrain["params"])
+
+# pretrain = torch.load("./pre_train/"+train_dict["pre_train"], map_location=torch.device('cpu'))
+# model.load_state_dict(pretrain["params"])
 # pretrain_state = pretrain["state_dict"]
 # pretrain_state_keys = pretrain_state.keys()
 # model_state_keys = model.state_dict().keys()
