@@ -21,7 +21,7 @@ from model import ComplexTransformerGenerationModel as CTGM
 test_dict = {}
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-test_dict["project_name"] = "CTGM_2d_v2_mse"
+test_dict["project_name"] = "CTGM_2d_v10_cMLP_mse"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [6]
 test_dict["eval_file_cnt"] = 16
@@ -49,11 +49,11 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-model_list = sorted(glob.glob(os.path.join(test_dict["save_folder"], "model_best_*.pth")))
-if "curr" in model_list[-1]:
-    print("Remove model_best_curr")
-    model_list.pop()
-# target_model = test_dict["save_folder"]+"model_best_086.pth"
+# model_list = sorted(glob.glob(os.path.join(test_dict["save_folder"], "model_best_*.pth")))
+# if "curr" in model_list[-1]:
+#     print("Remove model_best_curr")
+#     model_list.pop()
+target_model = test_dict["save_folder"]+"model_best_064.pth"
 target_model = model_list[-1]
 model = torch.load(target_model, map_location=torch.device('cpu'))
 print("--->", target_model, " is loaded.")
