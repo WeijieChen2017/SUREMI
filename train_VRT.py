@@ -90,10 +90,10 @@ model = VRT(
     upscale=1, 
     img_size=[6,64,64], 
     window_size=[6,8,8], 
-    depths=[8,8,8,8,8,8],
+    depths=[8,8,8,8,8,8,8],
     indep_reconsts=[9,10], 
-    embed_dims=[96,96,96,96,96,96],
-    num_heads=[12,12,12,12,12,12], 
+    embed_dims=[96,96,96,96,96,96,96],
+    num_heads=[12,12,12,12,12,12,12], 
     pa_frames=2, 
     deformable_groups=16
     )
