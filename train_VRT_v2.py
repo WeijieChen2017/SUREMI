@@ -163,7 +163,7 @@ for pretrain_path in pretrain_list:
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
     package_train = [train_list, True, False, "train"]
-    package_val = [val_list, False, True, "val"]
+    package_val = [val_list[:5], False, True, "val"]
     # package_test = [test_list, False, False, "test"]
 
     for package in [package_val]:  # package_train 
