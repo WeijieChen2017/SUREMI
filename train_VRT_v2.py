@@ -152,22 +152,13 @@ best_val_loss = 1e6
 pretrain_list = sorted(glob.glob(train_dict["save_folder"]+"*.pth"))
 pretrain_epoch = []
 for pretrain_path in pretrain_list:
-    print(pretrain_path, int(pretrain_path[-7:-4]))
-    idx_epoch = int(pretrain_path[-7:-4])
+    print(pretrain_path, int(pretrain_path[-7:-4])-1)
+    idx_epoch = int(pretrain_path[-7:-4])-1
 
     model = torch.load(pretrain_path)
     model.eval()
     model = model.to(device)
     criterion = nn.MSELoss()
-
-    optimizer = torch.optim.AdamW(
-        model.parameters(),
-        lr = train_dict["opt_lr"],
-        betas = train_dict["opt_betas"],
-        eps = train_dict["opt_eps"],
-        weight_decay = train_dict["opt_weight_decay"],
-        amsgrad = train_dict["amsgrad"]
-        )
 
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
@@ -201,7 +192,7 @@ for pretrain_path in pretrain_list:
             x_path = file_path
             y_path = file_path.replace("MR", "CT")
             file_name = os.path.basename(file_path)
-            print(iter_tag + " ===> Epoch[{:03d}]: --->".format(idx_epoch+1), x_path, "<---", end="")
+            # print(iter_tag + " ===> Epoch[{:03d}]: --->".format(idx_epoch+1), x_path, "<---", end="")
             x_file = nib.load(x_path)
             y_file = nib.load(y_path)
             x_data = x_file.get_fdata()
@@ -236,7 +227,7 @@ for pretrain_path in pretrain_list:
             batch_x = torch.from_numpy(batch_x).float().to(device)
             batch_y = torch.from_numpy(batch_y).float().to(device)
 
-            optimizer.zero_grad()
+            # optimizer.zero_grad()
             y_hat = model(batch_x)
             # print("Yhat size: ", y_hat.size())
             loss = criterion(y_hat, batch_y)
