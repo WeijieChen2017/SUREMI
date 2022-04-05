@@ -213,8 +213,8 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                 for iz in range(batch_per_step):
 
-                    batch_x[:, iz, :cx*cx] = x_data[z_list[iz+batch_offset], :, :]
-                    batch_y[:, iz, :cx*cx] = y_data[z_list[iz+batch_offset], :, :]
+                    batch_x[:, iz, :] = x_data[z_list[iz+batch_offset], :, :]
+                    batch_y[:, iz, :] = y_data[z_list[iz+batch_offset], :, :]
 
                     # x_real = x_data[z_list[iz+batch_offset], :, :cx*cx]
                     # x_imag = x_data[z_list[iz+batch_offset], :, cx*cx:]
