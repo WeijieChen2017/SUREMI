@@ -149,7 +149,7 @@ best_val_loss = 1e6
 
 # for idx_epoch in range(train_dict["epochs"]):
 
-pretrain_list = sorted(glob.glob(train_dict["save_folder"]+".pth"))
+pretrain_list = sorted(glob.glob(train_dict["save_folder"]+"*.pth"))
 pretrain_epoch = []
 for pretrain_path in pretrain_list:
     print(pretrain_path, int(pretrain_path[-8:-5]))
