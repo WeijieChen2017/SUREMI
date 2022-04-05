@@ -39,7 +39,7 @@ train_dict["input_size"] = [256, 256]
 ax, ay = train_dict["input_size"]
 train_dict["gpu_ids"] = [2]
 train_dict["epochs"] = 100
-train_dict["batch"] = 16
+train_dict["batch"] = 64
 train_dict["dropout"] = 0
 train_dict["model_term"] = "ComplexTransformerGenerationModel"
 
@@ -152,7 +152,7 @@ np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 
 # ==================== training ====================
 
-best_val_loss = 1e-4
+best_val_loss = 1e6
 best_epoch = 0
 # wandb.watch(model)
 
