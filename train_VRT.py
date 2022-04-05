@@ -74,17 +74,17 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # VRT-007-3motion-blur
-model = VRT(
-    upscale=1, 
-    img_size=[6,192,192], 
-    window_size=[6,8,8], 
-    depths=[8,8,8,8,8,8,8, 4,4, 4,4],
-    indep_reconsts=[9,10], 
-    embed_dims=[96,96,96,96,96,96,96, 120,120, 120,120],
-    num_heads=[6,6,6,6,6,6,6, 6,6, 6,6], 
-    pa_frames=2, 
-    deformable_groups=16
-    )
+# model = VRT(
+#     upscale=1, 
+#     img_size=[6,192,192], 
+#     window_size=[6,8,8], 
+#     depths=[8,8,8,8,8,8,8, 4,4, 4,4],
+#     indep_reconsts=[9,10], 
+#     embed_dims=[96,96,96,96,96,96,96, 120,120, 120,120],
+#     num_heads=[6,6,6,6,6,6,6, 6,6, 6,6], 
+#     pa_frames=2, 
+#     deformable_groups=16
+#     )
 
 
 # pretrain = torch.load("./pre_train/"+train_dict["pre_train"], map_location=torch.device('cpu'))
@@ -147,14 +147,35 @@ np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 best_val_loss = 1e6
 # wandb.watch(model)
 
-for idx_epoch in range(train_dict["epochs"]):
+# for idx_epoch in range(train_dict["epochs"]):
+
+pretrain_list = sorted(glob.glob(train_dict["save_folder"]+".pth"))
+pretrain_epoch = []
+for pretrain_path in pretrain_list:
+    print(pretrain_path, int(pretrain_path[-8:-5]))
+    idx_epoch = int(pretrain_path[-8:-5])
+
+    model = torch.load(pretrain_path)
+    model.eval()
+    model = model.to(device)
+    criterion = nn.MSELoss()
+
+    optimizer = torch.optim.AdamW(
+        model.parameters(),
+        lr = train_dict["opt_lr"],
+        betas = train_dict["opt_betas"],
+        eps = train_dict["opt_eps"],
+        weight_decay = train_dict["opt_weight_decay"],
+        amsgrad = train_dict["amsgrad"]
+        )
+
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
     package_train = [train_list, True, False, "train"]
-    package_val = [val_list[:10], False, True, "val"]
+    package_val = [val_list, False, True, "val"]
     # package_test = [test_list, False, False, "test"]
 
-    for package in [package_train]: #, package_val
+    for package in [package_val]:  # package_train 
 
         file_list = package[0]
         isTrain = package[1]
@@ -223,17 +244,17 @@ for idx_epoch in range(train_dict["epochs"]):
                 loss.backward()
                 optimizer.step()
             case_loss[cnt_file] = loss.item()
-            print("Loss: ", case_loss[cnt_file])
+            # print("Loss: ", case_loss[cnt_file])
 
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
         print("  Loss: ", np.mean(case_loss))
         np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), case_loss)
 
-        if np.mean(case_loss) < best_val_loss:
+        # if np.mean(case_loss) < best_val_loss:
             # save the best model
-            torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch+1))
-            print("Checkpoint saved at Epoch {:03d}".format(idx_epoch+1))
-            best_val_loss = np.mean(case_loss)
+            # torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch+1))
+            # print("Checkpoint saved at Epoch {:03d}".format(idx_epoch+1))
+            # best_val_loss = np.mean(case_loss)
 
         # if isVal:
             # np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_x.npy", batch_x.cpu().detach().numpy())
