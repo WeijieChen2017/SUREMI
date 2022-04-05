@@ -155,7 +155,7 @@ for pretrain_path in pretrain_list:
     print(pretrain_path, int(pretrain_path[-7:-4])-1)
     idx_epoch = int(pretrain_path[-7:-4])-1
 
-    if idx_epoch < 8:
+    if idx_epoch < 18:
         continue
 
     model = torch.load(pretrain_path)
