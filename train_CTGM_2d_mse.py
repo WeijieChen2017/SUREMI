@@ -213,15 +213,18 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                 for iz in range(batch_per_step):
 
-                    x_real = x_data[z_list[iz+batch_offset], :, :cx*cx]
-                    x_imag = x_data[z_list[iz+batch_offset], :, cx*cx:]
-                    y_real = y_data[z_list[iz+batch_offset], :, :cx*cx]
-                    y_imag = y_data[z_list[iz+batch_offset], :, cx*cx:]
+                    batch_x[:, iz, :cx*cx] = x_data[z_list[iz+batch_offset], :, :]
+                    batch_y[:, iz, :cx*cx] = y_data[z_list[iz+batch_offset], :, :]
 
-                    batch_x[:, iz, :cx*cx] = self_pro(x_real)
-                    batch_x[:, iz, cx*cx:] = self_pro(x_imag)
-                    batch_y[:, iz, :cx*cx] = self_pro(y_real)
-                    batch_y[:, iz, cx*cx:] = self_pro(y_imag)
+                    # x_real = x_data[z_list[iz+batch_offset], :, :cx*cx]
+                    # x_imag = x_data[z_list[iz+batch_offset], :, cx*cx:]
+                    # y_real = y_data[z_list[iz+batch_offset], :, :cx*cx]
+                    # y_imag = y_data[z_list[iz+batch_offset], :, cx*cx:]
+
+                    # batch_x[:, iz, :cx*cx] = self_pro(x_real)
+                    # batch_x[:, iz, cx*cx:] = self_pro(x_imag)
+                    # batch_y[:, iz, :cx*cx] = self_pro(y_real)
+                    # batch_y[:, iz, cx*cx:] = self_pro(y_imag)
 
                 batch_x = torch.from_numpy(batch_x).float().to(device).contiguous()
                 batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
