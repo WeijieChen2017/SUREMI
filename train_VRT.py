@@ -107,18 +107,18 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # model.load_state_dict(new_model_state)
 
 # model = nn.DataParallel(model)
-model.train()
-model = model.to(device)
-criterion = nn.MSELoss()
+# model.train()
+# model = model.to(device)
+# criterion = nn.MSELoss()
 
-optimizer = torch.optim.AdamW(
-    model.parameters(),
-    lr = train_dict["opt_lr"],
-    betas = train_dict["opt_betas"],
-    eps = train_dict["opt_eps"],
-    weight_decay = train_dict["opt_weight_decay"],
-    amsgrad = train_dict["amsgrad"]
-    )
+# optimizer = torch.optim.AdamW(
+#     model.parameters(),
+#     lr = train_dict["opt_lr"],
+#     betas = train_dict["opt_betas"],
+#     eps = train_dict["opt_eps"],
+#     weight_decay = train_dict["opt_weight_decay"],
+#     amsgrad = train_dict["amsgrad"]
+#     )
 
 # ==================== data division ====================
 
