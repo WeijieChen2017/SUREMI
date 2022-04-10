@@ -34,7 +34,7 @@ test_dict["input_size"] = train_dict["input_size"]
 ax, ay = test_dict["input_size"]
 cx = 32
 
-for path in [test_dict["save_folder"], test_dict["save_folder"]+"pred/"]:
+for path in [test_dict["save_folder"]+"pred/", test_dict["save_folder"]+"stage1/"]:
     if not os.path.exists(path):
         os.mkdir(path)
 
@@ -65,8 +65,7 @@ model = model.to(device)
 # ==================== data division ====================
 
 data_div = np.load(os.path.join(test_dict["save_folder"], "data_division.npy"), allow_pickle=True)[()]
-X_list = data_div['test_list_X'][:test_dict["eval_file_cnt"]]
-
+X_list = data_div['train_list_X'] + data_div['val_list_X'] + data_div['test_list_X']
 
 # train_dict = {}
 # train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
@@ -181,10 +180,10 @@ for cnt_file, file_path in enumerate(file_list):
 
     file_CT = nib.load("./data_dir/Iman_CT/norm/"+file_name.replace("npy", "nii.gz"))
     pred_file = nib.Nifti1Image(pred_vol, file_CT.affine, file_CT.header)
-    pred_name = test_dict["save_folder"]+"pred/"+file_name.replace("npy", "nii.gz")
+    pred_name = test_dict["save_folder"]+"stage1/"+file_name.replace("npy", "nii.gz")
     nib.save(pred_file, pred_name)
 
-    pred_file = nib.Nifti1Image(pred_gt, file_CT.affine, file_CT.header)
-    pred_name = test_dict["save_folder"]+"pred/"+file_name.replace(".npy", "_gt.nii.gz")
-    nib.save(pred_file, pred_name)
+    # pred_file = nib.Nifti1Image(pred_gt, file_CT.affine, file_CT.header)
+    # pred_name = test_dict["save_folder"]+"pred/"+file_name.replace(".npy", "_gt.nii.gz")
+    # nib.save(pred_file, pred_name)
     print(pred_name)
