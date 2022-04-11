@@ -146,7 +146,7 @@ for cnt_file, file_path in enumerate(file_list):
         batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
             
         y_hat_iz = model(batch_x, batch_y).detach().cpu().numpy()
-        y_hat[iz, :, :] = y_hat_iz
+        y_hat[iz, :, :] = np.squeeze(y_hat_iz)
 
     save_name = y_path.replace("kspace_2d", "kspace_2d_e80_S2")
     np.save(save_name, y_hat)
