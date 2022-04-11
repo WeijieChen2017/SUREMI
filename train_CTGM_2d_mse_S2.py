@@ -32,12 +32,12 @@ def self_pro(data):
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "CTGM_2d_v11_mse_layer1"
+train_dict["project_name"] = "CTGM_2d_v11_mse_layer2_e80L2"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 729
 train_dict["input_size"] = [256, 256]
 ax, ay = train_dict["input_size"]
-train_dict["gpu_ids"] = [2]
+train_dict["gpu_ids"] = [3]
 train_dict["epochs"] = 100
 train_dict["batch"] = 64
 train_dict["dropout"] = 0
@@ -58,7 +58,7 @@ train_dict["model_related"]["out_dropout"] = 0.0
 train_dict["model_related"]["layers"] = 1
 train_dict["model_related"]["attn_mask"] = False
 
-train_dict["folder_X"] = "./data_dir/Iman_MR/kspace_2d/"
+train_dict["folder_X"] = "./data_dir/Iman_CT/kspace_2d_e80_S2/"
 train_dict["folder_Y"] = "./data_dir/Iman_CT/kspace_2d/"
 # train_dict["pre_train"] = "swin_base_patch244_window1677_kinetics400_22k.pth"
 train_dict["val_ratio"] = 0.3
