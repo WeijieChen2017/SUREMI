@@ -34,7 +34,7 @@ test_dict["input_size"] = train_dict["input_size"]
 ax, ay = test_dict["input_size"]
 cx = 32
 
-for path in [test_dict["save_folder"], test_dict["save_folder"]+"pred/"]:
+for path in [test_dict["save_folder"]+"pred/", test_dict["save_folder"]+"stage1/"]:
     if not os.path.exists(path):
         os.mkdir(path)
 
@@ -65,8 +65,7 @@ model = model.to(device)
 # ==================== data division ====================
 
 data_div = np.load(os.path.join(test_dict["save_folder"], "data_division.npy"), allow_pickle=True)[()]
-X_list = data_div['train_list_X'][:test_dict["eval_file_cnt"]]
-
+X_list = data_div['train_list_X'] + data_div['val_list_X'] + data_div['test_list_X']
 
 # train_dict = {}
 # train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
@@ -133,16 +132,9 @@ for cnt_file, file_path in enumerate(file_list):
     x_data = np.load(x_path)
     y_data = np.load(y_path)
     az = x_data.shape[0]
-    # book = np.zeros((dz, num_vocab, cx*cx*2))
-    z_list = list(range(az))
-    pred_vol = np.zeros((256, 256, az))
-    pred_gt = np.zeros((256, 256, az))
-    
-    for iz in range(az):
+    y_hat = np.zeros(y_data.shape)
 
-        # print()
-        pred_img = np.zeros((256, 256))
-        pred_img_gt = np.zeros((256, 256))
+    for iz in range(az):
 
         batch_x = np.zeros((num_vocab, 1, cx**2*2))
         batch_y = np.zeros((num_vocab, 1, cx**2*2))
@@ -153,38 +145,9 @@ for cnt_file, file_path in enumerate(file_list):
         batch_x = torch.from_numpy(batch_x).float().to(device).contiguous()
         batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
             
-        y_hat = model(batch_x, batch_y).detach().cpu().numpy()
-        # y_hat = model(batch_x, max_len=num_vocab).detach().cpu().numpy()
-        # print(y_hat.shape)
-        y_hat_real = np.squeeze(y_hat[:, :, :cx**2]).reshape(ax//cx, ay//cx, cx**2)
-        y_hat_imag = np.squeeze(y_hat[:, :, cx**2:]).reshape(ax//cx, ay//cx, cx**2)
+        y_hat_iz = model(batch_x, batch_y).detach().cpu().numpy()
+        y_hat[iz, :, :] = y_hat_iz
 
-        y_gt_real = np.squeeze(batch_y.detach().cpu().numpy()[:, :, :cx**2]).reshape(ax//cx, ay//cx, cx**2)
-        y_gt_imag = np.squeeze(batch_y.detach().cpu().numpy()[:, :, cx**2:]).reshape(ax//cx, ay//cx, cx**2)
-        
-        for ix in range(ax//cx):
-            for iy in range(ay//cx):
-                patch_real = y_hat_real[ix, iy, :]
-                pathc_imag = y_hat_imag[ix, iy, :]
-                pred_cplx = np.vectorize(complex)(patch_real, pathc_imag).reshape((cx, cx))
-                patch = np.fft.ifftn(np.fft.ifftshift(pred_cplx))
-                pred_img[ix*cx:ix*cx+cx, iy*cx:iy*cx+cx] = patch.real
-
-                patch_gt_real = y_gt_real[ix, iy, :]
-                pathc_gt_imag = y_gt_imag[ix, iy, :]
-                pred_gt_cplx = np.vectorize(complex)(patch_gt_real, pathc_gt_imag).reshape((cx, cx))
-                patch_gt = np.fft.ifftn(np.fft.ifftshift(pred_gt_cplx))
-                pred_img_gt[ix*cx:ix*cx+cx, iy*cx:iy*cx+cx] = patch_gt.real
-
-        pred_vol[:, :, iz] = pred_img
-        pred_gt[:, :, iz] = pred_img_gt       
-
-    file_CT = nib.load("./data_dir/Iman_CT/norm/"+file_name.replace("npy", "nii.gz"))
-    pred_file = nib.Nifti1Image(pred_vol, file_CT.affine, file_CT.header)
-    pred_name = test_dict["save_folder"]+"pred/"+file_name.replace("npy", "nii.gz")
-    nib.save(pred_file, pred_name)
-
-    pred_file = nib.Nifti1Image(pred_gt, file_CT.affine, file_CT.header)
-    pred_name = test_dict["save_folder"]+"pred/"+file_name.replace(".npy", "_gt.nii.gz")
-    nib.save(pred_file, pred_name)
-    print(pred_name)
+    save_name = y_path.replace("kspace_2d", "kspace_2d_e80_S2")
+    np.save(save_name, y_hat)
+    print(save_name)
