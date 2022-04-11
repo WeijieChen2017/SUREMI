@@ -40,6 +40,9 @@ for path in [test_dict["save_folder"]+"pred/", test_dict["save_folder"]+"stage1/
 
 np.save(test_dict["save_folder"]+"test_dict.npy", test_dict)
 
+for path in ["./data_dir/Iman_CT/kspace_2d_e80_S2/"]:
+    if not os.path.exists(path):
+        os.mkdir(path)
 
 # ==================== basic settings ====================
 
