@@ -69,6 +69,7 @@ model = model.to(device)
 
 data_div = np.load(os.path.join(test_dict["save_folder"], "data_division.npy"), allow_pickle=True)[()]
 X_list = data_div['train_list_X'] + data_div['val_list_X'] + data_div['test_list_X']
+X_list = sorted(X_list)
 
 # train_dict = {}
 # train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
