@@ -21,7 +21,7 @@ from model import ComplexTransformerGenerationModel as CTGM
 test_dict = {}
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-test_dict["project_name"] = "CTGM_2d_v11_mse_layer1"
+test_dict["project_name"] = "CTGM_2d_v11_mse_layer2_e80L2"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [7]
 test_dict["eval_file_cnt"] = 1
@@ -55,7 +55,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 #     model_list.pop()
 # target_model = model_list[-1]
 
-target_model = test_dict["save_folder"]+"model_best_100.pth"
+target_model = test_dict["save_folder"]+"model_best_024.pth"
 
 model = torch.load(target_model, map_location=torch.device('cpu'))
 print("--->", target_model, " is loaded.")
@@ -65,8 +65,9 @@ model = model.to(device)
 # ==================== data division ====================
 
 data_div = np.load(os.path.join(test_dict["save_folder"], "data_division.npy"), allow_pickle=True)[()]
-X_list = data_div['train_list_X'][:test_dict["eval_file_cnt"]]
+# X_list = data_div['train_list_X'][:test_dict["eval_file_cnt"]]
 
+X_list = ["./data_dir/Iman_CT/kspace_2d_e80_S2/00093.npy"]
 
 # train_dict = {}
 # train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
