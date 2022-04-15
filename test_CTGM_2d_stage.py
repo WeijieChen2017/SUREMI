@@ -153,6 +153,6 @@ for cnt_file, file_path in enumerate(file_list):
         y_hat_iz = model(batch_x, batch_y).detach().cpu().numpy()
         y_hat[iz, :, :] = np.squeeze(y_hat_iz)
 
-    save_name = y_path.replace("kspace_2d", test_dict["new_stage_folder"])
+    save_name = y_path.replace("kspace_2d_e80_S2", test_dict["new_stage_folder"])
     np.save(save_name, y_hat)
     print(save_name)
