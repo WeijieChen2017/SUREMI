@@ -21,10 +21,10 @@ from model import ComplexTransformerGenerationModel as CTGM
 test_dict = {}
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-test_dict["project_name"] = "CTGM_2d_v11_mse_layer1"
+test_dict["project_name"] = "CTGM_2d_v11_mse_layer2_e80L2"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
-test_dict["gpu_ids"] = [7]
-test_dict["eval_file_cnt"] = 1
+test_dict["gpu_ids"] = [2]
+test_dict["eval_file_cnt"] = 16
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
 print("input size:", train_dict["input_size"])
@@ -55,7 +55,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 #     model_list.pop()
 # target_model = model_list[-1]
 
-target_model = test_dict["save_folder"]+"model_best_080.pth"
+target_model = test_dict["save_folder"]+"model_best_099.pth"
 
 model = torch.load(target_model, map_location=torch.device('cpu'))
 print("--->", target_model, " is loaded.")
@@ -126,8 +126,10 @@ x should have dimension [seq_len, batch_size, n_features] (i.e., L, N, C).
 for cnt_file, file_path in enumerate(file_list):
     
     total_file = len(file_list)
-    x_path = file_path
+    x_path = file_path.replace("MR", "CT")
+    x_path = x_path.replace("kspace_2d", "kspace_2d_e80_S2")
     y_path = file_path.replace("MR", "CT")
+    print(x_path)
     file_name = os.path.basename(file_path)
     print(" ===> [{:03d}]/[{:03d}]: --->".format(cnt_file+1, total_file), file_name, "<---", end="") #
     x_data = np.load(x_path)
