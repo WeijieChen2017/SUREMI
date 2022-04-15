@@ -21,10 +21,11 @@ from model import ComplexTransformerGenerationModel as CTGM
 test_dict = {}
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-test_dict["project_name"] = "CTGM_2d_v11_mse_layer1"
+test_dict["project_name"] = "CTGM_2d_v11_mse_layer2_e80L2"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
-test_dict["gpu_ids"] = [7]
+test_dict["gpu_ids"] = [4]
 test_dict["eval_file_cnt"] = 16
+test_dict["new_stage_folder"] = "kspace_2d_e100_S3"
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
 print("input size:", train_dict["input_size"])
@@ -40,7 +41,7 @@ for path in [test_dict["save_folder"]+"pred/", test_dict["save_folder"]+"stage1/
 
 np.save(test_dict["save_folder"]+"test_dict.npy", test_dict)
 
-for path in ["./data_dir/Iman_CT/kspace_2d_e80_S2/"]:
+for path in ["./data_dir/Iman_CT/"+test_dict["new_stage_folder"]+"/"]:
     if not os.path.exists(path):
         os.mkdir(path)
 
@@ -152,6 +153,6 @@ for cnt_file, file_path in enumerate(file_list):
         y_hat_iz = model(batch_x, batch_y).detach().cpu().numpy()
         y_hat[iz, :, :] = np.squeeze(y_hat_iz)
 
-    save_name = y_path.replace("kspace_2d", "kspace_2d_e80_S2")
+    save_name = y_path.replace("kspace_2d", test_dict["new_stage_folder"])
     np.save(save_name, y_hat)
     print(save_name)
