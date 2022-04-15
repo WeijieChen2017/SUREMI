@@ -128,7 +128,7 @@ for cnt_file, file_path in enumerate(file_list):
     total_file = len(file_list)
     x_path = file_path.replace("MR", "CT")
     # x_path = x_path.replace("kspace_2d", "kspace_2d_e80_S2")
-    y_path = file_path.replace("MR", "CT")
+    y_path = file_path.replace("kspace_2d_e80_S2", "kspace_2d")
     print(x_path, y_path)
     file_name = os.path.basename(file_path)
     print(" ===> [{:03d}]/[{:03d}]: --->".format(cnt_file+1, total_file), file_name, "<---", end="") #
