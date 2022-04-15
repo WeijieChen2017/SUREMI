@@ -25,7 +25,7 @@ test_dict["project_name"] = "CTGM_2d_v11_mse_layer2_e80L2"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [4]
 test_dict["eval_file_cnt"] = 16
-test_dict["new_stage_folder"] = "kspace_2d_e100_S3"
+test_dict["new_stage_folder"] = "kspace_2d_e99_S3"
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
 print("input size:", train_dict["input_size"])
@@ -59,7 +59,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 #     model_list.pop()
 # target_model = model_list[-1]
 
-target_model = test_dict["save_folder"]+"model_best_080.pth"
+target_model = test_dict["save_folder"]+"model_best_099.pth"
 
 model = torch.load(target_model, map_location=torch.device('cpu'))
 print("--->", target_model, " is loaded.")
