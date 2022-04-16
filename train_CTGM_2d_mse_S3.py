@@ -193,7 +193,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             total_file = len(file_list)
             
             x_path = file_path
-            y_path = file_path.replace("kspace_2d_e80_S2", "kspace_2d")
+            y_path = file_path.replace("kspace_2d_e99_S3", "kspace_2d")
             file_name = os.path.basename(file_path)
             print(x_path, y_path)
             print(iter_tag + " ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: --->".format(idx_epoch+1, cnt_file+1, total_file), file_name, "<---", end="") #
