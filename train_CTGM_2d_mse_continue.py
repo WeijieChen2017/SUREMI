@@ -32,12 +32,12 @@ def self_pro(data):
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "CTGM_2d_v11_mse_layer3_e99L2"
+train_dict["project_name"] = "CTGM_2d_v11_mse_layer1"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 729
 train_dict["input_size"] = [256, 256]
 ax, ay = train_dict["input_size"]
-train_dict["gpu_ids"] = [3]
+rain_dict["gpu_ids"] = [3]
 train_dict["epochs"] = 100
 train_dict["batch"] = 64
 train_dict["dropout"] = 0
@@ -58,7 +58,7 @@ train_dict["model_related"]["out_dropout"] = 0.0
 train_dict["model_related"]["layers"] = 1
 train_dict["model_related"]["attn_mask"] = False
 
-train_dict["folder_X"] = "./data_dir/Iman_CT/kspace_2d_e99_S3/"
+train_dict["folder_X"] = "./data_dir/Iman_MR/kspace_2d/"
 train_dict["folder_Y"] = "./data_dir/Iman_CT/kspace_2d/"
 # train_dict["pre_train"] = "swin_base_patch244_window1677_kinetics400_22k.pth"
 train_dict["val_ratio"] = 0.3
@@ -66,7 +66,7 @@ train_dict["test_ratio"] = 0.2
 
 train_dict["loss_term"] = "MSELoss"
 train_dict["optimizer"] = "AdamW"
-train_dict["opt_lr"] = 1e-3 # default
+train_dict["opt_lr"] = 1e-5 # default
 train_dict["opt_betas"] = (0.9, 0.999) # default
 train_dict["opt_eps"] = 1e-8 # default
 train_dict["opt_weight_decay"] = 0.01 # default
@@ -99,20 +99,20 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-model = CTGM( 
-    input_dims=train_dict["model_related"]["input_dims"],
-    hidden_size=train_dict["model_related"]["hidden_size"],
-    embed_dim=train_dict["model_related"]["embed_dim"],
-    output_dim=train_dict["model_related"]["output_dim"],
-    num_heads=train_dict["model_related"]["num_heads"],
-    attn_dropout=train_dict["model_related"]["attn_dropout"],
-    relu_dropout=train_dict["model_related"]["relu_dropout"],
-    res_dropout=train_dict["model_related"]["res_dropout"],
-    out_dropout=train_dict["model_related"]["out_dropout"],
-    layers=train_dict["model_related"]["layers"],
-    attn_mask=train_dict["model_related"]["attn_mask"])
+# model = CTGM( 
+#     input_dims=train_dict["model_related"]["input_dims"],
+#     hidden_size=train_dict["model_related"]["hidden_size"],
+#     embed_dim=train_dict["model_related"]["embed_dim"],
+#     output_dim=train_dict["model_related"]["output_dim"],
+#     num_heads=train_dict["model_related"]["num_heads"],
+#     attn_dropout=train_dict["model_related"]["attn_dropout"],
+#     relu_dropout=train_dict["model_related"]["relu_dropout"],
+#     res_dropout=train_dict["model_related"]["res_dropout"],
+#     out_dropout=train_dict["model_related"]["out_dropout"],
+#     layers=train_dict["model_related"]["layers"],
+#     attn_mask=train_dict["model_related"]["attn_mask"])
 
-# model = torch.load(train_dict["save_folder"]+"model_best_102.pth")
+model = torch.load(train_dict["save_folder"]+"model_best_100.pth")
 
 # model = nn.DataParallel(model)
 model.train()
@@ -152,7 +152,7 @@ np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 
 # ==================== training ====================
 
-best_val_loss = 1e6
+best_val_loss = 1
 best_epoch = 0
 # wandb.watch(model)
 
@@ -164,7 +164,7 @@ package_val = [val_list, False, True, "val"]
 num_vocab = (ax//cx) * (ay//cx)
 
 for idx_epoch_new in range(train_dict["epochs"]):
-    idx_epoch = idx_epoch_new + 0
+    idx_epoch = idx_epoch_new + 100
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
     for package in [package_train, package_val]: # , package_val
@@ -193,7 +193,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             total_file = len(file_list)
             
             x_path = file_path
-            y_path = file_path.replace("kspace_2d_e99_S3", "kspace_2d")
+            y_path = file_path.replace("kspace_2d_e80_S2", "kspace_2d")
             file_name = os.path.basename(file_path)
             print(x_path, y_path)
             print(iter_tag + " ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: --->".format(idx_epoch+1, cnt_file+1, total_file), file_name, "<---", end="") #
