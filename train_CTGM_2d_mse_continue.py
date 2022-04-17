@@ -37,7 +37,7 @@ train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 729
 train_dict["input_size"] = [256, 256]
 ax, ay = train_dict["input_size"]
-rain_dict["gpu_ids"] = [2]
+train_dict["gpu_ids"] = [2]
 train_dict["epochs"] = 100
 train_dict["batch"] = 64
 train_dict["dropout"] = 0
@@ -193,7 +193,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             total_file = len(file_list)
             
             x_path = file_path
-            y_path = file_path.replace("kspace_2d_e80_S2", "kspace_2d")
+            y_path = file_path.replace("MR", "CT")
             file_name = os.path.basename(file_path)
             print(x_path, y_path)
             print(iter_tag + " ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: --->".format(idx_epoch+1, cnt_file+1, total_file), file_name, "<---", end="") #
