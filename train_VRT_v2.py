@@ -162,7 +162,11 @@ np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 best_val_loss = 1e6
 # wandb.watch(model)
 
-# for idx_epoch in range(train_dict["epochs"]):
+package_train = [train_list[:5], True, False, "train"]
+package_val = [val_list[:5], False, True, "val"]
+# package_test = [test_list, False, False, "test"]
+
+for idx_epoch in range(train_dict["epochs"]):
 
 # pretrain_list = sorted(glob.glob(train_dict["save_folder"]+"*.pth"))
 # pretrain_epoch = []
@@ -180,90 +184,86 @@ best_val_loss = 1e6
 
     # print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
-package_train = [train_list[:5], True, False, "train"]
-package_val = [val_list[:5], False, True, "val"]
-# package_test = [test_list, False, False, "test"]
+    for package in [package_val]:  # package_train 
 
-for package in [package_val]:  # package_train 
+        file_list = package[0]
+        isTrain = package[1]
+        isVal = package[2]
+        iter_tag = package[3]
 
-    file_list = package[0]
-    isTrain = package[1]
-    isVal = package[2]
-    iter_tag = package[3]
-
-    if isTrain:
-        model.train()
-    else:
-        model.eval()
-
-    random.shuffle(file_list)
-    
-    case_loss = np.zeros((len(file_list)))
-
-    # b, d, c, h, w
-    # N, D, C, H, W
-    # x_data = nib.load(file_list[0]).get_fdata()
-
-    for cnt_file, file_path in enumerate(file_list):
-        
-        x_path = file_path
-        y_path = file_path.replace("MR", "CT")
-        file_name = os.path.basename(file_path)
-        print(iter_tag + " ===> Epoch[{:03d}]: --->".format(idx_epoch+1), x_path, "<---", end="")
-        x_file = nib.load(x_path)
-        y_file = nib.load(y_path)
-        x_data = x_file.get_fdata()
-        y_data = y_file.get_fdata()
-        # x_data = x_data / np.amax(x_data)
-
-        for idx_batch in range(train_dict["batch"]):
-
-            batch_x = np.zeros((train_dict["batch"], train_dict["input_size"][0], 3, train_dict["input_size"][1], train_dict["input_size"][2]))
-            batch_y = np.zeros((train_dict["batch"], train_dict["input_size"][0], 3, train_dict["input_size"][1], train_dict["input_size"][2]))
-
-            z_offset = np.random.randint(x_data.shape[2]//3 - train_dict["input_size"][0])
-            h_offset = np.random.randint(x_data.shape[0] - train_dict["input_size"][1])
-            w_offset = np.random.randint(x_data.shape[1] - train_dict["input_size"][2])
-
-            for idx_channel in range(train_dict["input_size"][0]):
-                z_center = (z_offset + idx_channel) * 3 + 1
-                x_slice = x_data[h_offset:h_offset+train_dict["input_size"][1], w_offset:w_offset+train_dict["input_size"][2], z_center-1:z_center+2]
-                y_slice = y_data[h_offset:h_offset+train_dict["input_size"][1], w_offset:w_offset+train_dict["input_size"][2], z_center-1:z_center+2]
-                
-                # print("H:", h_offset, h_offset+train_dict["input_size"][1])
-                # print("W:", w_offset, w_offset+train_dict["input_size"][2])
-                # print("Z:", z_center-1, z_center+2)
-
-                batch_x[idx_batch, idx_channel, 0, :, :] = x_slice[:, :, 0]
-                batch_x[idx_batch, idx_channel, 1, :, :] = x_slice[:, :, 1]
-                batch_x[idx_batch, idx_channel, 2, :, :] = x_slice[:, :, 2]
-                batch_y[idx_batch, idx_channel, 0, :, :] = y_slice[:, :, 0]
-                batch_y[idx_batch, idx_channel, 1, :, :] = y_slice[:, :, 1]
-                batch_y[idx_batch, idx_channel, 2, :, :] = y_slice[:, :, 2]
-
-        batch_x = torch.from_numpy(batch_x).float().to(device)
-        batch_y = torch.from_numpy(batch_y).float().to(device)
-
-        # optimizer.zero_grad()
-        y_hat = model(batch_x)
-        # print("Yhat size: ", y_hat.size())
-        loss = criterion(y_hat, batch_y)
         if isTrain:
-            loss.backward()
-            optimizer.step()
-        case_loss[cnt_file] = loss.item()
-        # print("Loss: ", case_loss[cnt_file])
+            model.train()
+        else:
+            model.eval()
 
-    print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
-    print("  Loss: ", np.mean(case_loss))
-    np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), case_loss)
+        random.shuffle(file_list)
 
-    if np.mean(case_loss) < best_val_loss:
-        # save the best model
-        torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch+1))
-        torch.save(optimizer, train_dict["save_folder"]+"optim_{:03d}.pth".format(idx_epoch + 1))
-        print("Checkpoint saved at Epoch {:03d}".format(idx_epoch+1))
-        best_val_loss = np.mean(case_loss)
+        case_loss = np.zeros((len(file_list)))
+
+        # b, d, c, h, w
+        # N, D, C, H, W
+        # x_data = nib.load(file_list[0]).get_fdata()
+
+        for cnt_file, file_path in enumerate(file_list):
+            
+            x_path = file_path
+            y_path = file_path.replace("MR", "CT")
+            file_name = os.path.basename(file_path)
+            print(iter_tag + " ===> Epoch[{:03d}]: --->".format(idx_epoch+1), x_path, "<---", end="")
+            x_file = nib.load(x_path)
+            y_file = nib.load(y_path)
+            x_data = x_file.get_fdata()
+            y_data = y_file.get_fdata()
+            # x_data = x_data / np.amax(x_data)
+
+            for idx_batch in range(train_dict["batch"]):
+
+                batch_x = np.zeros((train_dict["batch"], train_dict["input_size"][0], 3, train_dict["input_size"][1], train_dict["input_size"][2]))
+                batch_y = np.zeros((train_dict["batch"], train_dict["input_size"][0], 3, train_dict["input_size"][1], train_dict["input_size"][2]))
+
+                z_offset = np.random.randint(x_data.shape[2]//3 - train_dict["input_size"][0])
+                h_offset = np.random.randint(x_data.shape[0] - train_dict["input_size"][1])
+                w_offset = np.random.randint(x_data.shape[1] - train_dict["input_size"][2])
+
+                for idx_channel in range(train_dict["input_size"][0]):
+                    z_center = (z_offset + idx_channel) * 3 + 1
+                    x_slice = x_data[h_offset:h_offset+train_dict["input_size"][1], w_offset:w_offset+train_dict["input_size"][2], z_center-1:z_center+2]
+                    y_slice = y_data[h_offset:h_offset+train_dict["input_size"][1], w_offset:w_offset+train_dict["input_size"][2], z_center-1:z_center+2]
+                    
+                    # print("H:", h_offset, h_offset+train_dict["input_size"][1])
+                    # print("W:", w_offset, w_offset+train_dict["input_size"][2])
+                    # print("Z:", z_center-1, z_center+2)
+
+                    batch_x[idx_batch, idx_channel, 0, :, :] = x_slice[:, :, 0]
+                    batch_x[idx_batch, idx_channel, 1, :, :] = x_slice[:, :, 1]
+                    batch_x[idx_batch, idx_channel, 2, :, :] = x_slice[:, :, 2]
+                    batch_y[idx_batch, idx_channel, 0, :, :] = y_slice[:, :, 0]
+                    batch_y[idx_batch, idx_channel, 1, :, :] = y_slice[:, :, 1]
+                    batch_y[idx_batch, idx_channel, 2, :, :] = y_slice[:, :, 2]
+
+            batch_x = torch.from_numpy(batch_x).float().to(device)
+            batch_y = torch.from_numpy(batch_y).float().to(device)
+
+            # optimizer.zero_grad()
+            y_hat = model(batch_x)
+            # print("Yhat size: ", y_hat.size())
+            loss = criterion(y_hat, batch_y)
+            if isTrain:
+                loss.backward()
+                optimizer.step()
+            case_loss[cnt_file] = loss.item()
+            # print("Loss: ", case_loss[cnt_file])
+
+        print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
+        print("  Loss: ", np.mean(case_loss))
+        np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), case_loss)
+
+        if np.mean(case_loss) < best_val_loss:
+            # save the best model
+            torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch+1))
+            torch.save(optimizer, train_dict["save_folder"]+"optim_{:03d}.pth".format(idx_epoch + 1))
+            print("Checkpoint saved at Epoch {:03d}".format(idx_epoch+1))
+            best_val_loss = np.mean(case_loss)
 
         # if isVal:
             # np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_x.npy", batch_x.cpu().detach().numpy())
