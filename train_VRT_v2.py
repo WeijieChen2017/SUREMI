@@ -103,6 +103,7 @@ model = VRT(
 
 pretrain = torch.load("./pre_train/"+train_dict["pre_train"])
 model.load_state_dict(pretrain["params"])
+print("Load pre_trained model from "+"./pre_train/"+train_dict["pre_train"])
 # pretrain_state = pretrain["state_dict"]
 # pretrain_state_keys = pretrain_state.keys()
 # model_state_keys = model.state_dict().keys()
@@ -258,7 +259,7 @@ for package in [package_val]:  # package_train
     np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), case_loss)
 
     if np.mean(case_loss) < best_val_loss:
-        save the best model
+        # save the best model
         torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch+1))
         torch.save(optimizer, train_dict["save_folder"]+"optim_{:03d}.pth".format(idx_epoch + 1))
         print("Checkpoint saved at Epoch {:03d}".format(idx_epoch+1))
