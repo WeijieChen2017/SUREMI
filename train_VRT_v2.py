@@ -43,7 +43,7 @@ train_dict["batch"] = 1
 train_dict["dropout"] = 0
 train_dict["model_term"] = "VRT"
 train_dict["deconv_channels"] = 6
-train_dict["input_size"] = [6,192,192]
+train_dict["input_size"] = [6,64,64]
 train_dict["sigma"] = 1
 
 train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
@@ -255,7 +255,7 @@ for idx_epoch in range(train_dict["epochs"]):
                 train_dict["input_size"][1], 
                 train_dict["input_size"][2])) * train_dict["sigma"]
             batch_x = np.concatenate([batch_x, noise_map], 2)
-            print(batch_x.shape)
+            # print(batch_x.shape)
 
             batch_x = torch.from_numpy(batch_x).float().to(device)
             batch_y = torch.from_numpy(batch_y).float().to(device)
@@ -269,7 +269,7 @@ for idx_epoch in range(train_dict["epochs"]):
                 optimizer.step()
             case_loss[cnt_file] = loss.item()
             # print("Loss: ", case_loss[cnt_file])
-            exit()
+            # exit()
 
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
         print("  Loss: ", np.mean(case_loss))
