@@ -272,6 +272,10 @@ for idx_epoch in range(train_dict["epochs"]):
             print("Loss: ", case_loss[cnt_file])
             # exit()
 
+            del batch_x, batch_y
+            gc.collect()
+            torch.cuda.empty_cache()
+
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
         print("  Loss: ", np.mean(case_loss))
         np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), case_loss)
