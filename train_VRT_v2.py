@@ -123,7 +123,7 @@ print("Load pre_trained model from "+"./pre_train/"+train_dict["pre_train"])
 # model.load_state_dict(new_model_state)
 
 # model = nn.DataParallel(model)
-model.train().float()
+model.train()
 model = model.to(device)
 criterion = L1_Charbonnier_loss()
 
@@ -194,8 +194,10 @@ for idx_epoch in range(train_dict["epochs"]):
 
         if isTrain:
             model.train()
+            torch.set_grad_enabled(True)
         else:
             model.eval()
+            torch.set_grad_enabled(False)
 
         random.shuffle(file_list)
 
