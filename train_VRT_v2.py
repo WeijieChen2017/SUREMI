@@ -218,6 +218,11 @@ for idx_epoch in range(train_dict["epochs"]):
 
             for idx_batch in range(train_dict["batch"]):
 
+                # weight of size [96, 28, 1, 3, 3], 
+                # expected input[1, 27, 6, 192, 192] 
+                # to have 28 channels, but got 27 channels instead
+                # 1, 6, 3, 192, 192 
+
                 batch_x = np.zeros((train_dict["batch"], train_dict["input_size"][0], 3, train_dict["input_size"][1], train_dict["input_size"][2]))
                 batch_y = np.zeros((train_dict["batch"], train_dict["input_size"][0], 3, train_dict["input_size"][1], train_dict["input_size"][2]))
 
@@ -240,6 +245,12 @@ for idx_epoch in range(train_dict["epochs"]):
                     batch_y[idx_batch, idx_channel, 0, :, :] = y_slice[:, :, 0]
                     batch_y[idx_batch, idx_channel, 1, :, :] = y_slice[:, :, 1]
                     batch_y[idx_batch, idx_channel, 2, :, :] = y_slice[:, :, 2]
+
+            # noise_level = torch.ones((1, 1, 1, 1)) * self.sigma
+            # noise = torch.normal(mean=0, std=noise_level.expand_as(imgs_gt))
+            # imgs_lq = imgs_gt + noise
+            # t, _, h, w = imgs_lq.shape
+            # imgs_lq = torch.cat([imgs_lq, noise_level.expand(t, 1, h, w)], 1)
 
             batch_x = torch.from_numpy(batch_x).float().to(device)
             batch_y = torch.from_numpy(batch_y).float().to(device)

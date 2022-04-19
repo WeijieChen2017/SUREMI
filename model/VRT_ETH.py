@@ -1364,6 +1364,7 @@ class VRT(nn.Module):
         # main network
         if self.upscale == 1:
             # video deblurring, etc.
+            print(x.size())
             x = self.conv_first(x.transpose(1, 2))
             x = x + self.conv_after_body(
                 self.forward_features(x, flows_backward, flows_forward).transpose(1, 4)).transpose(1, 4)
