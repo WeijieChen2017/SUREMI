@@ -194,10 +194,10 @@ for idx_epoch in range(train_dict["epochs"]):
 
         if isTrain:
             model.train()
-            torch.set_grad_enabled(True)
+            # torch.set_grad_enabled(True)
         else:
             model.eval()
-            torch.set_grad_enabled(False)
+            # torch.set_grad_enabled(False)
 
         random.shuffle(file_list)
 
@@ -267,11 +267,14 @@ for idx_epoch in range(train_dict["epochs"]):
             batch_x = torch.from_numpy(batch_x).float().to(device)
             batch_y = torch.from_numpy(batch_y).float().to(device)
 
-            optimizer.zero_grad()
-            y_hat = model(batch_x)
-            # print("Yhat size: ", y_hat.size())
-            loss = criterion(y_hat, batch_y)
+            if isVal:
+                 with torch.no_grad():
+                    y_hat = model(batch_x)
+                    loss = criterion(y_hat, batch_y)
             if isTrain:
+                optimizer.zero_grad()
+                y_hat = model(batch_x)
+                loss = criterion(y_hat, batch_y)
                 loss.backward()
                 optimizer.step()
             case_loss[cnt_file] = loss.item()
