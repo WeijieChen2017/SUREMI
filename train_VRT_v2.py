@@ -91,7 +91,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # 008_train_vrt_videodenoising_davis
 model = VRT(
     upscale=1, 
-    img_size=[6,192,192], 
+    img_size=[6,64,64], 
     window_size=[6,8,8], 
     depths=[8,8,8,8,8,8,8, 4,4, 4,4],
     indep_reconsts=[9,10], 
