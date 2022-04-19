@@ -43,7 +43,7 @@ train_dict["batch"] = 1
 train_dict["dropout"] = 0
 train_dict["model_term"] = "VRT"
 train_dict["deconv_channels"] = 6
-train_dict["input_size"] = [6,96,96]
+train_dict["input_size"] = [6,64,64]
 train_dict["sigma"] = 1
 
 train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
@@ -163,8 +163,8 @@ np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 best_val_loss = 1e6
 # wandb.watch(model)
 
-package_train = [train_list[:5], True, False, "train"]
-package_val = [val_list[:5], False, True, "val"]
+package_train = [train_list, True, False, "train"]
+package_val = [val_list, False, True, "val"]
 # package_test = [test_list, False, False, "test"]
 
 for idx_epoch in range(train_dict["epochs"]):
