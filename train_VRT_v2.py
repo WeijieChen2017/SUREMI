@@ -209,10 +209,14 @@ for idx_epoch in range(train_dict["epochs"]):
 
         for cnt_file, file_path in enumerate(file_list):
             
+            cnt_total_file = len(file_list)
             x_path = file_path
             y_path = file_path.replace("MR", "CT")
             file_name = os.path.basename(file_path)
-            print(iter_tag + " ===> Epoch[{:03d}]/[{:03d}]: --->".format(idx_epoch+1, len(file_list)), x_path, "<---", end="")
+            print(iter_tag + " ===> Epoch[{:03d}]->[{:03d}]/[{:03d}]: --->".format(
+                idx_epoch+1, 
+                cnt_file+1,
+                cnt_total_file), x_path, "<---", end="")
             x_file = nib.load(x_path)
             y_file = nib.load(y_path)
             x_data = x_file.get_fdata()
@@ -263,7 +267,7 @@ for idx_epoch in range(train_dict["epochs"]):
             batch_x = torch.from_numpy(batch_x).float().to(device)
             batch_y = torch.from_numpy(batch_y).float().to(device)
 
-            # optimizer.zero_grad()
+            optimizer.zero_grad()
             y_hat = model(batch_x)
             # print("Yhat size: ", y_hat.size())
             loss = criterion(y_hat, batch_y)
