@@ -55,7 +55,7 @@ train_dict["test_ratio"] = 0.2
 
 train_dict["loss_term"] = "L1_Charbonnier_loss_1e-9"
 train_dict["optimizer"] = "AdamW"
-train_dict["opt_lr"] = 4e-4 # default
+train_dict["opt_lr"] = 1e-3 # default
 train_dict["opt_betas"] = (0.9, 0.99) # default
 train_dict["opt_eps"] = 1e-8 # default
 train_dict["opt_weight_decay"] = 0.01 # default
@@ -287,7 +287,7 @@ for idx_epoch in range(train_dict["epochs"]):
 
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
         print("  Loss: ", np.mean(case_loss))
-        # np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), case_loss)
+        np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), case_loss)
 
         # if np.mean(case_loss) < best_val_loss:
         #     # save the best model
