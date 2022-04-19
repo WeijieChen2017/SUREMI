@@ -185,7 +185,7 @@ for idx_epoch in range(train_dict["epochs"]):
 
     # print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
-    for package in [package_val]:  # package_train 
+    for package in [package_train, package_val]:  #  
 
         file_list = package[0]
         isTrain = package[1]
@@ -217,6 +217,9 @@ for idx_epoch in range(train_dict["epochs"]):
             y_data = y_file.get_fdata()
             # x_data = x_data / np.amax(x_data)
 
+            batch_x = np.zeros((train_dict["batch"], train_dict["input_size"][0], 3, train_dict["input_size"][1], train_dict["input_size"][2]))
+            batch_y = np.zeros((train_dict["batch"], train_dict["input_size"][0], 3, train_dict["input_size"][1], train_dict["input_size"][2]))
+
             for idx_batch in range(train_dict["batch"]):
 
                 # weight of size [96, 28, 1, 3, 3], 
@@ -225,9 +228,7 @@ for idx_epoch in range(train_dict["epochs"]):
                 # torch.Size([1, 6, 27, 192, 192])
                 # 1, 6, 3, 192, 192
 
-                batch_x = np.zeros((train_dict["batch"], train_dict["input_size"][0], 3, train_dict["input_size"][1], train_dict["input_size"][2]))
-                batch_y = np.zeros((train_dict["batch"], train_dict["input_size"][0], 3, train_dict["input_size"][1], train_dict["input_size"][2]))
-
+                
                 z_offset = np.random.randint(x_data.shape[2]//3 - train_dict["input_size"][0])
                 h_offset = np.random.randint(x_data.shape[0] - train_dict["input_size"][1])
                 w_offset = np.random.randint(x_data.shape[1] - train_dict["input_size"][2])
@@ -268,7 +269,7 @@ for idx_epoch in range(train_dict["epochs"]):
                 loss.backward()
                 optimizer.step()
             case_loss[cnt_file] = loss.item()
-            # print("Loss: ", case_loss[cnt_file])
+            print("Loss: ", case_loss[cnt_file])
             # exit()
 
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
