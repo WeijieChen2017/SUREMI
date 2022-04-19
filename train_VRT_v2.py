@@ -254,7 +254,7 @@ for idx_epoch in range(train_dict["epochs"]):
                 1, 
                 train_dict["input_size"][1], 
                 train_dict["input_size"][2])) * train_dict["sigma"]
-            batch_x = np.cat([batch_x, noise_map], 2)
+            batch_x = np.concatenate([batch_x, noise_map], 2)
             print(batch_x.shape)
 
             batch_x = torch.from_numpy(batch_x).float().to(device)
