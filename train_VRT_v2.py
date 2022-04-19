@@ -43,7 +43,7 @@ train_dict["batch"] = 1
 train_dict["dropout"] = 0
 train_dict["model_term"] = "VRT"
 train_dict["deconv_channels"] = 6
-train_dict["input_size"] = [6,64,64]
+train_dict["input_size"] = [6,32,32]
 train_dict["sigma"] = 1
 
 train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
@@ -91,7 +91,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # 008_train_vrt_videodenoising_davis
 model = VRT(
     upscale=1, 
-    img_size=[6,64,64], 
+    img_size=train_dict["input_size"], 
     window_size=[6,8,8], 
     depths=[8,8,8,8,8,8,8, 4,4, 4,4],
     indep_reconsts=[9,10], 
@@ -210,7 +210,7 @@ for idx_epoch in range(train_dict["epochs"]):
             x_path = file_path
             y_path = file_path.replace("MR", "CT")
             file_name = os.path.basename(file_path)
-            print(iter_tag + " ===> Epoch[{:03d}]: --->".format(idx_epoch+1), x_path, "<---", end="")
+            print(iter_tag + " ===> Epoch[{:03d}]/[{:03d}]: --->".format(idx_epoch+1, len(file_list)), x_path, "<---", end="")
             x_file = nib.load(x_path)
             y_file = nib.load(y_path)
             x_data = x_file.get_fdata()
@@ -278,7 +278,7 @@ for idx_epoch in range(train_dict["epochs"]):
 
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
         print("  Loss: ", np.mean(case_loss))
-        np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), case_loss)
+        # np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), case_loss)
 
         if np.mean(case_loss) < best_val_loss:
             # save the best model
