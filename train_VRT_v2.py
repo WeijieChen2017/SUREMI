@@ -37,7 +37,7 @@ train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 813
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
-train_dict["gpu_ids"] = [2, 6]
+train_dict["gpu_ids"] = [2]
 train_dict["epochs"] = 100
 train_dict["batch"] = 1
 train_dict["dropout"] = 0
@@ -123,7 +123,7 @@ print("Load pre_trained model from "+"./pre_train/"+train_dict["pre_train"])
 # model.load_state_dict(new_model_state)
 
 # model = nn.DataParallel(model)
-model.train()
+model.train().float()
 model = model.to(device)
 criterion = L1_Charbonnier_loss()
 
