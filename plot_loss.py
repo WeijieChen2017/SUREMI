@@ -4,8 +4,8 @@ import glob
 import copy
 import os
 
-n_epoch = 128
-folder = "./project_dir/CTGM_2d_v11_mse_layer1/"
+n_epoch = 100
+folder = "./project_dir/CTGM_2d_v11_mse_layer3_e99L2/"
 
 stage_hub = []
 npy_list = sorted(glob.glob(folder+"loss/epoch_loss_*.npy"))

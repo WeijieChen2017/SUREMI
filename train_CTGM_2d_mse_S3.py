@@ -157,7 +157,7 @@ best_epoch = 0
 # wandb.watch(model)
 
 # package_train = [train_list[:1], True, False, "train"]
-package_train = [train_list, True, True, "train"]
+package_train = [train_list, True, False, "train"]
 package_val = [val_list, False, True, "val"]
 # package_test = [test_list, False, False, "test"]
 
@@ -252,8 +252,6 @@ for idx_epoch_new in range(train_dict["epochs"]):
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
         print("  Loss: ", np.mean(case_loss))
         np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), case_loss)
-
-
 
         # if idx_epoch % 10 == 1:
         #     np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_x.npy", batch_x.cpu().detach().numpy())
