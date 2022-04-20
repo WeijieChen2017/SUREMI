@@ -13,7 +13,7 @@ import torch
 import torchvision
 import requests
 
-from monai.networks.nets import unetr
+from monai.networks.nets import UNETR
 
 # ==================== dict and config ====================
 
@@ -29,7 +29,7 @@ train_dict["gpu_ids"] = [2]
 train_dict["epochs"] = 100
 train_dict["batch"] = 16
 train_dict["dropout"] = 0
-train_dict["model_term"] = "unetr"
+train_dict["model_term"] = "UNETR"
 
 train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
 train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
@@ -73,7 +73,7 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # UnetR
-model = unetr(
+model = UNETR(
     in_channels=1,
     out_channels=1,
     img_size=train_dict["input_size"],
