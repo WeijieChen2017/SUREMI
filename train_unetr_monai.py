@@ -115,7 +115,7 @@ criterion = nn.SmoothL1Loss()
 
 optimizer = torch.optim.AdamW(
     model.parameters(),
-    lr = train_dict["opt_lr"]*1e-2,
+    lr = train_dict["opt_lr"],
     betas = train_dict["opt_betas"],
     eps = train_dict["opt_eps"],
     weight_decay = train_dict["opt_weight_decay"],
@@ -150,8 +150,8 @@ best_val_loss = 1e6
 best_epoch = 0
 # wandb.watch(model)
 
-package_train = [train_list[:5], True, False, "train"] #[:10]l
-package_val = [val_list[:5], False, True, "val"]
+package_train = [train_list, True, False, "train"] #[:10]l
+package_val = [val_list, False, True, "val"]
 # package_test = [test_list, False, False, "test"]
 
 for idx_epoch_new in range(train_dict["epochs"]):
@@ -233,11 +233,11 @@ for idx_epoch_new in range(train_dict["epochs"]):
         print("  Loss: ", np.mean(case_loss))
         np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), case_loss)
 
-        if np.mean(case_loss) < best_val_loss:
-            # save the best model
-            torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch + 1))
-            print("Checkpoint saved at Epoch {:03d}".format(idx_epoch + 1))
-            best_val_loss = np.mean(case_loss)
+        # if np.mean(case_loss) < best_val_loss:
+        #     # save the best model
+        #     torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch + 1))
+        #     print("Checkpoint saved at Epoch {:03d}".format(idx_epoch + 1))
+        #     best_val_loss = np.mean(case_loss)
 
         if isVal:
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_x.npy", batch_x.cpu().detach().numpy())
