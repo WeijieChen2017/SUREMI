@@ -47,8 +47,8 @@ train_dict["model_related"] = {}
 train_dict["model_related"]["cx"] = 32
 cx = train_dict["model_related"]["cx"]
 train_dict["model_related"]["input_dims"] = [cx**2, cx**2]
-train_dict["model_related"]["hidden_size"] = 512
-train_dict["model_related"]["embed_dim"] = 512
+train_dict["model_related"]["hidden_size"] = 1024
+train_dict["model_related"]["embed_dim"] = 1024
 train_dict["model_related"]["output_dim"] = cx**2*2
 train_dict["model_related"]["num_heads"] = cx
 train_dict["model_related"]["attn_dropout"] = 0.0
@@ -219,14 +219,13 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 batch_x = torch.from_numpy(batch_x).float().to(device).contiguous()
                 batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
                     
-
                 if isVal:
                     with torch.no_grad():
-                        y_hat = model(batch_x, max_len=num_vocab)
+                        y_hat = model(batch_x, max_len=10)
                         loss = criterion(y_hat, batch_y)
                 if isTrain:
                     optimizer.zero_grad()
-                    y_hat = model(batch_x, max_len=num_vocab)
+                    y_hat = model(batch_x, max_len=10)
                     loss = criterion(y_hat, batch_y)
                     loss.backward()
                     optimizer.step()
