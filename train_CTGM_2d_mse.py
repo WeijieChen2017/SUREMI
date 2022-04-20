@@ -32,13 +32,13 @@ def self_pro(data):
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "CTGM_2d_v11_mse_layer1"
+train_dict["project_name"] = "CTGM_2d_v12_mse_TF_1"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 729
 train_dict["input_size"] = [256, 256]
 ax, ay = train_dict["input_size"]
-train_dict["gpu_ids"] = [2]
-train_dict["epochs"] = 100
+train_dict["gpu_ids"] = [3]
+train_dict["epochs"] = 500
 train_dict["batch"] = 64
 train_dict["dropout"] = 0
 train_dict["model_term"] = "ComplexTransformerGenerationModel"
@@ -157,7 +157,7 @@ best_epoch = 0
 # wandb.watch(model)
 
 # package_train = [train_list[:1], True, False, "train"]
-package_train = [train_list, True, True, "train"]
+package_train = [train_list, True, False, "train"]
 package_val = [val_list, False, True, "val"]
 # package_test = [test_list, False, False, "test"]
 
@@ -229,13 +229,15 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 batch_x = torch.from_numpy(batch_x).float().to(device).contiguous()
                 batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
                     
-                optimizer.zero_grad()
-                # print(batch_x.size(), batch_y.size())
-                y_hat = model(batch_x, batch_y)
-                # print("Yhat size: ", y_hat.size(), end="   ")
-                # print("Ytrue size: ", batch_y.size())
-                loss = criterion(y_hat, batch_y)
+
+                if isVal:
+                    with torch.no_grad():
+                        y_hat = model(batch_x, max_len=num_vocab)
+                        loss = criterion(y_hat, batch_y)
                 if isTrain:
+                    optimizer.zero_grad()
+                    y_hat = model(batch_x, max_len=num_vocab)
+                    loss = criterion(y_hat, batch_y)
                     loss.backward()
                     optimizer.step()
                 batch_loss[ib] = loss.item()
@@ -263,6 +265,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             if np.mean(case_loss) < best_val_loss:
                 # save the best model
                 torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch + 1))
+                torch.save(optimizer, train_dict["save_folder"]+"optim_{:03d}.pth".format(idx_epoch + 1))
                 print("Checkpoint saved at Epoch {:03d}".format(idx_epoch + 1))
                 best_val_loss = np.mean(case_loss)
 
