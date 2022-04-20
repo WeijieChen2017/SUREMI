@@ -193,10 +193,10 @@ for idx_epoch_new in range(train_dict["epochs"]):
             y_data = y_file.get_fdata()
             # x_data = x_data / np.amax(x_data)
 
-            for idx_batch in range(train_dict["batch"]):
+            batch_x = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
+            batch_y = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
 
-                batch_x = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
-                batch_y = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
+            for idx_batch in range(train_dict["batch"]):
 
                 d0_offset = np.random.randint(x_data.shape[0] - train_dict["input_size"][1])
                 d1_offset = np.random.randint(x_data.shape[1] - train_dict["input_size"][2])
