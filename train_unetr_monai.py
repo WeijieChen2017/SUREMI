@@ -80,7 +80,7 @@ model = UNETR(
     feature_size = 32, #default=16
     hidden_size = 768, #default
     mlp_dim = 3072, #default
-    num_heads = 18, #default=12
+    num_heads = 24, #default=12
     pos_embed = "conv", #default
     norm_name = "instance", #default
     conv_block  = True, #default
