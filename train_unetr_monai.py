@@ -155,7 +155,7 @@ package_val = [val_list[:10], False, True, "val"]
 # package_test = [test_list, False, False, "test"]
 
 for idx_epoch_new in range(train_dict["epochs"]):
-    idx_epoch = idx_epoch_new + 100
+    idx_epoch = idx_epoch_new + 0
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
     for package in [package_train]: # , package_vall
@@ -176,13 +176,17 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
         # N, C, D, H, W
         x_data = nib.load(file_list[0]).get_fdata()
+        cnt_total_file = len(file_list)
 
         for cnt_file, file_path in enumerate(file_list):
             
             x_path = file_path
             y_path = file_path.replace("MR", "CT")
             file_name = os.path.basename(file_path)
-            print(iter_tag + " ===> Epoch[{:03d}]: --->".format(idx_epoch+1), x_path, "<---", end="")
+            print(iter_tag + " ===> Epoch[{:03d}]->[{:03d}]/[{:03d}]: --->".format(
+                idx_epoch+1, 
+                cnt_file+1,
+                cnt_total_file), x_path, "<---", end="")
             x_file = nib.load(x_path)
             y_file = nib.load(y_path)
             x_data = x_file.get_fdata()
