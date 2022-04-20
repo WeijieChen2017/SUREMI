@@ -37,8 +37,8 @@ train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 729
 train_dict["input_size"] = [256, 256]
 ax, ay = train_dict["input_size"]
-train_dict["gpu_ids"] = [3]
-train_dict["epochs"] = 500
+train_dict["gpu_ids"] = [6]
+train_dict["epochs"] = 483
 train_dict["batch"] = 64
 train_dict["dropout"] = 0
 train_dict["model_term"] = "ComplexTransformerGenerationModel"
@@ -99,34 +99,35 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-model = CTGM( 
-    input_dims=train_dict["model_related"]["input_dims"],
-    hidden_size=train_dict["model_related"]["hidden_size"],
-    embed_dim=train_dict["model_related"]["embed_dim"],
-    output_dim=train_dict["model_related"]["output_dim"],
-    num_heads=train_dict["model_related"]["num_heads"],
-    attn_dropout=train_dict["model_related"]["attn_dropout"],
-    relu_dropout=train_dict["model_related"]["relu_dropout"],
-    res_dropout=train_dict["model_related"]["res_dropout"],
-    out_dropout=train_dict["model_related"]["out_dropout"],
-    layers=train_dict["model_related"]["layers"],
-    attn_mask=train_dict["model_related"]["attn_mask"])
+# model = CTGM( 
+#     input_dims=train_dict["model_related"]["input_dims"],
+#     hidden_size=train_dict["model_related"]["hidden_size"],
+#     embed_dim=train_dict["model_related"]["embed_dim"],
+#     output_dim=train_dict["model_related"]["output_dim"],
+#     num_heads=train_dict["model_related"]["num_heads"],
+#     attn_dropout=train_dict["model_related"]["attn_dropout"],
+#     relu_dropout=train_dict["model_related"]["relu_dropout"],
+#     res_dropout=train_dict["model_related"]["res_dropout"],
+#     out_dropout=train_dict["model_related"]["out_dropout"],
+#     layers=train_dict["model_related"]["layers"],
+#     attn_mask=train_dict["model_related"]["attn_mask"])
 
-# model = torch.load(train_dict["save_folder"]+"model_best_102.pth")
+model = torch.load(train_dict["save_folder"]+"model_best_017.pth")
+optimizer = torch.load(train_dict["save_folder"]+"optim_017.pth")
 
 # model = nn.DataParallel(model)
 model.train()
 model = model.to(device)
 criterion = nn.MSELoss()
 
-optimizer = torch.optim.AdamW(
-    model.parameters(),
-    lr = train_dict["opt_lr"],
-    betas = train_dict["opt_betas"],
-    eps = train_dict["opt_eps"],
-    weight_decay = train_dict["opt_weight_decay"],
-    amsgrad = train_dict["amsgrad"]
-    )
+# optimizer = torch.optim.AdamW(
+#     model.parameters(),
+#     lr = train_dict["opt_lr"],
+#     betas = train_dict["opt_betas"],
+#     eps = train_dict["opt_eps"],
+#     weight_decay = train_dict["opt_weight_decay"],
+#     amsgrad = train_dict["amsgrad"]
+#     )
 
 # ==================== data division ====================
 
@@ -152,7 +153,7 @@ np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 
 # ==================== training ====================
 
-best_val_loss = 1e6
+best_val_loss = 3.96
 best_epoch = 0
 # wandb.watch(model)
 
@@ -164,7 +165,7 @@ package_val = [val_list, False, True, "val"]
 num_vocab = (ax//cx) * (ay//cx)
 
 for idx_epoch_new in range(train_dict["epochs"]):
-    idx_epoch = idx_epoch_new + 0
+    idx_epoch = idx_epoch_new + 17
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
     for package in [package_train, package_val]: # , package_val
