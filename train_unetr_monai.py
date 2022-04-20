@@ -27,7 +27,7 @@ train_dict["seed"] = 426
 train_dict["input_size"] = [64, 64, 64]
 train_dict["gpu_ids"] = [2]
 train_dict["epochs"] = 100
-train_dict["batch"] = 48
+train_dict["batch"] = 32
 train_dict["dropout"] = 0
 train_dict["model_term"] = "UNETR"
 
@@ -77,10 +77,10 @@ model = UNETR(
     in_channels=1,
     out_channels=1,
     img_size=train_dict["input_size"],
-    feature_size = 16, #default
+    feature_size = 32, #default=16
     hidden_size = 768, #default
     mlp_dim = 3072, #default
-    num_heads = 12, #default
+    num_heads = 18, #default=12
     pos_embed = "conv", #default
     norm_name = "instance", #default
     conv_block  = True, #default
@@ -146,7 +146,7 @@ np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 
 # ==================== training ====================
 
-best_val_loss = 0.0018349092755523438
+best_val_loss = 1e6
 best_epoch = 0
 # wandb.watch(model)
 
