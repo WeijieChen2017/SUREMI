@@ -158,7 +158,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
     idx_epoch = idx_epoch_new + 0
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
-    for package in [package_train]: # , package_vall
+    for package in [package_train, package_val]: # 
 
         file_list = package[0]
         isTrain = package[1]
