@@ -221,11 +221,11 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     
                 if isVal:
                     with torch.no_grad():
-                        y_hat = model(batch_x, max_len=7)
+                        y_hat = model(batch_x, max_len=6)
                         loss = criterion(y_hat, batch_y)
                 if isTrain:
                     optimizer.zero_grad()
-                    y_hat = model(batch_x, max_len=7)
+                    y_hat = model(batch_x, max_len=6)
                     # print(y_hat.size())
                     loss = criterion(y_hat, batch_y)
                     loss.backward()
