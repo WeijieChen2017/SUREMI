@@ -39,7 +39,7 @@ train_dict["input_size"] = [256, 256]
 ax, ay = train_dict["input_size"]
 train_dict["gpu_ids"] = [3]
 train_dict["epochs"] = 500
-train_dict["batch"] = 48
+train_dict["batch"] = 16
 train_dict["dropout"] = 0
 train_dict["model_term"] = "ComplexTransformerGenerationModel"
 
@@ -215,16 +215,6 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                     batch_x[:, iz, :] = x_data[z_list[iz+batch_offset], :, :]
                     batch_y[:, iz, :] = y_data[z_list[iz+batch_offset], :, :]
-
-                    # x_real = x_data[z_list[iz+batch_offset], :, :cx*cx]
-                    # x_imag = x_data[z_list[iz+batch_offset], :, cx*cx:]
-                    # y_real = y_data[z_list[iz+batch_offset], :, :cx*cx]
-                    # y_imag = y_data[z_list[iz+batch_offset], :, cx*cx:]
-
-                    # batch_x[:, iz, :cx*cx] = self_pro(x_real)
-                    # batch_x[:, iz, cx*cx:] = self_pro(x_imag)
-                    # batch_y[:, iz, :cx*cx] = self_pro(y_real)
-                    # batch_y[:, iz, cx*cx:] = self_pro(y_imag)
 
                 batch_x = torch.from_numpy(batch_x).float().to(device).contiguous()
                 batch_y = torch.from_numpy(batch_y).float().to(device).contiguous()
