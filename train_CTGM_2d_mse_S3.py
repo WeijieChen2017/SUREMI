@@ -99,34 +99,36 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-model = CTGM( 
-    input_dims=train_dict["model_related"]["input_dims"],
-    hidden_size=train_dict["model_related"]["hidden_size"],
-    embed_dim=train_dict["model_related"]["embed_dim"],
-    output_dim=train_dict["model_related"]["output_dim"],
-    num_heads=train_dict["model_related"]["num_heads"],
-    attn_dropout=train_dict["model_related"]["attn_dropout"],
-    relu_dropout=train_dict["model_related"]["relu_dropout"],
-    res_dropout=train_dict["model_related"]["res_dropout"],
-    out_dropout=train_dict["model_related"]["out_dropout"],
-    layers=train_dict["model_related"]["layers"],
-    attn_mask=train_dict["model_related"]["attn_mask"])
+# model = CTGM( 
+#     input_dims=train_dict["model_related"]["input_dims"],
+#     hidden_size=train_dict["model_related"]["hidden_size"],
+#     embed_dim=train_dict["model_related"]["embed_dim"],
+#     output_dim=train_dict["model_related"]["output_dim"],
+#     num_heads=train_dict["model_related"]["num_heads"],
+#     attn_dropout=train_dict["model_related"]["attn_dropout"],
+#     relu_dropout=train_dict["model_related"]["relu_dropout"],
+#     res_dropout=train_dict["model_related"]["res_dropout"],
+#     out_dropout=train_dict["model_related"]["out_dropout"],
+#     layers=train_dict["model_related"]["layers"],
+#     attn_mask=train_dict["model_related"]["attn_mask"])
 
-# model = torch.load(train_dict["save_folder"]+"model_best_102.pth")
+model = torch.load(train_dict["save_folder"]+"model_best_100.pth")
 
 # model = nn.DataParallel(model)
 model.train()
 model = model.to(device)
 criterion = nn.MSELoss()
 
-optimizer = torch.optim.AdamW(
-    model.parameters(),
-    lr = train_dict["opt_lr"],
-    betas = train_dict["opt_betas"],
-    eps = train_dict["opt_eps"],
-    weight_decay = train_dict["opt_weight_decay"],
-    amsgrad = train_dict["amsgrad"]
-    )
+optimizer = torch.load(train_dict["save_folder"]+"model_best_100.pth")
+
+# optimizer = torch.optim.AdamW(
+#     model.parameters(),
+#     lr = train_dict["opt_lr"],
+#     betas = train_dict["opt_betas"],
+#     eps = train_dict["opt_eps"],
+#     weight_decay = train_dict["opt_weight_decay"],
+#     amsgrad = train_dict["amsgrad"]
+#     )
 
 # ==================== data division ====================
 

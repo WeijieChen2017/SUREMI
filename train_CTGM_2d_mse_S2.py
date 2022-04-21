@@ -37,7 +37,7 @@ train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 729
 train_dict["input_size"] = [256, 256]
 ax, ay = train_dict["input_size"]
-train_dict["gpu_ids"] = [3]
+rain_dict["gpu_ids"] = [3]
 train_dict["epochs"] = 100
 train_dict["batch"] = 64
 train_dict["dropout"] = 0
@@ -264,6 +264,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             if np.mean(case_loss) < best_val_loss:
                 # save the best model
                 torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch + 1))
+                torch.save(optimizer, train_dict["save_folder"]+"optim_{:03d}.pth".format(idx_epoch + 1))
                 print("Checkpoint saved at Epoch {:03d}".format(idx_epoch + 1))
                 best_val_loss = np.mean(case_loss)
 
