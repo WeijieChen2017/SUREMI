@@ -545,7 +545,7 @@ class PatchUnEmbed(nn.Module):
         super().__init__()
         img_size = to_3tuple(img_size)
         patch_size = to_3tuple(patch_size)
-        patches_resolution = [img_size[0] // patch_size[0], img_size[1] // patch_size[1], , img_size[2] // patch_size[2]]
+        patches_resolution = [img_size[0] // patch_size[0], img_size[1] // patch_size[1], img_size[2] // patch_size[2]]
         self.img_size = img_size
         self.patch_size = patch_size
         self.patches_resolution = patches_resolution
