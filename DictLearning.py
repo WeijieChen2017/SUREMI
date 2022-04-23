@@ -4,14 +4,15 @@ import time
 import numpy as np
 import nibabel as nib
 
+from scipy.cluster import vq
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 
 train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
 train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
-train_dict["new_modality"] = "DL_32_1"
-train_dict["old_modality"] = "DL_32_1/"
+train_dict["old_modality"] = "DL_32_1"
+train_dict["new_modality"] = "norm"
 train_dict["cube_size"] = 32
 train_dict["file_cnt"] = 5
 cs = train_dict["cube_size"]
@@ -29,8 +30,8 @@ Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
 
 np.save("./data_dir/"+train_dict["new_modality"]+"_dict.npy", train_dict)
 
-array_x_cube = np.zeros((train_dict["cube_size"]**3, train_dict["file_cnt"]*512))
-array_y_cube = np.zeros((train_dict["cube_size"]**3, train_dict["file_cnt"]*512))
+array_x_cube = np.zeros((train_dict["file_cnt"]*512, train_dict["cube_size"]**3))
+array_y_cube = np.zeros((train_dict["file_cnt"]*512, train_dict["cube_size"]**3))
 cnt_cube = 0
 
 
@@ -69,16 +70,24 @@ for cnt_file, file_path in enumerate(X_list[:train_dict["file_cnt"]]):
                                     iy*cs:iy*cs+cs,
                                     iz*cs:iz*cs+cs]
 
-                array_x_cube[:, cnt_cube] = np.ravel(cube_x)
-                array_y_cube[:, cnt_cube] = np.ravel(cube_y)
+                array_x_cube[cnt_cube, :] = np.ravel(cube_x)
+                array_y_cube[cnt_cube, :] = np.ravel(cube_y)
                 cnt_cube += 1
-       
-save_name_x = train_dict["folder_X"].replace(train_dict["old_modality"], train_dict["new_modality"])+"array_x_cube.npy"
-save_name_y = train_dict["folder_Y"].replace(train_dict["old_modality"], train_dict["new_modality"])+"array_y_cube.npy"
 
-np.save(save_name_x, array_x_cube)
-np.save(save_name_y, array_y_cube)
-print(save_name_x, save_name_y)
+whitened_X = vq.whiten(array_x_cube)
+whitened_Y = vq.whiten(array_y_cube)
+
+code_book_X, mean_dist_X = vq.kmeans(whitened_X, k_or_guess=100, iter=100)
+code_book_Y, mean_dist_Y = vq.kmeans(whitened_Y, k_or_guess=100, iter=100)
+
+print(mean_dist_X, mean_dist_Y)
+
+# save_name_x = train_dict["folder_X"].replace(train_dict["old_modality"], train_dict["new_modality"])+"array_x_cube.npy"
+# save_name_y = train_dict["folder_Y"].replace(train_dict["old_modality"], train_dict["new_modality"])+"array_y_cube.npy"
+
+# np.save(save_name_x, array_x_cube)
+# np.save(save_name_y, array_y_cube)
+# print(save_name_x, save_name_y)
 
 
 
