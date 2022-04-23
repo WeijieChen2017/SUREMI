@@ -66,8 +66,8 @@ for cnt_file, file_path in enumerate(X_list[:train_dict["file_cnt"]]):
                                     iy*cs:iy*cs+cs,
                                     iz*cs:iz*cs+cs]
 
-                array_x_cube[cnt_cube] = np.ravel(cube_x)
-                array_y_cube[cnt_cube] = np.ravel(cube_y)
+                array_x_cube[:, cnt_cube] = np.ravel(cube_x)
+                array_y_cube[:, cnt_cube] = np.ravel(cube_y)
                 cnt_cube += 1
        
 np.save(train_dict["folder_X"]+train_dict["old_modality"]+"array_x_cube.npy", array_x_cube)
