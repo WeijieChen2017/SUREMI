@@ -77,8 +77,8 @@ for cnt_file, file_path in enumerate(X_list[:train_dict["file_cnt"]]):
 whitened_X = vq.whiten(array_x_cube)
 whitened_Y = vq.whiten(array_y_cube)
 
-code_book_X, mean_dist_X = vq.kmeans(whitened_X, k_or_guess=100, iter=100)
-code_book_Y, mean_dist_Y = vq.kmeans(whitened_Y, k_or_guess=100, iter=100)
+code_book_X, mean_dist_X = vq.kmeans(whitened_X, k_or_guess=100, iter=20)
+code_book_Y, mean_dist_Y = vq.kmeans(whitened_Y, k_or_guess=100, iter=20)
 
 print(mean_dist_X, mean_dist_Y)
 
