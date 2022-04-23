@@ -11,7 +11,7 @@ train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
 train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
 train_dict["new_modality"] = "norm"
-train_dict["old_modality"] = "DL_32_1"
+train_dict["old_modality"] = "DL_32_1/"
 train_dict["cube_size"] = 32
 train_dict["file_cnt"] = 5
 cs = train_dict["cube_size"]
@@ -70,8 +70,11 @@ for cnt_file, file_path in enumerate(X_list[:train_dict["file_cnt"]]):
                 array_y_cube[:, cnt_cube] = np.ravel(cube_y)
                 cnt_cube += 1
        
-np.save(train_dict["folder_X"]+train_dict["old_modality"]+"array_x_cube.npy", array_x_cube)
-np.save(train_dict["folder_Y"]+train_dict["old_modality"]+"array_y_cube.npy", array_y_cube)
+save_name_x = train_dict["folder_X"].replace(train_dict["old_modality"], train_dict["new_modality"])+"array_x_cube.npy"
+save_name_y = train_dict["folder_Y"].replace(train_dict["old_modality"], train_dict["new_modality"])+"array_y_cube.npy"
+
+np.save(save_name_x, array_x_cube)
+np.save(save_name_y, array_y_cube)
 print(train_dict["folder_X"]+train_dict["old_modality"]+"array_x_cube.npy")
 
 
