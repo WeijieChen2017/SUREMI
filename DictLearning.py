@@ -10,16 +10,19 @@ train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 
 train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
 train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
-train_dict["new_modality"] = "norm"
+train_dict["new_modality"] = "DL_32_1"
 train_dict["old_modality"] = "DL_32_1/"
 train_dict["cube_size"] = 32
 train_dict["file_cnt"] = 5
 cs = train_dict["cube_size"]
 
-if not os.path.exists(train_dict["folder_X"].replace(train_dict["old_modality"], train_dict["new_modality"])):
-    os.makedirs(train_dict["folder_X"].replace(train_dict["old_modality"], train_dict["new_modality"]))
-if not os.path.exists(train_dict["folder_Y"].replace(train_dict["old_modality"], train_dict["new_modality"])):
-    os.makedirs(train_dict["folder_Y"].replace(train_dict["old_modality"], train_dict["new_modality"]))
+new_folder_X = train_dict["folder_X"].replace(train_dict["old_modality"], train_dict["new_modality"])
+new_folder_Y = train_dict["folder_Y"].replace(train_dict["old_modality"], train_dict["new_modality"])
+
+if not os.path.exists(new_folder_X):
+    os.makedirs(new_folder_X)
+if not os.path.exists(new_folder_X):
+    os.makedirs(new_folder_X)
 
 X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
 Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
@@ -75,7 +78,7 @@ save_name_y = train_dict["folder_Y"].replace(train_dict["old_modality"], train_d
 
 np.save(save_name_x, array_x_cube)
 np.save(save_name_y, array_y_cube)
-print(train_dict["folder_X"]+train_dict["old_modality"]+"array_x_cube.npy")
+print(save_name_x, save_name_y)
 
 
 
