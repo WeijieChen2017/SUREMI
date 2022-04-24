@@ -102,16 +102,21 @@ for cnt_file, file_path in enumerate(CB_list):
 
     bx, by, bz = ds_x.shape
 
-    onehot_X = np.zeros((bx//ppp, by//ppp, bz//ppp))
-    onehot_Y = np.zeros((bx//ppp, by//ppp, bz//ppp))
+    onehot_X = np.zeros((bx//ppp*by//ppp*bz//ppp, ppp**3))
+    onehot_Y = np.zeros((bx//ppp*by//ppp*bz//ppp, ppp**3))
+    cnt_onehot = 0
 
     for ix in range(bx//ppp):
         for iy in range(by//ppp):
             for iz in range(bz//ppp):
                 patch_x = ds_x[ix*ppp:ix*ppp+ppp, iy*ppp:iy*ppp+ppp, iz*ppp:iz*ppp+ppp]
                 patch_y = ds_y[ix*ppp:ix*ppp+ppp, iy*ppp:iy*ppp+ppp, iz*ppp:iz*ppp+ppp]
-                onehot_X[ix, iy, iz] = MBK_X.predict(np.ravel(patch_x) / std_x)
-                onehot_Y[ix, iy, iz] = MBK_X.predict(np.ravel(patch_y) / std_y)
+                onehot_X[cnt_onehot, :] = np.ravel(patch_x) / std_x
+                onehot_Y[cnt_onehot, :] = np.ravel(patch_y) / std_y
+                cnt_onehot += 1
+
+    onehot_X = MBK_X.predict(onehot_X)
+    onehot_Y = MBK_X.predict(onehot_Y)
 
     onehot_X_array.append([x_path, onehot_X])
     onehot_Y_array.append([y_path, onehot_Y])
