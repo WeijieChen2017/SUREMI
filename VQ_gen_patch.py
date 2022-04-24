@@ -101,6 +101,9 @@ for cnt_file, file_path in enumerate(CB_list):
 
     print(az, cnt_patch)
 
+array_x_patch = array_x_patch[:cnt_patch]
+array_y_patch = array_y_patch[:cnt_patch]
+
     # ax, ay, az = x_data.shape
     # pad_x = int(np.ceil(ax/cs)*cs-ax) // 2
     # pad_y = int(np.ceil(ay/cs)*cs-ay) // 2
