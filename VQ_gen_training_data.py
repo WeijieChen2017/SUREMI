@@ -124,6 +124,6 @@ for cnt_file, file_path in enumerate(CB_list):
 save_name_x = new_folder_X+"onthot_x_cube_8x.npy"
 save_name_y = new_folder_Y+"onthot_y_cube_8x.npy"
 
-np.save(save_name_x, array_x_cube)
-np.save(save_name_y, array_y_cube)
+np.save(save_name_x, onehot_X_array)
+np.save(save_name_y, onehot_Y_array)
 print(save_name_x, save_name_y)
