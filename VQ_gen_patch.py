@@ -93,11 +93,11 @@ for cnt_file, file_path in enumerate(CB_list):
     for ix in range(bx//ppp):
         for iy in range(by//ppp):
             for iz in range(bz//ppp):
-            patch_x = ds_x[ix*ppp:ix*ppp+ppp, iy*ppp:iy*ppp+ppp, iz*ppp:iz*ppp+ppp]
-            patch_y = ds_y[ix*ppp:ix*ppp+ppp, iy*ppp:iy*ppp+ppp, iz*ppp:iz*ppp+ppp]
-            array_x_patch[cnt_patch, :] = np.ravel(patch_x)
-            array_y_patch[cnt_patch, :] = np.ravel(patch_y)
-            cnt_patch += 1
+                patch_x = ds_x[ix*ppp:ix*ppp+ppp, iy*ppp:iy*ppp+ppp, iz*ppp:iz*ppp+ppp]
+                patch_y = ds_y[ix*ppp:ix*ppp+ppp, iy*ppp:iy*ppp+ppp, iz*ppp:iz*ppp+ppp]
+                array_x_patch[cnt_patch, :] = np.ravel(patch_x)
+                array_y_patch[cnt_patch, :] = np.ravel(patch_y)
+                cnt_patch += 1
 
     print(cnt_patch)
 
