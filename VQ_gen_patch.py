@@ -31,8 +31,8 @@ new_folder_Y = train_dict["folder_Y"].replace(train_dict["old_modality"], train_
 
 if not os.path.exists(new_folder_X):
     os.makedirs(new_folder_X)
-if not os.path.exists(new_folder_X):
-    os.makedirs(new_folder_X)
+if not os.path.exists(new_folder_Y):
+    os.makedirs(new_folder_Y)
 
 X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
 Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
