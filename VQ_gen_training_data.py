@@ -57,14 +57,14 @@ new_folder_Y = train_dict["folder_Y"].replace(train_dict["old_modality"], train_
 # np.save("./data_dir/VQ3d_8x_data_division.npy", data_division_dict)
 # np.save("./data_dir/VQ3d_8x_train_dict.npy", train_dict)
 
-MBK_X = np.load("./data_dir/Iman_MR/VQ3d/MBK_x_cube_8x.npy", allow_pickle=True)
-MBK_Y = np.load("./data_dir/Iman_CT/VQ3d/MBK_y_cube_8x.npy", allow_pickle=True)
+MBK_X = np.load("./data_dir/Iman_MR/VQ3d/MBK_x_cube_8x.npy", allow_pickle=True).item()
+MBK_Y = np.load("./data_dir/Iman_CT/VQ3d/MBK_y_cube_8x.npy", allow_pickle=True).item()
 
-std_x = np.load("./data_dir/Iman_MR/VQ3d/std_x_cube_8x.npy", allow_pickle=True)
-std_y = np.load("./data_dir/Iman_CT/VQ3d/std_y_cube_8x.npy", allow_pickle=True)
+std_x = np.load("./data_dir/Iman_MR/VQ3d/std_x_cube_8x.npy", allow_pickle=True).item()
+std_y = np.load("./data_dir/Iman_CT/VQ3d/std_y_cube_8x.npy", allow_pickle=True).item()
 
-CB_list = np.load("./data_dir/VQ3d_8x_data_division.npy", allow_pickle=True)
-CB_list = CB_list.item()["train_list_X"]+CB_list.item()["val_list_X"]
+CB_list = np.load("./data_dir/VQ3d_8x_data_division.npy", allow_pickle=True).item()
+CB_list = CB_list["train_list_X"]+CB_list["val_list_X"]
 CB_list.sort()
 for path in CB_list:
     print(path)
