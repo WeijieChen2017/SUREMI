@@ -21,6 +21,8 @@ train_dict["cube_size"] = 32
 train_dict["downsample"] = 8
 train_dict["pixel_per_patch"] = train_dict["cube_size"] // train_dict["downsample"]
 train_dict["file_cnt"] = 5
+train_dict["val_ratio"] = 0.3
+train_dict["test_ratio"] = 0.2
 cs = train_dict["cube_size"]
 ppp = train_dict["pixel_per_patch"]
 
