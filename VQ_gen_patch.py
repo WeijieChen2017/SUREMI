@@ -14,11 +14,11 @@ train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
 train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
 train_dict["old_modality"] = "norm"
-train_dict["new_modality"] = "VQ_8x"
+train_dict["new_modality"] = "VQ"
 train_dict["seed"] = 426
 np.random.seed(train_dict["seed"])
 train_dict["cube_size"] = 32
-train_dict["downsample"] = 8
+train_dict["downsample"] = 4
 train_dict["pixel_per_patch"] = train_dict["cube_size"] // train_dict["downsample"]
 train_dict["file_cnt"] = 5
 train_dict["val_ratio"] = 0.3
@@ -52,7 +52,7 @@ data_division_dict = {
     "train_list_X" : train_list,
     "val_list_X" : val_list,
     "test_list_X" : test_list}
-np.save("./data_dir/"+"VQ_8x_data_division.npy", data_division_dict)
+np.save("./data_dir/"+"VQ_4x_data_division.npy", data_division_dict)
 
 CB_list = train_list+val_list
 CB_list.sort()
@@ -139,8 +139,8 @@ array_y_patch = array_y_patch[:cnt_patch]
 
 # print(mean_dist_X, mean_dist_Y)
 
-save_name_x = new_folder_X+"/array_x_patch.npy"
-save_name_y = new_folder_Y+"/array_y_patch.npy"
+save_name_x = new_folder_X+"/array_x_patch_4x.npy"
+save_name_y = new_folder_Y+"/array_y_patch_4x.npy"
 
 np.save(save_name_x, array_x_patch)
 np.save(save_name_y, array_y_patch)
