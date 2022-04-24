@@ -9,6 +9,7 @@ array_x_patch = np.load("./data_dir/Iman_MR/VQ_8x/array_x_patch.npy")
 array_y_patch = np.load("./data_dir/Iman_CT/VQ_8x/array_y_patch.npy")
 
 cnt_samples, cnt_feature = array_x_patch.shape
+print("cnt_samples", cnt_samples, "cnt_feature", cnt_feature)
 
 # whitening by features divided by the std
 
@@ -28,7 +29,8 @@ print(save_name_x, save_name_y)
 whitened_X = array_x_patch / std_x
 whitened_Y = array_y_patch / std_y
 
-print(array_x_patch[0, :], whitened_X[0, :])
+print(std_x, std_y)
+print(array_x_patch[cnt_samples//2, :], whitened_X[cnt_samples//2, :])
 
 MBK_X = MiniBatchKMeans(n_clusters=4096, random_state=426, batch_size=1024, verbose=1)
 MBK_Y = MiniBatchKMeans(n_clusters=4096, random_state=426, batch_size=1024, verbose=1)
