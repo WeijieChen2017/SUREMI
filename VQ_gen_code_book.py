@@ -6,7 +6,7 @@ def dist_l2(x, y):
     return np.sqrt(np.sum(np.square(x-y)))
 
 array_x_patch = np.load("./data_dir/Iman_MR/VQ_8x/array_x_patch.npy")
-array_y_patch = np.load("./data_dir/Iman_MR/VQ_8x/array_y_patch.npy")
+array_y_patch = np.load("./data_dir/Iman_CT/VQ_8x/array_y_patch.npy")
 
 cnt_samples, cnt_feature = array_x_patch.shape
 
