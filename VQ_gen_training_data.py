@@ -61,7 +61,7 @@ MBK_X = np.load("./data_dir/Iman_MR/VQ3d/MBK_x_cube_8x.npy", allow_pickle=True)
 MBK_Y = np.load("./data_dir/Iman_CT/VQ3d/MBK_y_cube_8x.npy", allow_pickle=True)
 
 std_x = np.load("./data_dir/Iman_MR/VQ3d/std_x_cube_8x.npy", allow_pickle=True)
-std_y = np.load("./data_dir/Iman_MR/VQ3d/std_y_cube_8x.npy", allow_pickle=True)
+std_y = np.load("./data_dir/Iman_CT/VQ3d/std_y_cube_8x.npy", allow_pickle=True)
 
 CB_list = np.load("./data_dir/VQ3d_8x_data_division.npy", allow_pickle=True)
 CB_list.sort()
