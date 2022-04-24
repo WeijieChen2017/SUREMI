@@ -52,7 +52,7 @@ data_division_dict = {
     "train_list_X" : train_list,
     "val_list_X" : val_list,
     "test_list_X" : test_list}
-np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
+np.save("./data_dir/"+"VQ_8x_data_division.npy", data_division_dict)
 
 CB_list = train_list+val_list
 CB_list.sort()
@@ -136,8 +136,8 @@ for cnt_file, file_path in enumerate(CB_list):
 
 # print(mean_dist_X, mean_dist_Y)
 
-save_name_x = train_dict["folder_X"].replace(train_dict["old_modality"], train_dict["new_modality"])+"/array_x_patch.npy"
-save_name_y = train_dict["folder_Y"].replace(train_dict["old_modality"], train_dict["new_modality"])+"/array_y_patch.npy"
+save_name_x = new_folder_X+"/array_x_patch.npy"
+save_name_y = new_folder_Y+"/array_y_patch.npy"
 
 np.save(save_name_x, array_x_patch)
 np.save(save_name_y, array_y_patch)
