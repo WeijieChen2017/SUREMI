@@ -104,8 +104,8 @@ for cnt_file, file_path in enumerate(CB_list):
 array_x_cube = array_x_cube[:cnt_patch]
 array_y_cube = array_y_cube[:cnt_patch]
 
-save_name_x = new_folder_X+"/array_x_cube_8x.npy"
-save_name_y = new_folder_Y+"/array_y_cube_8x.npy"
+save_name_x = new_folder_X+"array_x_cube_8x.npy"
+save_name_y = new_folder_Y+"array_y_cube_8x.npy"
 
 np.save(save_name_x, array_x_cube)
 np.save(save_name_y, array_y_cube)

@@ -5,8 +5,8 @@ from  sklearn.cluster import MiniBatchKMeans
 def dist_l2(x, y):
     return np.sqrt(np.sum(np.square(x-y)))
 
-array_x_patch = np.load("./data_dir/Iman_MR/VQ_8x/array_x_patch.npy")
-array_y_patch = np.load("./data_dir/Iman_CT/VQ_8x/array_y_patch.npy")
+array_x_patch = np.load("./data_dir/Iman_MR/VQ3d//array_x_cube_8x.npy")
+array_y_patch = np.load("./data_dir/Iman_CT/VQ3d//array_y_cube_8x.npy")
 
 cnt_samples, cnt_feature = array_x_patch.shape
 print("cnt_samples", cnt_samples, "cnt_feature", cnt_feature)
@@ -20,8 +20,8 @@ for idx in range(cnt_feature):
     std_x[idx] = np.std(array_x_patch[:, idx])
     std_y[idx] = np.std(array_y_patch[:, idx])
 
-save_name_x = "./data_dir/Iman_MR/VQ_8x/std_x_patch.npy"
-save_name_y = "./data_dir/Iman_CT/VQ_8x/std_y_patch.npy"
+save_name_x = "./data_dir/Iman_MR/VQ3d/std_x_cube_8x.npy"
+save_name_y = "./data_dir/Iman_CT/VQ3d/std_y_cube_8x.npy"
 np.save(save_name_x, std_x)
 np.save(save_name_y, std_y)
 print(save_name_x, save_name_y)
@@ -38,8 +38,8 @@ MBK_Y = MiniBatchKMeans(n_clusters=4096, random_state=426, batch_size=1024, verb
 MBK_X.fit(whitened_X)
 MBK_Y.fit(whitened_Y)
 
-save_name_x = "./data_dir/Iman_MR/VQ_8x/MBK_x_patch.npy"
-save_name_y = "./data_dir/Iman_CT/VQ_8x/MBK_y_patch.npy"
+save_name_x = "./data_dir/Iman_MR/VQ3d/MBK_x_cube_8x.npy"
+save_name_y = "./data_dir/Iman_CT/VQ3d/MBK_y_cube_8x.npy"
 np.save(save_name_x, MBK_X)
 np.save(save_name_y, MBK_Y)
 print(save_name_x, save_name_y)
