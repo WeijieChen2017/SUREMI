@@ -68,23 +68,15 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-print(train_dict["model_related"]["d_model"][0], 
-    train_dict["model_related"]["nhead"][0], 
-    train_dict["model_related"]["num_encoder_layers"][0], 
-    train_dict["model_related"]["num_decoder_layers"][0], 
-    train_dict["model_related"]["dim_feedforward"][0], 
-    train_dict["model_related"]["dropout"][0], 
-    train_dict["model_related"]["activation"][0])
-
 # Transformer
 model = Transformer(
     d_model=train_dict["model_related"]["d_model"][0], 
-    nhead=train_dict["model_related"]["nhead"], 
-    num_encoder_layers=train_dict["model_related"]["num_encoder_layers"], 
-    num_decoder_layers=train_dict["model_related"]["num_decoder_layers"], 
-    dim_feedforward=train_dict["model_related"]["dim_feedforward"], 
-    dropout=train_dict["model_related"]["dropout"], 
-    activation=train_dict["model_related"]["activation"], 
+    nhead=train_dict["model_related"]["nhead"][0], 
+    num_encoder_layers=train_dict["model_related"]["num_encoder_layers"][0], 
+    num_decoder_layers=train_dict["model_related"]["num_decoder_layers"][0], 
+    dim_feedforward=train_dict["model_related"]["dim_feedforward"][0], 
+    dropout=train_dict["model_related"]["dropout"][0], 
+    activation=train_dict["model_related"]["activation"][0], 
     custom_encoder=None, 
     custom_decoder=None, 
     layer_norm_eps=1e-05, 
