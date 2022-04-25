@@ -126,27 +126,6 @@ data_division_dict = {
     "filename_list_Y" : FILENAME_Y}
 np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 
-
-X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
-Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
-
-selected_list = np.asarray(X_list)
-np.random.shuffle(selected_list)
-selected_list = list(selected_list)
-
-val_list = selected_list[:int(len(selected_list)*train_dict["val_ratio"])]
-val_list.sort()
-test_list = selected_list[-int(len(selected_list)*train_dict["test_ratio"]):]
-test_list.sort()
-train_list = list(set(selected_list) - set(val_list) - set(test_list))
-train_list.sort()
-
-data_division_dict = {
-    "train_list_X" : train_list,
-    "val_list_X" : val_list,
-    "test_list_X" : test_list}
-np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
-
 # ==================== training ====================
 
 best_val_loss = 1e6
@@ -205,11 +184,11 @@ for idx_epoch_new in range(train_dict["epochs"]):
             
             if isVal:
                 with torch.no_grad():
-                    y_hat = model(batch_x)
+                    y_hat = model(batch_x, batch_y)
                     loss = criterion(y_hat, batch_y)
             if isTrain:
                 optimizer.zero_grad()
-                y_hat = model(batch_x)
+                y_hat = model(batch_x, batch_y)
                 loss = criterion(y_hat, batch_y)
                 loss.backward()
                 optimizer.step()
