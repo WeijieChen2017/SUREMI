@@ -212,6 +212,12 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 print("Checkpoint saved at Epoch {:03d}".format(idx_epoch + 1))
                 best_val_loss = np.mean(case_loss)
 
+                if not best_epoch == 0:
+                    os.system("rm "+train_dict["save_folder"]+"model_best_{:03d}.pth".format(best_epoch))
+                    os.system("rm "+train_dict["save_folder"]+"optim_{:03d}.pth".format(best_epoch))
+
+                best_epoch = idx_epoch + 1
+
         del batch_x, batch_y
         gc.collect()
         torch.cuda.empty_cache()
