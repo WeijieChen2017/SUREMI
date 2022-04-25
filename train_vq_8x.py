@@ -159,7 +159,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             
             x_path = FILENAME_X[idx_file]
             y_path = FILENAME_Y[idx_file]
-            file_name = os.path.basename(file_path)
+            file_name = os.path.basename(x_path)
             print(iter_tag + " ===> Epoch[{:03d}]->[{:03d}]/[{:03d}]: --->".format(
                 idx_epoch+1, 
                 cnt_file+1,
