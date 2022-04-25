@@ -164,8 +164,8 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 idx_epoch+1, 
                 cnt_file+1,
                 cnt_total_file), x_path, "<---", end="")
-            x_data = DATA_x[idx_file]
-            y_data = DATA_y[idx_file]
+            x_data = CODE_x[idx_file]
+            y_data = CODE_y[idx_file]
 
             # len, num_feature
             batch_x = np.zeros((len(x_data), 4096))
