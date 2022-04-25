@@ -68,7 +68,15 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-# UnetR
+print(train_dict["model_related"]["d_model"], 
+    train_dict["model_related"]["nhead"], 
+    train_dict["model_related"]["num_encoder_layers"], 
+    train_dict["model_related"]["num_decoder_layers"], 
+    train_dict["model_related"]["dim_feedforward"], 
+    train_dict["model_related"]["dropout"], 
+    train_dict["model_related"]["activation"])
+
+# Transformer
 model = Transformer(
     d_model=train_dict["model_related"]["d_model"], 
     nhead=train_dict["model_related"]["nhead"], 
