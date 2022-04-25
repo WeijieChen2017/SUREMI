@@ -45,7 +45,7 @@ train_dict["opt_weight_decay"] = 0.01 # default
 train_dict["amsgrad"] = False # default
 
 train_dict["model_related"] = {}
-train_dict["model_related"]["d_model"] = 4096, 
+train_dict["model_related"]["d_model"] = 4096+2, 
 train_dict["model_related"]["nhead"] = 8, 
 train_dict["model_related"]["num_encoder_layers"]=4, 
 train_dict["model_related"]["num_decoder_layers"]=4, 
@@ -168,12 +168,12 @@ for idx_epoch_new in range(train_dict["epochs"]):
             y_data = CODE_y[idx_file]
 
             # len, num_feature
-            batch_x = np.zeros((len(x_data), 4096))
-            batch_y = np.zeros((len(y_data), 4096))
+            batch_x = np.zeros((len(x_data), 4096+2))
+            batch_y = np.zeros((len(y_data), 4096+2))
             
             # # [CLS] [SEP]
-            # batch_x[0, 0], batch_x[-1, -1] = 1, 1
-            # batch_y[0, 0], batch_y[-1, -1] = 1, 1
+            batch_x[0, 0], batch_x[-1, -1] = 1, 1
+            batch_y[0, 0], batch_y[-1, -1] = 1, 1
 
             for idx_onehot in range(len(x_data)):
                 batch_x[idx_onehot, x_data[idx_onehot]+1] = 1
