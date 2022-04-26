@@ -145,8 +145,8 @@ criterion = nn.SmoothL1Loss()
 
 data_division_dict = np.load(train_dict["save_folder"]+"data_division.npy", allow_pickle=True).item()
 train_list = data_division_dict["train_list_X"]
-val_list_X = data_division_dict["val_list_X"]
-test_list_X = data_division_dict["test_list_X"]
+val_list = data_division_dict["val_list_X"]
+test_list = data_division_dict["test_list_X"]
 
 # ==================== training ====================
 
