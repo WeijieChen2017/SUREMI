@@ -26,7 +26,7 @@ train_dict["seed"] = 729
 # train_dict["output_channel"] = 30
 train_dict["input_size"] = [64, 64, 64]
 train_dict["gpu_ids"] = [3]
-train_dict["epochs"] = 100
+train_dict["epochs"] = 107
 train_dict["batch"] = 8
 train_dict["dropout"] = 0
 train_dict["model_term"] = "SwinUNETR"
@@ -73,19 +73,19 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # UnetR
-model = SwinUNETR(
-    img_size = train_dict["input_size"],
-    in_channels = 1,
-    out_channels = 1,
-    feature_size = 48,
-    depths = [2, 2, 2, 2], #default
-    num_heads = [3, 6, 12, 24], #default
-    norm_name = "instance", #default
-    drop_rate = 0.0, #default
-    attn_drop_rate = 0.0, #default
-    dropout_path_rate = 0.0, #default
-    use_checkpoint = False, #default
-    )
+# model = SwinUNETR(
+#     img_size = train_dict["input_size"],
+#     in_channels = 1,
+#     out_channels = 1,
+#     feature_size = 48,
+#     depths = [2, 2, 2, 2], #default
+#     num_heads = [3, 6, 12, 24], #default
+#     norm_name = "instance", #default
+#     drop_rate = 0.0, #default
+#     attn_drop_rate = 0.0, #default
+#     dropout_path_rate = 0.0, #default
+#     use_checkpoint = False, #default
+#     )
 
 # pretrain = torch.load("./pre_train/"+train_dict["pre_train"], map_location=torch.device('cpu'))
 # pretrain_state = pretrain["state_dict"]
@@ -104,47 +104,53 @@ model = SwinUNETR(
 #         new_model_state[model_key] = model.state_dict()[model_key]
 
 # model.load_state_dict(new_model_state)
-# model = torch.load(train_dict["save_folder"]+"model_best_086.pth", map_location=torch.device('cpu'))
+model = torch.load(train_dict["save_folder"]+"model_best_093.pth", map_location=torch.device('cpu'))
+optimizer = torch.load(train_dict["save_folder"]+"optim_093.pth")
 
 # model = nn.DataParallel(model)
 model.train()
 model = model.to(device)
 criterion = nn.SmoothL1Loss()
 
-optimizer = torch.optim.AdamW(
-    model.parameters(),
-    lr = train_dict["opt_lr"],
-    betas = train_dict["opt_betas"],
-    eps = train_dict["opt_eps"],
-    weight_decay = train_dict["opt_weight_decay"],
-    amsgrad = train_dict["amsgrad"]
-    )
+# optimizer = torch.optim.AdamW(
+#     model.parameters(),
+#     lr = train_dict["opt_lr"],
+#     betas = train_dict["opt_betas"],
+#     eps = train_dict["opt_eps"],
+#     weight_decay = train_dict["opt_weight_decay"],
+#     amsgrad = train_dict["amsgrad"]
+#     )
 
 # ==================== data division ====================
 
-X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
-Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
+# X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
+# Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
 
-selected_list = np.asarray(X_list)
-np.random.shuffle(selected_list)
-selected_list = list(selected_list)
+# selected_list = np.asarray(X_list)
+# np.random.shuffle(selected_list)
+# selected_list = list(selected_list)
 
-val_list = selected_list[:int(len(selected_list)*train_dict["val_ratio"])]
-val_list.sort()
-test_list = selected_list[-int(len(selected_list)*train_dict["test_ratio"]):]
-test_list.sort()
-train_list = list(set(selected_list) - set(val_list) - set(test_list))
-train_list.sort()
+# val_list = selected_list[:int(len(selected_list)*train_dict["val_ratio"])]
+# val_list.sort()
+# test_list = selected_list[-int(len(selected_list)*train_dict["test_ratio"]):]
+# test_list.sort()
+# train_list = list(set(selected_list) - set(val_list) - set(test_list))
+# train_list.sort()
 
-data_division_dict = {
-    "train_list_X" : train_list,
-    "val_list_X" : val_list,
-    "test_list_X" : test_list}
-np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
+# data_division_dict = {
+#     "train_list_X" : train_list,
+#     "val_list_X" : val_list,
+#     "test_list_X" : test_list}
+# np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
+
+data_division_dict = np.load(train_dict["save_folder"]+"data_division.npy", allow_pickle=True).item()
+train_list = data_division_dict["train_list_X"]
+val_list_X = data_division_dict["val_list_X"]
+test_list_X = data_division_dict["test_list_X"]
 
 # ==================== training ====================
 
-best_val_loss = 1e6
+best_val_loss = 0.0010033504832524223
 best_epoch = 0
 # wandb.watch(model)
 
@@ -245,6 +251,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             # torch.save(model, train_dict["save_folder"]+"model_.pth".format(idx_epoch + 1))
             if np.mean(case_loss) < best_val_loss:
                 # save the best model
+                best_epoch = idx_epoch + 1
                 torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch + 1))
                 torch.save(optimizer, train_dict["save_folder"]+"optim_{:03d}.pth".format(idx_epoch + 1))
                 print("Checkpoint saved at Epoch {:03d}".format(idx_epoch + 1))
