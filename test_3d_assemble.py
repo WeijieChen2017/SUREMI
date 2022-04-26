@@ -20,7 +20,7 @@ from model import SwinTransformer3D
 test_dict = {}
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-test_dict["project_name"] = "SwinUNETR_Iman_v1"
+test_dict["project_name"] = "UnetR_Iman_v1"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [7]
 test_dict["eval_step"] = [32, 32, 32] # <= input_size
@@ -53,7 +53,7 @@ model_list = sorted(glob.glob(os.path.join(test_dict["save_folder"], "model_best
 if "curr" in model_list[-1]:
     print("Remove model_best_curr")
     model_list.pop()
-target_model = test_dict["save_folder"]+"model_best_092.pth"
+target_model = test_dict["save_folder"]+"model_best_100.pth"
 model = torch.load(target_model, map_location=torch.device('cpu'))
 print("--->", target_model, " is loaded.")
 
