@@ -159,7 +159,7 @@ package_val = [val_list, False, True, "val"]
 # package_test = [test_list, False, False, "test"]
 
 for idx_epoch_new in range(train_dict["epochs"]):
-    idx_epoch = idx_epoch_new + 0
+    idx_epoch = idx_epoch_new + 93
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
     for package in [package_train, package_val]: # 
