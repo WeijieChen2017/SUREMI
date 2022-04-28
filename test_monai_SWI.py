@@ -88,7 +88,7 @@ for cnt_file, file_path in enumerate(file_list):
     x_path = file_path
     y_path = file_path.replace("MR", "CT")
     file_name = os.path.basename(file_path)
-    print(iter_tag + " ===> Case[{:03d}/{:03d}]: ".format(cnt_file+1, cnt_total_file), x_path, "<---") # , end=""
+    print(iter_tag + " ===> Case[{:03d}/{:03d}]: ".format(cnt_file+1, cnt_total_file), x_path, "<---", end="") # 
     x_file = nib.load(x_path)
     y_file = nib.load(y_path)
     x_data = x_file.get_fdata()
@@ -97,9 +97,11 @@ for cnt_file, file_path in enumerate(file_list):
     ax, ay, az = x_data.shape
     case_loss = 0
 
+    input_data = np.expand_dims(x_data, (0,1))
+
     with torch.no_grad():
         y_hat = sliding_window_inference(
-            inputs = torch.from_numpy(np.expand_dims(x_data, (0,1))).float().to(device), 
+            inputs = torch.from_numpy(input_data).float().to(device), 
             roi_size = [32, 32, 32], 
             sw_batch_size = 1, 
             predictor = model,
@@ -112,8 +114,11 @@ for cnt_file, file_path in enumerate(file_list):
             device=device
             )
 
+    output_data = y_hat.cpu().detach().numpy()
+    print(output_data.shape)
+
     # print(pad_y_hat.shape)
-    test_file = nib.Nifti1Image(y_hat.cpu().detach().numpy(), x_file.affine, x_file.header)
+    test_file = nib.Nifti1Image(, x_file.affine, x_file.header)
     test_save_name = train_dict["save_folder"]+"pred_monai/"+file_name
     nib.save(test_file, test_save_name)
 
