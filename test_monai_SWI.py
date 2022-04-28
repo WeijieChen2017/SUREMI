@@ -24,7 +24,6 @@ test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 test_dict["project_name"] = "SwinUNETR_Iman_v1"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [3]
-test_dict["input_size"] = [64, 64, 64] # <= input_size
 test_dict["eval_file_cnt"] = 0
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
@@ -75,15 +74,9 @@ if test_dict["eval_file_cnt"] > 0:
 file_list = X_list
 iter_tag = "test"
 cnt_total_file = len(file_list)
-total_loss = 0
-step_x, step_y, step_z = test_dict["eval_step"]
-ins_x, ins_y, ins_z = test_dict["input_size"]
 model.eval()
 
 cnt_each_cube = 1
-cnt_each_cube *= ins_x//step_x
-cnt_each_cube *= ins_y//step_y
-cnt_each_cube *= ins_z//step_z
 
 for cnt_file, file_path in enumerate(file_list):
     
