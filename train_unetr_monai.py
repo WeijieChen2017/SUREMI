@@ -19,15 +19,15 @@ from monai.networks.nets import UNETR
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "UnetR_Iman_v1"
+train_dict["project_name"] = "UnetR_Iman_v2"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
-train_dict["seed"] = 426
+train_dict["seed"] = 813
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
 train_dict["input_size"] = [64, 64, 64]
 train_dict["gpu_ids"] = [2]
 train_dict["epochs"] = 100
-train_dict["batch"] = 32
+train_dict["batch"] = 1
 train_dict["dropout"] = 0
 train_dict["model_term"] = "UNETR"
 
@@ -73,21 +73,21 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # UnetR
-# model = UNETR(
-#     in_channels=1,
-#     out_channels=1,
-#     img_size=train_dict["input_size"],
-#     feature_size = 32, #default=16
-#     hidden_size = 768, #default
-#     mlp_dim = 3072, #default
-#     num_heads = 24, #default=12
-#     pos_embed = "conv", #default
-#     norm_name = "instance", #default
-#     conv_block  = True, #default
-#     res_block = True, #default
-#     dropout_rate = 0.0, #default
-#     spatial_dims = 3 #default
-#     )
+model = UNETR(
+    in_channels=1,
+    out_channels=1,
+    img_size=train_dict["input_size"],
+    feature_size = 120, #default=16
+    hidden_size = 768, #default
+    mlp_dim = 4096, #default
+    num_heads = 32, #default=12
+    pos_embed = "conv", #default
+    norm_name = "instance", #default
+    conv_block  = True, #default
+    res_block = True, #default
+    dropout_rate = 0.0, #default
+    spatial_dims = 3 #default
+    )
 
 # pretrain = torch.load("./pre_train/"+train_dict["pre_train"], map_location=torch.device('cpu'))
 # pretrain_state = pretrain["state_dict"]
@@ -108,22 +108,22 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # model.load_state_dict(new_model_state)
 # model = torch.load(train_dict["save_folder"]+"model_best_086.pth", map_location=torch.device('cpu'))
 
-model = torch.load(train_dict["save_folder"]+"model_best_100.pth", map_location=torch.device('cpu'))
-optimizer = torch.load(train_dict["save_folder"]+"optim_100.pth")
+# model = torch.load(train_dict["save_folder"]+"model_best_100.pth", map_location=torch.device('cpu'))
+# optimizer = torch.load(train_dict["save_folder"]+"optim_100.pth")
 
 # model = nn.DataParallel(model)
 model.train()
 model = model.to(device)
 criterion = nn.SmoothL1Loss()
 
-# optimizer = torch.optim.AdamW(
-#     model.parameters(),
-#     lr = train_dict["opt_lr"],
-#     betas = train_dict["opt_betas"],
-#     eps = train_dict["opt_eps"],
-#     weight_decay = train_dict["opt_weight_decay"],
-#     amsgrad = train_dict["amsgrad"]
-#     )
+optimizer = torch.optim.AdamW(
+    model.parameters(),
+    lr = train_dict["opt_lr"],
+    betas = train_dict["opt_betas"],
+    eps = train_dict["opt_eps"],
+    weight_decay = train_dict["opt_weight_decay"],
+    amsgrad = train_dict["amsgrad"]
+    )
 
 # ==================== data division ====================
 
@@ -149,7 +149,7 @@ np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 
 # ==================== training ====================
 
-best_val_loss = 0.0012547990323086692
+best_val_loss = 1e6
 best_epoch = 0
 # wandb.watch(model)
 
