@@ -97,7 +97,7 @@ class WindowAttention(nn.Module):
 
         super().__init__()
         self.dim = dim
-        self.window_size = window_size  # Wd, Wh, Ww
+        self.window_size = to_3tuple(window_size)  # Wd, Wh, Ww
         self.num_heads = num_heads
         head_dim = dim // num_heads
         self.scale = qk_scale or head_dim ** -0.5
