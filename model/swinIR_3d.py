@@ -182,7 +182,7 @@ class SwinTransformerBlock(nn.Module):
         norm_layer (nn.Module, optional): Normalization layer.  Default: nn.LayerNorm
     """
 
-    def __init__(self, dim, num_heads, window_size=(2,7,7), shift_size=(0,0,0),
+    def __init__(self, dim, num_heads, window_size=(7,7,7), shift_size=(0,0,0),
                  mlp_ratio=4., qkv_bias=True, qk_scale=None, drop=0., attn_drop=0., drop_path=0.,
                  act_layer=nn.GELU, norm_layer=nn.LayerNorm, use_checkpoint=False):
         super().__init__()
@@ -513,12 +513,12 @@ class PatchEmbed(nn.Module):
         if D % self.patch_size[0] != 0:
             x = F.pad(x, (0, 0, 0, 0, 0, self.patch_size[0] - D % self.patch_size[0]))
 
-        x = self.proj(x)  # B C D Wh Ww
+        x = self.proj(x)  # B C Wd Wh Ww
         if self.norm is not None:
-            D, Wh, Ww = x.size(2), x.size(3), x.size(4)
+            Wd, Wh, Ww = x.size(2), x.size(3), x.size(4)
             x = x.flatten(2).transpose(1, 2)
             x = self.norm(x)
-            x = x.transpose(1, 2).view(-1, self.embed_dim, D, Wh, Ww)
+            x = x.transpose(1, 2).view(-1, self.embed_dim, Wd, Wh, Ww)
 
         return x
 
@@ -555,7 +555,7 @@ class PatchUnEmbed(nn.Module):
         self.embed_dim = embed_dim
 
     def forward(self, x, x_size):
-        B, HWD, C = x.shape
+        B, DHW, C = x.shape
         x = x.transpose(1, 2, 3).view(B, self.embed_dim, x_size[0], x_size[1], x_size[2])  # B Ph*Pw C
         return x
 
@@ -610,7 +610,7 @@ class UpsampleOneStep(nn.Sequential):
         return flops
 
 
-class SwinIR(nn.Module):
+class SwinIR3d(nn.Module):
     r""" SwinIR
         A PyTorch impl of : `SwinIR: Image Restoration Using Swin Transformer`, based on Swin Transformer.
 
@@ -663,7 +663,7 @@ class SwinIR(nn.Module):
         resi_connection='1conv',
         **kwargs
         ):
-        super(SwinIR, self).__init__()
+        super(SwinIR3d, self).__init__()
         num_in_ch = in_chans
         num_out_ch = in_chans
         num_feat = 64
@@ -809,7 +809,7 @@ class SwinIR(nn.Module):
         x = self.patch_embed(x)
         if self.ape:
             x = x + self.absolute_pos_embed
-        x = self.pos_drop(x)
+        x = self.pos_drop(x) # drop out
 
         for layer in self.layers:
             x = layer(x, x_size)
@@ -820,6 +820,7 @@ class SwinIR(nn.Module):
         return x
 
     def forward(self, x):
+        # B, C, D, H, W
         D, H, W = x.shape[2:]
         x = self.check_image_size(x)
         
@@ -853,7 +854,7 @@ class SwinIR(nn.Module):
 
         x = x / self.img_range + self.mean
 
-        return x[:, :, :H*self.upscale, :W*self.upscale, :D**self.upscale]
+        return x[:, :, :D*self.upscale, :H*self.upscale, :W**self.upscale]
 
     def flops(self):
         flops = 0
@@ -870,9 +871,10 @@ class SwinIR(nn.Module):
 if __name__ == '__main__':
     upscale = 4
     window_size = 8
-    height = (1024 // upscale // window_size + 1) * window_size
-    width = (720 // upscale // window_size + 1) * window_size
-    model = SwinIR(upscale=2, img_size=(height, width),
+    depth = (256 // upscale // window_size + 1) * window_size
+    height = (256 // upscale // window_size + 1) * window_size
+    width = (180 // upscale // window_size + 1) * window_size
+    model = SwinIR3d(upscale=2, img_size=(depth, height, width),
                    window_size=window_size, img_range=1., depths=[6, 6, 6, 6],
                    embed_dim=60, num_heads=[6, 6, 6, 6], mlp_ratio=2, upsampler='pixelshuffledirect')
     print(model)

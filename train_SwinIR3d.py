@@ -13,7 +13,7 @@ import torch
 import torchvision
 import requests
 
-from model import SwinIR
+from model import SwinIR3d
 
 # ==================== dict and config ====================
 
@@ -21,13 +21,13 @@ train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 train_dict["project_name"] = "SwinIR3d_Iman_v1"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
-train_dict["seed"] = 729
+train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
-train_dict["input_size"] = [32]
+train_dict["input_size"] = [64, 64, 64]
 train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 100
-train_dict["batch"] = 4
+train_dict["batch"] = 8
 train_dict["dropout"] = 0
 train_dict["model_term"] = "SwinIR3d"
 
@@ -44,6 +44,41 @@ train_dict["opt_betas"] = (0.9, 0.999) # default
 train_dict["opt_eps"] = 1e-8 # default
 train_dict["opt_weight_decay"] = 0.01 # default
 train_dict["amsgrad"] = False # default
+
+#SWIN-B
+# TYPE: swin
+# NAME: swin_base_patch4_window7_224
+# DROP_PATH_RATE: 0.5
+# SWIN:
+# EMBED_DIM: 128
+# DEPTHS: [ 2, 2, 18, 2 ]
+# NUM_HEADS: [ 4, 8, 16, 32 ]
+# WINDOW_SIZE: 7
+
+train_dict["model_related"] = {}
+train_dict["model_related"]["img_size"] = 64, 
+train_dict["model_related"]["patch_size"] = 1, 
+train_dict["model_related"]["in_chans"] = 1,
+train_dict["model_related"]["embed_dim"] = 128, 
+train_dict["model_related"]["depths"] = [ 2, 2, 18, 2 ],
+train_dict["model_related"]["num_heads"] = [ 4, 8, 16, 32 ],
+train_dict["model_related"]["window_size"] = 7, 
+train_dict["model_related"]["mlp_ratio"] = 4., 
+train_dict["model_related"]["qkv_bias"] = True, 
+train_dict["model_related"]["qk_scale"] = None,
+train_dict["model_related"]["drop_rate"] = 0., 
+train_dict["model_related"]["attn_drop_rate"] = 0., 
+train_dict["model_related"]["drop_path_rate"] = 0.1,
+train_dict["model_related"]["norm_layer"] = nn.LayerNorm, 
+train_dict["model_related"]["ape"] = False, 
+train_dict["model_related"]["patch_norm"] = True,
+train_dict["model_related"]["use_checkpoint"] = False, 
+train_dict["model_related"]["upscale"] = 1, 
+train_dict["model_related"]["img_range"] = 1., 
+train_dict["model_related"]["upsampler"] = '', 
+train_dict["model_related"]["resi_connection"] = '3conv',
+
+
 
 for path in [train_dict["save_folder"], train_dict["save_folder"]+"npy/", train_dict["save_folder"]+"loss/"]:
     if not os.path.exists(path):
@@ -72,29 +107,29 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-# UnetR
-model = SwinIR(
-    img_size=train_dict["input_size"], 
-    patch_size=1, 
-    in_chans=1,
-    embed_dim=96, 
-    depths=[6, 6, 6, 6], 
-    num_heads=[6, 6, 6, 6],
-    window_size=7, 
-    mlp_ratio=4., 
-    qkv_bias=True, 
-    qk_scale=None,
-    drop_rate=0., 
-    attn_drop_rate=0., 
-    drop_path_rate=0.1,
-    norm_layer=nn.LayerNorm, 
-    ape=False, 
-    patch_norm=True,
-    use_checkpoint=False, 
-    upscale=1, 
-    img_range=1., 
-    upsampler='', 
-    resi_connection='1conv',
+# SwinIR3d
+model = SwinIR3d(
+    img_size=train_dict["model_related"]["img_size"], 
+    patch_size=train_dict["model_related"]["patch_size"], 
+    in_chans=train_dict["model_related"]["in_chans"],
+    embed_dim=train_dict["model_related"]["embed_dim"], 
+    depths=train_dict["model_related"]["depths"], 
+    num_heads=train_dict["model_related"]["num_heads"],
+    window_size=train_dict["model_related"]["window_size"], 
+    mlp_ratio=train_dict["model_related"]["mlp_ratio"], 
+    qkv_bias=train_dict["model_related"]["qkv_bias"], 
+    qk_scale=train_dict["model_related"]["qk_scale"],
+    drop_rate=train_dict["model_related"]["drop_rate"], 
+    attn_drop_rate=train_dict["model_related"]["attn_drop_rate"], 
+    drop_path_rate=train_dict["model_related"]["drop_path_rate"],
+    norm_layer=train_dict["model_related"]["norm_layer"], 
+    ape=train_dict["model_related"]["ape"], 
+    patch_norm=train_dict["model_related"]["patch_norm"],
+    use_checkpoint=train_dict["model_related"]["use_checkpoint"], 
+    upscale=train_dict["model_related"]["upscale"], 
+    img_range=train_dict["model_related"]["img_range"], 
+    upsampler=train_dict["model_related"]["upsampler"], 
+    resi_connection=train_dict["model_related"]["resi_connection"],
     )
 
 # pretrain = torch.load("./pre_train/"+train_dict["pre_train"], map_location=torch.device('cpu'))
@@ -114,7 +149,8 @@ model = SwinIR(
 #         new_model_state[model_key] = model.state_dict()[model_key]
 
 # model.load_state_dict(new_model_state)
-# model = torch.load(train_dict["save_folder"]+"model_best_086.pth", map_location=torch.device('cpu'))
+# model = torch.load(train_dict["save_folder"]+"model_best_093.pth", map_location=torch.device('cpu'))
+# optimizer = torch.load(train_dict["save_folder"]+"optim_093.pth")
 
 # model = nn.DataParallel(model)
 model.train()
@@ -152,14 +188,19 @@ data_division_dict = {
     "test_list_X" : test_list}
 np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 
+# data_division_dict = np.load(train_dict["save_folder"]+"data_division.npy", allow_pickle=True).item()
+# train_list = data_division_dict["train_list_X"]
+# val_list = data_division_dict["val_list_X"]
+# test_list = data_division_dict["test_list_X"]
+
 # ==================== training ====================
 
 best_val_loss = 1e6
 best_epoch = 0
 # wandb.watch(model)
 
-package_train = [train_list[:5], True, False, "train"] #[:10]l
-package_val = [val_list[:5], False, True, "val"]
+package_train = [train_list, True, False, "train"] #[:10]l
+package_val = [val_list, False, True, "val"]
 # package_test = [test_list, False, False, "test"]
 
 for idx_epoch_new in range(train_dict["epochs"]):
@@ -255,6 +296,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             # torch.save(model, train_dict["save_folder"]+"model_.pth".format(idx_epoch + 1))
             if np.mean(case_loss) < best_val_loss:
                 # save the best model
+                best_epoch = idx_epoch + 1
                 torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch + 1))
                 torch.save(optimizer, train_dict["save_folder"]+"optim_{:03d}.pth".format(idx_epoch + 1))
                 print("Checkpoint saved at Epoch {:03d}".format(idx_epoch + 1))
