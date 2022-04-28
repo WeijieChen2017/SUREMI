@@ -510,6 +510,7 @@ class RSTB(nn.Module):
             norm_layer=None)
 
     def forward(self, x, x_size):
+        print("513", x.shape, x_size)
         return self.patch_embed(self.conv(self.patch_unembed(self.residual_group(x, x_size), x_size))) + x
 
     def flops(self):
