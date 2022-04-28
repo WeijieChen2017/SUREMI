@@ -56,7 +56,7 @@ train_dict["amsgrad"] = False # default
 # WINDOW_SIZE: 7
 
 train_dict["model_related"] = {}
-train_dict["model_related"]["img_size"] = 64, 
+train_dict["model_related"]["img_size"] = 32, 
 train_dict["model_related"]["patch_size"] = 1, 
 train_dict["model_related"]["in_chans"] = 1,
 train_dict["model_related"]["embed_dim"] = 64, 
