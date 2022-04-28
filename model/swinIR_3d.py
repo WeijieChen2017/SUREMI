@@ -42,7 +42,6 @@ def window_partition(x, window_size):
         windows: (B*num_windows, window_size*window_size*window_size, C)
     """
     B, D, H, W, C = x.shape
-    print(B, D, H, W, C, window_size)
     x = x.view(
         B, 
         D // window_size, window_size, 
@@ -268,6 +267,7 @@ class SwinTransformerBlock(nn.Module):
         return attn_mask
 
     def forward(self, x, x_size):
+        print(x.shape, x_size)
         D, H, W = x_size
         B, L, C = x.shape
         # assert L == D * H * W, "input feature has wrong size"
