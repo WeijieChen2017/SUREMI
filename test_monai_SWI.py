@@ -21,12 +21,11 @@ from monai.inferers import sliding_window_inference
 test_dict = {}
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-test_dict["project_name"] = "UnetR_Iman_v1"
+test_dict["project_name"] = "SwinIR3d_Iman_v1"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
-test_dict["gpu_ids"] = [7]
+test_dict["gpu_ids"] = [5]
 test_dict["eval_step"] = [32, 32, 32] # <= input_size
-test_dict["eval_file_cnt"] = 1
-test_dict["fusion_method"] = "median" # sum or median
+test_dict["eval_file_cnt"] = 5
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
 print("input size:", train_dict["input_size"])
@@ -50,11 +49,11 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-model_list = sorted(glob.glob(os.path.join(test_dict["save_folder"], "model_best_*.pth")))
-if "curr" in model_list[-1]:
-    print("Remove model_best_curr")
-    model_list.pop()
-target_model = test_dict["save_folder"]+"model_best_100.pth"
+# model_list = sorted(glob.glob(os.path.join(test_dict["save_folder"], "model_best_*.pth")))
+# if "curr" in model_list[-1]:
+#     print("Remove model_best_curr")
+#     model_list.pop()
+target_model = test_dict["save_folder"]+"model_best_046.pth"
 model = torch.load(target_model, map_location=torch.device('cpu'))
 print("--->", target_model, " is loaded.")
 
