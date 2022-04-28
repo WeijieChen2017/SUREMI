@@ -24,10 +24,10 @@ train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
-train_dict["input_size"] = [32, 32, 32]
+train_dict["input_size"] = 64
 train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 100
-train_dict["batch"] = 2
+train_dict["batch"] = 1
 train_dict["dropout"] = 0
 train_dict["model_term"] = "SwinIR3d"
 
@@ -56,11 +56,11 @@ train_dict["amsgrad"] = False # default
 # WINDOW_SIZE: 7
 
 train_dict["model_related"] = {}
-train_dict["model_related"]["img_size"] = 32, 
+train_dict["model_related"]["img_size"] = train_dict["input_size"], 
 train_dict["model_related"]["patch_size"] = 1, 
 train_dict["model_related"]["in_chans"] = 1,
-train_dict["model_related"]["embed_dim"] = 32, 
-train_dict["model_related"]["depths"] = [ 4, 4, 4, 4 ],
+train_dict["model_related"]["embed_dim"] = 64, 
+train_dict["model_related"]["depths"] = [ 2, 2, 18, 2 ],
 train_dict["model_related"]["num_heads"] = [ 4, 8, 16, 32 ],
 train_dict["model_related"]["window_size"] = 8, 
 train_dict["model_related"]["mlp_ratio"] = 2., 
