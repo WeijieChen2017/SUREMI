@@ -17,4 +17,6 @@ from .complex_transformer.model import TransformerGenerationModel as ComplexTran
 from .complex_MLP.models import cMLP
 
 from .SwinUNETR import SwinUNETR
-from .swinIR_3d import SwinIR
+from .swinIR_3d import SwinIR3d
+
+from .transformer_pytorch import TransformerModel
