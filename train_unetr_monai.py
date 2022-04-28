@@ -78,7 +78,7 @@ model = UNETR(
     out_channels=1,
     img_size=train_dict["input_size"],
     feature_size = 240, #default=16
-    hidden_size = 2048, #default
+    hidden_size = 2400, #default
     mlp_dim = 4096, #default
     num_heads = 48, #default=12
     pos_embed = "conv", #default
