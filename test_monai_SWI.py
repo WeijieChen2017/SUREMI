@@ -88,7 +88,7 @@ for cnt_file, file_path in enumerate(file_list):
     x_path = file_path
     y_path = file_path.replace("MR", "CT")
     file_name = os.path.basename(file_path)
-    print(iter_tag + " ===> Case[{:03d}/{:03d}]: ".format(cnt_file+1, cnt_total_file), x_path, "<---", end="")
+    print(iter_tag + " ===> Case[{:03d}/{:03d}]: ".format(cnt_file+1, cnt_total_file), x_path, "<---") # , end=""
     x_file = nib.load(x_path)
     y_file = nib.load(y_path)
     x_data = x_file.get_fdata()
