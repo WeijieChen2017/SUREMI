@@ -19,15 +19,15 @@ from model import SwinUNETR
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "SwinUNETR_Iman_v1"
+train_dict["project_name"] = "SwinUNETR_Iman_v2"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
-train_dict["seed"] = 729
+train_dict["seed"] = 813
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
 train_dict["input_size"] = [64, 64, 64]
-train_dict["gpu_ids"] = [3]
-train_dict["epochs"] = 107
-train_dict["batch"] = 8
+train_dict["gpu_ids"] = [6]
+train_dict["epochs"] = 200
+train_dict["batch"] = 1
 train_dict["dropout"] = 0
 train_dict["model_term"] = "SwinUNETR"
 
@@ -72,20 +72,20 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-# UnetR
-# model = SwinUNETR(
-#     img_size = train_dict["input_size"],
-#     in_channels = 1,
-#     out_channels = 1,
-#     feature_size = 48,
-#     depths = [2, 2, 2, 2], #default
-#     num_heads = [3, 6, 12, 24], #default
-#     norm_name = "instance", #default
-#     drop_rate = 0.0, #default
-#     attn_drop_rate = 0.0, #default
-#     dropout_path_rate = 0.0, #default
-#     use_checkpoint = False, #default
-#     )
+UnetR
+model = SwinUNETR(
+    img_size = train_dict["input_size"],
+    in_channels = 1,
+    out_channels = 1,
+    feature_size = 48,
+    depths = [2, 2, 8, 2], #default
+    num_heads = [4, 8, 16, 24], #default
+    norm_name = "instance", #default
+    drop_rate = 0.0, #default
+    attn_drop_rate = 0.0, #default
+    dropout_path_rate = 0.0, #default
+    use_checkpoint = False, #default
+    )
 
 # pretrain = torch.load("./pre_train/"+train_dict["pre_train"], map_location=torch.device('cpu'))
 # pretrain_state = pretrain["state_dict"]
@@ -104,22 +104,22 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 #         new_model_state[model_key] = model.state_dict()[model_key]
 
 # model.load_state_dict(new_model_state)
-model = torch.load(train_dict["save_folder"]+"model_best_093.pth", map_location=torch.device('cpu'))
-optimizer = torch.load(train_dict["save_folder"]+"optim_093.pth")
+# model = torch.load(train_dict["save_folder"]+"model_best_093.pth", map_location=torch.device('cpu'))
+# optimizer = torch.load(train_dict["save_folder"]+"optim_093.pth")
 
 # model = nn.DataParallel(model)
 model.train()
 model = model.to(device)
 criterion = nn.SmoothL1Loss()
 
-# optimizer = torch.optim.AdamW(
-#     model.parameters(),
-#     lr = train_dict["opt_lr"],
-#     betas = train_dict["opt_betas"],
-#     eps = train_dict["opt_eps"],
-#     weight_decay = train_dict["opt_weight_decay"],
-#     amsgrad = train_dict["amsgrad"]
-#     )
+optimizer = torch.optim.AdamW(
+    model.parameters(),
+    lr = train_dict["opt_lr"],
+    betas = train_dict["opt_betas"],
+    eps = train_dict["opt_eps"],
+    weight_decay = train_dict["opt_weight_decay"],
+    amsgrad = train_dict["amsgrad"]
+    )
 
 # ==================== data division ====================
 
@@ -150,7 +150,7 @@ test_list = data_division_dict["test_list_X"]
 
 # ==================== training ====================
 
-best_val_loss = 0.0010033504832524223
+best_val_loss = 1e6
 best_epoch = 0
 # wandb.watch(model)
 
@@ -159,7 +159,7 @@ package_val = [val_list, False, True, "val"]
 # package_test = [test_list, False, False, "test"]
 
 for idx_epoch_new in range(train_dict["epochs"]):
-    idx_epoch = idx_epoch_new + 93
+    idx_epoch = idx_epoch_new + 0
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
     for package in [package_train, package_val]: # 
