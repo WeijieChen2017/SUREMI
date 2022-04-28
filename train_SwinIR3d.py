@@ -24,7 +24,7 @@ train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
-train_dict["input_size"] = 64
+train_dict["input_size"] = [64, 64, 64]
 train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 100
 train_dict["batch"] = 1
@@ -56,7 +56,7 @@ train_dict["amsgrad"] = False # default
 # WINDOW_SIZE: 7
 
 train_dict["model_related"] = {}
-train_dict["model_related"]["img_size"] = train_dict["input_size"], 
+train_dict["model_related"]["img_size"] = train_dict["input_size"][0], 
 train_dict["model_related"]["patch_size"] = 1, 
 train_dict["model_related"]["in_chans"] = 1,
 train_dict["model_related"]["embed_dim"] = 64, 
