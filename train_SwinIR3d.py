@@ -27,7 +27,7 @@ train_dict["seed"] = 426
 train_dict["input_size"] = [32, 32, 32]
 train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 100
-train_dict["batch"] = 8
+train_dict["batch"] = 2
 train_dict["dropout"] = 0
 train_dict["model_term"] = "SwinIR3d"
 
