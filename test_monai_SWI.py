@@ -97,23 +97,20 @@ for cnt_file, file_path in enumerate(file_list):
     ax, ay, az = x_data.shape
     case_loss = 0
 
-
-    swi = sliding_window_inference(
-        # inputs = x_data, 
-        roi_size = [ins_x, ins_y, ins_z], 
-        sw_batch_size = 1, 
-        # predictor = model,
-        overlap=0.25, 
-        mode="gaussian", 
-        sigma_scale=0.125, 
-        padding_mode="constant", 
-        cval=0.0, 
-        sw_device=device, 
-        device=device
-        )
-
     with torch.no_grad():
-        y_hat = inferer(inputs=torch.from_numpy(x_data).float().to(device), network=model)
+        y_hat = sliding_window_inference(
+            inputs = x_datatorch.from_numpy(x_data).float().to(device), 
+            roi_size = [ins_x, ins_y, ins_z], 
+            sw_batch_size = 1, 
+            predictor = model,
+            overlap=0.25, 
+            mode="gaussian", 
+            sigma_scale=0.125, 
+            padding_mode="constant", 
+            cval=0.0, 
+            sw_device=device, 
+            device=device
+            )
 
     # print(pad_y_hat.shape)
     test_file = nib.Nifti1Image(y_hat.cpu().detach().numpy(), x_file.affine, x_file.header)
