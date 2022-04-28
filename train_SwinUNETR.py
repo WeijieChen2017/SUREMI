@@ -72,7 +72,7 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-UnetR
+# SwinUNETR
 model = SwinUNETR(
     img_size = train_dict["input_size"],
     in_channels = 1,
