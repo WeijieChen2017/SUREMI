@@ -878,7 +878,6 @@ class SwinIR3d(nn.Module):
 
     def forward(self, x):
         # B, C, D, H, W
-        print(x.shape)
         D, H, W = x.shape[2:]
         x = self.check_image_size(x)
         
