@@ -59,8 +59,8 @@ train_dict["model_related"] = {}
 train_dict["model_related"]["img_size"] = 32, 
 train_dict["model_related"]["patch_size"] = 1, 
 train_dict["model_related"]["in_chans"] = 1,
-train_dict["model_related"]["embed_dim"] = 48, 
-train_dict["model_related"]["depths"] = [ 2, 2, 18, 2 ],
+train_dict["model_related"]["embed_dim"] = 32, 
+train_dict["model_related"]["depths"] = [ 4, 4, 4, 4 ],
 train_dict["model_related"]["num_heads"] = [ 4, 8, 16, 32 ],
 train_dict["model_related"]["window_size"] = 8, 
 train_dict["model_related"]["mlp_ratio"] = 2., 
@@ -79,7 +79,6 @@ train_dict["model_related"]["upsampler"] = '',
 train_dict["model_related"]["resi_connection"] = '3conv',
 
 # print(train_dict["model_related"])
-
 
 for path in [train_dict["save_folder"], train_dict["save_folder"]+"npy/", train_dict["save_folder"]+"loss/"]:
     if not os.path.exists(path):
