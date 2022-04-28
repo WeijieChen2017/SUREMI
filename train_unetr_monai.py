@@ -77,10 +77,10 @@ model = UNETR(
     in_channels=1,
     out_channels=1,
     img_size=train_dict["input_size"],
-    feature_size = 120, #default=16
-    hidden_size = 768, #default
+    feature_size = 240, #default=16
+    hidden_size = 2048, #default
     mlp_dim = 4096, #default
-    num_heads = 32, #default=12
+    num_heads = 48, #default=12
     pos_embed = "conv", #default
     norm_name = "instance", #default
     conv_block  = True, #default
