@@ -43,13 +43,22 @@ def window_partition(x, window_size):
     """
     B, D, H, W, C = x.shape
     print(B, D, H, W, C, window_size)
-    window_size = to_3tuple(window_size)
-    x = x.view(B, D // window_size[0], window_size[0], H // window_size[1], window_size[1], W // window_size[2], window_size[2], C)
-    windows = x.permute(0, 1, 3, 5, 2, 4, 6, 7).contiguous().view(-1, reduce(mul, window_size), C)
+    x = x.view(
+        B, 
+        D // window_size, window_size, 
+        H // window_size, window_size, 
+        W // window_size, window_size, 
+        C)
+    windows = x.permute(0, 1, 3, 5, 2, 4, 6, 7).contiguous().view(
+        -1, 
+        window_size, 
+        window_size, 
+        window_size, 
+        C)
     return windows
 
 
-def window_reverse(windows, window_size, B, D, H, W):
+def window_reverse(windows, window_size, D, H, W):
     """
     Args:
         windows: (B*num_windows, window_size, window_size, C)
@@ -59,12 +68,18 @@ def window_reverse(windows, window_size, B, D, H, W):
     Returns:
         x: (B, D, H, W, C)
     """
-    x = windows.view(B, D // window_size[0], H // window_size[1], W // window_size[2], window_size[0], window_size[1], window_size[2], -1)
+    B = int(windows.shape[0] / (D * H * W / window_size / window_size / window_size))
+    x = windows.view(
+        B, 
+        D // window_size, 
+        H // window_size, 
+        W // window_size, 
+        window_size, 
+        window_size, 
+        window_size,
+         -1)
     x = x.permute(0, 1, 4, 2, 5, 3, 6, 7).contiguous().view(B, D, H, W, -1)
     return x
-
-
-
 
 def get_window_size(x_size, window_size, shift_size=None):
     use_window_size = list(window_size)
