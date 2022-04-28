@@ -490,8 +490,8 @@ class PatchEmbed(nn.Module):
     """
     def __init__(self, img_size, patch_size=4, in_chans=3, embed_dim=96, norm_layer=None):
         super().__init__()
-        img_size = to_2tuple(img_size)
-        patch_size = to_2tuple(patch_size)
+        img_size = to_3tuple(img_size)
+        patch_size = to_3tuple(patch_size)
         patches_resolution = [img_size[0] // patch_size[0],
                               img_size[1] // patch_size[1],
                               img_size[2] // patch_size[2]]
