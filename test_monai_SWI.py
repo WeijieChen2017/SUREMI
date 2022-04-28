@@ -13,7 +13,7 @@ import torch
 import torchvision
 import requests
 
-from model import SwinTransformer3D
+# from model import SwinTransformer3D
 from monai.inferers import sliding_window_inference
 
 # ==================== dict and config ====================
@@ -21,7 +21,7 @@ from monai.inferers import sliding_window_inference
 test_dict = {}
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-test_dict["project_name"] = "SwinUNETR_Iman_v1"
+test_dict["project_name"] = "UnetR_Iman_v1"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [3]
 test_dict["eval_file_cnt"] = 0
@@ -52,7 +52,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # if "curr" in model_list[-1]:
 #     print("Remove model_best_curr")
 #     model_list.pop()
-target_model = test_dict["save_folder"]+"model_best_107.pth"
+target_model = test_dict["save_folder"]+"model_best_105.pth"
 model = torch.load(target_model, map_location=torch.device('cpu'))
 print("--->", target_model, " is loaded.")
 
