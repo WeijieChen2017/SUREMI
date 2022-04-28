@@ -118,7 +118,7 @@ for cnt_file, file_path in enumerate(file_list):
     print(output_data.shape)
 
     # print(pad_y_hat.shape)
-    test_file = nib.Nifti1Image(, x_file.affine, x_file.header)
+    test_file = nib.Nifti1Image(output_data, x_file.affine, x_file.header)
     test_save_name = train_dict["save_folder"]+"pred_monai/"+file_name
     nib.save(test_file, test_save_name)
 
