@@ -78,7 +78,7 @@ train_dict["model_related"]["img_range"] = 1.,
 train_dict["model_related"]["upsampler"] = '', 
 train_dict["model_related"]["resi_connection"] = '3conv',
 
-print(train_dict["model_related"])
+# print(train_dict["model_related"])
 
 
 for path in [train_dict["save_folder"], train_dict["save_folder"]+"npy/", train_dict["save_folder"]+"loss/"]:
