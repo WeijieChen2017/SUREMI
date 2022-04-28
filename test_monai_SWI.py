@@ -21,11 +21,11 @@ from monai.inferers import sliding_window_inference
 test_dict = {}
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-test_dict["project_name"] = "SwinIR3d_Iman_v1"
+test_dict["project_name"] = "SwinUNETR_Iman_v1"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [3]
-test_dict["eval_step"] = [32, 32, 32] # <= input_size
-test_dict["eval_file_cnt"] = 5
+test_dict["input_size"] = [64, 64, 64] # <= input_size
+test_dict["eval_file_cnt"] = 0
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
 print("input size:", train_dict["input_size"])
@@ -53,7 +53,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # if "curr" in model_list[-1]:
 #     print("Remove model_best_curr")
 #     model_list.pop()
-target_model = test_dict["save_folder"]+"model_best_046.pth"
+target_model = test_dict["save_folder"]+"model_best_107.pth"
 model = torch.load(target_model, map_location=torch.device('cpu'))
 print("--->", target_model, " is loaded.")
 
@@ -64,7 +64,9 @@ loss_func = nn.SmoothL1Loss()
 # ==================== data division ====================
 
 data_div = np.load(os.path.join(test_dict["save_folder"], "data_division.npy"), allow_pickle=True)[()]
-X_list = data_div['test_list_X'][:test_dict["eval_file_cnt"]]
+X_list = data_div['test_list_X']
+if test_dict["eval_file_cnt"] > 0:
+    X_list = X_list[:test_dict["eval_file_cnt"]]
 
 # ==================== Evaluating ====================
 
@@ -102,7 +104,7 @@ for cnt_file, file_path in enumerate(file_list):
     with torch.no_grad():
         y_hat = sliding_window_inference(
             inputs = torch.from_numpy(input_data).float().to(device), 
-            roi_size = [32, 32, 32], 
+            roi_size = test_dict["input_size"], 
             sw_batch_size = 1, 
             predictor = model,
             overlap=0.25, 
@@ -122,9 +124,9 @@ for cnt_file, file_path in enumerate(file_list):
     test_save_name = train_dict["save_folder"]+"pred_monai/"+file_name
     nib.save(test_file, test_save_name)
 
-total_loss /= cnt_total_file
-print("Total ", train_dict['loss_term'], total_loss)
-np.save(train_dict["save_folder"]+"pred_monai/", os.path.basename(model_list[-1])+"_total_loss.npy", total_loss)
+# total_loss /= cnt_total_file
+# print("Total ", train_dict['loss_term'], total_loss)
+# np.save(train_dict["save_folder"]+"pred_monai/", os.path.basename(model_list[-1])+"_total_loss.npy", total_loss)
 
 
 
