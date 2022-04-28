@@ -99,7 +99,7 @@ for cnt_file, file_path in enumerate(file_list):
 
     with torch.no_grad():
         y_hat = sliding_window_inference(
-            inputs = torch.from_numpy(np.expand_dims(x_data, 0)).float().to(device), 
+            inputs = torch.from_numpy(np.expand_dims(x_data, (0,1))).float().to(device), 
             roi_size = [32, 32, 32], 
             sw_batch_size = 1, 
             predictor = model,
