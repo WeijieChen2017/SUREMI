@@ -27,7 +27,7 @@ train_dict["seed"] = 426
 train_dict["input_size"] = [64, 64, 64]
 train_dict["gpu_ids"] = [4]
 train_dict["epochs"] = 200
-train_dict["batch"] = 16
+train_dict["batch"] = 64
 train_dict["dropout"] = 0
 train_dict["model_term"] = "Monai_Unet3d"
 
@@ -173,11 +173,11 @@ for idx_epoch_new in range(train_dict["epochs"]):
             y_data = y_file.get_fdata()
             x_data = x_data / np.amax(x_data)
 
+            batch_x = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
+            batch_y = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
+
             for idx_batch in range(train_dict["batch"]):
-
-                batch_x = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
-                batch_y = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
-
+                
                 d0_offset = np.random.randint(x_data.shape[0] - train_dict["input_size"][1])
                 d1_offset = np.random.randint(x_data.shape[1] - train_dict["input_size"][2])
                 d2_offset = np.random.randint(x_data.shape[2] - train_dict["input_size"][0])
