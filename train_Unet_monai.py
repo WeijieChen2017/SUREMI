@@ -19,26 +19,25 @@ from monai.networks.nets.unet import UNet as UNet
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Unet_Monai_Iman_equal"
+train_dict["project_name"] = "Unet_Monai_Iman_v1"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
-train_dict["input_size"] = [96, 96, 96]
-train_dict["gpu_ids"] = [7]
-train_dict["epochs"] = 100
+train_dict["input_size"] = [64, 64, 64]
+train_dict["gpu_ids"] = [4]
+train_dict["epochs"] = 200
 train_dict["batch"] = 16
 train_dict["dropout"] = 0
 train_dict["model_term"] = "Monai_Unet3d"
-train_dict["deconv_channels"] = 6
 
 train_dict["model_related"] = {}
 train_dict["model_related"]["spatial_dims"] = 3
 train_dict["model_related"]["in_channels"] = 1
 train_dict["model_related"]["out_channels"] = 1
-train_dict["model_related"]["channels"] = (128, 128, 128, 128)
+train_dict["model_related"]["channels"] = (64, 128, 256, 512)
 train_dict["model_related"]["strides"] = (2, 2, 2)
-train_dict["model_related"]["num_res_units"] = 3
+train_dict["model_related"]["num_res_units"] = 4
             
 
 
@@ -83,12 +82,14 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-model = UNet( spatial_dims=train_dict["model_related"]["spatial_dims"],
-            in_channels=train_dict["model_related"]["in_channels"],
-            out_channels=train_dict["model_related"]["out_channels"],
-            channels=train_dict["model_related"]["channels"],
-            strides=train_dict["model_related"]["strides"],
-            num_res_units=train_dict["model_related"]["num_res_units"])
+model = UNet( 
+    spatial_dims=train_dict["model_related"]["spatial_dims"],
+    in_channels=train_dict["model_related"]["in_channels"],
+    out_channels=train_dict["model_related"]["out_channels"],
+    channels=train_dict["model_related"]["channels"],
+    strides=train_dict["model_related"]["strides"],
+    num_res_units=train_dict["model_related"]["num_res_units"]
+    )
 
 # model = nn.DataParallel(model)
 model.train()
@@ -218,6 +219,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             if np.mean(case_loss) < best_val_loss:
                 # save the best model
                 torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch + 1))
+                torch.save(optimizer, train_dict["save_folder"]+"optim_{:03d}.pth".format(idx_epoch + 1))
                 print("Checkpoint saved at Epoch {:03d}".format(idx_epoch + 1))
                 best_val_loss = np.mean(case_loss)
 
