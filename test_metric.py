@@ -44,7 +44,7 @@ for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
     table_metric = np.zeros((cnt_file_CT, cnt_metric))
     
     for cnt_CT, path_CT in enumerate(list_CT_folder):
-        print(hub_CT_name[cnt_CT_folder]+" ===> [{:03d}]/[{:03d}]: --->".format(cnt_CT+1, path_CT), path_CT, "<---")
+        print(hub_CT_name[cnt_CT_folder]+" ===> [{:03d}]/[{:03d}]: --->".format(cnt_CT+1, cnt_file_CT), path_CT, "<---")
         filename = os.path.basename(path_CT)
         path_CT_GT = folder_CT_GT+filename
         file_CT = nib.load(path_CT)
