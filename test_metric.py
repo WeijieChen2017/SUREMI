@@ -49,10 +49,13 @@ def filter_data(data, range_min, range_max):
     return mask
 
 folder_CT_GT = "./data_dir/Iman_CT/norm/"
-hub_CT_name = ["SwinUNETR_S", "UnetR_S"]
+hub_CT_name = [
+	"Swin3d_32", 
+	# "UnetR_S"
+	]
 hub_CT_folder = [
-    "./project_dir/SwinUNETR_Iman_v1/pred_monai/",
-    "./project_dir/UnetR_Iman_v1/pred_monai/"
+    "./project_dir/SwinIR3d_Iman_v1/pred_monai/",
+    # "./project_dir/UnetR_Iman_v1/pred_monai/"
 ]
 
 hub_metric = ["rmse", "nrmse", "mae", "ssim", "psnr", "acutance", "dice_air", "dice_soft", "dice_bone"]

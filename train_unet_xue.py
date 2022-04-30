@@ -217,7 +217,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 loss.backward()
                 optimizer.step()
             case_loss[cnt_file] = loss.item()*1e6
-            print("Loss: ", case_loss[cnt_file])
+            print(" Loss: ", case_loss[cnt_file])
 
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
         print("  Loss: ", np.mean(case_loss))
@@ -228,7 +228,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_y.npy", batch_y.cpu().detach().numpy())
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_z.npy", y_hat.cpu().detach().numpy())
 
-            torch.save(model, train_dict["save_folder"]+"model_.pth".format(idx_epoch + 1))
+            # torch.save(model, train_dict["save_folder"]+"model_.pth".format(idx_epoch + 1))
             if np.mean(case_loss) < best_val_loss:
                 # save the best model
                 torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch + 1))
