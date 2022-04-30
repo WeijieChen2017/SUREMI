@@ -7,14 +7,24 @@ import nibabel as nib
 from scipy.ndimage import sobel
 from skimage.metrics import structural_similarity as ssim
 from skimage.metrics import peak_signal_noise_ratio as psnr
-from skimage.metrics import normalized_root_mse as nrmse
-from sklearn.metrics import mean_squared_error as rmse
-from sklearn.metrics import mean_absolute_error as mae
+# from skimage.metrics import normalized_root_mse as nrmse
+# from sklearn.metrics import mean_squared_error as rmse
+# from sklearn.metrics import mean_absolute_error as mae
 
 def denorm_CT(data):
     data *= 4000
     data -= 1024
     return data
+
+
+def rmse(x,y):
+	return np.sqrt(np.sum(np.square(x-y)))
+
+def nrmse(x,y):
+	return np.mean(rmse(x,y))
+
+def mae(x,y)
+	return np.mean(np.absolute(x-y))
 
 def acutance(x, y):
     return np.mean(np.absolute(sobel(data_x)))
