@@ -118,7 +118,7 @@ val_list = selected_list[:int(len(selected_list)*train_dict["val_ratio"])]
 val_list.sort()
 test_list = selected_list[-int(len(selected_list)*train_dict["test_ratio"]):]
 test_list.sort()
-train_list = list(set(selected_list) - set(val_list) - set(test_list))
+train_list = list(set(selected_list) - set(val_list)) # - set(test_list))
 train_list.sort()
 
 data_division_dict = {
