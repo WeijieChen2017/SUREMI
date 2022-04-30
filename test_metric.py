@@ -7,27 +7,46 @@ import nibabel as nib
 from scipy.ndimage import sobel
 from skimage.metrics import structural_similarity as ssim
 from skimage.metrics import peak_signal_noise_ratio as psnr
-# from skimage.metrics import normalized_root_mse as nrmse
-# from sklearn.metrics import mean_squared_error as rmse
-# from sklearn.metrics import mean_absolute_error as mae
+from sklearn.metrics import confusion_matrix
 
 def denorm_CT(data):
     data *= 4000
     data -= 1024
     return data
 
-
 def rmse(x,y):
-	return np.sqrt(np.sum(np.square(x-y)))
+    return np.sqrt(np.sum(np.square(x-y)))
 
 def nrmse(x,y):
-	return np.mean(rmse(x,y))
+    return np.mean(rmse(x,y))
 
 def mae(x,y):
-	return np.mean(np.absolute(x-y))
+    return np.mean(np.absolute(x-y))
 
 def acutance(x):
     return np.mean(np.absolute(sobel(data_x)))
+
+def dice_coe(x, y, tissue="air"):
+    if tissue == "air":
+        x_mask = filter_data(x, -2000, -500)
+        y_mask = filter_data(y, -2000, -500)
+    if tissue == "soft":
+        x_mask = filter_data(x, -500, 250)
+        y_mask = filter_data(y, -500, 250)
+    if tissue == "bone":
+        x_mask = filter_data(x, 250, 3000)
+        y_mask = filter_data(y, 250, 3000)
+    CM = confusion_matrix(np.ravel(x_mask), np.ravel(y_mask))
+    TN, FP, FN, TP = CM.ravel()
+    return 2*TP / (2*TP + FN + FP)
+
+def filter_data(data, range_min, range_max):
+    mask_1 = data < range_max
+    mask_2 = data > range_min
+    mask_1 = mask_1.astype(int)
+    mask_2 = mask_2.astype(int)
+    mask = mask_1 * mask_2
+    return mask
 
 folder_CT_GT = "./data_dir/Iman_CT/norm/"
 hub_CT_name = ["SwinUNETR_S", "UnetR_S"]
@@ -36,15 +55,7 @@ hub_CT_folder = [
     "./project_dir/UnetR_Iman_v1/pred_monai/"
 ]
 
-hub_metric = ["rmse", "nrmse", "mae", "ssim", "psnr", "acutance"]
-hub_metric_func = [
-    rmse,
-    nrmse,
-    mae,
-    ssim,
-    psnr,
-    acutance
-]
+hub_metric = ["rmse", "nrmse", "mae", "ssim", "psnr", "acutance", "dice_air", "dice_soft", "dice_bone"]
 
 for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
     list_CT_folder = sorted(glob.glob(CT_folder+"*.nii.gz"))
@@ -71,7 +82,10 @@ for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
         table_metric[cnt_CT, 3] = ssim(data_x, data_y, data_range=4000)
         table_metric[cnt_CT, 4] = psnr(data_x, data_y, data_range=4000)
         table_metric[cnt_CT, 5] = acutance(data_x)
+        table_metric[cnt_CT, 6] = dice_coe(x, y, tissue="air")
+        table_metric[cnt_CT, 7] = dice_coe(x, y, tissue="soft")
+        table_metric[cnt_CT, 8] = dice_coe(x, y, tissue="bone")
     
     save_name = hub_CT_name[cnt_CT_folder]+"_"+"_".join(hub_metric)+".npy"
+    print(save_name)
     np.save(save_name, table_metric)
-
