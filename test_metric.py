@@ -72,6 +72,6 @@ for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
         table_metric[cnt_CT, 4] = psnr(data_x, data_y, data_range=4000)
         table_metric[cnt_CT, 5] = acutance(data_x)
     
-    save_name = hub_CT_name[cnt_CT_folder]+"_"+"_".join(hub_metric_func)+".npy"
+    save_name = hub_CT_name[cnt_CT_folder]+"_"+"_".join(hub_metric)+".npy"
     np.save(save_name, table_metric)
 
