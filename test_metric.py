@@ -58,7 +58,7 @@ hub_CT_folder = [
 hub_metric = ["rmse", "nrmse", "mae", "ssim", "psnr", "acutance", "dice_air", "dice_soft", "dice_bone"]
 
 for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
-    list_CT_folder = sorted(glob.glob(CT_folder+"*.nii.gz"))[:5]
+    list_CT_folder = sorted(glob.glob(CT_folder+"*.nii.gz"))
     cnt_file_CT = len(list_CT_folder)
     cnt_metric = len(hub_metric)
     
@@ -86,6 +86,6 @@ for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
         table_metric[cnt_CT, 7] = dice_coe(data_x, data_y, tissue="soft")
         table_metric[cnt_CT, 8] = dice_coe(data_x, data_y, tissue="bone")
     
-    save_name = hub_CT_name[cnt_CT_folder]+"_"+"_".join(hub_metric)+".npy"
+    save_name = "./metric/"+hub_CT_name[cnt_CT_folder]+"_"+"_".join(hub_metric)+".npy"
     print(save_name)
     np.save(save_name, table_metric)
