@@ -35,7 +35,7 @@ train_dict["model_related"] = {}
 train_dict["model_related"]["spatial_dims"] = 3
 train_dict["model_related"]["in_channels"] = 1
 train_dict["model_related"]["out_channels"] = 1
-train_dict["model_related"]["channels"] = (32, 64, 128, 256)
+train_dict["model_related"]["channels"] = (64, 128, 256, 512)
 train_dict["model_related"]["strides"] = (2, 2, 2)
 train_dict["model_related"]["num_res_units"] = 4
             
@@ -173,8 +173,8 @@ for idx_epoch_new in range(train_dict["epochs"]):
             x_path = file_path
             y_path = file_path.replace("NAC", "CTAC")
             file_name = os.path.basename(file_path)
-            print(iter_tag + " ===> Epoch[{:03d}] <===".format(idx_epoch+1))
-            print(x_path, y_path)
+            print(iter_tag + " ===> Epoch[{:03d}] <===".format(idx_epoch+1), end="")
+            print(x_path, y_path, end="")
             x_file = nib.load(x_path)
             y_file = nib.load(y_path)
             x_data = x_file.get_fdata()
@@ -204,14 +204,17 @@ for idx_epoch_new in range(train_dict["epochs"]):
             batch_x = torch.from_numpy(batch_x).float().to(device)
             batch_y = torch.from_numpy(batch_y).float().to(device)
                 
-            optimizer.zero_grad()
-            y_hat = model(batch_x)
-            # print("Yhat size: ", y_hat.size())
-            loss = criterion(y_hat, batch_y)
+            if isVal:
+                with torch.no_grad():
+                    y_hat = model(batch_x)
+                    loss = criterion(y_hat, batch_y)
             if isTrain:
+                optimizer.zero_grad()
+                y_hat = model(batch_x)
+                loss = criterion(y_hat, batch_y)
                 loss.backward()
                 optimizer.step()
-            case_loss[cnt_file] = loss.item()
+            case_loss[cnt_file] = loss.item()*1e6
             print("Loss: ", case_loss[cnt_file])
 
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
