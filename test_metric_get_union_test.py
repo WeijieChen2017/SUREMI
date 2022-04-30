@@ -82,10 +82,10 @@ union_test_file = [
 ]
 
 for test_filename in union_test_file:
-    # for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
-    #     cmd = "cp "+CT_folder+test_filename+" ./metric/"+hub_CT_name[cnt_CT_folder]+"_"+test_filename
-    #     print(cmd)
-    #     os.system(cmd)
+    for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
+        cmd = "cp "+CT_folder+test_filename+" ./metric/"+hub_CT_name[cnt_CT_folder]+"_"+test_filename
+        print(cmd)
+        os.system(cmd)
     cmd = "cp "+folder_CT_GT+test_filename+" ./metric/GT_"+test_filename
     print(cmd)
     os.system(cmd)
