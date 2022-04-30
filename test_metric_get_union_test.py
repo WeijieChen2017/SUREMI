@@ -53,24 +53,24 @@ def filter_data(data, range_min, range_max):
 folder_MR_GT = "./data_dir/Iman_MR/norm/"
 folder_CT_GT = "./data_dir/Iman_CT/norm/"
 hub_CT_name = [
-    "Unet_S",
-    "Unet_L",
-    "UnetR_S",
+    # "Unet_S",
+    # "Unet_L",
+    # "UnetR_S",
 	"UnetR_L",
-    "SwinUnetR_S",
-    "SwinUnetR_L",
-    "SwinIR3d_S",
-    "SwinIR3d_L"
+    # "SwinUnetR_S",
+    # "SwinUnetR_L",
+    # "SwinIR3d_S",
+    # "SwinIR3d_L"
 	]
 hub_CT_folder = [
-    "./project_dir/Unet_Monai_Iman/pred_monai/",
-    "./project_dir/Unet_Monai_Iman_v1/pred_monai/",
-    "./project_dir/UnetR_Iman_v1/pred_monai/",
+    # "./project_dir/Unet_Monai_Iman/pred_monai/",
+    # "./project_dir/Unet_Monai_Iman_v1/pred_monai/",
+    # "./project_dir/UnetR_Iman_v1/pred_monai/",
     "./project_dir/UnetR_Iman_v2/pred_monai/",
-    "./project_dir/SwinUNETR_Iman_v1/pred_monai/",
-    "./project_dir/SwinUNETR_Iman_v2/pred_monai/",
-    "./project_dir/SwinIR3d_Iman_v1/pred_monai/",
-    "./project_dir/SwinIR3d_Iman_v2/pred_monai/",
+    # "./project_dir/SwinUNETR_Iman_v1/pred_monai/",
+    # "./project_dir/SwinUNETR_Iman_v2/pred_monai/",
+    # "./project_dir/SwinIR3d_Iman_v1/pred_monai/",
+    # "./project_dir/SwinIR3d_Iman_v2/pred_monai/",
 ]
 
 union_test_file = [
