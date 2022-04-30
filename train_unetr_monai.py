@@ -73,21 +73,21 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # UnetR
-model = UNETR(
-    in_channels=1,
-    out_channels=1,
-    img_size=train_dict["input_size"],
-    feature_size = 240, #default=16
-    hidden_size = 2400, #default
-    mlp_dim = 4096, #default
-    num_heads = 48, #default=12
-    pos_embed = "conv", #default
-    norm_name = "instance", #default
-    conv_block  = True, #default
-    res_block = True, #default
-    dropout_rate = 0.0, #default
-    spatial_dims = 3 #default
-    )
+# model = UNETR(
+#     in_channels=1,
+#     out_channels=1,
+#     img_size=train_dict["input_size"],
+#     feature_size = 240, #default=16
+#     hidden_size = 2400, #default
+#     mlp_dim = 4096, #default
+#     num_heads = 48, #default=12
+#     pos_embed = "conv", #default
+#     norm_name = "instance", #default
+#     conv_block  = True, #default
+#     res_block = True, #default
+#     dropout_rate = 0.0, #default
+#     spatial_dims = 3 #default
+#     )
 
 # pretrain = torch.load("./pre_train/"+train_dict["pre_train"], map_location=torch.device('cpu'))
 # pretrain_state = pretrain["state_dict"]
@@ -108,48 +108,53 @@ model = UNETR(
 # model.load_state_dict(new_model_state)
 # model = torch.load(train_dict["save_folder"]+"model_best_086.pth", map_location=torch.device('cpu'))
 
-# model = torch.load(train_dict["save_folder"]+"model_best_100.pth", map_location=torch.device('cpu'))
-# optimizer = torch.load(train_dict["save_folder"]+"optim_100.pth")
+model = torch.load(train_dict["save_folder"]+"model_best_97.pth", map_location=torch.device('cpu'))
+optimizer = torch.load(train_dict["save_folder"]+"optim_97.pth")
 
 # model = nn.DataParallel(model)
 model.train()
 model = model.to(device)
 criterion = nn.SmoothL1Loss()
 
-optimizer = torch.optim.AdamW(
-    model.parameters(),
-    lr = train_dict["opt_lr"],
-    betas = train_dict["opt_betas"],
-    eps = train_dict["opt_eps"],
-    weight_decay = train_dict["opt_weight_decay"],
-    amsgrad = train_dict["amsgrad"]
-    )
+# optimizer = torch.optim.AdamW(
+#     model.parameters(),
+#     lr = train_dict["opt_lr"],
+#     betas = train_dict["opt_betas"],
+#     eps = train_dict["opt_eps"],
+#     weight_decay = train_dict["opt_weight_decay"],
+#     amsgrad = train_dict["amsgrad"]
+#     )
 
 # ==================== data division ====================
 
-X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
-Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
+# X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
+# Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
 
-selected_list = np.asarray(X_list)
-np.random.shuffle(selected_list)
-selected_list = list(selected_list)
+# selected_list = np.asarray(X_list)
+# np.random.shuffle(selected_list)
+# selected_list = list(selected_list)
 
-val_list = selected_list[:int(len(selected_list)*train_dict["val_ratio"])]
-val_list.sort()
-test_list = selected_list[-int(len(selected_list)*train_dict["test_ratio"]):]
-test_list.sort()
-train_list = list(set(selected_list) - set(val_list) - set(test_list))
-train_list.sort()
+# val_list = selected_list[:int(len(selected_list)*train_dict["val_ratio"])]
+# val_list.sort()
+# test_list = selected_list[-int(len(selected_list)*train_dict["test_ratio"]):]
+# test_list.sort()
+# train_list = list(set(selected_list) - set(val_list) - set(test_list))
+# train_list.sort()
 
-data_division_dict = {
-    "train_list_X" : train_list,
-    "val_list_X" : val_list,
-    "test_list_X" : test_list}
-np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
+# data_division_dict = {
+#     "train_list_X" : train_list,
+#     "val_list_X" : val_list,
+#     "test_list_X" : test_list}
+# np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
+
+data_division_dict = np.load(train_dict["save_folder"]+"data_division.npy", allow_pickle=True).item()
+train_list = data_division_dict["train_list_X"]
+val_list = data_division_dict["val_list_X"]
+test_list = data_division_dict["test_list_X"]
 
 # ==================== training ====================
 
-best_val_loss = 1e6
+best_val_loss = 0.0018033715778717188
 best_epoch = 0
 # wandb.watch(model)
 
@@ -158,7 +163,7 @@ package_val = [val_list, False, True, "val"]
 # package_test = [test_list, False, False, "test"]
 
 for idx_epoch_new in range(train_dict["epochs"]):
-    idx_epoch = idx_epoch_new + 0
+    idx_epoch = idx_epoch_new + 100
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
     for package in [package_train, package_val]: # 
