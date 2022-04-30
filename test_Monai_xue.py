@@ -52,7 +52,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # if "curr" in model_list[-1]:
 #     print("Remove model_best_curr")
 #     model_list.pop()
-target_model = test_dict["save_folder"]+"model_best_226.pth"
+target_model = test_dict["save_folder"]+"model_best_280.pth"
 model = torch.load(target_model, map_location=torch.device('cpu'))
 print("--->", target_model, " is loaded.")
 
@@ -71,7 +71,10 @@ loss_func = nn.SmoothL1Loss()
 
 # wandb.watch(model)
 
-file_list = sorted(glob.glob("/data_dir/xue/NAC_test/*.nii"))
+file_list = sorted(glob.glob("./data_dir/xue/NAC_test/*.nii"))
+print("Pred list")
+for file_path in file_list:
+    print(file_path)
 iter_tag = "test"
 cnt_total_file = len(file_list)
 model.eval()
