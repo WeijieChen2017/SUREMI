@@ -25,8 +25,8 @@ train_dict["seed"] = 813
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
 train_dict["input_size"] = [64, 64, 32]
-train_dict["gpu_ids"] = [6]
-train_dict["epochs"] = 350
+train_dict["gpu_ids"] = [1]
+train_dict["epochs"] = 100
 train_dict["batch"] = 64
 train_dict["dropout"] = 0
 train_dict["model_term"] = "Monai_Unet3d"
@@ -40,9 +40,11 @@ train_dict["model_related"]["strides"] = (2, 2, 2)
 train_dict["model_related"]["num_res_units"] = 4
             
 
+train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
+train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
 
-train_dict["folder_X"] = "./data_dir/xue/NAC/"
-train_dict["folder_Y"] = "./data_dir/xue/CTAC/"
+# train_dict["folder_X"] = "./data_dir/xue/NAC/"
+# train_dict["folder_Y"] = "./data_dir/xue/CTAC/"
 # train_dict["pre_train"] = "swin_base_patch244_window1677_kinetics400_22k.pth"
 train_dict["val_ratio"] = 0.3
 train_dict["test_ratio"] = 0.0
@@ -107,8 +109,8 @@ optimizer = torch.optim.AdamW(
 
 # ==================== data division ====================
 
-X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii"))
-Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii"))
+X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
+Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
 
 selected_list = np.asarray(X_list)
 np.random.shuffle(selected_list)
