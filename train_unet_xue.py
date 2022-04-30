@@ -40,18 +40,18 @@ train_dict["model_related"]["strides"] = (2, 2, 2)
 train_dict["model_related"]["num_res_units"] = 4
             
 
-train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
-train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
+# train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
+# train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
 
-# train_dict["folder_X"] = "./data_dir/xue/NAC/"
-# train_dict["folder_Y"] = "./data_dir/xue/CTAC/"
+train_dict["folder_X"] = "./data_dir/xue/NAC/"
+?# train_dict["folder_Y"] = "./data_dir/xue/CTAC/"
 # train_dict["pre_train"] = "swin_base_patch244_window1677_kinetics400_22k.pth"
 train_dict["val_ratio"] = 0.3
 train_dict["test_ratio"] = 0.0
 
 train_dict["loss_term"] = "SmoothL1Loss"
 train_dict["optimizer"] = "AdamW"
-train_dict["opt_lr"] = 1e-3 # default
+train_dict["opt_lr"] = 1e-4 # default
 train_dict["opt_betas"] = (0.9, 0.999) # default
 train_dict["opt_eps"] = 1e-8 # default
 train_dict["opt_weight_decay"] = 0.01 # default
@@ -84,16 +84,17 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-model = UNet( 
-    spatial_dims=train_dict["model_related"]["spatial_dims"],
-    in_channels=train_dict["model_related"]["in_channels"],
-    out_channels=train_dict["model_related"]["out_channels"],
-    channels=train_dict["model_related"]["channels"],
-    strides=train_dict["model_related"]["strides"],
-    num_res_units=train_dict["model_related"]["num_res_units"]
-    )
+# model = UNet( 
+#     spatial_dims=train_dict["model_related"]["spatial_dims"],
+#     in_channels=train_dict["model_related"]["in_channels"],
+#     out_channels=train_dict["model_related"]["out_channels"],
+#     channels=train_dict["model_related"]["channels"],
+#     strides=train_dict["model_related"]["strides"],
+#     num_res_units=train_dict["model_related"]["num_res_units"]
+#     )
 
 # model = nn.DataParallel(model)
+model = torch.load(train_dict["save_folder"]+"model_best_050.pth", map_location=torch.device('cpu'))
 model.train()
 model = model.to(device)
 criterion = nn.SmoothL1Loss()
@@ -109,25 +110,30 @@ optimizer = torch.optim.AdamW(
 
 # ==================== data division ====================
 
-X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
-Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
+# X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
+# Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
 
-selected_list = np.asarray(X_list)
-np.random.shuffle(selected_list)
-selected_list = list(selected_list)
+# selected_list = np.asarray(X_list)
+# np.random.shuffle(selected_list)
+# selected_list = list(selected_list)
 
-val_list = selected_list[:int(len(selected_list)*train_dict["val_ratio"])]
-val_list.sort()
-test_list = selected_list[-int(len(selected_list)*train_dict["test_ratio"]):]
-test_list.sort()
-train_list = list(set(selected_list) - set(val_list)) # - set(test_list))
-train_list.sort()
+# val_list = selected_list[:int(len(selected_list)*train_dict["val_ratio"])]
+# val_list.sort()
+# test_list = selected_list[-int(len(selected_list)*train_dict["test_ratio"]):]
+# test_list.sort()
+# train_list = list(set(selected_list) - set(val_list)) # - set(test_list))
+# train_list.sort()
 
-data_division_dict = {
-    "train_list_X" : train_list,
-    "val_list_X" : val_list,
-    "test_list_X" : test_list}
-np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
+# data_division_dict = {
+#     "train_list_X" : train_list,
+#     "val_list_X" : val_list,
+#     "test_list_X" : test_list}
+# np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
+
+data_division_dict = np.load(train_dict["save_folder"]+"data_division.npy", allow_pickle=True).item()
+train_list = data_division_dict["train_list_X"]
+val_list = data_division_dict["val_list_X"]
+# test_list = data_division_dict["test_list_X"]
 
 print("Train list")
 for path in train_list:
