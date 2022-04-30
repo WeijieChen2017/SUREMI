@@ -110,8 +110,8 @@ optimizer = torch.optim.AdamW(
 
 # ==================== data division ====================
 
-X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
-Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
+X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii"))
+Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii"))
 
 selected_list = np.asarray(X_list)
 np.random.shuffle(selected_list)
