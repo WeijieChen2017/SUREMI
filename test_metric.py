@@ -23,7 +23,7 @@ def rmse(x,y):
 def nrmse(x,y):
 	return np.mean(rmse(x,y))
 
-def mae(x,y)
+def mae(x,y):
 	return np.mean(np.absolute(x-y))
 
 def acutance(x, y):
