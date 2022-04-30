@@ -185,9 +185,9 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
             for idx_batch in range(train_dict["batch"]):
                 
-                d0_offset = np.random.randint(x_data.shape[0] - train_dict["input_size"][1])
-                d1_offset = np.random.randint(x_data.shape[1] - train_dict["input_size"][2])
-                d2_offset = np.random.randint(x_data.shape[2] - train_dict["input_size"][0])
+                d0_offset = np.random.randint(x_data.shape[0] - train_dict["input_size"][0])
+                d1_offset = np.random.randint(x_data.shape[1] - train_dict["input_size"][1])
+                d2_offset = np.random.randint(x_data.shape[2] - train_dict["input_size"][2])
 
                 x_slice = x_data[d0_offset:d0_offset+train_dict["input_size"][0],
                                  d1_offset:d1_offset+train_dict["input_size"][1],
