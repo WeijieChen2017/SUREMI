@@ -50,10 +50,10 @@ def filter_data(data, range_min, range_max):
 
 folder_CT_GT = "./data_dir/Iman_CT/norm/"
 hub_CT_name = [
-	"Swin3d_64"
+	"SwinUnetR_L"
 	]
 hub_CT_folder = [
-    "./project_dir/SwinIR3d_Iman_v2/pred_monai/"
+    "./project_dir/SwinUNETR_Iman_v2/pred_monai/"
 ]
 
 hub_metric = ["rmse", "nrmse", "mae", "ssim", "psnr", "acutance", "dice_air", "dice_soft", "dice_bone"]
