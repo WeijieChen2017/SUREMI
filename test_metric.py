@@ -26,7 +26,7 @@ def nrmse(x,y):
 def mae(x,y):
 	return np.mean(np.absolute(x-y))
 
-def acutance(x, y):
+def acutance(x):
     return np.mean(np.absolute(sobel(data_x)))
 
 folder_CT_GT = "./data_dir/Iman_CT/norm/"
