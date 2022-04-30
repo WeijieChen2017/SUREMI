@@ -73,8 +73,8 @@ for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
         data_CT = file_CT.get_fdata()
         data_CT_GT = file_CT_GT.get_fdata()
         
-        data_x = data_CT
-        data_y = data_CT_GT
+        data_x = denorm_CT(data_CT)
+        data_y = denorm_CT(data_CT_GT)
         
         table_metric[cnt_CT, 0] = rmse(data_x, data_y)
         table_metric[cnt_CT, 1] = nrmse(data_x, data_y)
