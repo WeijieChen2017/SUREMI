@@ -52,7 +52,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # if "curr" in model_list[-1]:
 #     print("Remove model_best_curr")
 #     model_list.pop()
-target_model = test_dict["save_folder"]+"model_best_105.pth"
+target_model = test_dict["save_folder"]+"model_best_151.pth"
 model = torch.load(target_model, map_location=torch.device('cpu'))
 print("--->", target_model, " is loaded.")
 
