@@ -108,8 +108,8 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # model.load_state_dict(new_model_state)
 # model = torch.load(train_dict["save_folder"]+"model_best_086.pth", map_location=torch.device('cpu'))
 
-model = torch.load(train_dict["save_folder"]+"model_best_97.pth", map_location=torch.device('cpu'))
-optimizer = torch.load(train_dict["save_folder"]+"optim_97.pth")
+model = torch.load(train_dict["save_folder"]+"model_best_097.pth", map_location=torch.device('cpu'))
+optimizer = torch.load(train_dict["save_folder"]+"optim_097.pth")
 
 # model = nn.DataParallel(model)
 model.train()
