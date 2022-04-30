@@ -8,6 +8,7 @@ from scipy.ndimage import sobel
 from skimage.metrics import structural_similarity as ssim
 from skimage.metrics import peak_signal_noise_ratio as psnr
 from sklearn.metrics import confusion_matrix
+from skimage.metrics import mean_squared_error
 
 def denorm_CT(data):
     data *= 4000
@@ -92,7 +93,7 @@ for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
         data_x = denorm_CT(data_CT)
         data_y = denorm_CT(data_CT_GT)
         
-        table_metric[cnt_CT, 0] = rmse(data_x, data_y)
+        table_metric[cnt_CT, 0] = mean_squared_error(data_x, data_y)
         # table_metric[cnt_CT, 1] = nrmse(data_x, data_y)
         # table_metric[cnt_CT, 2] = mae(data_x, data_y)
         # table_metric[cnt_CT, 3] = ssim(data_x, data_y, data_range=4000)
