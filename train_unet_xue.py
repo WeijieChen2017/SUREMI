@@ -27,7 +27,7 @@ train_dict["seed"] = 813
 train_dict["input_size"] = [64, 64, 32]
 train_dict["gpu_ids"] = [6]
 train_dict["epochs"] = 350
-train_dict["batch"] = 32
+train_dict["batch"] = 64
 train_dict["dropout"] = 0
 train_dict["model_term"] = "Monai_Unet3d"
 
@@ -173,7 +173,8 @@ for idx_epoch_new in range(train_dict["epochs"]):
             x_path = file_path
             y_path = file_path.replace("NAC", "CTAC")
             file_name = os.path.basename(file_path)
-            print(iter_tag + " ===> Epoch[{:03d}]: --->".format(idx_epoch+1), x_path, "<---", end="")
+            print(iter_tag + " ===> Epoch[{:03d}] <===".format(idx_epoch+1))
+            print(x_path, y_path)
             x_file = nib.load(x_path)
             y_file = nib.load(y_path)
             x_data = x_file.get_fdata()
