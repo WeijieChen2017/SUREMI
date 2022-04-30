@@ -127,6 +127,14 @@ data_division_dict = {
     "test_list_X" : test_list}
 np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 
+print("Train list")
+for path in train_list:
+    print(path)
+
+print("Val list")
+for path in val_list:
+    print(path)
+
 # ==================== training ====================
 
 best_val_loss = 1e6
@@ -222,6 +230,6 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 print("Checkpoint saved at Epoch {:03d}".format(idx_epoch + 1))
                 best_val_loss = np.mean(case_loss)
 
-        del batch_x, batch_y
-        gc.collect()
-        torch.cuda.empty_cache()
+        # del batch_x, batch_y
+        # gc.collect()
+        # torch.cuda.empty_cache()
