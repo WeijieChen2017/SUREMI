@@ -26,7 +26,7 @@ train_dict["seed"] = 813
 # train_dict["output_channel"] = 30
 train_dict["input_size"] = [64, 64, 32]
 train_dict["gpu_ids"] = [1]
-train_dict["epochs"] = 100
+train_dict["epochs"] = 150
 train_dict["batch"] = 64
 train_dict["dropout"] = 0
 train_dict["model_term"] = "Monai_Unet3d"
@@ -51,7 +51,7 @@ train_dict["test_ratio"] = 0.0
 
 train_dict["loss_term"] = "SmoothL1Loss"
 train_dict["optimizer"] = "AdamW"
-train_dict["opt_lr"] = 1e-4 # default
+train_dict["opt_lr"] = 1e-5 # default
 train_dict["opt_betas"] = (0.9, 0.999) # default
 train_dict["opt_eps"] = 1e-8 # default
 train_dict["opt_weight_decay"] = 0.01 # default
@@ -241,6 +241,12 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 torch.save(optimizer, train_dict["save_folder"]+"optim_{:03d}.pth".format(idx_epoch + 1))
                 print("Checkpoint saved at Epoch {:03d}".format(idx_epoch + 1))
                 best_val_loss = np.mean(case_loss)
+
+                if not best_epoch == 0:
+                    os.system("rm "+train_dict["save_folder"]+"model_best_{:03d}.pth".format(best_epoch))
+                    # os.system("rm "+train_dict["save_folder"]+"optim_{:03d}.pth".format(best_epoch))
+
+                best_epoch = idx_epoch + 1
 
         # del batch_x, batch_y
         # gc.collect()
