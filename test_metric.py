@@ -65,12 +65,12 @@ for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
         data_x = data_CT
         data_y = data_CT_GT
         
-        table_metric[cnt_CT, 0] = rmse(data_x, data_y, squared=False)
+        table_metric[cnt_CT, 0] = rmse(data_x, data_y)
         table_metric[cnt_CT, 1] = nrmse(data_x, data_y)
         table_metric[cnt_CT, 2] = mae(data_x, data_y)
         table_metric[cnt_CT, 3] = ssim(data_x, data_y, data_range=4000)
         table_metric[cnt_CT, 4] = psnr(data_x, data_y, data_range=4000)
-        table_metric[cnt_CT, 5] = np.mean(np.absolute(sobel(data_x)))
+        table_metric[cnt_CT, 5] = acutance(data_x)
     
     save_name = hub_CT_name[cnt_CT_folder]+"_"+"_".join(hub_metric_func)+".npy"
     np.save(save_name, table_metric)
