@@ -110,29 +110,29 @@ optimizer = torch.optim.AdamW(
 
 # ==================== data division ====================
 
-# X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
-# Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
+X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
+Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
 
-# selected_list = np.asarray(X_list)
-# np.random.shuffle(selected_list)
-# selected_list = list(selected_list)
+selected_list = np.asarray(X_list)
+np.random.shuffle(selected_list)
+selected_list = list(selected_list)
 
-# val_list = selected_list[:int(len(selected_list)*train_dict["val_ratio"])]
-# val_list.sort()
-# test_list = selected_list[-int(len(selected_list)*train_dict["test_ratio"]):]
-# test_list.sort()
-# train_list = list(set(selected_list) - set(val_list)) # - set(test_list))
-# train_list.sort()
+val_list = selected_list[:int(len(selected_list)*train_dict["val_ratio"])]
+val_list.sort()
+test_list = selected_list[-int(len(selected_list)*train_dict["test_ratio"]):]
+test_list.sort()
+train_list = list(set(selected_list) - set(val_list)) # - set(test_list))
+train_list.sort()
 
-# data_division_dict = {
-#     "train_list_X" : train_list,
-#     "val_list_X" : val_list,
-#     "test_list_X" : test_list}
-# np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
+data_division_dict = {
+    "train_list_X" : train_list,
+    "val_list_X" : val_list,
+    "test_list_X" : test_list}
+np.save(train_dict["save_folder"]+"data_division_ft.npy", data_division_dict)
 
-data_division_dict = np.load(train_dict["save_folder"]+"data_division.npy", allow_pickle=True).item()
-train_list = data_division_dict["train_list_X"]
-val_list = data_division_dict["val_list_X"]
+# data_division_dict = np.load(train_dict["save_folder"]+"data_division.npy", allow_pickle=True).item()
+# train_list = data_division_dict["train_list_X"]
+# val_list = data_division_dict["val_list_X"]
 # test_list = data_division_dict["test_list_X"]
 
 print("Train list")
