@@ -82,9 +82,9 @@ for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
         table_metric[cnt_CT, 3] = ssim(data_x, data_y, data_range=4000)
         table_metric[cnt_CT, 4] = psnr(data_x, data_y, data_range=4000)
         table_metric[cnt_CT, 5] = acutance(data_x)
-        table_metric[cnt_CT, 6] = dice_coe(x, y, tissue="air")
-        table_metric[cnt_CT, 7] = dice_coe(x, y, tissue="soft")
-        table_metric[cnt_CT, 8] = dice_coe(x, y, tissue="bone")
+        table_metric[cnt_CT, 6] = dice_coe(data_x, data_y, tissue="air")
+        table_metric[cnt_CT, 7] = dice_coe(data_x, data_y, tissue="soft")
+        table_metric[cnt_CT, 8] = dice_coe(data_x, data_y, tissue="bone")
     
     save_name = hub_CT_name[cnt_CT_folder]+"_"+"_".join(hub_metric)+".npy"
     print(save_name)
