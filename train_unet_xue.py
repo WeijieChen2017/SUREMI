@@ -44,7 +44,7 @@ train_dict["model_related"]["num_res_units"] = 4
 # train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
 
 train_dict["folder_X"] = "./data_dir/xue/NAC/"
-?# train_dict["folder_Y"] = "./data_dir/xue/CTAC/"
+train_dict["folder_Y"] = "./data_dir/xue/CTAC/"
 # train_dict["pre_train"] = "swin_base_patch244_window1677_kinetics400_22k.pth"
 train_dict["val_ratio"] = 0.3
 train_dict["test_ratio"] = 0.0
