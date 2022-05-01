@@ -7,6 +7,7 @@ import nibabel as nib
 
 folder_MR_GT = "./data_dir/Iman_MR/norm/"
 folder_CT_GT = "./data_dir/Iman_CT/norm/"
+
 hub_CT_name = [
     "Unet_S",
     "Unet_L",
@@ -38,7 +39,7 @@ union_test_file = [
 
 
 for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
-    cmd = "cp "+CT_folder+test_filename+" ./metric/"+hub_CT_name[cnt_CT_folder]+"_dict.npy"
+    cmd = "cp "+CT_folder+"dict.npy"+" ./metric/"+hub_CT_name[cnt_CT_folder]+"_dict.npy"
     print(cmd)
     os.system(cmd)
 
