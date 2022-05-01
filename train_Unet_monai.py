@@ -35,7 +35,7 @@ train_dict["model_related"] = {}
 train_dict["model_related"]["spatial_dims"] = 3
 train_dict["model_related"]["in_channels"] = 1
 train_dict["model_related"]["out_channels"] = 1
-train_dict["model_related"]["channels"] = (64, 128, 256, 512)
+train_dict["model_related"]["channels"] = (32, 64, 128, 256)
 train_dict["model_related"]["strides"] = (2, 2, 2)
 train_dict["model_related"]["num_res_units"] = 4
             
