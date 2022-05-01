@@ -18,15 +18,16 @@ hub_CT_name = [
     "SwinIR3d_S",
     "SwinIR3d_L"
     ]
+
 hub_CT_folder = [
-    "./project_dir/Unet_Monai_Iman/pred_monai/",
-    "./project_dir/Unet_Monai_Iman_v1/pred_monai/",
-    "./project_dir/UnetR_Iman_v1/pred_monai/",
-    "./project_dir/UnetR_Iman_v2/pred_monai/",
-    "./project_dir/SwinUNETR_Iman_v1/pred_monai/",
-    "./project_dir/SwinUNETR_Iman_v2/pred_monai/",
-    "./project_dir/SwinIR3d_Iman_v1/pred_monai/",
-    "./project_dir/SwinIR3d_Iman_v2/pred_monai/",
+    "./project_dir/Unet_Monai_Iman/",
+    "./project_dir/Unet_Monai_Iman_v1/",
+    "./project_dir/UnetR_Iman_v1/",
+    "./project_dir/UnetR_Iman_v2/",
+    "./project_dir/SwinUNETR_Iman_v1/",
+    "./project_dir/SwinUNETR_Iman_v2/",
+    "./project_dir/SwinIR3d_Iman_v1/",
+    "./project_dir/SwinIR3d_Iman_v2/",
 ]
 
 union_test_file = [
