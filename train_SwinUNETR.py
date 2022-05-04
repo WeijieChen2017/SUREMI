@@ -19,15 +19,15 @@ from model import SwinUNETR
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "SwinUNETR_Iman_v2"
+train_dict["project_name"] = "SwinUNETR_Iman_v3_mse"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
-train_dict["seed"] = 813
+train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
 train_dict["input_size"] = [64, 64, 64]
-train_dict["gpu_ids"] = [6]
+train_dict["gpu_ids"] = [4]
 train_dict["epochs"] = 200
-train_dict["batch"] = 1
+train_dict["batch"] = 4
 train_dict["dropout"] = 0
 train_dict["model_term"] = "SwinUNETR"
 
@@ -37,13 +37,25 @@ train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
 train_dict["val_ratio"] = 0.3
 train_dict["test_ratio"] = 0.2
 
-train_dict["loss_term"] = "SmoothL1Loss"
+train_dict["loss_term"] = "MSELoss"
 train_dict["optimizer"] = "AdamW"
 train_dict["opt_lr"] = 1e-3 # default
 train_dict["opt_betas"] = (0.9, 0.999) # default
 train_dict["opt_eps"] = 1e-8 # default
 train_dict["opt_weight_decay"] = 0.01 # default
 train_dict["amsgrad"] = False # default
+
+train_dict["model_related"] = {}
+train_dict["model_related"]["in_channels"] = 1
+train_dict["model_related"]["out_channels"] = 1
+train_dict["model_related"]["feature_size"] = 64
+train_dict["model_related"]["depths"] = [4, 4, 8, 4]
+train_dict["model_related"]["num_heads"] = [16, 32, 64, 128]
+train_dict["model_related"]["norm_name"] = "instance"
+train_dict["model_related"]["drop_rate"] = 0.25
+train_dict["model_related"]["attn_drop_rate"] = 0.25
+train_dict["model_related"]["dropout_path_rate"] = 0.25
+train_dict["model_related"]["use_checkpoint"] = False
 
 for path in [train_dict["save_folder"], train_dict["save_folder"]+"npy/", train_dict["save_folder"]+"loss/"]:
     if not os.path.exists(path):
@@ -75,16 +87,16 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # SwinUNETR
 model = SwinUNETR(
     img_size = train_dict["input_size"],
-    in_channels = 1,
-    out_channels = 1,
-    feature_size = 120,
-    depths = [4, 8, 16, 32], #default
-    num_heads = [8, 16, 32, 64], #default
-    norm_name = "instance", #default
-    drop_rate = 0.0, #default
-    attn_drop_rate = 0.0, #default
-    dropout_path_rate = 0.0, #default
-    use_checkpoint = False, #default
+    in_channels = train_dict["model_related"]["in_channels"][0],
+    out_channels = train_dict["model_related"]["out_channels"][0],
+    feature_size = train_dict["model_related"]["feature_size"][0],
+    depths = train_dict["model_related"]["depths"][0],
+    num_heads = train_dict["model_related"]["num_heads"][0],
+    norm_name = train_dict["model_related"]["norm_name"][0],
+    drop_rate = train_dict["model_related"]["drop_rate"][0],
+    attn_drop_rate = train_dict["model_related"]["attn_drop_rate"][0],
+    dropout_path_rate = train_dict["model_related"]["dropout_path_rate"][0],
+    use_checkpoint = train_dict["model_related"]["use_checkpoint"][0],
     )
 
 # pretrain = torch.load("./pre_train/"+train_dict["pre_train"], map_location=torch.device('cpu'))
@@ -110,7 +122,7 @@ model = SwinUNETR(
 # model = nn.DataParallel(model)
 model.train()
 model = model.to(device)
-criterion = nn.SmoothL1Loss()
+criterion = nn.MSELoss()
 
 optimizer = torch.optim.AdamW(
     model.parameters(),
