@@ -24,10 +24,11 @@ train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
-train_dict["input_size"] = [64, 64, 64]
+train_dict["input_size"] = [48, 48, 48]
 train_dict["gpu_ids"] = [4]
-train_dict["epochs"] = 500
-train_dict["batch"] = 4
+train_dict["epochs"] = 100
+train_dict["batch"] = 1
+train_dict["case_iter_time"] = 60
 train_dict["dropout"] = 0
 train_dict["model_term"] = "SwinUNETR"
 
@@ -189,6 +190,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
         random.shuffle(file_list)
         
         case_loss = np.zeros((len(file_list)))
+        cit_loss = np.zeors((train_dict["case_iter_time"]))
 
         # N, C, D, H, W
         x_data = nib.load(file_list[0]).get_fdata()
@@ -209,40 +211,50 @@ for idx_epoch_new in range(train_dict["epochs"]):
             y_data = y_file.get_fdata()
             # x_data = x_data / np.amax(x_data)
 
-            batch_x = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
-            batch_y = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
+            acmu_grad = 0 # accumulate gradients 
 
-            for idx_batch in range(train_dict["batch"]):
+            for idx_cit in train_dict["case_iter_time"]:
 
-                d0_offset = np.random.randint(x_data.shape[0] - train_dict["input_size"][0])
-                d1_offset = np.random.randint(x_data.shape[1] - train_dict["input_size"][1])
-                d2_offset = np.random.randint(x_data.shape[2] - train_dict["input_size"][2])
+                batch_x = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
+                batch_y = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
 
-                x_slice = x_data[d0_offset:d0_offset+train_dict["input_size"][0],
-                                 d1_offset:d1_offset+train_dict["input_size"][1],
-                                 d2_offset:d2_offset+train_dict["input_size"][2]
-                                 ]
-                y_slice = y_data[d0_offset:d0_offset+train_dict["input_size"][0],
-                                 d1_offset:d1_offset+train_dict["input_size"][1],
-                                 d2_offset:d2_offset+train_dict["input_size"][2]
-                                 ]
-                batch_x[idx_batch, 0, :, :, :] = x_slice
-                batch_y[idx_batch, 0, :, :, :] = y_slice
+                for idx_batch in range(train_dict["batch"]):
 
-            batch_x = torch.from_numpy(batch_x).float().to(device)
-            batch_y = torch.from_numpy(batch_y).float().to(device)
-            
-            if isVal:
-                with torch.no_grad():
+                    d0_offset = np.random.randint(x_data.shape[0] - train_dict["input_size"][1])
+                    d1_offset = np.random.randint(x_data.shape[1] - train_dict["input_size"][2])
+                    d2_offset = np.random.randint(x_data.shape[2] - train_dict["input_size"][0])
+
+                    x_slice = x_data[d0_offset:d0_offset+train_dict["input_size"][0],
+                                     d1_offset:d1_offset+train_dict["input_size"][1],
+                                     d2_offset:d2_offset+train_dict["input_size"][2]
+                                     ]
+                    y_slice = y_data[d0_offset:d0_offset+train_dict["input_size"][0],
+                                     d1_offset:d1_offset+train_dict["input_size"][1],
+                                     d2_offset:d2_offset+train_dict["input_size"][2]
+                                     ]
+                    batch_x[idx_batch, 0, :, :, :] = x_slice
+                    batch_y[idx_batch, 0, :, :, :] = y_slice
+
+                batch_x = torch.from_numpy(batch_x).float().to(device)
+                batch_y = torch.from_numpy(batch_y).float().to(device)
+                
+                if isVal:
+                    with torch.no_grad():
+                        y_hat = model(batch_x)
+                        loss = criterion(y_hat, batch_y)
+                if isTrain:
+                    optimizer.zero_grad()
                     y_hat = model(batch_x)
                     loss = criterion(y_hat, batch_y)
-            if isTrain:
-                optimizer.zero_grad()
-                y_hat = model(batch_x)
-                loss = criterion(y_hat, batch_y)
-                loss.backward()
-                optimizer.step()
-            case_loss[cnt_file] = loss.item()
+                    loss.backward()
+                    acmu_grad += 1
+
+                    if acmu_grad == train_dict["case_iter_time"]-1:
+                        optimizer.step()
+                        acmu_grad = 0
+
+                cit_loss[idx_cit] = loss.item()
+            case_loss[cnt_file] = np.mean(cit_loss)
             print("Loss: ", case_loss[cnt_file])
 
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
