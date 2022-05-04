@@ -51,10 +51,10 @@ def filter_data(data, range_min, range_max):
 
 folder_CT_GT = "./data_dir/Iman_CT/norm/"
 hub_CT_name = [
-	"UnetR_L"
+	"New_Unet"
 	]
 hub_CT_folder = [
-    "./project_dir/UnetR_Iman_v2/pred_monai/"
+    "./project_dir/Unet_Monai_Iman_v1/pred_monai/"
 ]
 
 hub_metric = ["rmse", "nrmse", "mae", "ssim", "psnr", "acutance", "dice_air", "dice_soft", "dice_bone"]

@@ -6,26 +6,24 @@ import nibabel as nib
 
 folder_CT_GT = "./data_dir/Iman_CT/norm/"
 hub_CT_name = [
-    # "Unet_S",
-    # "Unet_L",
-    # "UnetR_S",
-    # "UnetR_L",
-    # "SwinUnetR_S",
-    # "SwinUnetR_L",
-    # "SwinIR3d_S",
-    # "SwinIR3d_L"
-    "New_Unet",
+    "Unet_S",
+    "Unet_L",
+    "UnetR_S",
+    "UnetR_L",
+    "SwinUnetR_S",
+    "SwinUnetR_L",
+    "SwinIR3d_S",
+    "SwinIR3d_L"
     ]
 hub_CT_folder = [
-    # "./project_dir/Unet_Monai_Iman/",
-    # "./project_dir/Unet_Monai_Iman_v1/",
-    # "./project_dir/UnetR_Iman_v1/",
-    # "./project_dir/UnetR_Iman_v2/",
-    # "./project_dir/SwinUNETR_Iman_v1/",
-    # "./project_dir/SwinUNETR_Iman_v2/",
-    # "./project_dir/SwinIR3d_Iman_v1/",
-    # "./project_dir/SwinIR3d_Iman_v2/",
-    "./project_dir/Unet_Monai_Iman_v2/",
+    "./project_dir/Unet_Monai_Iman/",
+    "./project_dir/Unet_Monai_Iman_v1/",
+    "./project_dir/UnetR_Iman_v1/",
+    "./project_dir/UnetR_Iman_v2/",
+    "./project_dir/SwinUNETR_Iman_v1/",
+    "./project_dir/SwinUNETR_Iman_v2/",
+    "./project_dir/SwinIR3d_Iman_v1/",
+    "./project_dir/SwinIR3d_Iman_v2/",
 ]
 
 train_loss = []
