@@ -190,7 +190,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
         random.shuffle(file_list)
         
         case_loss = np.zeros((len(file_list)))
-        cit_loss = np.zeros((train_dict["case_iter_time"]))
+        cit_loss = np.zeros((range(train_dict["case_iter_time"])))
 
         # N, C, D, H, W
         x_data = nib.load(file_list[0]).get_fdata()
