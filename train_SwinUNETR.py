@@ -87,16 +87,16 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # SwinUNETR
 model = SwinUNETR(
     img_size = train_dict["input_size"],
-    in_channels = train_dict["model_related"]["in_channels"][0],
-    out_channels = train_dict["model_related"]["out_channels"][0],
-    feature_size = train_dict["model_related"]["feature_size"][0],
-    depths = train_dict["model_related"]["depths"][0],
-    num_heads = train_dict["model_related"]["num_heads"][0],
-    norm_name = train_dict["model_related"]["norm_name"][0],
-    drop_rate = train_dict["model_related"]["drop_rate"][0],
-    attn_drop_rate = train_dict["model_related"]["attn_drop_rate"][0],
-    dropout_path_rate = train_dict["model_related"]["dropout_path_rate"][0],
-    use_checkpoint = train_dict["model_related"]["use_checkpoint"][0],
+    in_channels = train_dict["model_related"]["in_channels"],
+    out_channels = train_dict["model_related"]["out_channels"],
+    feature_size = train_dict["model_related"]["feature_size"],
+    depths = train_dict["model_related"]["depths"],
+    num_heads = train_dict["model_related"]["num_heads"],
+    norm_name = train_dict["model_related"]["norm_name"],
+    drop_rate = train_dict["model_related"]["drop_rate"],
+    attn_drop_rate = train_dict["model_related"]["attn_drop_rate"],
+    dropout_path_rate = train_dict["model_related"]["dropout_path_rate"],
+    use_checkpoint = train_dict["model_related"]["use_checkpoint"],
     )
 
 # pretrain = torch.load("./pre_train/"+train_dict["pre_train"], map_location=torch.device('cpu'))
@@ -214,9 +214,9 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
             for idx_batch in range(train_dict["batch"]):
 
-                d0_offset = np.random.randint(x_data.shape[0] - train_dict["input_size"][1])
-                d1_offset = np.random.randint(x_data.shape[1] - train_dict["input_size"][2])
-                d2_offset = np.random.randint(x_data.shape[2] - train_dict["input_size"][0])
+                d0_offset = np.random.randint(x_data.shape[0] - train_dict["input_size"][0])
+                d1_offset = np.random.randint(x_data.shape[1] - train_dict["input_size"][1])
+                d2_offset = np.random.randint(x_data.shape[2] - train_dict["input_size"][2])
 
                 x_slice = x_data[d0_offset:d0_offset+train_dict["input_size"][0],
                                  d1_offset:d1_offset+train_dict["input_size"][1],
