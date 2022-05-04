@@ -190,7 +190,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
         random.shuffle(file_list)
         
         case_loss = np.zeros((len(file_list)))
-        cit_loss = np.zeros((range(train_dict["case_iter_time"])))
+        cit_loss = np.zeros((train_dict["case_iter_time"]))
 
         # N, C, D, H, W
         x_data = nib.load(file_list[0]).get_fdata()
@@ -213,7 +213,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
             acmu_grad = 0 # accumulate gradients 
 
-            for idx_cit in train_dict["case_iter_time"]:
+            for idx_cit in range(train_dict["case_iter_time"]):
 
                 batch_x = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
                 batch_y = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
