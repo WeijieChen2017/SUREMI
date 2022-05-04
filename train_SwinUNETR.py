@@ -24,7 +24,7 @@ train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
-train_dict["input_size"] = [48, 48, 48]
+train_dict["input_size"] = [64, 64, 64]
 train_dict["gpu_ids"] = [4]
 train_dict["epochs"] = 500
 train_dict["batch"] = 4
@@ -50,11 +50,11 @@ train_dict["model_related"]["in_channels"] = 1
 train_dict["model_related"]["out_channels"] = 1
 train_dict["model_related"]["feature_size"] = 64
 train_dict["model_related"]["depths"] = [4, 4, 8, 4]
-train_dict["model_related"]["num_heads"] = [16, 32, 64, 128]
+train_dict["model_related"]["num_heads"] = [16, 16, 32, 32]
 train_dict["model_related"]["norm_name"] = "instance"
-train_dict["model_related"]["drop_rate"] = 0.25
-train_dict["model_related"]["attn_drop_rate"] = 0.25
-train_dict["model_related"]["dropout_path_rate"] = 0.25
+train_dict["model_related"]["drop_rate"] = 0.1
+train_dict["model_related"]["attn_drop_rate"] = 0.1
+train_dict["model_related"]["dropout_path_rate"] = 0.1
 train_dict["model_related"]["use_checkpoint"] = False
 
 for path in [train_dict["save_folder"], train_dict["save_folder"]+"npy/", train_dict["save_folder"]+"loss/"]:
