@@ -21,7 +21,7 @@ from monai.inferers import sliding_window_inference
 test_dict = {}
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-test_dict["project_name"] = "model_best_188.pth"
+test_dict["project_name"] = "MRL_Monai_mse"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [4]
 test_dict["eval_file_cnt"] = 0
