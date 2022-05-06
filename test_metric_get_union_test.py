@@ -9,25 +9,33 @@ folder_MR_GT = "./data_dir/Iman_MR/norm/"
 folder_CT_GT = "./data_dir/Iman_CT/norm/"
 
 hub_CT_name = [
-    "Unet_S",
-    "Unet_L",
-    "UnetR_S",
-    "UnetR_L",
-    "SwinUnetR_S",
-    "SwinUnetR_L",
-    "SwinIR3d_S",
-    "SwinIR3d_L"
+    # "Unet_S",
+    # "Unet_L",
+    # "UnetR_S",
+    # "UnetR_L",
+    # "SwinUnetR_S",
+    # "SwinUnetR_L",
+    # "SwinIR3d_S",
+    # "SwinIR3d_L",
+    "MRL_MAE_xyz_654", 
+    "MRL_MSE_xyz_666", 
+    "MRL_MSE_xyz_654", 
+    "MRL_sL1_xyz_666",
     ]
 
 hub_CT_folder = [
-    "./project_dir/Unet_Monai_Iman/",
-    "./project_dir/Unet_Monai_Iman_v1/",
-    "./project_dir/UnetR_Iman_v1/",
-    "./project_dir/UnetR_Iman_v2/",
-    "./project_dir/SwinUNETR_Iman_v1/",
-    "./project_dir/SwinUNETR_Iman_v2/",
-    "./project_dir/SwinIR3d_Iman_v1/",
-    "./project_dir/SwinIR3d_Iman_v2/",
+    # "./project_dir/Unet_Monai_Iman/",
+    # "./project_dir/Unet_Monai_Iman_v1/",
+    # "./project_dir/UnetR_Iman_v1/",
+    # "./project_dir/UnetR_Iman_v2/",
+    # "./project_dir/SwinUNETR_Iman_v1/",
+    # "./project_dir/SwinUNETR_Iman_v2/",
+    # "./project_dir/SwinIR3d_Iman_v1/",
+    # "./project_dir/SwinIR3d_Iman_v2/",
+    "./project_dir/MRL_Monai_mae/", 
+    "./project_dir/MRL_Monai_mse/", 
+    "./project_dir/MRL_Monai_mse_vxyz_64_32_16/", 
+    "./project_dir/MRL_Monai_smoothL1/", 
 ]
 
 union_test_file = [
