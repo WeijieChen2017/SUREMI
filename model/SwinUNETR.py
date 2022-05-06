@@ -222,7 +222,11 @@ class SwinUNETR(nn.Module):
             res_block=True,
         )
 
-        self.out = UnetOutBlock(
+        self.out_1 = UnetOutBlock(
+            spatial_dims=spatial_dims, in_channels=feature_size, out_channels=feature_size
+        )  # type: ignore
+
+        self.out_2 = UnetOutBlock(
             spatial_dims=spatial_dims, in_channels=feature_size, out_channels=out_channels
         )  # type: ignore
 
@@ -296,7 +300,7 @@ class SwinUNETR(nn.Module):
         dec1 = self.decoder3(dec2, enc2)
         dec0 = self.decoder2(dec1, enc1)
         out = self.decoder1(dec0, enc0)
-        logits = self.out(out)
+        logits = self.out_2(self.out_1(out))
         return logits
 
 

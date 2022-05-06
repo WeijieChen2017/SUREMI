@@ -19,7 +19,7 @@ from model import SwinUNETR
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "SwinUNETR_Iman_v4_smL1"
+train_dict["project_name"] = "SwinUNETR_Iman_v4_mse"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
@@ -50,13 +50,13 @@ train_dict["model_related"] = {}
 train_dict["model_related"]["in_channels"] = 1
 train_dict["model_related"]["out_channels"] = 1
 train_dict["model_related"]["feature_size"] = 60
-train_dict["model_related"]["depths"] = [2, 2, 8, 2]
-train_dict["model_related"]["num_heads"] = [6, 6, 12, 6]
+train_dict["model_related"]["depths"] = [2, 2, 8, 2],
+train_dict["model_related"]["num_heads"] = [3, 6, 12, 24]
 train_dict["model_related"]["norm_name"] = "instance"
 train_dict["model_related"]["drop_rate"] = 0.1
 train_dict["model_related"]["attn_drop_rate"] = 0.1
 train_dict["model_related"]["dropout_path_rate"] = 0.1
-train_dict["model_related"]["use_checkpoint"] = False
+train_dict["model_related"]["use_checkpoint"] = True
 
 for path in [train_dict["save_folder"], train_dict["save_folder"]+"npy/", train_dict["save_folder"]+"loss/"]:
     if not os.path.exists(path):
