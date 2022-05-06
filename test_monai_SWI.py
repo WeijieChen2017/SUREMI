@@ -21,10 +21,10 @@ from monai.inferers import sliding_window_inference
 test_dict = {}
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-test_dict["project_name"] = "MRL_Monai_smoothL1"
+test_dict["project_name"] = "SwinUNETR_Iman_v3_mse"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [4]
-test_dict["eval_file_cnt"] = 0
+test_dict["eval_file_cnt"] = 5
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
 print("input size:", train_dict["input_size"])
@@ -52,7 +52,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # if "curr" in model_list[-1]:
 #     print("Remove model_best_curr")
 #     model_list.pop()
-target_model = test_dict["save_folder"]+"model_best_194.pth"
+target_model = test_dict["save_folder"]+"model_best_010.pth"
 model = torch.load(target_model, map_location=torch.device('cpu'))
 print("--->", target_model, " is loaded.")
 
