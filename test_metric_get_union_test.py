@@ -47,21 +47,21 @@ union_test_file = [
 ]
 
 
-for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
-    cmd = "cp "+CT_folder+"dict.npy"+" ./metric/"+hub_CT_name[cnt_CT_folder]+"_dict.npy"
-    print(cmd)
-    os.system(cmd)
-
-
-
-# for test_filename in union_test_file:
-#     for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
-#         cmd = "cp "+CT_folder+test_filename+" ./metric/"+hub_CT_name[cnt_CT_folder]+"_"+test_filename
-#         print(cmd)
-#         os.system(cmd)
-#     cmd = "cp "+folder_CT_GT+test_filename+" ./metric/GT_"+test_filename
+# for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
+#     cmd = "cp "+CT_folder+"dict.npy"+" ./metric/"+hub_CT_name[cnt_CT_folder]+"_dict.npy"
 #     print(cmd)
 #     os.system(cmd)
-#     cmd = "cp "+folder_MR_GT+test_filename+" ./metric/MR_"+test_filename
-#     print(cmd)
-#     os.system(cmd)
+
+
+
+for test_filename in union_test_file:
+    for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
+        cmd = "cp "+CT_folder+test_filename+" ./metric/"+hub_CT_name[cnt_CT_folder]+"_"+test_filename
+        print(cmd)
+        os.system(cmd)
+    # cmd = "cp "+folder_CT_GT+test_filename+" ./metric/GT_"+test_filename
+    # print(cmd)
+    # os.system(cmd)
+    # cmd = "cp "+folder_MR_GT+test_filename+" ./metric/MR_"+test_filename
+    # print(cmd)
+    # os.system(cmd)
