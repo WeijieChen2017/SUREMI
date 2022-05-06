@@ -82,7 +82,7 @@ for k in train_dict:
     if v is dict:
         for kk in v:
             print("-->", kk, v[kk])
-    print(k, v)
+    print("-->",k,"-->",v,"-->",type(v))
 print("="*60)
 
 
