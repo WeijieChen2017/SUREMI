@@ -79,10 +79,12 @@ np.save(train_dict["save_folder"]+"dict.npy", train_dict)
 print("="*60)
 for k in train_dict:
     v = train_dict[k]
-    if v is dict:
+    if type(v) is dict:
+        print("-->",k)
         for kk in v:
-            print("-->", kk, v[kk])
-    print("-->",k,"-->",v,"-->",type(v))
+            print("-->-->", kk, v[kk], type(v[kk]))
+    else:
+        print("-->",k,v,type(v))
 print("="*60)
 
 
