@@ -27,8 +27,8 @@ train_dict["seed"] = 426
 train_dict["input_size"] = [64, 64, 64]
 train_dict["gpu_ids"] = [4]
 train_dict["epochs"] = 100
-train_dict["batch"] = 1
-train_dict["case_iter_time"] = 60
+train_dict["batch"] = 12
+train_dict["case_iter_time"] = 5
 train_dict["dropout"] = 0
 train_dict["model_term"] = "SwinUNETR"
 
