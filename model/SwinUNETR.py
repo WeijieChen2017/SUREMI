@@ -1003,9 +1003,6 @@ class SwinTransformer(nn.Module):
             spatial_dims=spatial_dims,
         )
         self.pos_drop = nn.Dropout(p=drop_rate)
-        print(drop_path_rate, depths)
-        print(sum(depths))
-        print(torch.linspace(0, drop_path_rate, sum(depths)))
         dpr = [x.item() for x in torch.linspace(0, drop_path_rate, sum(depths))]
         self.layers1 = nn.ModuleList()
         self.layers2 = nn.ModuleList()
