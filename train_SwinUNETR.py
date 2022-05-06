@@ -77,8 +77,8 @@ for path in [train_dict["save_folder"], train_dict["save_folder"]+"npy/", train_
 np.save(train_dict["save_folder"]+"dict.npy", train_dict)
 
 print("="*60)
-for kv in train_dict:
-    print(kv)
+for k in train_dict:
+    print(kv, train_dict[k])
 print("="*60)
 
 
