@@ -21,7 +21,7 @@ from monai.inferers import sliding_window_inference
 test_dict = {}
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-test_dict["project_name"] = "SwinUNETR_Iman_v5_mae"
+test_dict["project_name"] = "SwinUNETR_Iman_v4_mse"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [3]
 test_dict["eval_file_cnt"] = 5
@@ -48,11 +48,12 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-# model_list = sorted(glob.glob(os.path.join(test_dict["save_folder"], "model_best_*.pth")))
-# if "curr" in model_list[-1]:
-#     print("Remove model_best_curr")
-#     model_list.pop()
-target_model = test_dict["save_folder"]+"model_best_032.pth"
+model_list = sorted(glob.glob(os.path.join(test_dict["save_folder"], "model_best_*.pth")))
+if "curr" in model_list[-1]:
+    print("Remove model_best_curr")
+    model_list.pop()
+target_model = model_list[-1]
+# target_model = test_dict["save_folder"]+"model_best_032.pth"
 model = torch.load(target_model, map_location=torch.device('cpu'))
 print("--->", target_model, " is loaded.")
 
