@@ -21,8 +21,8 @@ from monai.inferers import sliding_window_inference
 test_dict = {}
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-test_dict["project_name"] = "UnetR_Iman_v4_mae"
-# test_dict["project_name"] = "UnetR_Iman_v3_mse"
+# test_dict["project_name"] = "UnetR_Iman_v4_mae"
+test_dict["project_name"] = "UnetR_Iman_v3_mse"
 # test_dict["project_name"] = "SwinUNETR_Iman_v4_mse"
 # test_dict["project_name"] = "SwinUNETR_Iman_v5_mae"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
