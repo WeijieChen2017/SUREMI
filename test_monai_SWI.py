@@ -22,11 +22,11 @@ test_dict = {}
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 # test_dict["project_name"] = "UnetR_Iman_v4_mae"
-# test_dict["project_name"] = "UnetR_Iman_v3_mse"
-test_dict["project_name"] = "SwinUNETR_Iman_v4_mse"
+test_dict["project_name"] = "UnetR_Iman_v3_mse"
+# test_dict["project_name"] = "SwinUNETR_Iman_v4_mse"
 # test_dict["project_name"] = "SwinUNETR_Iman_v5_mae"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
-test_dict["gpu_ids"] = [7]
+test_dict["gpu_ids"] = [5]
 test_dict["eval_file_cnt"] = 0
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
