@@ -50,12 +50,22 @@ def filter_data(data, range_min, range_max):
     mask = mask_1 * mask_2
     return mask
 
+# "UnetR_L2"
+# "UnetR_L1"
+# "SUnetR_L2"
+# "SUnetR_L1"
+
+# "UnetR_Iman_v3_mse"
+# "UnetR_Iman_v4_mae"
+# "SwinUNETR_Iman_v4_mse"
+# "SwinUNETR_Iman_v5_mae"
+
 folder_CT_GT = "./data_dir/Iman_CT/norm/"
 hub_CT_name = [
-	"MRL_sL1_xyz_64_64_64"
+	"UnetR_L2"
 	]
 hub_CT_folder = [
-    "./project_dir/MRL_Monai_smoothL1/pred_monai/"
+    "./project_dir/UnetR_Iman_v3_mse/pred_monai/"
 ]
 
 hub_metric = ["rmse", "nrmse", "mae", "ssim", "psnr", "acutance", "dice_air", "dice_soft", "dice_bone"]
