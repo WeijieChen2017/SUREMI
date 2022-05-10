@@ -26,7 +26,7 @@ hub_CT_name = [
     "SwinUnetR_L1", 
     "SwinUnetR_L2",
     ]
-    
+
 hub_CT_folder = [
     # "./project_dir/Unet_Monai_Iman/",
     # "./project_dir/Unet_Monai_Iman_v1/",
@@ -64,7 +64,7 @@ union_test_file = [
 
 for test_filename in union_test_file:
     for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
-        cmd = "cp "+CT_folder+test_filename+" ./metric/"+hub_CT_name[cnt_CT_folder]+"_"+test_filename
+        cmd = "cp "+CT_folder+"pred/"+test_filename+" ./metric/"+hub_CT_name[cnt_CT_folder]+"_"+test_filename
         print(cmd)
         os.system(cmd)
     # cmd = "cp "+folder_CT_GT+test_filename+" ./metric/GT_"+test_filename
