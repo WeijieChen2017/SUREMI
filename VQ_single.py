@@ -70,6 +70,7 @@ class VQ(nn.Module):
         # convert quantized from BHWC -> BCHW
         quantized = x + (quantized - x).detach()
         quantized = quantized.permute(0, 4, 1, 2, 3).contiguous()
+        print(input_shape, quantized.size())
         
         recon = self.deconv1(quantized)
         recon = F.relu(recon)
