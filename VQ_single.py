@@ -56,7 +56,7 @@ class VQ(nn.Module):
 
         # Encoding
         encoding_indices = torch.argmin(distances, dim=1).unsqueeze(1)
-        encodings = torch.zeros(encoding_indices.shape[0], self._num_embeddings, device=inputs.device)
+        encodings = torch.zeros(encoding_indices.shape[0], self._num_embeddings, device=x.device)
         encodings.scatter_(1, encoding_indices, 1)
 
         # Quantize and unflatten
