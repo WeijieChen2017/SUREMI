@@ -11,7 +11,7 @@ class VQ_single(nn.Module):
                  embedding_dim=64, 
                  num_embeddings=512,
                  commitment_cost=0.25):
-        super(VQ, self).__init__()
+        super(VQ_single, self).__init__()
         # N,C,D,H,W
 #         self.conv_weight = nn.Parameter(torch.randn(num_hiddens, in_channels, cube_size, cube_size, cube_size))
         self._embedding_dim = embedding_dim
