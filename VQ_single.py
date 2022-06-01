@@ -43,7 +43,7 @@ class VQ(nn.Module):
         x = self.conv2(x)
         x = F.relu(x)
         x = self.conv3(x)
-        x = inputs.permute(0, 2, 3, 4, 1).contiguous()
+        x = x.permute(0, 2, 3, 4, 1).contiguous()
         input_shape = x.shape
 
         # Flatten input
