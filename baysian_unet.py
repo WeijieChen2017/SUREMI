@@ -28,7 +28,7 @@ train_dict["seed"] = 426
 train_dict["input_size"] = [96, 96, 96]
 train_dict["gpu_ids"] = [2]
 train_dict["epochs"] = 200
-train_dict["batch"] = 32
+train_dict["batch"] = 64
 train_dict["dropout"] = 0
 train_dict["model_term"] = "Monai_Unet3d"
 
@@ -158,7 +158,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
         random.shuffle(file_list)
         
-        case_loss = np.zeros((len(file_list)))
+        case_loss = np.zeros((len(file_list), 2))
 
         # N, C, D, H, W
         x_data = nib.load(file_list[0]).get_fdata()
@@ -203,14 +203,15 @@ for idx_epoch_new in range(train_dict["epochs"]):
             y_hat = model(batch_x)
             # nll = F.cross_entropy(y_hat, batch_y)
             # print("Yhat size: ", y_hat.size())
-            loss = criterion(y_hat, batch_y)
+            L1 = criterion(y_hat, batch_y)
             kl = sum(m.kl_divergence() for m in model.modules() if hasattr(m, "kl_divergence"))
-            loss = loss + kl / len(file_list)
+            loss = L1 + kl / len(file_list)
             if isTrain:
                 loss.backward()
                 optimizer.step()
-            case_loss[cnt_file] = loss.item()
-            print("Loss: ", case_loss[cnt_file], "KL: ", kl.item())
+            case_loss[cnt_file, 0] = L1.item()
+            case_loss[cnt_file, 1] = kl.item()
+            print("Loss: ", case_loss[cnt_file], "KL: ", kl.item(), "L1:", L1.item())
 
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
         print("  Loss: ", np.mean(case_loss))
