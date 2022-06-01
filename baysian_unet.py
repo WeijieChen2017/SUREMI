@@ -210,7 +210,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 loss.backward()
                 optimizer.step()
             case_loss[cnt_file] = loss.item()
-            print("Loss: ", case_loss[cnt_file])
+            print("Loss: ", case_loss[cnt_file], "KL: ", kl.item())
 
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
         print("  Loss: ", np.mean(case_loss))
