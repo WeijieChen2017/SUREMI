@@ -80,6 +80,10 @@ class VQ(nn.Module):
         
         return eq_loss, recon
 
+gpu_list = ','.join(str(x) for x in [7])
+os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
+print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 file_CT = nib.load("./data_dir/Iman_CT/norm/02472.nii.gz")
 file_MR = nib.load("./data_dir/Iman_MR/norm/02472.nii.gz")
@@ -87,6 +91,7 @@ data_CT = file_CT.get_fdata()
 data_MR = file_MR.get_fdata()
 print(data_CT.shape, data_MR.shape)
 
-model = VQ()
-x = torch.from_numpy(np.expand_dims(data_CT, (0, 1))).float()
-ans = model(x)
+model = VQ().to(device)
+x = torch.from_numpy(np.expand_dims(data_CT, (0, 1))).float().to(device)
+ans = model(x)[1].detach().numpy()
+print(ans.shape)
