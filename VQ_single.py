@@ -31,8 +31,8 @@ class VQ(nn.Module):
         self.conv3 = nn.Conv3d(num_hiddens, num_hiddens, kernel_size=4, stride=2, padding=1)
         
         self.deconv1 = nn.ConvTranspose3d(num_hiddens, num_hiddens, kernel_size=4, stride=2, padding=1)
-        self.deconv1 = nn.ConvTranspose3d(num_hiddens, num_hiddens//2, kernel_size=4, stride=2, padding=1)
-        self.deconv1 = nn.ConvTranspose3d(num_hiddens//2, num_hiddens//2, kernel_size=4, stride=2, padding=1)
+        self.deconv2 = nn.ConvTranspose3d(num_hiddens, num_hiddens//2, kernel_size=4, stride=2, padding=1)
+        self.deconv3 = nn.ConvTranspose3d(num_hiddens//2, num_hiddens//2, kernel_size=4, stride=2, padding=1)
         
         self.outconv = nn.Conv3d(num_hiddens//2, in_channels, kernel_size=1, stride=1, padding=0)
 
