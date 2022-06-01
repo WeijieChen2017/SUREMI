@@ -26,7 +26,7 @@ train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
 train_dict["input_size"] = [96, 96, 96]
-train_dict["gpu_ids"] = [2]
+train_dict["gpu_ids"] = [3]
 train_dict["epochs"] = 200
 train_dict["batch"] = 32
 train_dict["dropout"] = 0
@@ -92,7 +92,7 @@ model = UNet(
     num_res_units=train_dict["model_related"]["num_res_units"]
     )
 
-bnn.bayesianize_(model, inference="inducing", inducing_rows=64, inducing_cols=64)
+# bnn.bayesianize_(model, inference="inducing", inducing_rows=64, inducing_cols=64)
 
 # model = nn.DataParallel(model)
 model.train()
@@ -204,14 +204,15 @@ for idx_epoch_new in range(train_dict["epochs"]):
             # nll = F.cross_entropy(y_hat, batch_y)
             # print("Yhat size: ", y_hat.size())
             L1 = criterion(y_hat, batch_y)
-            kl = sum(m.kl_divergence() for m in model.modules() if hasattr(m, "kl_divergence"))
-            loss = L1 + kl / len(file_list)
+            # kl = sum(m.kl_divergence() for m in model.modules() if hasattr(m, "kl_divergence"))
+            # loss = L1 + kl / len(file_list)
+            loss = L1
             if isTrain:
                 loss.backward()
                 optimizer.step()
             case_loss[cnt_file, 0] = L1.item()
-            case_loss[cnt_file, 1] = kl.item()
-            print("Loss: ", loss.item(), "KL: ", kl.item(), "L1:", L1.item())
+            # case_loss[cnt_file, 1] = kl.item()
+            print("Loss: ", loss.item(),  "L1:", L1.item()) # "KL: ", kl.item(),
 
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
         print("  Loss: ", np.mean(case_loss))
