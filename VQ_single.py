@@ -231,7 +231,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 batch_x = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
                 batch_y = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
 
-                z_offset = (x_data.shape[2] - train_dict["input_size"][2]) // 2
+                z_offset = (train_dict["input_size"][2] - x_data.shape[2]) // 2
 
                 if z_offset > 0:
                     batch_x[0, 0, :, :, z_offset:-z_offset] = x_data
