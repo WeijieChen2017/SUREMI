@@ -204,7 +204,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             # nll = F.cross_entropy(y_hat, batch_y)
             # print("Yhat size: ", y_hat.size())
             loss = criterion(y_hat, batch_y)
-            kl = sum(m.kl_divergence() for m in net.modules() if hasattr(m, "kl_divergence"))
+            kl = sum(m.kl_divergence() for m in model.modules() if hasattr(m, "kl_divergence"))
             loss = loss + kl / len(file_list)
             if isTrain:
                 loss.backward()
