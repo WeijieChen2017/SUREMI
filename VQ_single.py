@@ -74,9 +74,9 @@ class VQ(nn.Module):
         
         recon = self.deconv1(quantized)
         recon = F.relu(recon)
-        recon = self.deconv2(quantized)
+        recon = self.deconv2(recon)
         recon = F.relu(recon)
-        recon = self.deconv3(quantized)
+        recon = self.deconv3(recon)
         recon = self.outconv(recon)
         
         return eq_loss, recon
