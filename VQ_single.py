@@ -24,10 +24,10 @@ train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
-# train_dict["input_size"] = [64, 64, 64]
+train_dict["input_size"] = [256, 256, 160]
 train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 100
-train_dict["batch"] = 12
+train_dict["batch"] = 1
 train_dict["case_iter_time"] = 1
 train_dict["dropout"] = 0
 train_dict["model_term"] = "VQ_single"
@@ -228,8 +228,17 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
             for idx_cit in range(train_dict["case_iter_time"]):
 
-                # batch_x = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
-                # batch_y = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
+                batch_x = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
+                batch_y = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
+
+                z_offset = (x_data.shape[2] - train_dict["input_size"][2]) // 2
+
+                if z_offset > 0:
+                    batch_x[0, 0, :, :, z_offset:-z_offset] = x_data
+                    batch_y[0, 0, :, :, z_offset:-z_offset] = y_data
+                else:
+                    batch_x[0, 0, :, :, :] = x_data
+                    batch_y[0, 0, :, :, :] = y_data
 
                 # for idx_batch in range(train_dict["batch"]):
 
@@ -248,8 +257,8 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 #     batch_x[idx_batch, 0, :, :, :] = x_slice
                 #     batch_y[idx_batch, 0, :, :, :] = y_slice
 
-                batch_x = torch.from_numpy(np.expand_dims(x_data, (0, 1))).float().to(device)
-                batch_y = torch.from_numpy(np.expand_dims(y_data, (0, 1))).float().to(device)
+                batch_x = torch.from_numpy(batch_x).float().to(device)
+                batch_y = torch.from_numpy(batch_y).float().to(device)
                 
                 if isVal:
                     with torch.no_grad():
@@ -297,7 +306,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
         del batch_x, batch_y
         gc.collect()
         torch.cuda.empty_cache()
-        
+
 # model = VQ().to(device)
 # x = torch.from_numpy(np.expand_dims(data_CT, (0, 1))).float().to(device)
 # ans = model(x)[1].cpu().detach().numpy()
