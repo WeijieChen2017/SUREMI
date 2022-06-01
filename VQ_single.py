@@ -94,5 +94,5 @@ print(data_CT.shape, data_MR.shape)
 
 model = VQ().to(device)
 x = torch.from_numpy(np.expand_dims(data_CT, (0, 1))).float().to(device)
-ans = model(x)[1].detach().numpy()
+ans = model(x)[1].cpu().detach().numpy()
 print(ans.shape)
