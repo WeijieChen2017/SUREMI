@@ -65,7 +65,7 @@ class VQ(nn.Module):
         # Loss
         e_latent_loss = F.mse_loss(quantized.detach(), x)
         q_latent_loss = F.mse_loss(quantized, x.detach())
-        loss = q_latent_loss + self._commitment_cost * e_latent_loss
+        eq_loss = q_latent_loss + self._commitment_cost * e_latent_loss
 
         # convert quantized from BHWC -> BCHW
         quantized = x + (quantized - x).detach()
