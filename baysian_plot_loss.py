@@ -21,16 +21,18 @@ for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
     list_train_loss = sorted(glob.glob(CT_folder+"loss/*train*.npy"))
     list_val_loss = sorted(glob.glob(CT_folder+"loss/*val*.npy"))
     model_name = hub_CT_name[cnt_CT_folder]
-    curr_train_loss = np.zeros((len(list_train_loss)))
-    curr_val_loss = np.zeros((len(list_val_loss)))
+    curr_train_loss = np.zeros((len(list_train_loss), 2))
+    curr_val_loss = np.zeros((len(list_val_loss), 2))
     for cnt_epoch, filepath in enumerate(list_train_loss):
         print(filepath)
         data = np.load(filepath)
-        curr_train_loss[cnt_epoch] = np.mean(data)
+        curr_train_loss[cnt_epoch, 0] = np.mean(data[:, 0])
+        curr_train_loss[cnt_epoch, 1] = np.mean(data[:, 1])
     for cnt_epoch, filepath in enumerate(list_val_loss):
         print(filepath)
         data = np.load(filepath)
-        curr_val_loss[cnt_epoch] = np.mean(data)
+        curr_val_loss[cnt_epoch, 0] = np.mean(data[:, 0])
+        curr_val_loss[cnt_epoch, 1] = np.mean(data[:, 1])
     train_loss.append([model_name, curr_train_loss])
     val_loss.append([model_name, curr_val_loss])
 
