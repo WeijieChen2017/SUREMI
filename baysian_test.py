@@ -21,10 +21,11 @@ from monai.inferers import sliding_window_inference
 test_dict = {}
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-test_dict["project_name"] = "Bayesian_unet_v1_control"
+test_dict["project_name"] = "Bayesian_unet_v2_beta_1e8"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [7]
 test_dict["eval_file_cnt"] = 11
+test_dict["best_model_name"] = "model_best_060.pth"
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
 print("input size:", train_dict["input_size"])
@@ -48,12 +49,12 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-model_list = sorted(glob.glob(os.path.join(test_dict["save_folder"], "model_best_*.pth")))
-if "curr" in model_list[-1]:
-    print("Remove model_best_curr")
-    model_list.pop()
-target_model = model_list[-1]
-target_model = test_dict["save_folder"]+"model_best_053.pth"
+# model_list = sorted(glob.glob(os.path.join(test_dict["save_folder"], "model_best_*.pth")))
+# if "curr" in model_list[-1]:
+#     print("Remove model_best_curr")
+#     model_list.pop()
+# target_model = model_list[-1]
+target_model = test_dict["save_folder"]+test_dict["best_model_name"]
 model = torch.load(target_model, map_location=torch.device('cpu'))
 print("--->", target_model, " is loaded.")
 
