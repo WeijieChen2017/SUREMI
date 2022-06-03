@@ -20,17 +20,17 @@ import bnn
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Bayesian_unet_v2_beta_1e8"
+train_dict["project_name"] = "Bayesian_unet_v3_beta_1e3"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
 train_dict["input_size"] = [96, 96, 96]
-train_dict["gpu_ids"] = [2]
+train_dict["gpu_ids"] = [1]
 train_dict["epochs"] = 60
 train_dict["batch"] = 32
 train_dict["dropout"] = 0
-train_dict["beta"] = 1e8 # resize KL loss
+train_dict["beta"] = 1e3 # resize KL loss
 train_dict["model_term"] = "Monai_Unet3d"
 
 train_dict["model_related"] = {}
