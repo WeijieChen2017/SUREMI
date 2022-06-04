@@ -20,7 +20,7 @@ import bnn
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Bayesian_unet_v4_beta_1e3_mse"
+train_dict["project_name"] = "Bayesian_unet_v5_ob_KL"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
@@ -30,7 +30,7 @@ train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 60
 train_dict["batch"] = 32
 train_dict["dropout"] = 0
-train_dict["beta"] = 1e3 # resize KL loss
+train_dict["beta"] = 1 # resize KL loss
 train_dict["model_term"] = "Monai_Unet3d"
 
 train_dict["model_related"] = {}
@@ -49,7 +49,7 @@ train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
 train_dict["val_ratio"] = 0.3
 train_dict["test_ratio"] = 0.2
 
-train_dict["loss_term"] = "MSELoss"
+train_dict["loss_term"] = "SmoothL1Loss"
 train_dict["optimizer"] = "AdamW"
 train_dict["opt_lr"] = 1e-3 # default
 train_dict["opt_betas"] = (0.9, 0.999) # default
@@ -98,7 +98,7 @@ bnn.bayesianize_(model, inference="inducing", inducing_rows=64, inducing_cols=64
 # model = nn.DataParallel(model)
 model.train()
 model = model.to(device)
-criterion = nn.MSELoss()
+criterion = nn.SmoothL1Loss()
 
 optimizer = torch.optim.AdamW(
     model.parameters(),
@@ -206,8 +206,9 @@ for idx_epoch_new in range(train_dict["epochs"]):
             # print("Yhat size: ", y_hat.size())
             L1 = criterion(y_hat, batch_y)
             kl = sum(m.kl_divergence() for m in model.modules() if hasattr(m, "kl_divergence"))
-            kl /= train_dict["beta"]
-            loss = L1 + kl / len(file_list)
+            # kl /= train_dict["beta"]
+            # loss = L1 + kl / len(file_list)
+            loss = L1
             if isTrain:
                 loss.backward()
                 optimizer.step()
