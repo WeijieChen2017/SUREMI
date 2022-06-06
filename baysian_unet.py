@@ -96,6 +96,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # bnn.bayesianize_(model, inference="inducing", inducing_rows=64, inducing_cols=64)
 
 model = torch.load(train_dict["save_folder"]+"model_best_051.pth", map_location=torch.device('cpu'))
+bnn.bayesianize_(model, inference="inducing", inducing_rows=64, inducing_cols=64)
 optimizer = torch.load(train_dict["save_folder"]+"optim_051.pth")
 
 model.train()
