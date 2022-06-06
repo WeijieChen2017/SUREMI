@@ -6,11 +6,12 @@ import nibabel as nib
 
 # folder_CT_GT = "./data_dir/Iman_CT/norm/"
 hub_CT_name = [
-    "unet",
-    "unet_control_1e1",
-    "unet_control_1e8",
-    "unet_control_1e3",
-    "unet_control_1e3_mse",
+    # "unet",
+    # "unet_control_1e1",
+    # "unet_control_1e8",
+    # "unet_control_1e3",
+    # "unet_control_1e3_mse",
+    "unet_control_ob_KL"
     ]
 hub_CT_folder = [
     "./project_dir/Bayesian_unet_v1/",
@@ -18,6 +19,7 @@ hub_CT_folder = [
     "./project_dir/Bayesian_unet_v2_beta_1e8/",
     "./project_dir/Bayesian_unet_v3_beta_1e3/",
     "./project_dir/Bayesian_unet_v4_beta_1e3_mse/",
+    "./project_dir/Bayesian_unet_v5_ob_KL/",
     ]
 
 train_loss = []
