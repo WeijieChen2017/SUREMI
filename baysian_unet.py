@@ -33,6 +33,7 @@ train_dict["dropout"] = 0
 train_dict["beta"] = 1 # resize KL loss
 train_dict["model_term"] = "Monai_Unet3d"
 train_dict["dataset_ratio"] = 0.5
+train_dict["continue_training_epoch"] = 0
 
 train_dict["model_related"] = {}
 train_dict["model_related"]["spatial_dims"] = 3
@@ -96,9 +97,11 @@ model = UNet(
 
 bnn.bayesianize_(model, inference="inducing", inducing_rows=64, inducing_cols=64)
 
-# model = torch.load(train_dict["save_folder"]+"model_best_051.pth", map_location=torch.device('cpu'))
+# model = torch.load(train_dict["save_folder"]+"model_best_{:03d}".format(
+#     train_dict["continue_training_epoch"])+".pth", map_location=torch.device('cpu'))
 # bnn.bayesianize_(model, inference="inducing", inducing_rows=64, inducing_cols=64)
-# optimizer = torch.load(train_dict["save_folder"]+"optim_051.pth")
+# optimizer = torch.load(train_dict["save_folder"]+"optim_{:03d}".format(
+#     train_dict["continue_training_epoch"])+".pth")
 
 model.train()
 model = model.to(device)
@@ -154,7 +157,7 @@ package_val = [val_list, False, True, "val"]
 # package_test = [test_list, False, False, "test"]
 
 for idx_epoch_new in range(train_dict["epochs"]):
-    idx_epoch = idx_epoch_new + 51
+    idx_epoch = idx_epoch_new + train_dict["continue_training_epoch"]
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
     for package in [package_train, package_val]:
