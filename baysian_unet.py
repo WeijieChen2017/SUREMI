@@ -26,8 +26,8 @@ train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
 train_dict["input_size"] = [96, 96, 96]
-train_dict["gpu_ids"] = [7]
-train_dict["epochs"] = 60
+train_dict["gpu_ids"] = [1]
+train_dict["epochs"] = 200
 train_dict["batch"] = 32
 train_dict["dropout"] = 0
 train_dict["beta"] = 1 # resize KL loss
@@ -84,52 +84,61 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-model = UNet( 
-    spatial_dims=train_dict["model_related"]["spatial_dims"],
-    in_channels=train_dict["model_related"]["in_channels"],
-    out_channels=train_dict["model_related"]["out_channels"],
-    channels=train_dict["model_related"]["channels"],
-    strides=train_dict["model_related"]["strides"],
-    num_res_units=train_dict["model_related"]["num_res_units"]
-    )
+# model = UNet( 
+#     spatial_dims=train_dict["model_related"]["spatial_dims"],
+#     in_channels=train_dict["model_related"]["in_channels"],
+#     out_channels=train_dict["model_related"]["out_channels"],
+#     channels=train_dict["model_related"]["channels"],
+#     strides=train_dict["model_related"]["strides"],
+#     num_res_units=train_dict["model_related"]["num_res_units"]
+#     )
 
-bnn.bayesianize_(model, inference="inducing", inducing_rows=64, inducing_cols=64)
+# bnn.bayesianize_(model, inference="inducing", inducing_rows=64, inducing_cols=64)
 
-# model = nn.DataParallel(model)
+model.load_state_dict(new_model_state)
+model = torch.load(train_dict["save_folder"]+"model_best_051.pth", map_location=torch.device('cpu'))
+optimizer = torch.load(train_dict["save_folder"]+"optim_051.pth")
+
 model.train()
 model = model.to(device)
 criterion = nn.SmoothL1Loss()
 
-optimizer = torch.optim.AdamW(
-    model.parameters(),
-    lr = train_dict["opt_lr"],
-    betas = train_dict["opt_betas"],
-    eps = train_dict["opt_eps"],
-    weight_decay = train_dict["opt_weight_decay"],
-    amsgrad = train_dict["amsgrad"]
-    )
+# optimizer = torch.optim.AdamW(
+#     model.parameters(),
+#     lr = train_dict["opt_lr"],
+#     betas = train_dict["opt_betas"],
+#     eps = train_dict["opt_eps"],
+#     weight_decay = train_dict["opt_weight_decay"],
+#     amsgrad = train_dict["amsgrad"]
+#     )
 
 # ==================== data division ====================
 
-X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
-Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
+# X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
+# Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
 
-selected_list = np.asarray(X_list)
-np.random.shuffle(selected_list)
-selected_list = list(selected_list)
+# selected_list = np.asarray(X_list)
+# np.random.shuffle(selected_list)
+# selected_list = list(selected_list)
 
-val_list = selected_list[:int(len(selected_list)*train_dict["val_ratio"])]
-val_list.sort()
-test_list = selected_list[-int(len(selected_list)*train_dict["test_ratio"]):]
-test_list.sort()
-train_list = list(set(selected_list) - set(val_list) - set(test_list))
-train_list.sort()
+# val_list = selected_list[:int(len(selected_list)*train_dict["val_ratio"])]
+# val_list.sort()
+# test_list = selected_list[-int(len(selected_list)*train_dict["test_ratio"]):]
+# test_list.sort()
+# train_list = list(set(selected_list) - set(val_list) - set(test_list))
+# train_list.sort()
 
-data_division_dict = {
-    "train_list_X" : train_list,
-    "val_list_X" : val_list,
-    "test_list_X" : test_list}
-np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
+# data_division_dict = {
+#     "train_list_X" : train_list,
+#     "val_list_X" : val_list,
+#     "test_list_X" : test_list}
+# np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
+
+
+data_division_dict = np.load(train_dict["save_folder"]+"data_division.npy", allow_pickle=True).item()
+train_list = data_division_dict["train_list_X"]
+val_list = data_division_dict["val_list_X"]
+test_list = data_division_dict["test_list_X"]
 
 # ==================== training ====================
 
@@ -142,7 +151,7 @@ package_val = [val_list, False, True, "val"]
 # package_test = [test_list, False, False, "test"]
 
 for idx_epoch_new in range(train_dict["epochs"]):
-    idx_epoch = idx_epoch_new
+    idx_epoch = idx_epoch_new + 51
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
 
     for package in [package_train, package_val]:
