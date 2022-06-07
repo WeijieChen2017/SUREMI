@@ -64,7 +64,7 @@ test_dict["project_name"] = "Bayesian_unet_v6_ob_KL_small"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [0]
 test_dict["eval_file_cnt"] = 5
-test_dict["best_model_name"] = "model_best_280.pth"
+test_dict["best_model_name"] = "model_best_188.pth"
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
 print("input size:", train_dict["input_size"])
