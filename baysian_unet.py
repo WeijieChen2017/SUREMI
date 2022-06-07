@@ -16,34 +16,77 @@ import requests
 from monai.networks.nets.unet import UNet as UNet
 import bnn
 
+class UnetBNN(nn.Module):
+    """(convolution => [BN] => ReLU) * 2"""
+
+    def __init__(self, unet_dict):
+        super().__init__()
+    
+        self.unet = UNet( 
+            spatial_dims=unet_dict["spatial_dims"],
+            in_channels=unet_dict["in_channels"],
+            out_channels=unet_dict["mid_channels"],
+            channels=unet_dict["channels"],
+            strides=unet_dict["strides"],
+            num_res_units=unet_dict["num_res_units"]
+            )
+        if unet_dict["spatial_dims"] == 2:
+            self.out_conv = nn.Conv2d(
+                unet_dict["mid_channels"],
+                unet_dict["out_channels"], 
+                kernel_size=1
+                )
+        if unet_dict["spatial_dims"] == 3:
+            self.out_conv = nn.Conv3d(
+                unet_dict["mid_channels"],
+                unet_dict["out_channels"], 
+                kernel_size=1
+                )
+
+        bnn.bayesianize_(
+            self.out_conv,
+            inference=unet_dict["inference"]"inducing",
+            inducing_rows=unet_dict["inducing_rows"]64,
+            inducing_cols=unet_dict["inducing_cols"]64
+            )
+
+    def forward(self, x):
+        x = self.unet(x)
+        x = self.out_conv(x)
+        return x
+
 # ==================== dict and config ====================
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Bayesian_unet_v6_ob_KL_small"
+train_dict["project_name"] = "Bayesian_unet_v7_unet_BNN"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
 train_dict["input_size"] = [96, 96, 96]
 train_dict["gpu_ids"] = [1]
-train_dict["epochs"] = 500
+train_dict["epochs"] = 200
 train_dict["batch"] = 16
 train_dict["dropout"] = 0
-train_dict["beta"] = 1 # resize KL loss
+train_dict["beta"] = 1e8 # resize KL loss
 train_dict["model_term"] = "Monai_Unet3d"
 train_dict["dataset_ratio"] = 0.5
 train_dict["continue_training_epoch"] = 0
 
-train_dict["model_related"] = {}
-train_dict["model_related"]["spatial_dims"] = 3
-train_dict["model_related"]["in_channels"] = 1
-train_dict["model_related"]["out_channels"] = 1
-train_dict["model_related"]["channels"] = (32, 64, 128, 256)
-train_dict["model_related"]["strides"] = (2, 2, 2)
-train_dict["model_related"]["num_res_units"] = 4
-            
+unet_dict = {}
+unet_dict["spatial_dims"] = 3
+unet_dict["in_channels"] = 1
+unet_dict["mid_channels"] = 64
+unet_dict["out_channels"] = 1
+unet_dict["channels"] = (32, 64, 128, 256)
+unet_dict["strides"] = (2, 2, 2)
+unet_dict["num_res_units"] = 4
+unet_dict["inference"] = "inducing"
+unet_dict["inducing_rows"] = 64
+unet_dict["inducing_cols"] = 64
 
+train_dict["model_related"] = unet_dict
 
 train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
 train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
@@ -86,23 +129,23 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-model = UNet( 
-    spatial_dims=train_dict["model_related"]["spatial_dims"],
-    in_channels=train_dict["model_related"]["in_channels"],
-    out_channels=train_dict["model_related"]["out_channels"],
-    channels=train_dict["model_related"]["channels"],
-    strides=train_dict["model_related"]["strides"],
-    num_res_units=train_dict["model_related"]["num_res_units"]
-    )
+# model = UNet( 
+#     spatial_dims=train_dict["model_related"]["spatial_dims"],
+#     in_channels=train_dict["model_related"]["in_channels"],
+#     out_channels=train_dict["model_related"]["out_channels"],
+#     channels=train_dict["model_related"]["channels"],
+#     strides=train_dict["model_related"]["strides"],
+#     num_res_units=train_dict["model_related"]["num_res_units"]
+#     )
 
-bnn.bayesianize_(model, inference="inducing", inducing_rows=64, inducing_cols=64)
+# bnn.bayesianize_(model, inference="inducing", inducing_rows=64, inducing_cols=64)
 
 # model = torch.load(train_dict["save_folder"]+"model_best_{:03d}".format(
 #     train_dict["continue_training_epoch"])+".pth", map_location=torch.device('cpu'))
 # bnn.bayesianize_(model, inference="inducing", inducing_rows=64, inducing_cols=64)
 # optimizer = torch.load(train_dict["save_folder"]+"optim_{:03d}".format(
 #     train_dict["continue_training_epoch"])+".pth")
-
+model = UnetBNN(unet_dict)
 model.train()
 model = model.to(device)
 criterion = nn.SmoothL1Loss()
@@ -221,10 +264,10 @@ for idx_epoch_new in range(train_dict["epochs"]):
             # nll = F.cross_entropy(y_hat, batch_y)
             # print("Yhat size: ", y_hat.size())
             L1 = criterion(y_hat, batch_y)
-            kl = sum(m.kl_divergence() for m in model.modules() if hasattr(m, "kl_divergence"))
-            # kl /= train_dict["beta"]
-            # loss = L1 + kl / len(file_list)
-            loss = L1
+            kl = sum(m.kl_divergence() for m in model.out_conv.modules() if hasattr(m, "kl_divergence"))
+            kl /= train_dict["beta"]
+            loss = L1 + kl / len(file_list)
+            # loss = L1
             if isTrain:
                 loss.backward()
                 optimizer.step()
@@ -242,12 +285,12 @@ for idx_epoch_new in range(train_dict["epochs"]):
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_z.npy", y_hat.cpu().detach().numpy())
 
             torch.save(model, train_dict["save_folder"]+"model_.pth".format(idx_epoch + 1))
-            if np.mean(case_loss[:, 0]) < best_val_loss:
+            if np.mean(case_loss[:, :]) < best_val_loss:
                 # save the best model
                 torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch + 1))
                 torch.save(optimizer, train_dict["save_folder"]+"optim_{:03d}.pth".format(idx_epoch + 1))
                 print("Checkpoint saved at Epoch {:03d}".format(idx_epoch + 1))
-                best_val_loss = np.mean(case_loss[:, 0])
+                best_val_loss = np.mean(case_loss[:, :])
 
         del batch_x, batch_y
         gc.collect()
