@@ -45,9 +45,9 @@ class UnetBNN(nn.Module):
 
         bnn.bayesianize_(
             self.out_conv,
-            inference=unet_dict["inference"]"inducing",
-            inducing_rows=unet_dict["inducing_rows"]64,
-            inducing_cols=unet_dict["inducing_cols"]64
+            inference=unet_dict["inference"],
+            inducing_rows=unet_dict["inducing_rows"],
+            inducing_cols=unet_dict["inducing_cols"],
             )
 
     def forward(self, x):
