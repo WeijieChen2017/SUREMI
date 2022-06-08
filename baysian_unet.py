@@ -26,7 +26,7 @@ class UnetBNN(nn.Module):
         self.unet = UNet( 
             spatial_dims=unet_dict["spatial_dims"],
             in_channels=unet_dict["in_channels"],
-            out_channels=unet_dict["out_channels"],
+            out_channels=unet_dict["mid_channels"],
             channels=unet_dict["channels"],
             strides=unet_dict["strides"],
             num_res_units=unet_dict["num_res_units"],
