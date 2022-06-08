@@ -59,20 +59,21 @@ class UnetBNN(nn.Module):
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Bayesian_unet_v10_unet_BNN_KLe11"
+train_dict["project_name"] = "Bayesian_unet_v11_unet_BNN_KLe8_flip"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
 train_dict["input_size"] = [96, 96, 96]
-train_dict["gpu_ids"] = [4]
+train_dict["gpu_ids"] = [1]
 train_dict["epochs"] = 200
 train_dict["batch"] = 8
 train_dict["dropout"] = 0
-train_dict["beta"] = 1e11 # resize KL loss
+train_dict["beta"] = 18 # resize KL loss
 train_dict["model_term"] = "Monai_Unet3d"
-train_dict["dataset_ratio"] = 0.5
+train_dict["dataset_ratio"] = 0.25
 train_dict["continue_training_epoch"] = 0
+train_dict["flip"] = True
 
 unet_dict = {}
 unet_dict["spatial_dims"] = 3
@@ -266,7 +267,13 @@ for idx_epoch_new in range(train_dict["epochs"]):
             L1 = criterion(y_hat, batch_y)
             kl = sum(m.kl_divergence() for m in model.out_conv.modules() if hasattr(m, "kl_divergence"))
             kl /= train_dict["beta"]
-            loss = L1 + kl / len(file_list)
+            if not train_dict["flip"]:
+                loss = L1 + kl / len(file_list)
+            else:
+                if idx_epoch % 2 == 0:
+                    loss = L1
+                else:
+                    loss = kl / len(file_list)
             # loss = L1
             if isTrain:
                 loss.backward()
