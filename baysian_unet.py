@@ -60,13 +60,13 @@ class UnetBNN(nn.Module):
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Bayesian_unet_v13_unet_drop25"
+train_dict["project_name"] = "Bayesian_unet_v14_unet_drop50"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
 train_dict["input_size"] = [96, 96, 96]
-train_dict["gpu_ids"] = [2]
+train_dict["gpu_ids"] = [4]
 train_dict["epochs"] = 200
 train_dict["batch"] = 16
 train_dict["dropout"] = 0
@@ -89,7 +89,7 @@ unet_dict["inducing_rows"] = 64
 unet_dict["inducing_cols"] = 64
 unet_dict["act"] = Act.PRELU
 unet_dict["normunet"] = Norm.INSTANCE
-unet_dict["dropout"] = 0.25
+unet_dict["dropout"] = 0.5
 unet_dict["bias"] = True
 
 train_dict["model_related"] = unet_dict
