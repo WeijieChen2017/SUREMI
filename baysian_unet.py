@@ -296,7 +296,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             print("Loss: ", loss.item(), "KL: ", kl.item(), "L1:", L1.item())
 
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
-        print("  Loss: ", np.mean(case_loss))
+        print("  Loss: ", np.mean(case_loss), "  Recon: ", np.mean(case_loss[:, 0]))
         np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), case_loss)
 
         if isVal:
