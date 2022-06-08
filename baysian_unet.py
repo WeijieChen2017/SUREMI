@@ -227,7 +227,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
         random.shuffle(file_list)
         
-        case_loss = np.zeros((len(file_list), 2))
+        case_loss = np.zeros((len(file_list), 1))
 
         # N, C, D, H, W
         x_data = nib.load(file_list[0]).get_fdata()
@@ -274,22 +274,23 @@ for idx_epoch_new in range(train_dict["epochs"]):
             # nll = F.cross_entropy(y_hat, batch_y)
             # print("Yhat size: ", y_hat.size())
             L1 = criterion(y_hat, batch_y)
-            kl = sum(m.kl_divergence() for m in model.out_conv.modules() if hasattr(m, "kl_divergence"))
-            kl /= train_dict["beta"]
-            if not train_dict["flip"]:
-                loss = L1 + kl / len(file_list)
-            else:
-                if idx_epoch % 2 == 0:
-                    loss = L1
-                else:
-                    loss = kl / len(file_list)
-            # loss = L1
+            # kl = sum(m.kl_divergence() for m in model.out_conv.modules() if hasattr(m, "kl_divergence"))
+            # kl /= train_dict["beta"]
+            # if not train_dict["flip"]:
+            #     loss = L1 + kl / len(file_list)
+            # else:
+            #     if idx_epoch % 2 == 0:
+            #         loss = L1
+            #     else:
+            #         loss = kl / len(file_list)
+            loss = L1
             if isTrain:
                 loss.backward()
                 optimizer.step()
             case_loss[cnt_file, 0] = L1.item()
-            case_loss[cnt_file, 1] = kl.item()
-            print("Loss: ", loss.item(), "KL: ", kl.item(), "L1:", L1.item())
+            # case_loss[cnt_file, 1] = kl.item()
+            # print("Loss: ", loss.item(), "KL: ", kl.item(), "L1:", L1.item())
+            print("Loss: ", loss.item())
 
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
         print("  Loss: ", np.mean(case_loss))
