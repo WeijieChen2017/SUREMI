@@ -26,10 +26,14 @@ class UnetBNN(nn.Module):
         self.unet = UNet( 
             spatial_dims=unet_dict["spatial_dims"],
             in_channels=unet_dict["in_channels"],
-            out_channels=unet_dict["mid_channels"],
+            out_channels=unet_dict["out_channels"],
             channels=unet_dict["channels"],
             strides=unet_dict["strides"],
-            num_res_units=unet_dict["num_res_units"]
+            num_res_units=unet_dict["num_res_units"],
+            act=unet_dict["act"],
+            norm=unet_dict["normunet"],
+            dropout=unet_dict["dropout"],
+            bias=unet_dict["bias"],
             )
         if unet_dict["spatial_dims"] == 2:
             self.out_conv = nn.Conv2d(
@@ -60,17 +64,17 @@ class UnetBNN(nn.Module):
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Bayesian_unet_v15_unet_drop75"
+train_dict["project_name"] = "Bayesian_unet_v16_unet_BNN_KLe6_flip"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
 train_dict["input_size"] = [96, 96, 96]
-train_dict["gpu_ids"] = [4]
+train_dict["gpu_ids"] = [1]
 train_dict["epochs"] = 200
-train_dict["batch"] = 16
+train_dict["batch"] = 8
 train_dict["dropout"] = 0
-train_dict["beta"] = 18 # resize KL loss
+train_dict["beta"] = 1e6 # resize KL loss
 train_dict["model_term"] = "Monai_Unet3d"
 train_dict["dataset_ratio"] = 0.25
 train_dict["continue_training_epoch"] = 0
@@ -89,7 +93,7 @@ unet_dict["inducing_rows"] = 64
 unet_dict["inducing_cols"] = 64
 unet_dict["act"] = Act.PRELU
 unet_dict["normunet"] = Norm.INSTANCE
-unet_dict["dropout"] = 0.75
+unet_dict["dropout"] = 0.0
 unet_dict["bias"] = True
 
 train_dict["model_related"] = unet_dict
@@ -135,18 +139,18 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-model = UNet( 
-    spatial_dims=unet_dict["spatial_dims"],
-    in_channels=unet_dict["in_channels"],
-    out_channels=unet_dict["out_channels"],
-    channels=unet_dict["channels"],
-    strides=unet_dict["strides"],
-    num_res_units=unet_dict["num_res_units"],
-    act=unet_dict["act"],
-    norm=unet_dict["normunet"],
-    dropout=unet_dict["dropout"],
-    bias=unet_dict["bias"],
-    )
+# model = UNet( 
+#     spatial_dims=unet_dict["spatial_dims"],
+#     in_channels=unet_dict["in_channels"],
+#     out_channels=unet_dict["out_channels"],
+#     channels=unet_dict["channels"],
+#     strides=unet_dict["strides"],
+#     num_res_units=unet_dict["num_res_units"],
+#     act=unet_dict["act"],
+#     norm=unet_dict["normunet"],
+#     dropout=unet_dict["dropout"],
+#     bias=unet_dict["bias"],
+#     )
 
 # bnn.bayesianize_(model, inference="inducing", inducing_rows=64, inducing_cols=64)
 
@@ -227,7 +231,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
         random.shuffle(file_list)
         
-        case_loss = np.zeros((len(file_list), 1))
+        case_loss = np.zeros((len(file_list), 2))
 
         # N, C, D, H, W
         x_data = nib.load(file_list[0]).get_fdata()
@@ -274,23 +278,22 @@ for idx_epoch_new in range(train_dict["epochs"]):
             # nll = F.cross_entropy(y_hat, batch_y)
             # print("Yhat size: ", y_hat.size())
             L1 = criterion(y_hat, batch_y)
-            # kl = sum(m.kl_divergence() for m in model.out_conv.modules() if hasattr(m, "kl_divergence"))
-            # kl /= train_dict["beta"]
-            # if not train_dict["flip"]:
-            #     loss = L1 + kl / len(file_list)
-            # else:
-            #     if idx_epoch % 2 == 0:
-            #         loss = L1
-            #     else:
-            #         loss = kl / len(file_list)
-            loss = L1
+            kl = sum(m.kl_divergence() for m in model.out_conv.modules() if hasattr(m, "kl_divergence"))
+            kl /= len(file_list)
+            if not train_dict["flip"]:
+                loss = L1 + kl / train_dict["beta"]
+            else:
+                if idx_epoch % 2 == 0:
+                    loss = L1
+                else:
+                    loss = kl / train_dict["beta"]
+            # loss = L1
             if isTrain:
                 loss.backward()
                 optimizer.step()
             case_loss[cnt_file, 0] = L1.item()
-            # case_loss[cnt_file, 1] = kl.item()
-            # print("Loss: ", loss.item(), "KL: ", kl.item(), "L1:", L1.item())
-            print("Loss: ", loss.item())
+            case_loss[cnt_file, 1] = kl.item()
+            print("Loss: ", loss.item(), "KL: ", kl.item(), "L1:", L1.item())
 
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
         print("  Loss: ", np.mean(case_loss))
