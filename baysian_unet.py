@@ -14,6 +14,7 @@ import torchvision
 import requests
 
 from monai.networks.nets.unet import UNet as UNet
+from monai.networks.layers.factories import Act, Norm
 import bnn
 
 class UnetBNN(nn.Module):
@@ -59,15 +60,15 @@ class UnetBNN(nn.Module):
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Bayesian_unet_v11_unet_BNN_KLe8_flip"
+train_dict["project_name"] = "Bayesian_unet_v12_unet_drop10"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
 train_dict["input_size"] = [96, 96, 96]
-train_dict["gpu_ids"] = [1]
+train_dict["gpu_ids"] = [2]
 train_dict["epochs"] = 200
-train_dict["batch"] = 8
+train_dict["batch"] = 16
 train_dict["dropout"] = 0
 train_dict["beta"] = 18 # resize KL loss
 train_dict["model_term"] = "Monai_Unet3d"
@@ -86,6 +87,10 @@ unet_dict["num_res_units"] = 4
 unet_dict["inference"] = "inducing"
 unet_dict["inducing_rows"] = 64
 unet_dict["inducing_cols"] = 64
+unet_dict["act"] = Act.PRELU
+unet_dict["normunet"] = Norm.INSTANCE
+unet_dict["dropout"] = 0.1
+unet_dict["bias"] = True
 
 train_dict["model_related"] = unet_dict
 
@@ -130,14 +135,32 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-# model = UNet( 
-#     spatial_dims=train_dict["model_related"]["spatial_dims"],
-#     in_channels=train_dict["model_related"]["in_channels"],
-#     out_channels=train_dict["model_related"]["out_channels"],
-#     channels=train_dict["model_related"]["channels"],
-#     strides=train_dict["model_related"]["strides"],
-#     num_res_units=train_dict["model_related"]["num_res_units"]
-#     )
+model = UNet( 
+    spatial_dims=unet_dict["spatial_dims"],
+    in_channels=unet_dict["in_channels"],
+    out_channels=unet_dict["out_channels"],
+    channels=unet_dict["channels"],
+    strides=unet_dict["strides"],
+    num_res_units=unet_dict["num_res_units"],
+    act=unet_dict["act"],
+    norm=unet_dict["normunet"],
+    dropout=unet_dict["dropout"],
+    bias=unet_dict["bias"],
+    )
+
+spatial_dims: int,
+        in_channels: int,
+        out_channels: int,
+        channels: Sequence[int],
+        strides: Sequence[int],
+        kernel_size: Union[Sequence[int], int] = 3,
+        up_kernel_size: Union[Sequence[int], int] = 3,
+        num_res_units: int = 0,
+        act: Union[Tuple, str] = Act.PRELU,
+        norm: Union[Tuple, str] = Norm.INSTANCE,
+        dropout: float = 0.0,
+        bias: bool = True,
+        dimensions: Optional[int] = None,
 
 # bnn.bayesianize_(model, inference="inducing", inducing_rows=64, inducing_cols=64)
 
@@ -146,7 +169,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # bnn.bayesianize_(model, inference="inducing", inducing_rows=64, inducing_cols=64)
 # optimizer = torch.load(train_dict["save_folder"]+"optim_{:03d}".format(
 #     train_dict["continue_training_epoch"])+".pth")
-model = UnetBNN(unet_dict)
+# model = UnetBNN(unet_dict)
 model.train()
 model = model.to(device)
 criterion = nn.SmoothL1Loss()
