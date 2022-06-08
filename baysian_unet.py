@@ -148,20 +148,6 @@ model = UNet(
     bias=unet_dict["bias"],
     )
 
-spatial_dims: int,
-        in_channels: int,
-        out_channels: int,
-        channels: Sequence[int],
-        strides: Sequence[int],
-        kernel_size: Union[Sequence[int], int] = 3,
-        up_kernel_size: Union[Sequence[int], int] = 3,
-        num_res_units: int = 0,
-        act: Union[Tuple, str] = Act.PRELU,
-        norm: Union[Tuple, str] = Norm.INSTANCE,
-        dropout: float = 0.0,
-        bias: bool = True,
-        dimensions: Optional[int] = None,
-
 # bnn.bayesianize_(model, inference="inducing", inducing_rows=64, inducing_cols=64)
 
 # model = torch.load(train_dict["save_folder"]+"model_best_{:03d}".format(
