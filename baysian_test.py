@@ -57,7 +57,7 @@ class UnetBNN(nn.Module):
 test_dict = {}
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-test_dict["project_name"] = "Bayesian_unet_v16_unet_BNN_KLe6_flip"
+test_dict["project_name"] = "Bayesian_unet_v15_unet_drop75"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [1]
 test_dict["eval_file_cnt"] = 5
