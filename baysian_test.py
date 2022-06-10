@@ -17,8 +17,6 @@ import requests
 from monai.inferers import sliding_window_inference
 
 class UnetBNN(nn.Module):
-   """(convolution => [BN] => ReLU) * 2"""
-
     def __init__(self, unet_dict):
         super().__init__()
         self.unet = UNet( 
