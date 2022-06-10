@@ -52,7 +52,7 @@ for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
     for cnt_epoch, filepath in enumerate(list_train_loss):
         print(filepath)
         data = np.load(filepath)
-        if len(data.shape) > 1:
+        if data.shape[1]> 1:
             curr_train_loss[cnt_epoch, 0] = np.mean(data[:, 0])
             curr_train_loss[cnt_epoch, 1] = np.mean(data[:, 1])
         else:
@@ -60,7 +60,7 @@ for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
     for cnt_epoch, filepath in enumerate(list_val_loss):
         print(filepath)
         data = np.load(filepath)
-        if len(data.shape) > 1:
+        if data.shape[1] > 1:
             curr_val_loss[cnt_epoch, 0] = np.mean(data[:, 0])
             curr_val_loss[cnt_epoch, 1] = np.mean(data[:, 1])
         else:
