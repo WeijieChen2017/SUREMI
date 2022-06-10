@@ -57,11 +57,11 @@ class UnetBNN(nn.Module):
 test_dict = {}
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-test_dict["project_name"] = "Bayesian_unet_v15_unet_drop75"
+test_dict["project_name"] = "Unet_Monai_Iman_v2"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [1]
 test_dict["eval_file_cnt"] = 5
-test_dict["best_model_name"] = "model_best_195.pth"
+test_dict["best_model_name"] = "model_best_181.pth"
 test_dict["eval_sample"] = 11
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
@@ -101,10 +101,12 @@ loss_func = nn.SmoothL1Loss()
 
 # ==================== data division ====================
 
-data_div = np.load(os.path.join(test_dict["save_folder"], "data_division.npy"), allow_pickle=True)[()]
-X_list = data_div['test_list_X']
-if test_dict["eval_file_cnt"] > 0:
-    X_list = X_list[:test_dict["eval_file_cnt"]]
+# data_div = np.load(os.path.join(test_dict["save_folder"], "data_division.npy"), allow_pickle=True)[()]
+# X_list = data_div['test_list_X']
+# if test_dict["eval_file_cnt"] > 0:
+#     X_list = X_list[:test_dict["eval_file_cnt"]]
+
+X_list = ["./data_dir/Iman_MR/norm/00550.nii.gz"]
 
 # ==================== Evaluating ====================
 
