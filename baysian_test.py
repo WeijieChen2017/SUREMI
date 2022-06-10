@@ -17,7 +17,7 @@ import requests
 from monai.inferers import sliding_window_inference
 
 class UnetBNN(nn.Module):
-    """(convolution => [BN] => ReLU) * 2"""
+   """(convolution => [BN] => ReLU) * 2"""
 
     def __init__(self, unet_dict):
         super().__init__()
@@ -60,11 +60,12 @@ class UnetBNN(nn.Module):
 test_dict = {}
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-test_dict["project_name"] = "Bayesian_unet_v6_ob_KL_small"
+test_dict["project_name"] = "Bayesian_unet_v16_unet_BNN_KLe6_flip"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
-test_dict["gpu_ids"] = [0]
+test_dict["gpu_ids"] = [1]
 test_dict["eval_file_cnt"] = 5
-test_dict["best_model_name"] = "model_best_069.pth"
+test_dict["best_model_name"] = "model_best_195.pth"
+test_dict["eval_sample"] = 11
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
 print("input size:", train_dict["input_size"])
@@ -135,23 +136,45 @@ for cnt_file, file_path in enumerate(file_list):
 
     input_data = np.expand_dims(x_data, (0,1))
 
-    with torch.no_grad():
-        y_hat = sliding_window_inference(
-            inputs = torch.from_numpy(input_data).float().to(device), 
-            roi_size = test_dict["input_size"], 
-            sw_batch_size = 1, 
-            predictor = model,
-            overlap=0.25, 
-            mode="gaussian", 
-            sigma_scale=0.125, 
-            padding_mode="constant", 
-            cval=0.0, 
-            sw_device=device, 
-            device=device
-            )
+    # with torch.no_grad():
+    #     y_hat = sliding_window_inference(
+    #         inputs = torch.from_numpy(input_data).float().to(device), 
+    #         roi_size = test_dict["input_size"], 
+    #         sw_batch_size = 1, 
+    #         predictor = model,
+    #         overlap=0.25, 
+    #         mode="gaussian", 
+    #         sigma_scale=0.125, 
+    #         padding_mode="constant", 
+    #         cval=0.0, 
+    #         sw_device=device, 
+    #         device=device
+    #         )
 
-    output_data = y_hat.cpu().detach().numpy()
+    # output_data = y_hat.cpu().detach().numpy()
+    # print(output_data.shape)
+
+    eval_output = []
+    for idx in range(test_dict["eval_sample"]):
+        with torch.no_grad():
+            y_hat = sliding_window_inference(
+                inputs = torch.from_numpy(input_data).float().to(device), 
+                roi_size = test_dict["input_size"], 
+                sw_batch_size = 8, 
+                predictor = model,
+                overlap=0, 
+                mode="constant", 
+                sigma_scale=0.125, 
+                padding_mode="constant", 
+                cval=0.0, 
+                sw_device=device, 
+                device=device
+                )
+        eval_output.append(y_hat.cpu().detach().numpy())
+    eval_output = np.asarray(eval_output)
+    output_data = np.median(eval_output, axis=0)
     print(output_data.shape)
+
 
     # print(pad_y_hat.shape)
     test_file = nib.Nifti1Image(np.squeeze(output_data), x_file.affine, x_file.header)
