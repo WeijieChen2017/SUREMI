@@ -113,7 +113,7 @@ if test_dict["eval_file_cnt"] > 0:
 file_list = X_list
 iter_tag = "test"
 cnt_total_file = len(file_list)
-model.eval()
+model.train()
 
 cnt_each_cube = 1
 
