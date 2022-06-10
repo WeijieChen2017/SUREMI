@@ -21,7 +21,6 @@ class UnetBNN(nn.Module):
 
     def __init__(self, unet_dict):
         super().__init__()
-    
         self.unet = UNet( 
             spatial_dims=unet_dict["spatial_dims"],
             in_channels=unet_dict["in_channels"],
