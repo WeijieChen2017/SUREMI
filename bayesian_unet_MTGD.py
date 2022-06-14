@@ -291,7 +291,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     optimizer.zero_grad()
                     y_hat = model(batch_x)
                     L1 = criterion(y_hat, batch_y)
-                    KL = sum(m.kl_divergence() for m in model.out_conv.modules() if hasattr(m, "kl_divergence"))
+                    KL = sum(m.kl_divergence() for m in model.modules() if hasattr(m, "kl_divergence")) # out_conv.
                     KL /= len(file_list)
 
                     average_loss[idx_MTGD, 0] = L1.item()
