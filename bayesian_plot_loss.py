@@ -47,20 +47,20 @@ hub_CT_folder = [
     "./project_dir/Bayesian_unet_v13_unet_drop25/",
     "./project_dir/Bayesian_unet_v14_unet_drop50/",
     # "./project_dir/Bayesian_unet_v15_unet_drop75/",
-    "./project_dir/Bayesian_MTGD_v1_unet_do10_MTGD5",
-    "./project_dir/Bayesian_MTGD_v2_unet_do10_MTGD15",
-    "./project_dir/Bayesian_MTGD_v3_unet_do25_MTGD5",
-    "./project_dir/Bayesian_MTGD_v4_unet_do25_MTGD15",
-    "./project_dir/Bayesian_MTGD_v45unet_do50_MTGD5",
-    "./project_dir/Bayesian_MTGD_v45unet_do50_MTGD15",
+    "./project_dir/Bayesian_MTGD_v1_unet_do10_MTGD5/",
+    "./project_dir/Bayesian_MTGD_v2_unet_do10_MTGD15/",
+    "./project_dir/Bayesian_MTGD_v3_unet_do25_MTGD5/",
+    "./project_dir/Bayesian_MTGD_v4_unet_do25_MTGD15/",
+    "./project_dir/Bayesian_MTGD_v45unet_do50_MTGD5/",
+    "./project_dir/Bayesian_MTGD_v45unet_do50_MTGD15/",
     ]
 
 train_loss = []
 val_loss = []
 
 for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
-    list_train_loss = sorted(glob.glob(CT_folder+"loss/*train*.npy"))
-    list_val_loss = sorted(glob.glob(CT_folder+"loss/*val*.npy"))
+    list_train_loss = sorted(glob.glob(CT_folder+"/loss/*train*.npy"))
+    list_val_loss = sorted(glob.glob(CT_folder+"/loss/*val*.npy"))
     model_name = hub_CT_name[cnt_CT_folder]
     curr_train_loss = np.zeros((len(list_train_loss), 2))
     curr_val_loss = np.zeros((len(list_val_loss), 2))
