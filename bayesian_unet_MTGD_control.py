@@ -64,7 +64,7 @@ class UnetBNN(nn.Module):
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Bayesian_unet_v17_unet_BNN_KLe6_MTGD5"
+train_dict["project_name"] = "Bayesian_unet_v17_unet_do25_MTGD5"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
@@ -73,7 +73,7 @@ train_dict["input_size"] = [96, 96, 96]
 train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 200
 train_dict["batch"] = 8
-train_dict["dropout"] = 0
+train_dict["dropout"] = 0.25
 train_dict["beta"] = 1e6 # resize KL loss
 train_dict["model_term"] = "Monai_Unet3d"
 train_dict["dataset_ratio"] = 0.25
@@ -140,18 +140,18 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-# model = UNet( 
-#     spatial_dims=unet_dict["spatial_dims"],
-#     in_channels=unet_dict["in_channels"],
-#     out_channels=unet_dict["out_channels"],
-#     channels=unet_dict["channels"],
-#     strides=unet_dict["strides"],
-#     num_res_units=unet_dict["num_res_units"],
-#     act=unet_dict["act"],
-#     norm=unet_dict["normunet"],
-#     dropout=unet_dict["dropout"],
-#     bias=unet_dict["bias"],
-#     )
+model = UNet( 
+    spatial_dims=unet_dict["spatial_dims"],
+    in_channels=unet_dict["in_channels"],
+    out_channels=unet_dict["out_channels"],
+    channels=unet_dict["channels"],
+    strides=unet_dict["strides"],
+    num_res_units=unet_dict["num_res_units"],
+    act=unet_dict["act"],
+    norm=unet_dict["normunet"],
+    dropout=unet_dict["dropout"],
+    bias=unet_dict["bias"],
+    )
 
 # bnn.bayesianize_(model, inference="inducing", inducing_rows=64, inducing_cols=64)
 
@@ -160,7 +160,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # bnn.bayesianize_(model, inference="inducing", inducing_rows=64, inducing_cols=64)
 # optimizer = torch.load(train_dict["save_folder"]+"optim_{:03d}".format(
 #     train_dict["continue_training_epoch"])+".pth")
-model = UnetBNN(unet_dict)
+# model = UnetBNN(unet_dict)
 model.train()
 model = model.to(device)
 criterion = nn.SmoothL1Loss()
@@ -241,7 +241,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
         random.shuffle(file_list)
         
-        case_loss = np.zeros((len(file_list), 2))
+        case_loss = np.zeros((len(file_list), 1))
 
         # N, C, D, H, W
         x_data = nib.load(file_list[0]).get_fdata()
@@ -285,26 +285,26 @@ for idx_epoch_new in range(train_dict["epochs"]):
             
             if isTrain:
 
-                average_loss = np.zeros((train_dict["n_MTGD"], 2))
+                average_loss = np.zeros((train_dict["n_MTGD"], 1))
 
                 for idx_MTGD in range(train_dict["n_MTGD"]):
                     optimizer.zero_grad()
                     y_hat = model(batch_x)
                     L1 = criterion(y_hat, batch_y)
-                    KL = sum(m.kl_divergence() for m in model.out_conv.modules() if hasattr(m, "kl_divergence"))
-                    KL /= len(file_list)
+                    # KL = sum(m.kl_divergence() for m in model.out_conv.modules() if hasattr(m, "kl_divergence"))
+                    # KL /= len(file_list)
 
                     average_loss[idx_MTGD, 0] = L1.item()
-                    average_loss[idx_MTGD, 1] = KL.item()
+                    # average_loss[idx_MTGD, 1] = KL.item()
                     
-                    if not train_dict["flip"]:
-                        loss = L1 + KL / train_dict["beta"]
-                    else:
-                        if idx_epoch % 2 == 0:
-                            loss = L1
-                        else:
-                            loss = KL / train_dict["beta"]
-                    # loss = L1
+                    # if not train_dict["flip"]:
+                    #     loss = L1 + KL / train_dict["beta"]
+                    # else:
+                    #     if idx_epoch % 2 == 0:
+                    #         loss = L1
+                    #     else:
+                    #         loss = KL / train_dict["beta"]
+                    loss = L1
                     loss.backward()
 
                     for model_key, param in model.named_parameters():
@@ -320,25 +320,27 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 optimizer.step()
 
                 case_loss[cnt_file, 0] = np.mean(average_loss[:, 0])
-                case_loss[cnt_file, 1] = np.mean(average_loss[:, 1])
-                print("Loss: ", loss.item(), "KL: ", KL.item(), "L1:", L1.item())
+                # case_loss[cnt_file, 1] = np.mean(average_loss[:, 1])
+                # print("Loss: ", loss.item(), "KL: ", KL.item(), "L1:", L1.item())
+                print("Loss: ", loss.item())
 
             if isVal:
                 with torch.no_grad():
                     y_hat = model(batch_x)
                     L1 = criterion(y_hat, batch_y)
-                    kl = sum(m.kl_divergence() for m in model.out_conv.modules() if hasattr(m, "kl_divergence"))
-                    kl /= len(file_list)
-                    if not train_dict["flip"]:
-                        loss = L1 + kl / train_dict["beta"]
-                    else:
-                        if idx_epoch % 2 == 0:
-                            L1loss = L1
-                        else:
-                            loss = kl / train_dict["beta"]
+                    # kl = sum(m.kl_divergence() for m in model.out_conv.modules() if hasattr(m, "kl_divergence"))
+                    # kl /= len(file_list)
+                    # if not train_dict["flip"]:
+                    #     loss = L1 + kl / train_dict["beta"]
+                    # else:
+                    #     if idx_epoch % 2 == 0:
+                    #         L1loss = L1
+                    #     else:
+                    #         loss = kl / train_dict["beta"]
                 case_loss[cnt_file, 0] = L1.item()
-                case_loss[cnt_file, 1] = kl.item()
-                print("Loss: ", loss.item(), "KL: ", kl.item(), "L1:", L1.item())
+                # case_loss[cnt_file, 1] = kl.item()
+                # print("Loss: ", loss.item(), "KL: ", kl.item(), "L1:", L1.item())
+                print("Loss: ", loss.item())
 
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
         print("  Loss: ", np.mean(case_loss), "  Recon: ", np.mean(case_loss[:, 0]))
