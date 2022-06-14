@@ -64,7 +64,7 @@ class UnetBNN(nn.Module):
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Bayesian_MTGD_v2_unet_do10_MTGD15"
+train_dict["project_name"] = "Bayesian_MTGD_v3_unet_do25_MTGD5"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
@@ -74,8 +74,8 @@ train_dict["gpu_ids"] = [3]
 train_dict["epochs"] = 200
 train_dict["batch"] = 16
 
-train_dict["dropout"] = 0.10
-train_dict["n_MTGD"] = 15
+train_dict["dropout"] = 0.25
+train_dict["n_MTGD"] = 5
 
 train_dict["beta"] = 1e6 # resize KL loss
 train_dict["model_term"] = "Monai_Unet3d"
