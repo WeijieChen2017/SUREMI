@@ -70,7 +70,7 @@ train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
 train_dict["input_size"] = [96, 96, 96]
-train_dict["gpu_ids"] = [1]
+train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 200
 train_dict["batch"] = 8
 train_dict["dropout"] = 0
@@ -283,19 +283,26 @@ for idx_epoch_new in range(train_dict["epochs"]):
             batch_y = torch.from_numpy(batch_y).float().to(device)
             
             if isTrain:
+
+                average_loss = np.zeros((train_dict["n_MTGD"], 2))
+
                 for idx_MTGD in range(train_dict["n_MTGD"]):
                     optimizer.zero_grad()
                     y_hat = model(batch_x)
                     L1 = criterion(y_hat, batch_y)
-                    kl = sum(m.kl_divergence() for m in model.out_conv.modules() if hasattr(m, "kl_divergence"))
-                    kl /= len(file_list)
+                    KL = sum(m.kl_divergence() for m in model.out_conv.modules() if hasattr(m, "kl_divergence"))
+                    KL /= len(file_list)
+
+                    average_loss[idx_MTGD, 0] = L1.item()
+                    average_loss[idx_MTGD, 1] = KL.item()
+                    
                     if not train_dict["flip"]:
-                        loss = L1 + kl / train_dict["beta"]
+                        loss = L1 + KL / train_dict["beta"]
                     else:
                         if idx_epoch % 2 == 0:
                             loss = L1
                         else:
-                            loss = kl / train_dict["beta"]
+                            loss = KL / train_dict["beta"]
                     # loss = L1
                     loss.backward()
 
@@ -307,11 +314,11 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     median_gradient = np.median(MTGD_dict[model_key], axis=0)
                     median_gradient = np.reshape(median_gradient, param.grad.size())
                     param.grad = torch.from_numpy(median_gradient).float().to(device)
-
                 optimizer.step()
-                case_loss[cnt_file, 0] = L1.item()
-                case_loss[cnt_file, 1] = kl.item()
-                print("Loss: ", loss.item(), "KL: ", kl.item(), "L1:", L1.item())
+
+                case_loss[cnt_file, 0] = np.mean(average_loss[:, 0])
+                case_loss[cnt_file, 1] = np.mean(average_loss[:, 1])
+                print("Loss: ", loss.item(), "KL: ", KL.item(), "L1:", L1.item())
 
             if isVal:
                 with torch.no_grad():
