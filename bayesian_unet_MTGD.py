@@ -327,7 +327,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 with torch.no_grad():
                     y_hat = model(batch_x)
                     L1 = criterion(y_hat, batch_y)
-                    kl = sum(m.kl_divergence() for m in model.out_conv.modules() if hasattr(m, "kl_divergence"))
+                    kl = sum(m.kl_divergence() for m in model.modules() if hasattr(m, "kl_divergence")) # out_conv.
                     kl /= len(file_list)
                     if not train_dict["flip"]:
                         loss = L1 + kl / train_dict["beta"]
