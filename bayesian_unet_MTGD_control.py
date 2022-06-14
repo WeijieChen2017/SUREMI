@@ -64,7 +64,7 @@ class UnetBNN(nn.Module):
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Bayesian_MTGD_v1_unet_do10_MTGD5"
+train_dict["project_name"] = "Bayesian_MTGD_v2_unet_do10_MTGD11"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
