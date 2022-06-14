@@ -308,8 +308,8 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     loss.backward()
 
                     for model_key, param in model.named_parameters():
-                        print(model_key, param.grad)
-                        print("-"*60)
+                        # print(model_key, param.grad)
+                        # print("-"*60)
                         MTGD_dict[model_key][idx_MTGD, :] = torch.flatten(param.grad).to("cpu").numpy()
 
                 optimizer.zero_grad()
