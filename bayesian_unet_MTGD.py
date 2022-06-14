@@ -209,6 +209,7 @@ np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 
 MTGD_dict = {}
 for model_key, param in model.named_parameters():
+    print(model_key)
     new_shape = (train_dict["n_MTGD"], torch.flatten(param).size()[0])
     MTGD_dict[model_key] = np.zeros(new_shape)
 
@@ -307,6 +308,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     loss.backward()
 
                     for model_key, param in model.named_parameters():
+                        print(model_key, param)
                         MTGD_dict[model_key][idx_MTGD, :] = torch.flatten(param.grad).to("cpu").numpy()
 
                 optimizer.zero_grad()
