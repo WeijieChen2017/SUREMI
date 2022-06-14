@@ -64,7 +64,7 @@ class UnetBNN(nn.Module):
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Bayesian_unet_v21_unet_do10_MTGD5"
+train_dict["project_name"] = "Bayesian_MTGD_v1_unet_do10_MTGD5"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
@@ -328,6 +328,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 with torch.no_grad():
                     y_hat = model(batch_x)
                     L1 = criterion(y_hat, batch_y)
+                    loss = L1
                     # kl = sum(m.kl_divergence() for m in model.out_conv.modules() if hasattr(m, "kl_divergence"))
                     # kl /= len(file_list)
                     # if not train_dict["flip"]:
