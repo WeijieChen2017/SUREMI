@@ -30,6 +30,7 @@ hub_CT_name = [
     "do25_MED_15",
     "do50_MED_5",
     "do50_MED_15",
+    "Unet_L1",
     ]
 hub_CT_folder = [
     # "./project_dir/Bayesian_unet_v1/",
@@ -53,6 +54,7 @@ hub_CT_folder = [
     "./project_dir/Bayesian_MTGD_v4_unet_do25_MTGD15/",
     "./project_dir/Bayesian_MTGD_v45unet_do50_MTGD5/",
     "./project_dir/Bayesian_MTGD_v45unet_do50_MTGD15/",
+    "./project_dir/Unet_Monai_Iman_v2/"
     ]
 
 train_loss = []
