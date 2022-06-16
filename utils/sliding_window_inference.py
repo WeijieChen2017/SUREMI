@@ -27,6 +27,8 @@ from monai.utils import (
     optional_import,
 )
 
+import numpy as np
+
 tqdm, _ = optional_import("tqdm", name="tqdm")
 
 __all__ = ["sliding_window_inference"]
