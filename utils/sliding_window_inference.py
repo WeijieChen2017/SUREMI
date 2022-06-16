@@ -192,7 +192,8 @@ def sliding_window_inference(
             seg_prob_out_sub = predictor(window_data, *args, **kwargs)  # batched patch segmentation
             seg_prob_out_tuple.append(seg_prob_out_sub.cpu().detach().numpy())
         seg_prob_out_tuple = np.asarray(seg_prob_out_tuple)
-        seg_prob_out = np.median(seg_prob_out_tuple, axis=0).to(sw_devic)
+        seg_prob_out_median = np.median(seg_prob_out_tuple, axis=0)
+        seg_prob_out = torch.from_numpy(seg_prob_out_median).float().to(device)
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
         # convert seg_prob_out to tuple seg_prob_tuple, this does not allocate new memory.
