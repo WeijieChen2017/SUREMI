@@ -58,11 +58,11 @@ class UnetBNN(nn.Module):
 test_dict = {}
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-test_dict["project_name"] = "Bayesian_MTGD_v2_unet_do10_MTGD15"
+test_dict["project_name"] = "Bayesian_MTGD_v4_unet_do25_MTGD15"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [1]
 test_dict["eval_file_cnt"] = 5
-test_dict["best_model_name"] = "model_best_120.pth"
+test_dict["best_model_name"] = "model_best_130.pth"
 test_dict["eval_sample"] = 11
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
