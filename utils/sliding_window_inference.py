@@ -238,7 +238,8 @@ def sliding_window_inference(
                 _initialized_ss += 1
 
             # resizing the importance_map
-            resizer = Resize(spatial_size=seg_prob.shape[2:], mode="nearest", anti_aliasing=False)
+            # resizer = Resize(spatial_size=seg_prob.shape[2:], mode="nearest", anti_aliasing=False)
+            resizer = Resize(spatial_size=seg_prob.shape[2:], mode="nearest")
 
             # store the result in the proper location of the full output. Apply weights from importance map.
             for idx, original_idx in zip(slice_range, unravel_slice):
