@@ -62,7 +62,7 @@ test_dict["project_name"] = "Bayesian_MTGD_v45unet_do50_MTGD15"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [1]
 test_dict["eval_file_cnt"] = 5
-test_dict["best_model_name"] = "model_best_116.pth"
+test_dict["best_model_name"] = "model_best_170.pth"
 test_dict["eval_sample"] = 11
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
