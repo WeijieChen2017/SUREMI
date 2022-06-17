@@ -40,8 +40,8 @@ def add_noise(x, noise_type, noise_params):
         Pepper_mask = [SandP_noise<Prob_pepper]
 
         SandP_img = copy.deepcopy(x)
-        SandP_img[Salt_mask] = 1
-        SandP_img[Pepper_mask] = 0
+        SandP_img[tuple(Salt_mask)] = 1
+        SandP_img[tuple(Pepper_mask)] = 0
         return SandP_img
 
     if noise_type == "Speckle":
