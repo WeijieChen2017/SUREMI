@@ -121,6 +121,10 @@ def sliding_window_inference(
         - input must be channel-first and have a batch dim, supports N-D sliding window.
 
     """
+    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    cov_array = []
+    # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
     compute_dtype = inputs.dtype
     num_spatial_dims = len(inputs.shape) - 2
     if overlap < 0 or overlap >= 1:
@@ -189,10 +193,14 @@ def sliding_window_inference(
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         seg_prob_out_tuple = []
         for idx_median in range(cnt_sample):
-            seg_prob_out_sub = predictor(window_data, *args, **kwargs)  # batched patch segmentation
+            seg_prob_out_sub = predictor(window_data, *args, **kwargs)             # batched patch segmentation
             seg_prob_out_tuple.append(seg_prob_out_sub.cpu().detach().numpy())
         seg_prob_out_tuple = np.asarray(seg_prob_out_tuple)
         seg_prob_out_median = np.median(seg_prob_out_tuple, axis=0)
+        seg_mu = np.mean(seg_prob_out_tuple, axis=0)
+        seg_sigma = np.std(seg_prob_out_tuple, axis=0)
+        seg_cov = np.divide(seg_mu, seg_sigma)
+        cov_array.append(np.mean(seg_cov))
         seg_prob_out = torch.from_numpy(seg_prob_out_median).float().to(device)
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -294,7 +302,15 @@ def sliding_window_inference(
         final_output = dict(zip(dict_key, output_image_list))
     else:
         final_output = tuple(output_image_list)  # type: ignore
-    return final_output[0] if is_tensor_output else final_output  # type: ignore
+
+    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    cov_array = np.asarray(cov_array)
+    cov = np.mean(cov_array)
+    return [final_output[0] if is_tensor_output else final_output, cov]  # type: ignore
+    # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+    # return final_output[0] if is_tensor_output else final_output  # type: ignore
 
 
 
