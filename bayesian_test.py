@@ -74,9 +74,9 @@ for name in name_array:
     test_dict["project_name"] = name # "Bayesian_MTGD_v2_unet_do10_MTGD15"
     test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
     test_dict["gpu_ids"] = [1]
-    test_dict["eval_file_cnt"] = 1
+    test_dict["eval_file_cnt"] = 5
     # test_dict["best_model_name"] = "model_best_193.pth"
-    test_dict["eval_sample"] = 5
+    test_dict["eval_sample"] = 100
 
     train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
     print("input size:", train_dict["input_size"])
@@ -198,7 +198,7 @@ for name in name_array:
         test_save_name = train_dict["save_folder"]+"pred_monai/"+file_name
         nib.save(test_file, test_save_name)
 
-    np.save(train_dict["save_folder"]+"pred_monai/"+test_dict["project_name"]+"_cov.npy", cov_array)
+    np.save("./metric_bayesian/"+test_dict["project_name"]+"_cov.npy", cov_array)
     # total_loss /= cnt_total_file
     # print("Total ", train_dict['loss_term'], total_loss)
     # np.save(train_dict["save_folder"]+"pred_monai/", os.path.basename(model_list[-1])+"_total_loss.npy", total_loss)
