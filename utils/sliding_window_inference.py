@@ -200,7 +200,7 @@ def sliding_window_inference(
         seg_mu = np.mean(seg_prob_out_tuple, axis=0)
         seg_sigma = np.std(seg_prob_out_tuple, axis=0)
         seg_cov = np.divide(seg_sigma, seg_mu)
-        cov_array.append(np.mean(seg_cov, mask=seg_mu>0.125))
+        cov_array.append(np.ma.mean(seg_cov, mask=seg_mu>0.125))
         seg_prob_out = torch.from_numpy(seg_prob_out_median).float().to(device)
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
