@@ -28,6 +28,7 @@ from monai.utils import (
 )
 
 import numpy as np
+import numpy.ma as ma
 
 tqdm, _ = optional_import("tqdm", name="tqdm")
 
@@ -200,7 +201,8 @@ def sliding_window_inference(
         seg_mu = np.mean(seg_prob_out_tuple, axis=0)
         seg_sigma = np.std(seg_prob_out_tuple, axis=0)
         seg_cov = np.divide(seg_sigma, seg_mu)
-        cov_array.append(np.ma.mean(seg_cov, mask=seg_mu>0.125))
+        cov_bone_tissue = ma.masked_array(seg_cov, mask=seg_mu>0.125)
+        cov_array.append(cov_bone_tissue.mean())
         seg_prob_out = torch.from_numpy(seg_prob_out_median).float().to(device)
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
