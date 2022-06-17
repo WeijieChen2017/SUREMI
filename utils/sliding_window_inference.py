@@ -201,7 +201,8 @@ def sliding_window_inference(
         seg_mu = np.mean(seg_prob_out_tuple, axis=0)
         seg_sigma = np.std(seg_prob_out_tuple, axis=0)
         seg_cov = np.divide(seg_sigma, seg_mu)
-        cov_bone_tissue = ma.masked_array(seg_cov, mask=seg_mu>0.125)
+        seg_cov[seg_mu<0.125] = np.nan # -500 is air, (-500+1000)/4000 = 0.125
+        cov_bone_tissue = ma.masked_invalid(seg_cov)
         cov_array.append(cov_bone_tissue.mean())
         seg_prob_out = torch.from_numpy(seg_prob_out_median).float().to(device)
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
