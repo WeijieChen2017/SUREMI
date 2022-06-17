@@ -55,7 +55,7 @@ def add_noise(x, noise_type, noise_params):
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Bayesian_HDMGD_v1_Gau025_MRCT"
+train_dict["project_name"] = "Bayesian_HDMGD_v1_Gau050_MRCT"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
