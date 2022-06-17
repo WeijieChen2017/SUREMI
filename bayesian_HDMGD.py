@@ -65,18 +65,16 @@ def add_noise(x, noise_type, noise_params):
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Bayesian_HDMGD_v6_S&P050_MRMR"
+train_dict["project_name"] = "Bayesian_HDMGD_v6_S&P050_MRCT"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
-# train_dict["input_channel"] = 30
-# train_dict["output_channel"] = 30
 train_dict["input_size"] = [96, 96, 96]
 train_dict["epochs"] = 200
 train_dict["batch"] = 8
 
 train_dict["noise_type"] = "Salt&Pepper"
 train_dict["noise_params"] = (0.95, 0.05)
-train_dict["target_img"] = "MR"
+train_dict["target_img"] = "CT"
 
 train_dict["gpu_ids"] = [6]
 train_dict["dropout"] = 0.5
