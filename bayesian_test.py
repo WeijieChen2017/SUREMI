@@ -198,7 +198,7 @@ for name in name_array:
         test_save_name = train_dict["save_folder"]+"pred_monai/"+file_name
         nib.save(test_file, test_save_name)
 
-    np.save(train_dict["save_folder"]+"pred_monai/cov.npy", cov_array)
+    np.save(train_dict["save_folder"]+"pred_monai/"+test_dict["project_name"]+"_cov.npy", cov_array)
     # total_loss /= cnt_total_file
     # print("Total ", train_dict['loss_term'], total_loss)
     # np.save(train_dict["save_folder"]+"pred_monai/", os.path.basename(model_list[-1])+"_total_loss.npy", total_loss)
