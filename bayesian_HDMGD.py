@@ -50,12 +50,19 @@ def add_noise(x, noise_type, noise_params):
         Speckle_factor = np.random.normal(loc=S_mean, scale=S_std, size=x.shape)
         return np.multiply(x, 1+Speckle_factor)
 
+# v1 Gaussian mu=0, sigma=0.5
+# v2 Gaussian mu=0, sigma=0.25
+# v3 Poisson lambda=1
+# v4 Poisson lambda=0.25
+# v5 Salt&Pepper Salt=0.975, Pepper=0.025
+
+
 
 # ==================== dict and config ====================
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Bayesian_HDMGD_v5_Poi025_MRCT"
+train_dict["project_name"] = "Bayesian_HDMGD_v5_S&P025_MRMR"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
@@ -66,7 +73,7 @@ train_dict["batch"] = 8
 
 train_dict["noise_type"] = "Salt&Pepper"
 train_dict["noise_params"] = (0.975, 0.025)
-train_dict["target_img"] = "CT"
+train_dict["target_img"] = "MR"
 
 train_dict["gpu_ids"] = [6]
 train_dict["dropout"] = 0.5
