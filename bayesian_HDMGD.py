@@ -74,7 +74,7 @@ train_dict["batch"] = 8
 
 train_dict["noise_type"] = "Salt&Pepper"
 train_dict["noise_params"] = (0.95, 0.05)
-train_dict["target_img"] = "CT"
+train_dict["target_img"] = "MR"
 
 train_dict["gpu_ids"] = [6]
 train_dict["dropout"] = 0.5
