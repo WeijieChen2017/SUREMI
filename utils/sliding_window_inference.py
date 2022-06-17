@@ -197,7 +197,7 @@ def sliding_window_inference(
             seg_prob_out_tuple.append(seg_prob_out_sub.cpu().detach().numpy())
         seg_prob_out_tuple = np.asarray(seg_prob_out_tuple)
         seg_prob_out_median = np.median(seg_prob_out_tuple, axis=0)
-        seg_mu = np.mean(seg_prob_out_tuple, axis=0) + 1e-12
+        seg_mu = np.mean(seg_prob_out_tuple, axis=0)
         seg_sigma = np.std(seg_prob_out_tuple, axis=0)
         seg_cov = np.divide(seg_sigma, seg_mu)
         cov_array.append(np.mean(seg_cov))
