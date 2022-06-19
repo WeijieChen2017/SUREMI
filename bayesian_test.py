@@ -56,22 +56,22 @@ class UnetBNN(nn.Module):
 # ==================== dict and config ====================
 
 name_array = [
-    "./project_dir/Bayesian_HDMGD_v1_Gau050_MRCT/",
-    "./project_dir/Bayesian_HDMGD_v1_Gau050_MRMR/",
-    "./project_dir/Bayesian_HDMGD_v2_Gau025_MRCT/",
-    "./project_dir/Bayesian_HDMGD_v2_Gau025_MRMR/",
-    "./project_dir/Bayesian_HDMGD_v3_Poi100_MRCT/",
-    "./project_dir/Bayesian_HDMGD_v3_Poi100_MRMR/",
-    "./project_dir/Bayesian_HDMGD_v4_Poi025_MRCT/",
-    "./project_dir/Bayesian_HDMGD_v4_Poi025_MRMR/",
-    "./project_dir/Bayesian_HDMGD_v5_S&P025_MRCT/",
-    "./project_dir/Bayesian_HDMGD_v5_S&P025_MRMR/",
-    "./project_dir/Bayesian_HDMGD_v6_S&P050_MRCT/",
-    "./project_dir/Bayesian_HDMGD_v6_S&P050_MRMR/",
-    "./project_dir/Bayesian_HDMGD_v7_SPK025_MRCT/",
-    "./project_dir/Bayesian_HDMGD_v7_SPK025_MRMR/",
-    "./project_dir/Bayesian_HDMGD_v8_SPK050_MRCT/",
-    "./project_dir/Bayesian_HDMGD_v8_SPK050_MRMR/",
+    "Bayesian_HDMGD_v1_Gau050_MRCT",
+    "Bayesian_HDMGD_v1_Gau050_MRMR",
+    "Bayesian_HDMGD_v2_Gau025_MRCT",
+    "Bayesian_HDMGD_v2_Gau025_MRMR",
+    "Bayesian_HDMGD_v3_Poi100_MRCT",
+    "Bayesian_HDMGD_v3_Poi100_MRMR",
+    "Bayesian_HDMGD_v4_Poi025_MRCT",
+    "Bayesian_HDMGD_v4_Poi025_MRMR",
+    "Bayesian_HDMGD_v5_S&P025_MRCT",
+    "Bayesian_HDMGD_v5_S&P025_MRMR",
+    "Bayesian_HDMGD_v6_S&P050_MRCT",
+    "Bayesian_HDMGD_v6_S&P050_MRMR",
+    "Bayesian_HDMGD_v7_SPK025_MRCT",
+    "Bayesian_HDMGD_v7_SPK025_MRMR",
+    "Bayesian_HDMGD_v8_SPK050_MRCT",
+    "Bayesian_HDMGD_v8_SPK050_MRMR",
 ]
 
 
