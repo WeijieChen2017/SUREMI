@@ -56,12 +56,22 @@ class UnetBNN(nn.Module):
 # ==================== dict and config ====================
 
 name_array = [
-    "Bayesian_MTGD_v1_unet_do10_MTGD5",
-    "Bayesian_MTGD_v2_unet_do10_MTGD15",
-    "Bayesian_MTGD_v3_unet_do25_MTGD5",
-    "Bayesian_MTGD_v4_unet_do25_MTGD15",
-    "Bayesian_MTGD_v45unet_do50_MTGD5",
-    "Bayesian_MTGD_v45unet_do50_MTGD15",
+    "./project_dir/Bayesian_HDMGD_v1_Gau050_MRCT/",
+    "./project_dir/Bayesian_HDMGD_v1_Gau050_MRMR/",
+    "./project_dir/Bayesian_HDMGD_v2_Gau025_MRCT/",
+    "./project_dir/Bayesian_HDMGD_v2_Gau025_MRMR/",
+    "./project_dir/Bayesian_HDMGD_v3_Poi100_MRCT/",
+    "./project_dir/Bayesian_HDMGD_v3_Poi100_MRMR/",
+    "./project_dir/Bayesian_HDMGD_v4_Poi025_MRCT/",
+    "./project_dir/Bayesian_HDMGD_v4_Poi025_MRMR/",
+    "./project_dir/Bayesian_HDMGD_v5_S&P025_MRCT/",
+    "./project_dir/Bayesian_HDMGD_v5_S&P025_MRMR/",
+    "./project_dir/Bayesian_HDMGD_v6_S&P050_MRCT/",
+    "./project_dir/Bayesian_HDMGD_v6_S&P050_MRMR/",
+    "./project_dir/Bayesian_HDMGD_v7_SPK025_MRCT/",
+    "./project_dir/Bayesian_HDMGD_v7_SPK025_MRMR/",
+    "./project_dir/Bayesian_HDMGD_v8_SPK050_MRCT/",
+    "./project_dir/Bayesian_HDMGD_v8_SPK050_MRMR/",
 ]
 
 
@@ -74,9 +84,9 @@ for name in name_array:
     test_dict["project_name"] = name # "Bayesian_MTGD_v2_unet_do10_MTGD15"
     test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
     test_dict["gpu_ids"] = [1]
-    test_dict["eval_file_cnt"] = 0
+    test_dict["eval_file_cnt"] = 5
     # test_dict["best_model_name"] = "model_best_193.pth"
-    test_dict["eval_sample"] = 100
+    test_dict["eval_sample"] = 51
 
     train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
     print("input size:", train_dict["input_size"])
