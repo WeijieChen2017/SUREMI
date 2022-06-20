@@ -65,7 +65,7 @@ def add_noise(x, noise_type, noise_params):
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Bayesian_ZDMGD_v2_Gau_MRMR"
+train_dict["project_name"] = "Bayesian_ZDMGD_v1_Gau_MRMR"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_size"] = [96, 96, 96]
@@ -73,7 +73,7 @@ train_dict["epochs"] = 200
 train_dict["batch"] = 8
 
 train_dict["noise_type"] = "Gaussian"
-train_dict["noise_params"] = (0, 0.25)
+train_dict["noise_params"] = (0, 0.5)
 train_dict["target_img"] = "MR"
 
 train_dict["gpu_ids"] = [7]
@@ -211,11 +211,11 @@ np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 
 # ==================== MTGD ====================
 
-MTGD_dict = {}
-for model_key, param in model.named_parameters():
-    print(model_key)
-    new_shape = (train_dict["n_MTGD"], torch.flatten(param).size()[0])
-    MTGD_dict[model_key] = np.zeros(new_shape)
+# MTGD_dict = {}
+# for model_key, param in model.named_parameters():
+#     print(model_key)
+#     new_shape = (train_dict["n_MTGD"], torch.flatten(param).size()[0])
+#     MTGD_dict[model_key] = np.zeros(new_shape)
 
 # ==================== training ====================
 
@@ -306,7 +306,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     loss = L1
                     loss.backward()
                     optimizer.step()
-                    case_loss[cnt_file, 0] = np.mean(average_loss[:, 0])
+                    case_loss[cnt_file, 0] = L1.item()
                     print("Loss: ", loss.item())
 
             if train_dict["n_MTGD"] > 1:
