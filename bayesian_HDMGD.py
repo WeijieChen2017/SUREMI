@@ -59,24 +59,42 @@ def add_noise(x, noise_type, noise_params):
 # v7 Speckle mu=0, sigma=0.25
 # v8 Speckle mu=0, sigma=0.5
 
+model_list = [
+    ["v1_Gau050_MRMR", "Gaussian", (0, 0.5), "MR", [7]],
+    ["v1_Gau050_MRCT", "Gaussian", (0, 0.5), "CT", [7]],
+    ["v2_Gau025_MRMR", "Gaussian", (0, 0.25), "MR", [7]],
+    ["v2_Gau025_MRCT", "Gaussian", (0, 0.25), "CT", [7]],
+    ["v3_Poi100_MRMR", "Poisson", (1,), "MR", [6]],
+    ["v3_Poi100_MRCT", "Poisson", (1,), "CT", [6]],
+    ["v4_Poi025_MRMR", "Poisson", (0.25,), "MR", [6]],
+    ["v4_Poi025_MRCT", "Poisson", (0.25,), "CT", [6]],
+    ["v5_S&P025_MRMR", "Salt&Pepper", (0.975, 0.025), "MR", [3]],
+    ["v5_S&P025_MRCT", "Salt&Pepper", (0.975, 0.025), "CT", [3]],
+    ["v6_S&P050_MRMR", "Salt&Pepper", (0.95, 0.05), "MR", [3]],
+    ["v6_S&P050_MRCT", "Salt&Pepper", (0.95, 0.25), "CT", [3]],
+    ["v7_SPK025_MRMR", "Speckle", (0, 0.25), "MR", [7]],
+    ["v7_SPK025_MRCT", "Speckle", (0, 0.25), "CT", [7]],
+    ["v8_SPK050_MRMR", "Speckle", (0, 0.5), "MR", [6]],
+    ["v8_SPK050_MRCT", "Speckle", (0, 0.5), "CT", [6]],
+    ]
 
-
+current_model_idx = 0
 # ==================== dict and config ====================
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Bayesian_ZDMGD_v3_Gau_MRCT"
+train_dict["project_name"] = "Bayesian_ZDMGD_"+model_list[current_model_idx][0]
+train_dict["noise_type"] = model_list[current_model_idx][1]
+train_dict["noise_params"] = model_list[current_model_idx][2]
+train_dict["target_img"] = model_list[current_model_idx][3]
+train_dict["gpu_ids"] = model_list[current_model_idx][4]
+
+
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_size"] = [96, 96, 96]
 train_dict["epochs"] = 200
 train_dict["batch"] = 8
-
-train_dict["noise_type"] = "Poisson"
-train_dict["noise_params"] = (1,)
-train_dict["target_img"] = "CT"
-
-train_dict["gpu_ids"] = [7]
 train_dict["dropout"] = 0
 train_dict["n_MTGD"] = 1
 
