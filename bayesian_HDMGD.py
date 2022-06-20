@@ -73,7 +73,7 @@ train_dict["epochs"] = 200
 train_dict["batch"] = 8
 
 train_dict["noise_type"] = "Poisson"
-train_dict["noise_params"] = (1)
+train_dict["noise_params"] = (1,)
 train_dict["target_img"] = "MR"
 
 train_dict["gpu_ids"] = [7]
