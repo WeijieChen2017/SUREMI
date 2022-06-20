@@ -78,7 +78,10 @@ model_list = [
     ["v8_SPK050_MRCT", "Speckle", (0, 0.5), "CT", [6]],
     ]
 
-current_model_idx = 0
+print("Model index: ", end="")
+current_model_idx = int(input())
+print(model_list[current_model_idx])
+time.sleep(2)
 # ==================== dict and config ====================
 
 train_dict = {}
