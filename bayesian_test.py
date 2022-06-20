@@ -250,6 +250,13 @@ for name in name_array:
         test_file = nib.Nifti1Image(np.squeeze(output_data), x_file.affine, x_file.header)
         test_save_name = train_dict["save_folder"]+"pred_monai/"+file_name
         nib.save(test_file, test_save_name)
+        print(test_save_name)
+
+        test_file = nib.Nifti1Image(np.squeeze(x_data), x_file.affine, x_file.header)
+        test_save_name = train_dict["save_folder"]+"pred_monai/"+file_name.replace(".nii.gz", "_x.nii.gz")
+        nib.save(test_file, test_save_name)
+        print(test_save_name)
+
 
     np.save("./metric_bayesian/"+test_dict["project_name"]+"_cov.npy", cov_array)
     # total_loss /= cnt_total_file
