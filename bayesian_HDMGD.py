@@ -65,20 +65,20 @@ def add_noise(x, noise_type, noise_params):
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Bayesian_HDMGD_v8_SPK050_MRCT"
+train_dict["project_name"] = "Bayesian_ZDMGD_v1_Gau_MRMR"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_size"] = [96, 96, 96]
 train_dict["epochs"] = 200
 train_dict["batch"] = 8
 
-train_dict["noise_type"] = "Speckle"
+train_dict["noise_type"] = "Gaussian"
 train_dict["noise_params"] = (0, 0.5)
-train_dict["target_img"] = "CT"
+train_dict["target_img"] = "MR"
 
 train_dict["gpu_ids"] = [7]
-train_dict["dropout"] = 0.5
-train_dict["n_MTGD"] = 5
+train_dict["dropout"] = 0
+train_dict["n_MTGD"] = 1
 
 train_dict["beta"] = 1e6 # resize KL loss
 train_dict["model_term"] = "Monai_Unet3d"
@@ -296,32 +296,47 @@ for idx_epoch_new in range(train_dict["epochs"]):
             batch_x = torch.from_numpy(batch_x).float().to(device)
             batch_y = torch.from_numpy(batch_y).float().to(device)
             
-            if isTrain:
+            if train_dict["n_MTGD"] == 1:
+                
+                if isTrain:
 
-                average_loss = np.zeros((train_dict["n_MTGD"], 1))
-
-                for idx_MTGD in range(train_dict["n_MTGD"]):
                     optimizer.zero_grad()
                     y_hat = model(batch_x)
                     L1 = criterion(y_hat, batch_y)
-                    average_loss[idx_MTGD, 0] = L1.item()
                     loss = L1
                     loss.backward()
+                    optimizer.step()
+                    case_loss[cnt_file, 0] = np.mean(average_loss[:, 0])
+                    print("Loss: ", loss.item())
 
+            if train_dict["n_MTGD"] > 1:
+
+                if isTrain:
+
+                    average_loss = np.zeros((train_dict["n_MTGD"], 1))
+
+                    for idx_MTGD in range(train_dict["n_MTGD"]):
+                        optimizer.zero_grad()
+                        y_hat = model(batch_x)
+                        L1 = criterion(y_hat, batch_y)
+                        average_loss[idx_MTGD, 0] = L1.item()
+                        loss = L1
+                        loss.backward()
+
+                        for model_key, param in model.named_parameters():
+                            # print(model_key, param.grad)
+                            # print("-"*60)
+                            MTGD_dict[model_key][idx_MTGD, :] = torch.flatten(param.grad).to("cpu").numpy()
+
+                    optimizer.zero_grad()
                     for model_key, param in model.named_parameters():
-                        # print(model_key, param.grad)
-                        # print("-"*60)
-                        MTGD_dict[model_key][idx_MTGD, :] = torch.flatten(param.grad).to("cpu").numpy()
+                        median_gradient = np.median(MTGD_dict[model_key], axis=0)
+                        median_gradient = np.reshape(median_gradient, param.grad.size())
+                        param.grad = torch.from_numpy(median_gradient).float().to(device)
+                    optimizer.step()
 
-                optimizer.zero_grad()
-                for model_key, param in model.named_parameters():
-                    median_gradient = np.median(MTGD_dict[model_key], axis=0)
-                    median_gradient = np.reshape(median_gradient, param.grad.size())
-                    param.grad = torch.from_numpy(median_gradient).float().to(device)
-                optimizer.step()
-
-                case_loss[cnt_file, 0] = np.mean(average_loss[:, 0])
-                print("Loss: ", loss.item())
+                    case_loss[cnt_file, 0] = np.mean(average_loss[:, 0])
+                    print("Loss: ", loss.item())
 
             if isVal:
                 with torch.no_grad():
