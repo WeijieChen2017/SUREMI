@@ -129,7 +129,7 @@ for name in name_array:
     test_dict["input_size"] = train_dict["input_size"]
 
 
-    for path in [test_dict["save_folder"], test_dict["save_folder"]+"pred_monai/"]:
+    for path in [test_dict["save_folder"], test_dict["save_folder"]+test_dict["eval_save_folder"]]:
         if not os.path.exists(path):
             os.mkdir(path)
 
