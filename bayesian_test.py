@@ -88,43 +88,43 @@ class UnetBNN(nn.Module):
 
 # ==================== dict and config ====================
 
-# name_array = [
-#     "Bayesian_ZDMGD_v1_Gau050_MRCT",
-#     "Bayesian_ZDMGD_v1_Gau050_MRMR",
-#     "Bayesian_ZDMGD_v2_Gau025_MRCT",
-#     "Bayesian_ZDMGD_v2_Gau025_MRMR",
-#     "Bayesian_ZDMGD_v3_Poi100_MRCT",
-#     "Bayesian_ZDMGD_v3_Poi100_MRMR",
-#     "Bayesian_ZDMGD_v4_Poi025_MRCT",
-#     "Bayesian_ZDMGD_v4_Poi025_MRMR",
-#     "Bayesian_ZDMGD_v5_S&P025_MRCT",
-#     "Bayesian_ZDMGD_v5_S&P025_MRMR",
-#     "Bayesian_ZDMGD_v6_S&P050_MRCT",
-#     "Bayesian_ZDMGD_v6_S&P050_MRMR",
-#     "Bayesian_ZDMGD_v7_SPK025_MRCT",
-#     "Bayesian_ZDMGD_v7_SPK025_MRMR",
-#     "Bayesian_ZDMGD_v8_SPK050_MRCT",
-#     "Bayesian_ZDMGD_v8_SPK050_MRMR",
-# ]
-
 name_array = [
-    "Bayesian_HDMGD_v1_Gau050_MRCT",
-    "Bayesian_HDMGD_v1_Gau050_MRMR",
-    "Bayesian_HDMGD_v2_Gau025_MRCT",
-    "Bayesian_HDMGD_v2_Gau025_MRMR",
-    "Bayesian_HDMGD_v3_Poi100_MRCT",
-    "Bayesian_HDMGD_v3_Poi100_MRMR",
-    "Bayesian_HDMGD_v4_Poi025_MRCT",
-    "Bayesian_HDMGD_v4_Poi025_MRMR",
-    "Bayesian_HDMGD_v5_S&P025_MRCT",
-    "Bayesian_HDMGD_v5_S&P025_MRMR",
-    "Bayesian_HDMGD_v6_S&P050_MRCT",
-    "Bayesian_HDMGD_v6_S&P050_MRMR",
-    "Bayesian_HDMGD_v7_SPK025_MRCT",
-    "Bayesian_HDMGD_v7_SPK025_MRMR",
-    "Bayesian_HDMGD_v8_SPK050_MRCT",
-    "Bayesian_HDMGD_v8_SPK050_MRMR",
+    "Bayesian_ZDMGD_v1_Gau050_MRCT",
+    "Bayesian_ZDMGD_v1_Gau050_MRMR",
+    "Bayesian_ZDMGD_v2_Gau025_MRCT",
+    "Bayesian_ZDMGD_v2_Gau025_MRMR",
+    "Bayesian_ZDMGD_v3_Poi100_MRCT",
+    "Bayesian_ZDMGD_v3_Poi100_MRMR",
+    "Bayesian_ZDMGD_v4_Poi025_MRCT",
+    "Bayesian_ZDMGD_v4_Poi025_MRMR",
+    "Bayesian_ZDMGD_v5_S&P025_MRCT",
+    "Bayesian_ZDMGD_v5_S&P025_MRMR",
+    "Bayesian_ZDMGD_v6_S&P050_MRCT",
+    "Bayesian_ZDMGD_v6_S&P050_MRMR",
+    "Bayesian_ZDMGD_v7_SPK025_MRCT",
+    "Bayesian_ZDMGD_v7_SPK025_MRMR",
+    "Bayesian_ZDMGD_v8_SPK050_MRCT",
+    "Bayesian_ZDMGD_v8_SPK050_MRMR",
 ]
+
+# name_array = [
+#     "Bayesian_HDMGD_v1_Gau050_MRCT",
+#     "Bayesian_HDMGD_v1_Gau050_MRMR",
+#     "Bayesian_HDMGD_v2_Gau025_MRCT",
+#     "Bayesian_HDMGD_v2_Gau025_MRMR",
+#     "Bayesian_HDMGD_v3_Poi100_MRCT",
+#     "Bayesian_HDMGD_v3_Poi100_MRMR",
+#     "Bayesian_HDMGD_v4_Poi025_MRCT",
+#     "Bayesian_HDMGD_v4_Poi025_MRMR",
+#     "Bayesian_HDMGD_v5_S&P025_MRCT",
+#     "Bayesian_HDMGD_v5_S&P025_MRMR",
+#     "Bayesian_HDMGD_v6_S&P050_MRCT",
+#     "Bayesian_HDMGD_v6_S&P050_MRMR",
+#     "Bayesian_HDMGD_v7_SPK025_MRCT",
+#     "Bayesian_HDMGD_v7_SPK025_MRMR",
+#     "Bayesian_HDMGD_v8_SPK050_MRCT",
+#     "Bayesian_HDMGD_v8_SPK050_MRMR",
+# ]
 
 for name in name_array:
 
