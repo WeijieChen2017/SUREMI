@@ -89,22 +89,22 @@ class UnetBNN(nn.Module):
 # ==================== dict and config ====================
 
 name_array = [
-    "Bayesian_HDMGD_v1_Gau050_MRCT",
-    "Bayesian_HDMGD_v1_Gau050_MRMR",
-    "Bayesian_HDMGD_v2_Gau025_MRCT",
-    "Bayesian_HDMGD_v2_Gau025_MRMR",
-    "Bayesian_HDMGD_v3_Poi100_MRCT",
-    "Bayesian_HDMGD_v3_Poi100_MRMR",
-    "Bayesian_HDMGD_v4_Poi025_MRCT",
-    "Bayesian_HDMGD_v4_Poi025_MRMR",
-    "Bayesian_HDMGD_v5_S&P025_MRCT",
-    "Bayesian_HDMGD_v5_S&P025_MRMR",
-    "Bayesian_HDMGD_v6_S&P050_MRCT",
-    "Bayesian_HDMGD_v6_S&P050_MRMR",
-    "Bayesian_HDMGD_v7_SPK025_MRCT",
-    "Bayesian_HDMGD_v7_SPK025_MRMR",
-    "Bayesian_HDMGD_v8_SPK050_MRCT",
-    "Bayesian_HDMGD_v8_SPK050_MRMR",
+    "Bayesian_ZDMGD_v1_Gau050_MRCT",
+    "Bayesian_ZDMGD_v1_Gau050_MRMR",
+    "Bayesian_ZDMGD_v2_Gau025_MRCT",
+    "Bayesian_ZDMGD_v2_Gau025_MRMR",
+    "Bayesian_ZDMGD_v3_Poi100_MRCT",
+    "Bayesian_ZDMGD_v3_Poi100_MRMR",
+    "Bayesian_ZDMGD_v4_Poi025_MRCT",
+    "Bayesian_ZDMGD_v4_Poi025_MRMR",
+    "Bayesian_ZDMGD_v5_S&P025_MRCT",
+    "Bayesian_ZDMGD_v5_S&P025_MRMR",
+    "Bayesian_ZDMGD_v6_S&P050_MRCT",
+    "Bayesian_ZDMGD_v6_S&P050_MRMR",
+    "Bayesian_ZDMGD_v7_SPK025_MRCT",
+    "Bayesian_ZDMGD_v7_SPK025_MRMR",
+    "Bayesian_ZDMGD_v8_SPK050_MRCT",
+    "Bayesian_ZDMGD_v8_SPK050_MRMR",
 ]
 
 
@@ -117,7 +117,7 @@ for name in name_array:
     test_dict["project_name"] = name # "Bayesian_MTGD_v2_unet_do10_MTGD15"
     test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
     test_dict["gpu_ids"] = [1]
-    test_dict["eval_file_cnt"] = 5
+    test_dict["eval_file_cnt"] = 1
     # test_dict["best_model_name"] = "model_best_193.pth"
     test_dict["eval_sample"] = 51
 
@@ -207,7 +207,7 @@ for name in name_array:
             y_hat, cov = sliding_window_inference(
                     inputs = torch.from_numpy(input_data).float().to(device), 
                     roi_size = test_dict["input_size"], 
-                    sw_batch_size = 1, 
+                    sw_batch_size = 8, 
                     predictor = model,
                     overlap=0.25, 
                     mode="gaussian", 
