@@ -120,6 +120,7 @@ for name in name_array:
     test_dict["eval_file_cnt"] = 1
     # test_dict["best_model_name"] = "model_best_193.pth"
     test_dict["eval_sample"] = 51
+    test_dict["eval_save_folder"] = "std"
 
     train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
     print("input size:", train_dict["input_size"])
@@ -248,12 +249,12 @@ for name in name_array:
 
         # print(pad_y_hat.shape)
         test_file = nib.Nifti1Image(np.squeeze(output_data), x_file.affine, x_file.header)
-        test_save_name = train_dict["save_folder"]+"pred_monai/"+file_name
+        test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name
         nib.save(test_file, test_save_name)
         print(test_save_name)
 
         test_file = nib.Nifti1Image(np.squeeze(x_data), x_file.affine, x_file.header)
-        test_save_name = train_dict["save_folder"]+"pred_monai/"+file_name.replace(".nii.gz", "_x.nii.gz")
+        test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_x.nii.gz")
         nib.save(test_file, test_save_name)
         print(test_save_name)
 
