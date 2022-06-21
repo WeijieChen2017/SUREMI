@@ -198,14 +198,14 @@ def sliding_window_inference(
             seg_prob_out_tuple.append(seg_prob_out_sub.cpu().detach().numpy())
         seg_prob_out_tuple = np.asarray(seg_prob_out_tuple)
         seg_prob_out_median = np.median(seg_prob_out_tuple, axis=0)
-        seg_mu = np.mean(seg_prob_out_tuple, axis=0)
+        seg_mu = np.mean(seg_prob_out_tuple, axis=0)+1e-12
         seg_sigma = np.std(seg_prob_out_tuple, axis=0)
         seg_cov = np.divide(seg_sigma, seg_mu)
         seg_cov[seg_mu<0.125] = np.nan # -500 is air, (-500+1000)/4000 = 0.125
         cov_bone_tissue = ma.masked_invalid(seg_cov)
         cov_array.append(cov_bone_tissue.mean())
         # seg_prob_out = torch.from_numpy(seg_prob_out_median).float().to(device)
-        seg_prob_out = torch.from_numpy(seg_sigma).float().to(device)
+        seg_prob_out = torch.from_numpy(seg_cov).float().to(device)
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
         # convert seg_prob_out to tuple seg_prob_tuple, this does not allocate new memory.
