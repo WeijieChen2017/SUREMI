@@ -204,7 +204,8 @@ def sliding_window_inference(
         seg_cov[seg_mu<0.125] = np.nan # -500 is air, (-500+1000)/4000 = 0.125
         cov_bone_tissue = ma.masked_invalid(seg_cov)
         cov_array.append(cov_bone_tissue.mean())
-        seg_prob_out = torch.from_numpy(seg_prob_out_median).float().to(device)
+        # seg_prob_out = torch.from_numpy(seg_prob_out_median).float().to(device)
+        seg_prob_out = torch.from_numpy(seg_sigma).float().to(device)
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
         # convert seg_prob_out to tuple seg_prob_tuple, this does not allocate new memory.
