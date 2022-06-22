@@ -94,12 +94,12 @@ model_list = [
     # ["v7_SPK025_MRCT", "Speckle", (0, 0.25), "CT", [7]],
     # ["v8_SPK050_MRMR", "Speckle", (0, 0.5), "MR", [6]],
     # ["v8_SPK050_MRCT", "Speckle", (0, 0.5), "CT", [6]],
-    ["v9_RIC005_MRMR", "Racian", (5,), "MR", [7]],
-    ["v9_RIC005_MRCT", "Racian", (5,), "CT", [7]],
-    ["v10_RIC010_MRMR", "Racian", (10,), "MR", [7]],
-    ["v10_RIC010_MRCT", "Racian", (10,), "CT", [7]],
-    ["v11_RAY005_MRMR", "Rayleigh", (5, ), "MR", [7]],
-    ["v11_RAY005_MRCT", "Rayleigh", (5, ), "CT", [7]],
+    ["v9_RIC005_MRMR", "Racian", (5,), "MR", [3]],
+    ["v9_RIC005_MRCT", "Racian", (5,), "CT", [3]],
+    ["v10_RIC010_MRMR", "Racian", (10,), "MR", [3]],
+    ["v10_RIC010_MRCT", "Racian", (10,), "CT", [3]],
+    ["v11_RAY005_MRMR", "Rayleigh", (5, ), "MR", [3]],
+    ["v11_RAY005_MRCT", "Rayleigh", (5, ), "CT", [3]],
     ["v12_RAY010_MRMR", "Rayleigh", (10, ), "MR", [6]],
     ["v12_RAY010_MRCT", "Rayleigh", (10, ), "CT", [6]],
     ]
@@ -112,7 +112,7 @@ time.sleep(1)
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Bayesian_ZDMGD_"+model_list[current_model_idx][0]
+train_dict["project_name"] = "Bayesian_HDMGD_"+model_list[current_model_idx][0]
 train_dict["noise_type"] = model_list[current_model_idx][1]
 train_dict["noise_params"] = model_list[current_model_idx][2]
 train_dict["target_img"] = model_list[current_model_idx][3]
@@ -124,8 +124,8 @@ train_dict["seed"] = 426
 train_dict["input_size"] = [96, 96, 96]
 train_dict["epochs"] = 200
 train_dict["batch"] = 8
-train_dict["dropout"] = 0
-train_dict["n_MTGD"] = 1
+train_dict["dropout"] = 0.5
+train_dict["n_MTGD"] = 11
 
 train_dict["beta"] = 1e6 # resize KL loss
 train_dict["model_term"] = "Monai_Unet3d"
