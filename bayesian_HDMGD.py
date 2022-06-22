@@ -258,11 +258,12 @@ np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 
 # ==================== MTGD ====================
 
-# MTGD_dict = {}
-# for model_key, param in model.named_parameters():
-#     print(model_key)
-#     new_shape = (train_dict["n_MTGD"], torch.flatten(param).size()[0])
-#     MTGD_dict[model_key] = np.zeros(new_shape)
+if train_dict["n_MTGD"] > 1:
+    MTGD_dict = {}
+    for model_key, param in model.named_parameters():
+        print(model_key)
+        new_shape = (train_dict["n_MTGD"], torch.flatten(param).size()[0])
+        MTGD_dict[model_key] = np.zeros(new_shape)
 
 # ==================== training ====================
 
