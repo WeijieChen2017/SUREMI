@@ -50,6 +50,20 @@ def add_noise(x, noise_type, noise_params):
         Speckle_factor = np.random.normal(loc=S_mean, scale=S_std, size=x.shape)
         return np.multiply(x, 1+Speckle_factor)
 
+    if noise_type == "Racian":
+        snr = noise_params[0]
+        sigma = np.amax(x) / snr
+        noise_1 = random.normal(loc=0.0, scale=sigma, size=x.shape)
+        noise_2 = random.normal(loc=0.0, scale=sigma, size=x.shape)
+        return np.sqrt((x + noise_1) ** 2 + noise_2 ** 2)
+
+    if noise_type == "Rayleigh":
+        snr = noise_params[0]
+        sigma = np.amax(x) / snr
+        noise_1 = random.normal(loc=0.0, scale=sigma, size=x.shape)
+        noise_2 = random.normal(loc=0.0, scale=sigma, size=x.shape)
+        return x + np.sqrt(noise_1 ** 2 + noise_2 ** 2)
+
 # v1 Gaussian mu=0, sigma=0.5
 # v2 Gaussian mu=0, sigma=0.25
 # v3 Poisson lambda=1
@@ -58,30 +72,42 @@ def add_noise(x, noise_type, noise_params):
 # v6 Salt&Pepper Salt=0.95, Pepper=0.05
 # v7 Speckle mu=0, sigma=0.25
 # v8 Speckle mu=0, sigma=0.5
+# v9 Racian snr=5
+# v10 Racian snr=10
+# v11 Rayleigh snr=5
+# v12 Rayleigh snr=10
 
 model_list = [
-    ["v1_Gau050_MRMR", "Gaussian", (0, 0.5), "MR", [7]],
-    ["v1_Gau050_MRCT", "Gaussian", (0, 0.5), "CT", [7]],
-    ["v2_Gau025_MRMR", "Gaussian", (0, 0.25), "MR", [7]],
-    ["v2_Gau025_MRCT", "Gaussian", (0, 0.25), "CT", [7]],
-    ["v3_Poi100_MRMR", "Poisson", (1,), "MR", [6]],
-    ["v3_Poi100_MRCT", "Poisson", (1,), "CT", [6]],
-    ["v4_Poi025_MRMR", "Poisson", (0.25,), "MR", [6]],
-    ["v4_Poi025_MRCT", "Poisson", (0.25,), "CT", [6]],
-    ["v5_S&P025_MRMR", "Salt&Pepper", (0.975, 0.025), "MR", [3]],
-    ["v5_S&P025_MRCT", "Salt&Pepper", (0.975, 0.025), "CT", [3]],
-    ["v6_S&P050_MRMR", "Salt&Pepper", (0.95, 0.05), "MR", [3]],
-    ["v6_S&P050_MRCT", "Salt&Pepper", (0.95, 0.25), "CT", [3]],
-    ["v7_SPK025_MRMR", "Speckle", (0, 0.25), "MR", [7]],
-    ["v7_SPK025_MRCT", "Speckle", (0, 0.25), "CT", [7]],
-    ["v8_SPK050_MRMR", "Speckle", (0, 0.5), "MR", [6]],
-    ["v8_SPK050_MRCT", "Speckle", (0, 0.5), "CT", [6]],
+    # ["v1_Gau050_MRMR", "Gaussian", (0, 0.5), "MR", [7]],
+    # ["v1_Gau050_MRCT", "Gaussian", (0, 0.5), "CT", [7]],
+    # ["v2_Gau025_MRMR", "Gaussian", (0, 0.25), "MR", [7]],
+    # ["v2_Gau025_MRCT", "Gaussian", (0, 0.25), "CT", [7]],
+    # ["v3_Poi100_MRMR", "Poisson", (1,), "MR", [6]],
+    # ["v3_Poi100_MRCT", "Poisson", (1,), "CT", [6]],
+    # ["v4_Poi025_MRMR", "Poisson", (0.25,), "MR", [6]],
+    # ["v4_Poi025_MRCT", "Poisson", (0.25,), "CT", [6]],
+    # ["v5_S&P025_MRMR", "Salt&Pepper", (0.975, 0.025), "MR", [3]],
+    # ["v5_S&P025_MRCT", "Salt&Pepper", (0.975, 0.025), "CT", [3]],
+    # ["v6_S&P050_MRMR", "Salt&Pepper", (0.95, 0.05), "MR", [3]],
+    # ["v6_S&P050_MRCT", "Salt&Pepper", (0.95, 0.25), "CT", [3]],
+    # ["v7_SPK025_MRMR", "Speckle", (0, 0.25), "MR", [7]],
+    # ["v7_SPK025_MRCT", "Speckle", (0, 0.25), "CT", [7]],
+    # ["v8_SPK050_MRMR", "Speckle", (0, 0.5), "MR", [6]],
+    # ["v8_SPK050_MRCT", "Speckle", (0, 0.5), "CT", [6]],
+    ["v9_RIC005_MRMR", "Racian", (5,), "MR", [7]],
+    ["v9_RIC005_MRCT", "Racian", (5,), "CT", [7]],
+    ["v10_RIC010_MRMR", "Racian", (10,), "MR", [7]],
+    ["v10_RIC010_MRCT", "Racian", (10,), "CT", [7]],
+    ["v11_RAY005_MRMR", "Rayleigh", (5, ), "MR", [7]],
+    ["v11_RAY005_MRCT", "Rayleigh", (5, ), "CT", [7]],
+    ["v12_RAY010_MRMR", "Rayleigh", (10, ), "MR", [6]],
+    ["v12_RAY010_MRCT", "Rayleigh", (10, ), "CT", [6]],
     ]
 
 print("Model index: ", end="")
 current_model_idx = int(input())
 print(model_list[current_model_idx])
-time.sleep(2)
+time.sleep(1)
 # ==================== dict and config ====================
 
 train_dict = {}
