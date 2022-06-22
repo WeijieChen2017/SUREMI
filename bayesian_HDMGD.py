@@ -105,7 +105,7 @@ model_list = [
     ]
 
 print("Model index: ", end="")
-current_model_idx = int(input())
+current_model_idx = int(input()) - 1
 print(model_list[current_model_idx])
 time.sleep(1)
 # ==================== dict and config ====================
