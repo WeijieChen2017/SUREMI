@@ -53,15 +53,15 @@ def add_noise(x, noise_type, noise_params):
     if noise_type == "Racian":
         snr = noise_params[0]
         sigma = np.amax(x) / snr
-        noise_1 = random.normal(loc=0.0, scale=sigma, size=x.shape)
-        noise_2 = random.normal(loc=0.0, scale=sigma, size=x.shape)
+        noise_1 = np.random.normal(loc=0.0, scale=sigma, size=x.shape)
+        noise_2 = np.random.normal(loc=0.0, scale=sigma, size=x.shape)
         return np.sqrt((x + noise_1) ** 2 + noise_2 ** 2)
 
     if noise_type == "Rayleigh":
         snr = noise_params[0]
         sigma = np.amax(x) / snr
-        noise_1 = random.normal(loc=0.0, scale=sigma, size=x.shape)
-        noise_2 = random.normal(loc=0.0, scale=sigma, size=x.shape)
+        noise_1 = np.random.normal(loc=0.0, scale=sigma, size=x.shape)
+        noise_2 = np.random.normal(loc=0.0, scale=sigma, size=x.shape)
         return x + np.sqrt(noise_1 ** 2 + noise_2 ** 2)
 
 # v1 Gaussian mu=0, sigma=0.5
