@@ -215,7 +215,7 @@ for name in name_array:
             y_hat, cov = sliding_window_inference(
                     inputs = torch.from_numpy(input_data).float().to(device), 
                     roi_size = test_dict["input_size"], 
-                    sw_batch_size = 8, 
+                    sw_batch_size = 4, 
                     predictor = model,
                     overlap=0.25, 
                     mode="gaussian", 
