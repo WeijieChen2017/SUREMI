@@ -211,33 +211,11 @@ for name in name_array:
 
         input_data = np.expand_dims(x_data, (0,1))
 
-        with torch.no_grad():
-            y_hat, cov = sliding_window_inference(
-                    inputs = torch.from_numpy(input_data).float().to(device), 
-                    roi_size = test_dict["input_size"], 
-                    sw_batch_size = 4, 
-                    predictor = model,
-                    overlap=0.25, 
-                    mode="gaussian", 
-                    sigma_scale=0.125, 
-                    padding_mode="constant", 
-                    cval=0.0, 
-                    sw_device=device, 
-                    device=device,
-                    cnt_sample = test_dict["eval_sample"],
-                    )
-
-        output_data = y_hat.cpu().detach().numpy()
-        cov_array.append([file_name, cov])
-        print(output_data.shape, cov)
-
-        # eval_output = []
-        # for idx in range(test_dict["eval_sample"]):
-        #     with torch.no_grad():
-        #         y_hat = sliding_window_inference(
+        # with torch.no_grad():
+        #     y_hat, cov = sliding_window_inference(
         #             inputs = torch.from_numpy(input_data).float().to(device), 
         #             roi_size = test_dict["input_size"], 
-        #             sw_batch_size = 1, 
+        #             sw_batch_size = 4, 
         #             predictor = model,
         #             overlap=0.25, 
         #             mode="gaussian", 
@@ -248,13 +226,33 @@ for name in name_array:
         #             device=device,
         #             cnt_sample = test_dict["eval_sample"],
         #             )
-        #     eval_output.append(y_hat.cpu().detach().numpy())
-        # eval_output = np.asarray(eval_output)
-        # output_data = np.median(eval_output, axis=0)
-        # print(output_data.shape)
 
+        # output_data = y_hat.cpu().detach().numpy()
+        # cov_array.append([file_name, cov])
+        # print(output_data.shape, cov)
 
-        # print(pad_y_hat.shape)
+        eval_output = []
+        for idx in range(test_dict["eval_sample"]):
+            with torch.no_grad():
+                y_hat = sliding_window_inference(
+                    inputs = torch.from_numpy(input_data).float().to(device), 
+                    roi_size = test_dict["input_size"], 
+                    sw_batch_size = 1, 
+                    predictor = model,
+                    overlap=0.25, 
+                    mode="gaussian", 
+                    sigma_scale=0.125, 
+                    padding_mode="constant", 
+                    cval=0.0, 
+                    sw_device=device, 
+                    device=device,
+                    cnt_sample = test_dict["eval_sample"],
+                    )
+            eval_output.append(y_hat.cpu().detach().numpy())
+        eval_output = np.asarray(eval_output)
+        output_data = np.median(eval_output, axis=0)
+        print(output_data.shape)
+
         test_file = nib.Nifti1Image(np.squeeze(output_data), x_file.affine, x_file.header)
         test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name
         nib.save(test_file, test_save_name)
