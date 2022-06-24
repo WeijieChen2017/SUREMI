@@ -308,13 +308,13 @@ def sliding_window_inference(
         final_output = tuple(output_image_list)  # type: ignore
 
     # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    cov_array = np.asarray(cov_array)
-    cov = np.mean(cov_array)
-    return [final_output[0] if is_tensor_output else final_output, cov]  # type: ignore
+    # cov_array = np.asarray(cov_array)
+    # cov = np.mean(cov_array)
+    # return [final_output[0] if is_tensor_output else final_output, cov]  # type: ignore
     # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-    # return final_output[0] if is_tensor_output else final_output  # type: ignore
+    return final_output[0] if is_tensor_output else final_output  # type: ignore
 
 
 
