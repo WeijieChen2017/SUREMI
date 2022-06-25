@@ -15,7 +15,7 @@ import torchvision
 import requests
 
 # from monai.networks.nets.unet import UNet as UNet
-# from monai.networks.layers.factories import Act, Norm
+from monai.networks.layers.factories import Act, Norm
 import bnn
 
 from utils import add_noise
