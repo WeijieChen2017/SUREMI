@@ -18,10 +18,10 @@ hub_CT_name = [
     "Unet_L1", 
     # "MRL_MSE_xyz_654", 
     "Unet_L2",
-    "UR_L1", 
-    "UR_L2", 
-    "SR_L1", 
-    "SR_L2",
+    "UnetR_L1", 
+    "UnetR_L2", 
+    "SwinUnetR_L1", 
+    "SwinUnetR_L2",
     ]
 hub_CT_folder = [
     # "./project_dir/Unet_Monai_Iman/",

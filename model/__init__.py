@@ -1,4 +1,4 @@
-from .unet_models import UNet, UNet_seg
+# from .unet_models import UNet, UNet_seg
 from .unet_models import UNet_simple
 from .unet_models import UNet_bridge
 from .unet_models import UNet_bridge_skip
@@ -21,3 +21,4 @@ from .swinIR_3d import SwinIR3d
 
 from .transformer_pytorch import TransformerModel
 from .vq import VQ_single
+from .unet_monai import UNet

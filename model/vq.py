@@ -8,8 +8,8 @@ class VQ_single(nn.Module):
                  in_channels=1, 
                  num_hiddens=256, 
                  cube_size=32, 
-                 embedding_dim=64, 
-                 num_embeddings=512,
+                 embedding_dim=128, 
+                 num_embeddings=1024,
                  commitment_cost=0.25):
         super(VQ_single, self).__init__()
         # N,C,D,H,W

@@ -1,5 +1,6 @@
 import os
 import gc
+import copy
 import glob
 import time
 # import wandb
@@ -13,72 +14,84 @@ import torch
 import torchvision
 import requests
 
-from monai.networks.nets.unet import UNet as UNet
-from monai.networks.layers.factories import Act, Norm
+# from monai.networks.nets.unet import UNet as UNet
+# from monai.networks.layers.factories import Act, Norm
 import bnn
 
-class UnetBNN(nn.Module):
-    """(convolution => [BN] => ReLU) * 2"""
+from utils import add_noise
+from model import UNet
+from torchsummary import summary
 
-    def __init__(self, unet_dict):
-        super().__init__()
-    
-        self.unet = UNet( 
-            spatial_dims=unet_dict["spatial_dims"],
-            in_channels=unet_dict["in_channels"],
-            out_channels=unet_dict["mid_channels"],
-            channels=unet_dict["channels"],
-            strides=unet_dict["strides"],
-            num_res_units=unet_dict["num_res_units"],
-            act=unet_dict["act"],
-            norm=unet_dict["normunet"],
-            dropout=unet_dict["dropout"],
-            bias=unet_dict["bias"],
-            )
-        if unet_dict["spatial_dims"] == 2:
-            self.out_conv = nn.Conv2d(
-                unet_dict["mid_channels"],
-                unet_dict["out_channels"], 
-                kernel_size=1
-                )
-        if unet_dict["spatial_dims"] == 3:
-            self.out_conv = nn.Conv3d(
-                unet_dict["mid_channels"],
-                unet_dict["out_channels"], 
-                kernel_size=1
-                )
 
-        bnn.bayesianize_(
-            self.out_conv,
-            inference=unet_dict["inference"],
-            inducing_rows=unet_dict["inducing_rows"],
-            inducing_cols=unet_dict["inducing_cols"],
-            )
+# v1 Gaussian mu=0, sigma=0.5
+# v2 Gaussian mu=0, sigma=0.25
+# v3 Poisson lambda=1
+# v4 Poisson lambda=0.25
+# v5 Salt&Pepper Salt=0.975, Pepper=0.025
+# v6 Salt&Pepper Salt=0.95, Pepper=0.05
+# v7 Speckle mu=0, sigma=0.25
+# v8 Speckle mu=0, sigma=0.5
+# v9 Racian snr=5
+# v10 Racian snr=10
+# v11 Rayleigh snr=5
+# v12 Rayleigh snr=10
 
-    def forward(self, x):
-        x = self.unet(x)
-        x = self.out_conv(x)
-        return x
+model_list = [
+    ["v1_Gau050_MRMR_dual", "Gaussian", (0, 0.5), "MR", [7]],
+    # ["v1_Gau050_MRCT", "Gaussian", (0, 0.5), "CT", [7]],
+    # ["v2_Gau025_MRMR", "Gaussian", (0, 0.25), "MR", [7]],
+    # ["v2_Gau025_MRCT", "Gaussian", (0, 0.25), "CT", [7]],
+    # ["v3_Poi100_MRMR", "Poisson", (1,), "MR", [6]],
+    # ["v3_Poi100_MRCT", "Poisson", (1,), "CT", [6]],
+    # ["v4_Poi025_MRMR", "Poisson", (0.25,), "MR", [6]],
+    # ["v4_Poi025_MRCT", "Poisson", (0.25,), "CT", [6]],
+    # ["v5_S&P025_MRMR", "Salt&Pepper", (0.975, 0.025), "MR", [3]],
+    # ["v5_S&P025_MRCT", "Salt&Pepper", (0.975, 0.025), "CT", [3]],
+    # ["v6_S&P050_MRMR", "Salt&Pepper", (0.95, 0.05), "MR", [3]],
+    # ["v6_S&P050_MRCT", "Salt&Pepper", (0.95, 0.25), "CT", [3]],
+    # ["v7_SPK025_MRMR", "Speckle", (0, 0.25), "MR", [7]],
+    # ["v7_SPK025_MRCT", "Speckle", (0, 0.25), "CT", [7]],
+    # ["v8_SPK050_MRMR", "Speckle", (0, 0.5), "MR", [6]],
+    # ["v8_SPK050_MRCT", "Speckle", (0, 0.5), "CT", [6]],
+    # ["v9_RIC005_MRMR", "Racian", (5,), "MR", [3]],
+    # ["v9_RIC005_MRCT", "Racian", (5,), "CT", [3]],
+    # ["v10_RIC010_MRMR", "Racian", (10,), "MR", [3]],
+    # ["v10_RIC010_MRCT", "Racian", (10,), "CT", [3]],
+    # ["v11_RAY005_MRMR", "Rayleigh", (5, ), "MR", [3]],
+    # ["v11_RAY005_MRCT", "Rayleigh", (5, ), "CT", [3]],
+    # ["v12_RAY010_MRMR", "Rayleigh", (10, ), "MR", [6]],
+    # ["v12_RAY010_MRCT", "Rayleigh", (10, ), "CT", [6]],
+    ]
 
+print("Model index: ", end="")
+current_model_idx = int(input()) - 1
+print(model_list[current_model_idx])
+time.sleep(1)
 # ==================== dict and config ====================
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Bayesian_unet_v16_unet_BNN_KLe6_flip"
+train_dict["project_name"] = "Bayesian_HDMGD_"+model_list[current_model_idx][0]
+train_dict["noise_type"] = model_list[current_model_idx][1]
+train_dict["noise_params"] = model_list[current_model_idx][2]
+train_dict["target_img"] = model_list[current_model_idx][3]
+train_dict["gpu_ids"] = model_list[current_model_idx][4]
+
+
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
-# train_dict["input_channel"] = 30
-# train_dict["output_channel"] = 30
 train_dict["input_size"] = [96, 96, 96]
-train_dict["gpu_ids"] = [1]
 train_dict["epochs"] = 200
 train_dict["batch"] = 8
-train_dict["dropout"] = 0
+train_dict["dropout"] = 0.5
+train_dict["n_MTGD"] = 11
+
 train_dict["beta"] = 1e6 # resize KL loss
 train_dict["model_term"] = "Monai_Unet3d"
 train_dict["dataset_ratio"] = 0.25
 train_dict["continue_training_epoch"] = 0
-train_dict["flip"] = True
+train_dict["flip"] = False
+
 
 unet_dict = {}
 unet_dict["spatial_dims"] = 3
@@ -139,27 +152,33 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-# model = UNet( 
-#     spatial_dims=unet_dict["spatial_dims"],
-#     in_channels=unet_dict["in_channels"],
-#     out_channels=unet_dict["out_channels"],
-#     channels=unet_dict["channels"],
-#     strides=unet_dict["strides"],
-#     num_res_units=unet_dict["num_res_units"],
-#     act=unet_dict["act"],
-#     norm=unet_dict["normunet"],
-#     dropout=unet_dict["dropout"],
-#     bias=unet_dict["bias"],
-#     )
+model = UNet( 
+    spatial_dims=unet_dict["spatial_dims"],
+    in_channels=unet_dict["in_channels"],
+    out_channels=unet_dict["out_channels"],
+    channels=unet_dict["channels"],
+    strides=unet_dict["strides"],
+    num_res_units=unet_dict["num_res_units"],
+    act=unet_dict["act"],
+    norm=unet_dict["normunet"],
+    dropout=unet_dict["dropout"],
+    bias=unet_dict["bias"],
+    )
 
-bnn.bayesianize_(model, inference="inducing", inducing_rows=64, inducing_cols=64)
+print("*"*60)
+summary(model, (train_dict["batch"], 
+                train_dict["input_channel"], 
+                train_dict["input_size"][0], 
+                train_dict["input_size"][0], 
+                train_dict["input_size"][0]))
+print("*"*60)
 
 # model = torch.load(train_dict["save_folder"]+"model_best_{:03d}".format(
 #     train_dict["continue_training_epoch"])+".pth", map_location=torch.device('cpu'))
 # bnn.bayesianize_(model, inference="inducing", inducing_rows=64, inducing_cols=64)
 # optimizer = torch.load(train_dict["save_folder"]+"optim_{:03d}".format(
 #     train_dict["continue_training_epoch"])+".pth")
-model = UnetBNN(unet_dict)
+
 model.train()
 model = model.to(device)
 criterion = nn.SmoothL1Loss()
@@ -203,6 +222,16 @@ np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 # val_list = data_division_dict["val_list_X"]
 # test_list = data_division_dict["test_list_X"]
 
+
+# ==================== MTGD ====================
+
+if train_dict["n_MTGD"] > 1:
+    MTGD_dict = {}
+    for model_key, param in model.named_parameters():
+        print(model_key)
+        new_shape = (train_dict["n_MTGD"], torch.flatten(param).size()[0])
+        MTGD_dict[model_key] = np.zeros(new_shape)
+
 # ==================== training ====================
 
 best_val_loss = 1e3
@@ -231,7 +260,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
         random.shuffle(file_list)
         
-        case_loss = np.zeros((len(file_list), 2))
+        case_loss = np.zeros((len(file_list), 1))
 
         # N, C, D, H, W
         x_data = nib.load(file_list[0]).get_fdata()
@@ -248,7 +277,16 @@ for idx_epoch_new in range(train_dict["epochs"]):
             y_file = nib.load(y_path)
             x_data = x_file.get_fdata()
             y_data = y_file.get_fdata()
-            x_data = x_data / np.amax(x_data)
+            # x_data = x_data / np.amax(x_data)
+
+            if train_dict["target_img"] == "MR":
+                y_data = copy.deepcopy(x_data)
+
+            x_data = add_noise(
+                        x = x_data, 
+                        noise_type = train_dict["noise_type"],
+                        noise_params = train_dict["noise_params"],
+                        )
 
             batch_x = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
             batch_y = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
@@ -272,28 +310,58 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
             batch_x = torch.from_numpy(batch_x).float().to(device)
             batch_y = torch.from_numpy(batch_y).float().to(device)
+            
+            if train_dict["n_MTGD"] == 1:
                 
-            optimizer.zero_grad()
-            y_hat = model(batch_x)
-            # nll = F.cross_entropy(y_hat, batch_y)
-            # print("Yhat size: ", y_hat.size())
-            L1 = criterion(y_hat, batch_y)
-            kl = sum(m.kl_divergence() for m in model.out_conv.modules() if hasattr(m, "kl_divergence"))
-            kl /= len(file_list)
-            if not train_dict["flip"]:
-                loss = L1 + kl / train_dict["beta"]
-            else:
-                if idx_epoch % 2 == 0:
+                if isTrain:
+
+                    optimizer.zero_grad()
+                    y_hat = model(batch_x)
+                    L1 = criterion(y_hat, batch_y)
                     loss = L1
-                else:
-                    loss = kl / train_dict["beta"]
-            # loss = L1
-            if isTrain:
-                loss.backward()
-                optimizer.step()
-            case_loss[cnt_file, 0] = L1.item()
-            case_loss[cnt_file, 1] = kl.item()
-            print("Loss: ", loss.item(), "KL: ", kl.item(), "L1:", L1.item())
+                    loss.backward()
+                    optimizer.step()
+                    case_loss[cnt_file, 0] = L1.item()
+                    print("Loss: ", loss.item())
+
+            if train_dict["n_MTGD"] > 1:
+
+                if isTrain:
+
+                    average_loss = np.zeros((train_dict["n_MTGD"], 1))
+
+                    for idx_MTGD in range(train_dict["n_MTGD"]):
+                        optimizer.zero_grad()
+                        y_hat = model(batch_x)
+                        L1 = criterion(y_hat, batch_y)
+                        average_loss[idx_MTGD, 0] = L1.item()
+                        loss = L1
+                        loss.backward()
+
+                        for model_key, param in model.named_parameters():
+                            # print(model_key, param.grad)
+                            # print("-"*60)
+                            MTGD_dict[model_key][idx_MTGD, :] = torch.flatten(param.grad).to("cpu").numpy()
+
+                    optimizer.zero_grad()
+                    for model_key, param in model.named_parameters():
+                        median_gradient = np.median(MTGD_dict[model_key], axis=0)
+                        median_gradient = np.reshape(median_gradient, param.grad.size())
+                        param.grad = torch.from_numpy(median_gradient).float().to(device)
+                    optimizer.step()
+
+                    case_loss[cnt_file, 0] = np.mean(average_loss[:, 0])
+                    print("Loss: ", loss.item())
+
+            if isVal:
+                with torch.no_grad():
+                    y_hat = model(batch_x)
+                    L1 = criterion(y_hat, batch_y)
+                    loss =L1
+                case_loss[cnt_file, 0] = L1.item()
+                print("Loss: ", loss.item())
+
+            exit()
 
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
         print("  Loss: ", np.mean(case_loss), "  Recon: ", np.mean(case_loss[:, 0]))
@@ -312,6 +380,6 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 print("Checkpoint saved at Epoch {:03d}".format(idx_epoch + 1))
                 best_val_loss = np.mean(case_loss[:, 0])
 
-        del batch_x, batch_y
-        gc.collect()
-        torch.cuda.empty_cache()
+        # del batch_x, batch_y
+        # gc.collect()
+        # torch.cuda.empty_cache()
