@@ -165,6 +165,10 @@ model = UNet(
     bias=unet_dict["bias"],
     )
 
+model.train()
+model = model.to(device)
+criterion = nn.SmoothL1Loss()
+
 print("*"*60)
 test_sample = (train_dict["batch"], 
                 unet_dict["in_channels"], 
@@ -180,10 +184,6 @@ print("*"*60)
 # bnn.bayesianize_(model, inference="inducing", inducing_rows=64, inducing_cols=64)
 # optimizer = torch.load(train_dict["save_folder"]+"optim_{:03d}".format(
 #     train_dict["continue_training_epoch"])+".pth")
-
-model.train()
-model = model.to(device)
-criterion = nn.SmoothL1Loss()
 
 optimizer = torch.optim.AdamW(
     model.parameters(),
