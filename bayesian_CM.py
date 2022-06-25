@@ -63,10 +63,11 @@ model_list = [
     # ["v12_RAY010_MRCT", "Rayleigh", (10, ), "CT", [6]],
     ]
 
-print("Model index: ", end="")
-current_model_idx = int(input()) - 1
-print(model_list[current_model_idx])
-time.sleep(1)
+# print("Model index: ", end="")
+# current_model_idx = int(input()) - 1
+# print(model_list[current_model_idx])
+# time.sleep(1)
+current_model_idx = 0
 # ==================== dict and config ====================
 
 train_dict = {}
@@ -169,15 +170,15 @@ model.train()
 model = model.to(device)
 criterion = nn.SmoothL1Loss()
 
-print("*"*60)
-test_sample = (train_dict["batch"], 
-                unet_dict["in_channels"], 
-                train_dict["input_size"][0], 
-                train_dict["input_size"][0], 
-                train_dict["input_size"][0])
-print(test_sample)
-summary(model, test_sample)
-print("*"*60)
+# print("*"*60)
+# test_sample = (train_dict["batch"], 
+#                 unet_dict["in_channels"], 
+#                 train_dict["input_size"][0], 
+#                 train_dict["input_size"][0], 
+#                 train_dict["input_size"][0])
+# print(test_sample)
+# summary(model, test_sample)
+# print("*"*60)
 
 # model = torch.load(train_dict["save_folder"]+"model_best_{:03d}".format(
 #     train_dict["continue_training_epoch"])+".pth", map_location=torch.device('cpu'))
