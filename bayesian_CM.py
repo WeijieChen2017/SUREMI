@@ -167,7 +167,7 @@ model = UNet(
 
 print("*"*60)
 summary(model, (train_dict["batch"], 
-                train_dict["input_channel"], 
+                unet_dict["in_channels"], 
                 train_dict["input_size"][0], 
                 train_dict["input_size"][0], 
                 train_dict["input_size"][0]))
