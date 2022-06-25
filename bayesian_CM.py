@@ -166,7 +166,7 @@ model = UNet(
     )
 
 print("*"*60)
-test_sample = (train_dict["batch"], 
+test_sample = ( 
                 unet_dict["in_channels"], 
                 train_dict["input_size"][0], 
                 train_dict["input_size"][0], 
