@@ -260,7 +260,7 @@ class UNet_flat(nn.Module):
         # print(x2.size())
         x1 = self.up1(torch.cat([x2, x1], dim=1))
         # print(x1.size())
-        x_CM = self.softmax(self.up1(torch.cat([x1, x], dim=1)))
+        x_CM = self.softmax(self.CM(torch.cat([x1, x], dim=1)))
         # print(x_CM.size())
         
         return x1, x_CM
