@@ -171,7 +171,7 @@ model = UNet(
 model.train()
 model = model.to(device)
 # criterion = nn.SmoothL1Loss()
-criterion = weighted_L1Loss()
+criterion = weighted_L1Loss
 loss_CM = nn.MSELoss()
 
 # print("*"*60)
