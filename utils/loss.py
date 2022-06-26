@@ -1,4 +1,7 @@
 import torch
+
+from .module import Module
+
 # from .. import _reduction as _Reduction
 
 # class _Loss(Module):
