@@ -377,7 +377,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     L1 = criterion(batch_y, y_hat, y_CM)
                     L2 = loss_CM(y_CM, ONE_CM)
                     loss = L2*train_dict["alpha_loss_CM"] + L1*(1-train_dict["alpha_loss_CM"])
-                    loss.backward()
+                    # loss.backward()
                 case_loss[cnt_file, 0] = L1.item()
                 case_loss[cnt_file, 1] = L2.item()
                 print("Loss: ", loss.item())
