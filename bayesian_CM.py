@@ -37,7 +37,9 @@ from torchsummary import summary
 # v12 Rayleigh snr=10
 
 model_list = [
-    ["v1_Gau050_MRMR_dual", "Gaussian", (0, 0.5), "MR", [7]],
+    ["CM_HighDropout", "None", (0, ), "CT", [7], 0.5, 11]
+    ["CM_ZeroDropout", "None", (0, ), "CT", [7], 0., 1]
+    # ["v1_Gau050_MRMR_dual", "Gaussian", (0, 0.5), "MR", [7]],
     # ["v1_Gau050_MRCT", "Gaussian", (0, 0.5), "CT", [7]],
     # ["v2_Gau025_MRMR", "Gaussian", (0, 0.25), "MR", [7]],
     # ["v2_Gau025_MRCT", "Gaussian", (0, 0.25), "CT", [7]],
@@ -63,11 +65,11 @@ model_list = [
     # ["v12_RAY010_MRCT", "Rayleigh", (10, ), "CT", [6]],
     ]
 
-# print("Model index: ", end="")
-# current_model_idx = int(input()) - 1
-# print(model_list[current_model_idx])
-# time.sleep(1)
-current_model_idx = 0
+print("Model index: ", end="")
+current_model_idx = int(input()) - 1
+print(model_list[current_model_idx])
+time.sleep(1)
+# current_model_idx = 0
 # ==================== dict and config ====================
 
 train_dict = {}
@@ -77,15 +79,15 @@ train_dict["noise_type"] = model_list[current_model_idx][1]
 train_dict["noise_params"] = model_list[current_model_idx][2]
 train_dict["target_img"] = model_list[current_model_idx][3]
 train_dict["gpu_ids"] = model_list[current_model_idx][4]
+train_dict["dropout"] = model_list[current_model_idx][5]
+train_dict["n_MTGD"] = model_list[current_model_idx][6]
 
 
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_size"] = [96, 96, 96]
 train_dict["epochs"] = 200
-train_dict["batch"] = 8
-train_dict["dropout"] = 0.5
-train_dict["n_MTGD"] = 11
+train_dict["batch"] = 16
 
 train_dict["beta"] = 1e6 # resize KL loss
 train_dict["model_term"] = "Monai_Unet3d"
@@ -363,8 +365,6 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     loss =L1
                 case_loss[cnt_file, 0] = L1.item()
                 print("Loss: ", loss.item())
-
-            exit()
 
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
         print("  Loss: ", np.mean(case_loss), "  Recon: ", np.mean(case_loss[:, 0]))

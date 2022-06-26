@@ -231,29 +231,37 @@ class UNet_flat(nn.Module):
                 ResidualUnit(3, self.out_channels, self.out_channels, strides=1,
                 kernel_size=self.kernel_size, subunits=1, act=self.act, norm=self.norm,
                 dropout=self.dropout, bias=self.bias, last_conv_only=True, adn_ordering=self.adn_ordering))
+        self.CM = nn.Sequential(
+                Convolution(3, self.channels[0]*2, self.out_channels, strides=self.strides[0],
+                kernel_size=self.up_kernel_size, act=self.act, norm=self.norm, dropout=self.dropout, 
+                bias=self.bias, conv_only=False, is_transposed=True, adn_ordering=self.adn_ordering),
+                ResidualUnit(3, self.out_channels, self.out_channels, strides=1,
+                kernel_size=self.kernel_size, subunits=1, act=self.act, norm=self.norm,
+                dropout=self.dropout, bias=self.bias, last_conv_only=True, adn_ordering=self.adn_ordering))
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        print(x.size())
+        # print(x.size())
         x1 = self.down1(x)
-        print(x1.size())
+        # print(x1.size())
         x2 = self.down2(x1)
-        print(x2.size())
+        # print(x2.size())
         x3 = self.down3(x2)
-        print(x3.size())
+        # print(x3.size())
         x4 = self.down4(x3)
-        print(x4.size())
+        # print(x4.size())
         x5 = self.bottom(x4)
-        print(x5.size())
+        # print(x5.size())
         x4 = self.up4(torch.cat([x5, x4], dim=1))
-        print(x4.size())
+        # print(x4.size())
         x3 = self.up3(torch.cat([x4, x3], dim=1))
-        print(x3.size())
+        # print(x3.size())
         x2 = self.up2(torch.cat([x3, x2], dim=1))
-        print(x2.size())
+        # print(x2.size())
         x1 = self.up1(torch.cat([x2, x1], dim=1))
-        print(x1.size())
+        # print(x1.size())
+        x_CM = self.up1(torch.cat([x2, x1], dim=1))
         
-        return x1
+        return x1, x_CM
 
     #     def _create_block(
     #         inc: int, outc: int, channels: Sequence[int], strides: Sequence[int], is_top: bool

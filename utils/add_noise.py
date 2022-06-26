@@ -46,3 +46,6 @@ def add_noise(x, noise_type, noise_params):
         noise_1 = np.random.normal(loc=0.0, scale=sigma, size=x.shape)
         noise_2 = np.random.normal(loc=0.0, scale=sigma, size=x.shape)
         return x + np.sqrt(noise_1 ** 2 + noise_2 ** 2)
+
+    if noise_type == "None":
+        return x
