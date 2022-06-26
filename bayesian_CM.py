@@ -20,7 +20,7 @@ import bnn
 
 from utils import add_noise
 from model import UNet_flat as UNet
-from torchsummary import summary
+# from torchsummary import summary
 
 
 # v1 Gaussian mu=0, sigma=0.5
@@ -37,8 +37,8 @@ from torchsummary import summary
 # v12 Rayleigh snr=10
 
 model_list = [
-    ["CM_HighDropout", "None", (0, ), "CT", [7], 0.5, 11]
-    ["CM_ZeroDropout", "None", (0, ), "CT", [7], 0., 1]
+    ["CM_HighDropout", "None", (0, ), "CT", [7], 0.5, 11],
+    ["CM_ZeroDropout", "None", (0, ), "CT", [7], 0., 1],
     # ["v1_Gau050_MRMR_dual", "Gaussian", (0, 0.5), "MR", [7]],
     # ["v1_Gau050_MRCT", "Gaussian", (0, 0.5), "CT", [7]],
     # ["v2_Gau025_MRMR", "Gaussian", (0, 0.25), "MR", [7]],
