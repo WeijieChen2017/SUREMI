@@ -221,7 +221,7 @@ class UNet_flat(nn.Module):
                 Convolution(3, self.channels[1]*2, self.channels[0], strides=1,
                 kernel_size=self.up_kernel_size, act=self.act, norm=self.norm, dropout=self.dropout, 
                 bias=self.bias, conv_only=False, is_transposed=True, adn_ordering=self.adn_ordering),
-                ResidualUnit(3, self.channels[2], self.channels[2], strides=1,
+                ResidualUnit(3, self.channels[0], self.channels[0], strides=1,
                 kernel_size=self.kernel_size, subunits=1, act=self.act, norm=self.norm,
                 dropout=self.dropout, bias=self.bias, last_conv_only=False, adn_ordering=self.adn_ordering,))
         self.up1 = nn.Sequential(
