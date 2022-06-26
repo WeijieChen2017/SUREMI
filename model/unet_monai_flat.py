@@ -233,17 +233,25 @@ class UNet_flat(nn.Module):
                 dropout=self.dropout, bias=self.bias, last_conv_only=True, adn_ordering=self.adn_ordering))
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        print(x.size())
         x1 = self.down1(x)
+        print(x1.size())
         x2 = self.down2(x1)
+        print(x2.size())
         x3 = self.down3(x2)
+        print(x3.size())
         x4 = self.down4(x3)
+        print(x4.size())
         x5 = self.bottom(x4)
-        print(x.size(), x1.size(), x2.size(), x3.size(), x4.size(), x5.size())
+        print(x5.size())
         x4 = self.up4(torch.cat([x5, x4], dim=1))
+        print(x4.size())
         x3 = self.up3(torch.cat([x4, x3], dim=1))
+        print(x3.size())
         x2 = self.up2(torch.cat([x3, x2], dim=1))
+        print(x2.size())
         x1 = self.up1(torch.cat([x2, x1], dim=1))
-        print(x1.size(), x2.size(), x3.size(), x4.size(), x5.size())
+        print(x1.size())
         
         return x1
 
