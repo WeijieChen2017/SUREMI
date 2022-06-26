@@ -243,7 +243,12 @@ if train_dict["n_MTGD"] > 1:
 
 best_val_loss = 1e3
 best_epoch = 0
-ONE_CM = torch.ones(train_dict["input_size"]).float().to(device)
+ONE_CM = torch.ones((
+    train_dict["batch"],
+    1, 
+    train_dict["input_size"][0],
+    train_dict["input_size"][1],
+    train_dict["input_size"][2])).float().to(device)
 # wandb.watch(model)
 
 package_train = [train_list, True, False, "train"]
