@@ -1,7 +1,5 @@
 import torch
 
-from .module import Module
-
 # from .. import _reduction as _Reduction
 
 # class _Loss(Module):
@@ -26,12 +24,7 @@ from .module import Module
 #         loss = torch.mul(diff, weight)
 #         return torch.mean(loss)
 
-class weighted_L1Loss(Module):
-
-    def __init__(self) -> None:
-        super().__init__()
-
-    def forward(self, y_pred: Tensor, y_true: Tensor, weight: Tensor) -> Tensor:
-        diff = torch.abs(y_true - y_pred)
-        loss = torch.mul(diff, weight)
-        return torch.mean(loss)
+def weighted_L1Loss(self, y_true: Tensor, y_pred: Tensor, weight: Tensor) -> Tensor:
+    diff = torch.abs(y_pred - y_true)
+    loss = torch.mul(diff, weight)
+    return torch.mean(loss)
