@@ -243,6 +243,7 @@ if train_dict["n_MTGD"] > 1:
 
 best_val_loss = 1e3
 best_epoch = 0
+ONE_CM = torch.ones(train_dict["input_size"]).float().to(device)
 # wandb.watch(model)
 
 package_train = [train_list, True, False, "train"]
@@ -325,7 +326,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     optimizer.zero_grad()
                     y_hat, y_CM = model(batch_x)
                     L1 = torch.mul(criterion(y_hat, batch_y), y_CM)
-                    L2 = loss_CM(y_CM, torch.ones(train_dict["input_size"]))
+                    L2 = loss_CM(y_CM, ONE_CM)
                     loss = L2*train_dict["alpha_loss_CM"] + L1*(1-train_dict["alpha_loss_CM"])
                     loss.backward()
                     optimizer.step()
@@ -343,7 +344,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                         optimizer.zero_grad()
                         y_hat, y_CM = model(batch_x)
                         L1 = torch.mul(criterion(y_hat, batch_y), y_CM)
-                        L2 = loss_CM(y_CM, torch.ones(train_dict["input_size"]))
+                        L2 = loss_CM(y_CM, ONE_CM)
                         loss = L2*train_dict["alpha_loss_CM"] + L1*(1-train_dict["alpha_loss_CM"])
                         loss.backward()
                         average_loss[idx_MTGD, 0] = L1.item()
@@ -369,7 +370,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 with torch.no_grad():
                     y_hat, y_CM = model(batch_x)
                     L1 = torch.mul(criterion(y_hat, batch_y), y_CM)
-                    L2 = loss_CM(y_CM, torch.ones(train_dict["input_size"]))
+                    L2 = loss_CM(y_CM, ONE_CM)
                     loss = L2*train_dict["alpha_loss_CM"] + L1*(1-train_dict["alpha_loss_CM"])
                     loss.backward()
                 case_loss[cnt_file, 0] = L1.item()
