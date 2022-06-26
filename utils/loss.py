@@ -24,7 +24,7 @@ import torch
 #         loss = torch.mul(diff, weight)
 #         return torch.mean(loss)
 
-def weighted_L1Loss(self, y_true: Tensor, y_pred: Tensor, weight: Tensor) -> Tensor:
+def weighted_L1Loss(y_true, y_pred, weight):
     diff = torch.abs(y_pred - y_true)
     loss = torch.mul(diff, weight)
     return torch.mean(loss)
