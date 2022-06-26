@@ -273,7 +273,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
         random.shuffle(file_list)
         
-        case_loss = np.zeros((len(file_list), 1))
+        case_loss = np.zeros((len(file_list), 2))
 
         # N, C, D, H, W
         x_data = nib.load(file_list[0]).get_fdata()
