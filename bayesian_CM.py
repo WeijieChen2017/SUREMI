@@ -22,6 +22,10 @@ from utils import add_noise
 from model import UNet_flat as UNet
 # from torchsummary import summary
 
+def weighted_L1Loss(y_true, y_pred, weights):
+    diff = torch.abs(y_true - y_pred)
+    loss = torch.mul(diff, weights)
+    return torch.mean(loss)
 
 # v1 Gaussian mu=0, sigma=0.5
 # v2 Gaussian mu=0, sigma=0.25
@@ -171,7 +175,8 @@ model = UNet(
 
 model.train()
 model = model.to(device)
-criterion = nn.SmoothL1Loss()
+# criterion = nn.SmoothL1Loss()
+criterion = weighted_L1Loss()
 loss_CM = nn.MSELoss()
 
 # print("*"*60)
@@ -325,7 +330,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                     optimizer.zero_grad()
                     y_hat, y_CM = model(batch_x)
-                    L1 = torch.mul(criterion(y_hat, batch_y), y_CM)
+                    L1 = criterion(batch_y, y_hat, y_CM)
                     L2 = loss_CM(y_CM, ONE_CM)
                     loss = L2*train_dict["alpha_loss_CM"] + L1*(1-train_dict["alpha_loss_CM"])
                     loss.backward()
@@ -343,7 +348,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     for idx_MTGD in range(train_dict["n_MTGD"]):
                         optimizer.zero_grad()
                         y_hat, y_CM = model(batch_x)
-                        L1 = torch.mul(criterion(y_hat, batch_y), y_CM)
+                        L1 = criterion(batch_y, y_hat, y_CM)
                         L2 = loss_CM(y_CM, ONE_CM)
                         loss = L2*train_dict["alpha_loss_CM"] + L1*(1-train_dict["alpha_loss_CM"])
                         loss.backward()
@@ -369,7 +374,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             if isVal:
                 with torch.no_grad():
                     y_hat, y_CM = model(batch_x)
-                    L1 = torch.mul(criterion(y_hat, batch_y), y_CM)
+                    L1 = criterion(batch_y, y_hat, y_CM)
                     L2 = loss_CM(y_CM, ONE_CM)
                     loss = L2*train_dict["alpha_loss_CM"] + L1*(1-train_dict["alpha_loss_CM"])
                     loss.backward()
