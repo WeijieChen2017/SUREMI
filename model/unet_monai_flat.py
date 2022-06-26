@@ -238,7 +238,7 @@ class UNet_flat(nn.Module):
                 ResidualUnit(3, self.out_channels, self.out_channels, strides=1,
                 kernel_size=self.kernel_size, subunits=1, act=self.act, norm=self.norm,
                 dropout=self.dropout, bias=self.bias, last_conv_only=True, adn_ordering=self.adn_ordering))
-        self.softmax = nn.Softmax()
+        self.softmax = nn.Sigmoid()
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # print(x.size())
