@@ -18,14 +18,9 @@ import requests
 from monai.networks.layers.factories import Act, Norm
 import bnn
 
-from utils import add_noise
+from utils import add_noise, weighted_L1Loss
 from model import UNet_flat as UNet
 # from torchsummary import summary
-
-def weighted_L1Loss(y_true, y_pred, weights):
-    diff = torch.abs(y_true - y_pred)
-    loss = torch.mul(diff, weights)
-    return torch.mean(loss)
 
 # v1 Gaussian mu=0, sigma=0.5
 # v2 Gaussian mu=0, sigma=0.25
