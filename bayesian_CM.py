@@ -337,7 +337,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     optimizer.step()
                     case_loss[cnt_file, 0] = L1.item()
                     case_loss[cnt_file, 1] = L2.item()
-                    print("Loss: ", loss.item())
+                    print("Loss: ", loss.item(), "Recon loss: ", L1.item(), "CM loss", L2.item())
 
             if train_dict["n_MTGD"] > 1:
 
@@ -369,7 +369,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                     case_loss[cnt_file, 0] = np.mean(average_loss[:, 0])
                     case_loss[cnt_file, 1] = np.mean(average_loss[:, 1])
-                    print("Loss: ", loss.item())
+                    print("Loss: ", loss.item(), "Recon loss: ", L1.item(), "CM loss", L2.item())
 
             if isVal:
                 with torch.no_grad():
