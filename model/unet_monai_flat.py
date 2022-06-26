@@ -238,10 +238,12 @@ class UNet_flat(nn.Module):
         x3 = self.down2(x2)
         x4 = self.down2(x3)
         x5 = self.bottom(x4)
+        print(x.size(), x1.size(), x2.size(), x3.size(), x4.size(), x5.size())
         x4 = self.up4(torch.cat([x5, x4], dim=1))
         x3 = self.up3(torch.cat([x4, x3], dim=1))
         x2 = self.up2(torch.cat([x3, x2], dim=1))
         x1 = self.up1(torch.cat([x2, x1], dim=1))
+        print(x1.size(), x2.size(), x3.size(), x4.size(), x5.size())
         
         return x1
 

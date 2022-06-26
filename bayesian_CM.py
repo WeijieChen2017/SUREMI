@@ -170,15 +170,15 @@ model.train()
 model = model.to(device)
 criterion = nn.SmoothL1Loss()
 
-print("*"*60)
-test_sample = (train_dict["batch"], 
-                unet_dict["in_channels"], 
-                train_dict["input_size"][0], 
-                train_dict["input_size"][0], 
-                train_dict["input_size"][0])
-print(test_sample)
-summary(model, test_sample)
-print("*"*60)
+# print("*"*60)
+# test_sample = (train_dict["batch"], 
+#                 unet_dict["in_channels"], 
+#                 train_dict["input_size"][0], 
+#                 train_dict["input_size"][0], 
+#                 train_dict["input_size"][0])
+# print(test_sample)
+# summary(model, test_sample)
+# print("*"*60)
 
 # model = torch.load(train_dict["save_folder"]+"model_best_{:03d}".format(
 #     train_dict["continue_training_epoch"])+".pth", map_location=torch.device('cpu'))
