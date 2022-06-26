@@ -36,8 +36,11 @@ from model import UNet_flat as UNet
 # v12 Rayleigh snr=10
 
 model_list = [
-    ["CM_HighDropout", "None", (0, ), "CT", [7], 0.5, 11],
-    ["CM_ZeroDropout", "None", (0, ), "CT", [7], 0., 1],
+    # ["CM_HighDropout", "None", (0, ), "CT", [7], 0.5, 11],
+    ["CM_ZeroDropout_0001", "None", (0, ), "CT", [6], 0., 1, 1e-3],
+    ["CM_ZeroDropout_0010", "None", (0, ), "CT", [6], 0., 1, 1e-2],
+    ["CM_ZeroDropout_0100", "None", (0, ), "CT", [7], 0., 1, 1e-1],
+    ["CM_ZeroDropout_0500", "None", (0, ), "CT", [7], 0., 1, 5e-1],
     # ["v1_Gau050_MRMR_dual", "Gaussian", (0, 0.5), "MR", [7]],
     # ["v1_Gau050_MRCT", "Gaussian", (0, 0.5), "CT", [7]],
     # ["v2_Gau025_MRMR", "Gaussian", (0, 0.25), "MR", [7]],
@@ -80,14 +83,13 @@ train_dict["target_img"] = model_list[current_model_idx][3]
 train_dict["gpu_ids"] = model_list[current_model_idx][4]
 train_dict["dropout"] = model_list[current_model_idx][5]
 train_dict["n_MTGD"] = model_list[current_model_idx][6]
-
+train_dict["alpha_loss_CM"] = model_list[current_model_idx][7]
 
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_size"] = [96, 96, 96]
 train_dict["epochs"] = 200
-train_dict["batch"] = 16
-train_dict["alpha_loss_CM"] = 0.5
+train_dict["batch"] = 12
 
 train_dict["beta"] = 1e6 # resize KL loss
 train_dict["model_term"] = "Monai_Unet3d"
