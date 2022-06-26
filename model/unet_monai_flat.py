@@ -232,10 +232,10 @@ class UNet_flat(nn.Module):
                 kernel_size=self.kernel_size, subunits=1, act=self.act, norm=self.norm,
                 dropout=self.dropout, bias=self.bias, last_conv_only=True, adn_ordering=self.adn_ordering))
         self.CM = nn.Sequential(
-                Convolution(3, self.channels[0]*2, self.out_channels, strides=self.strides[0],
+                Convolution(3, self.out_channels*2, self.channels[0], strides=1,
                 kernel_size=self.up_kernel_size, act=self.act, norm=self.norm, dropout=self.dropout, 
                 bias=self.bias, conv_only=False, is_transposed=True, adn_ordering=self.adn_ordering),
-                ResidualUnit(3, self.out_channels, self.out_channels, strides=1,
+                ResidualUnit(3, self.channels[0], self.out_channels, strides=1,
                 kernel_size=self.kernel_size, subunits=1, act=self.act, norm=self.norm,
                 dropout=self.dropout, bias=self.bias, last_conv_only=True, adn_ordering=self.adn_ordering))
         self.softmax = nn.Sigmoid()
@@ -258,10 +258,10 @@ class UNet_flat(nn.Module):
         # print(x3.size())
         x2 = self.up2(torch.cat([x3, x2], dim=1))
         # print(x2.size())
-        x_CM = self.softmax(self.up1(torch.cat([x2, x1], dim=1)))
-        # print(x_CM.size())
         x1 = self.up1(torch.cat([x2, x1], dim=1))
         # print(x1.size())
+        x_CM = self.softmax(self.up1(torch.cat([x1, x], dim=1)))
+        # print(x_CM.size())
         
         return x1, x_CM
 
