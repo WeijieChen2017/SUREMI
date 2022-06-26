@@ -235,8 +235,8 @@ class UNet_flat(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x1 = self.down1(x)
         x2 = self.down2(x1)
-        x3 = self.down2(x2)
-        x4 = self.down2(x3)
+        x3 = self.down3(x2)
+        x4 = self.down4(x3)
         x5 = self.bottom(x4)
         print(x.size(), x1.size(), x2.size(), x3.size(), x4.size(), x5.size())
         x4 = self.up4(torch.cat([x5, x4], dim=1))
