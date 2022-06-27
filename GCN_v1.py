@@ -92,7 +92,7 @@ train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_size"] = [96, 96, 96]
 train_dict["epochs"] = 200
-train_dict["batch"] = 15
+train_dict["batch"] = 16
 
 train_dict["beta"] = 1e6 # resize KL loss
 train_dict["model_term"] = "Monai_Unet3d"
