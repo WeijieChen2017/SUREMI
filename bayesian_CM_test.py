@@ -15,8 +15,8 @@ import torchvision
 import requests
 
 # from model import SwinTransformer3D
-from monai.inferers import sliding_window_inference
-# from utils import sliding_window_inference
+# from monai.inferers import sliding_window_inference
+from utils import CM_sliding_window_inference as sliding_window_inference
 from utils import add_noise
 from model import UNet_flat as UNet
 
@@ -200,7 +200,7 @@ for name in name_array:
         input_data = np.expand_dims(x_data, (0,1))
 
         with torch.no_grad():
-            y_hat, CM = sliding_window_inference(
+            y_hat = sliding_window_inference(
                     inputs = torch.from_numpy(input_data).float().to(device), 
                     roi_size = test_dict["input_size"], 
                     sw_batch_size = 4, 
@@ -212,10 +212,26 @@ for name in name_array:
                     cval=0.0, 
                     sw_device=device, 
                     device=device,
+                    reconOrCM=True,
                     )
+            output_data = y_hat.cpu().detach().numpy()
 
-        output_data = y_hat.cpu().detach().numpy()
-        CM_data = CM.cpu().detach().numpy()
+            CM = sliding_window_inference(
+                    inputs = torch.from_numpy(input_data).float().to(device), 
+                    roi_size = test_dict["input_size"], 
+                    sw_batch_size = 4, 
+                    predictor = model,
+                    overlap=0.25, 
+                    mode="gaussian", 
+                    sigma_scale=0.125, 
+                    padding_mode="constant", 
+                    cval=0.0, 
+                    sw_device=device, 
+                    device=device,
+                    reconOrCM=True,
+                    )
+            CM_data = CM.cpu().detach().numpy()
+
         print(output_data.shape, CM_data.shape)
 
         # eval_output = []
