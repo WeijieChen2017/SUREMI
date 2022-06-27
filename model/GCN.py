@@ -6,7 +6,7 @@ from monai.networks.nets.unet import UNet as UNet
 
 class GCN(nn.Module):
     
-    def __init__(self,unet_dict_E, unet_dict_G) -> None:
+    def __init__(self,unet_dict_G, unet_dict_E) -> None:
         super().__init__()
 
         self.model_G = UNet( 
@@ -23,16 +23,16 @@ class GCN(nn.Module):
             )
 
         self.model_E = UNet(
-            spatial_dims=model_E["spatial_dims"],
-            in_channels=model_E["in_channels"],
-            out_channels=model_E["out_channels"],
-            channels=model_E["channels"],
-            strides=model_E["strides"],
-            num_res_units=model_E["num_res_units"],
-            act=model_E["act"],
-            norm=model_E["normunet"],
-            dropout=model_E["dropout"],
-            bias=model_E["bias"],
+            spatial_dims=unet_dict_E["spatial_dims"],
+            in_channels=unet_dict_E["in_channels"],
+            out_channels=unet_dict_E["out_channels"],
+            channels=unet_dict_E["channels"],
+            strides=unet_dict_E["strides"],
+            num_res_units=unet_dict_E["num_res_units"],
+            act=unet_dict_E["act"],
+            norm=unet_dict_E["normunet"],
+            dropout=unet_dict_E["dropout"],
+            bias=unet_dict_E["bias"],
             )
 
         self.softmax = nn.Sigmoid()
