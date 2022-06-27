@@ -22,7 +22,7 @@ from monai.networks.layers.factories import Act, Norm
 import bnn
 
 from utils import add_noise, weighted_L1Loss
-# from model import UNet_flat as UNet
+from model import GCN
 # from torchsummary import summary
 
 # v1 Gaussian mu=0, sigma=0.5
@@ -92,7 +92,7 @@ train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_size"] = [96, 96, 96]
 train_dict["epochs"] = 200
-train_dict["batch"] = 12
+train_dict["batch"] = 6
 
 train_dict["beta"] = 1e6 # resize KL loss
 train_dict["model_term"] = "Monai_Unet3d"
@@ -170,42 +170,15 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-model_G = UNet( 
-    spatial_dims=unet_dict["spatial_dims"],
-    in_channels=unet_dict["in_channels"],
-    out_channels=unet_dict["out_channels"],
-    channels=unet_dict["channels"],
-    strides=unet_dict["strides"],
-    num_res_units=unet_dict["num_res_units"],
-    act=unet_dict["act"],
-    norm=unet_dict["normunet"],
-    dropout=unet_dict["dropout"],
-    bias=unet_dict["bias"],
-    )
-
+model = GCN(unet_dict_G, unet_dict_E)
 model.train()
 model = model.to(device)
+
 # criterion = nn.SmoothL1Loss()
-criterion = weighted_L1Loss
-loss_CM = nn.MSELoss()
+loss_L1 = weighted_L1Loss
+loss_L2 = nn.MSELoss()
 
-# print("*"*60)
-# test_sample = (train_dict["batch"], 
-#                 unet_dict["in_channels"], 
-#                 train_dict["input_size"][0], 
-#                 train_dict["input_size"][0], 
-#                 train_dict["input_size"][0])
-# print(test_sample)
-# summary(model, test_sample)
-# print("*"*60)
-
-# model = torch.load(train_dict["save_folder"]+"model_best_{:03d}".format(
-#     train_dict["continue_training_epoch"])+".pth", map_location=torch.device('cpu'))
-# bnn.bayesianize_(model, inference="inducing", inducing_rows=64, inducing_cols=64)
-# optimizer = torch.load(train_dict["save_folder"]+"optim_{:03d}".format(
-#     train_dict["continue_training_epoch"])+".pth")
-
-optimizer = torch.optim.AdamW(
+optim = torch.optim.AdamW(
     model.parameters(),
     lr = train_dict["opt_lr"],
     betas = train_dict["opt_betas"],
@@ -307,14 +280,14 @@ for idx_epoch_new in range(train_dict["epochs"]):
             y_data = y_file.get_fdata()
             # x_data = x_data / np.amax(x_data)
 
-            if train_dict["target_img"] == "MR":
-                y_data = copy.deepcopy(x_data)
+            # if train_dict["target_img"] == "MR":
+            #     y_data = copy.deepcopy(x_data)
 
-            x_data = add_noise(
-                        x = x_data, 
-                        noise_type = train_dict["noise_type"],
-                        noise_params = train_dict["noise_params"],
-                        )
+            # x_data = add_noise(
+            #             x = x_data, 
+            #             noise_type = train_dict["noise_type"],
+            #             noise_params = train_dict["noise_params"],
+            #             )
 
             batch_x = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
             batch_y = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
@@ -343,76 +316,77 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 
                 if isTrain:
 
-                    optimizer.zero_grad()
-                    y_hat, y_CM = model(batch_x)
-                    L1 = criterion(batch_y, y_hat, y_CM)
-                    L2 = loss_CM(y_CM, ONE_CM)
-                    loss = L2*train_dict["alpha_loss_CM"] + L1*(1-train_dict["alpha_loss_CM"])
+                    optim.zero_grad()
+                    y_hat, y_cm = model(batch_x)
+                    cm_loss = loss_L2(y_cm, ONE_CM)
+                    recon_loss = loss_L1(batch_y, y_hat, y_cm)
+                    loss = cm_loss*train_dict["alpha_loss_CM"] + recon_loss*(1-train_dict["alpha_loss_CM"])
                     loss.backward()
-                    optimizer.step()
-                    case_loss[cnt_file, 0] = L1.item()
-                    case_loss[cnt_file, 1] = L2.item()
-                    print("Loss: ", loss.item(), "Recon loss: ", L1.item(), "CM loss", L2.item())
+                    optim.step()
+                    case_loss[cnt_file, 0] = recon_loss.item()
+                    case_loss[cnt_file, 1] = cm_loss.item()
+                    print("Loss: ", loss.item(), "Recon loss: ", recon_loss.item(), "CM loss", cm_loss.item())
 
-            if train_dict["n_MTGD"] > 1:
+            # if train_dict["n_MTGD"] > 1:
 
-                if isTrain:
+            #     if isTrain:
 
-                    average_loss = np.zeros((train_dict["n_MTGD"], 2))
+            #         average_loss = np.zeros((train_dict["n_MTGD"], 2))
 
-                    for idx_MTGD in range(train_dict["n_MTGD"]):
-                        optimizer.zero_grad()
-                        y_hat, y_CM = model(batch_x)
-                        L1 = criterion(batch_y, y_hat, y_CM)
-                        L2 = loss_CM(y_CM, ONE_CM)
-                        loss = L2*train_dict["alpha_loss_CM"] + L1*(1-train_dict["alpha_loss_CM"])
-                        loss.backward()
-                        average_loss[idx_MTGD, 0] = L1.item()
-                        average_loss[idx_MTGD, 1] = L2.item()
+            #         for idx_MTGD in range(train_dict["n_MTGD"]):
+            #             optimizer.zero_grad()
+            #             y_hat, y_CM = model(batch_x)
+            #             L1 = criterion(batch_y, y_hat, y_CM)
+            #             L2 = loss_CM(y_CM, ONE_CM)
+            #             loss = L2*train_dict["alpha_loss_CM"] + L1*(1-train_dict["alpha_loss_CM"])
+            #             loss.backward()
+            #             average_loss[idx_MTGD, 0] = L1.item()
+            #             average_loss[idx_MTGD, 1] = L2.item()
 
-                        for model_key, param in model.named_parameters():
-                            # print(model_key, param.grad)
-                            # print("-"*60)
-                            MTGD_dict[model_key][idx_MTGD, :] = torch.flatten(param.grad).to("cpu").numpy()
+            #             for model_key, param in model.named_parameters():
+            #                 # print(model_key, param.grad)
+            #                 # print("-"*60)
+            #                 MTGD_dict[model_key][idx_MTGD, :] = torch.flatten(param.grad).to("cpu").numpy()
 
-                    optimizer.zero_grad()
-                    for model_key, param in model.named_parameters():
-                        median_gradient = np.median(MTGD_dict[model_key], axis=0)
-                        median_gradient = np.reshape(median_gradient, param.grad.size())
-                        param.grad = torch.from_numpy(median_gradient).float().to(device)
-                    optimizer.step()
+            #         optimizer.zero_grad()
+            #         for model_key, param in model.named_parameters():
+            #             median_gradient = np.median(MTGD_dict[model_key], axis=0)
+            #             median_gradient = np.reshape(median_gradient, param.grad.size())
+            #             param.grad = torch.from_numpy(median_gradient).float().to(device)
+            #         optimizer.step()
 
-                    case_loss[cnt_file, 0] = np.mean(average_loss[:, 0])
-                    case_loss[cnt_file, 1] = np.mean(average_loss[:, 1])
-                    print("Loss: ", loss.item(), "Recon loss: ", L1.item(), "CM loss", L2.item())
+            #         case_loss[cnt_file, 0] = np.mean(average_loss[:, 0])
+            #         case_loss[cnt_file, 1] = np.mean(average_loss[:, 1])
+            #         print("Loss: ", loss.item(), "Recon loss: ", L1.item(), "CM loss", L2.item())
 
             if isVal:
                 with torch.no_grad():
-                    y_hat, y_CM = model(batch_x)
-                    L1 = criterion(batch_y, y_hat, y_CM)
-                    L2 = loss_CM(y_CM, ONE_CM)
-                    loss = L2*train_dict["alpha_loss_CM"] + L1*(1-train_dict["alpha_loss_CM"])
-                    # loss.backward()
-                case_loss[cnt_file, 0] = L1.item()
-                case_loss[cnt_file, 1] = L2.item()
-                print("Loss: ", loss.item(), "Recon loss: ", L1.item(), "CM loss", L2.item())
+
+                    y_hat, y_cm = model(batch_x)
+                    cm_loss = loss_L2(y_cm, ONE_CM)
+                    recon_loss = loss_L1(batch_y, y_hat, y_cm)
+                    loss = cm_loss*train_dict["alpha_loss_CM"] + recon_loss*(1-train_dict["alpha_loss_CM"])
+                case_loss[cnt_file, 0] = recon_loss.item()
+                case_loss[cnt_file, 1] = cm_loss.item()
+                print("Loss: ", loss.item(), "Recon loss: ", recon_loss.item(), "CM loss", cm_loss.item())
 
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
-        print("  Loss: ", np.mean(case_loss), "  L1: ", np.mean(case_loss[:, 0]), "  L2: ", np.mean(case_loss[:, 1]))
+        print("  Loss: ", np.mean(case_loss), " Recon loss: ", np.mean(case_loss[:, 0]), " CM loss: ", np.mean(case_loss[:, 1]))
         np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), case_loss)
 
         if isVal:
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_x.npy", batch_x.cpu().detach().numpy())
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_y.npy", batch_y.cpu().detach().numpy())
-            np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_z.npy", y_hat.cpu().detach().numpy())
-
+            np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_yhat.npy", y_hat.cpu().detach().numpy())
+            np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_cm.npy", y_cm.cpu().detach().numpy())
             torch.save(model, train_dict["save_folder"]+"model_.pth".format(idx_epoch + 1))
-            if np.mean(case_loss[:, 0]) < best_val_loss:
+            
+            if np.mean(case_loss) < best_val_loss:
                 # save the best model
                 torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch + 1))
                 torch.save(optimizer, train_dict["save_folder"]+"optim_{:03d}.pth".format(idx_epoch + 1))
                 print("Checkpoint saved at Epoch {:03d}".format(idx_epoch + 1))
-                best_val_loss = np.mean(case_loss[:, 0])
+                best_val_loss = np.mean(case_loss)
 
         # del batch_x, batch_y
         # gc.collect()
