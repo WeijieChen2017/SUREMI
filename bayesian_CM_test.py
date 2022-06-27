@@ -169,7 +169,7 @@ for name in name_array:
     file_list = X_list
     iter_tag = "test"
     cnt_total_file = len(file_list)
-    model.train()
+    model.eval()
 
     cnt_each_cube = 1
 
