@@ -6,8 +6,11 @@ from monai.networks.nets.unet import UNet as UNet
 
 class GCN(nn.Module):
     
-    def __init__(self,unet_dict_G, unet_dict_E) -> None:
+    def __init__(self, unet_dict_G, unet_dict_E) -> None:
         super().__init__()
+
+        print(unet_dict_G)
+        print(unet_dict_E)
 
         self.model_G = UNet( 
             spatial_dims=unet_dict_G["spatial_dims"],
