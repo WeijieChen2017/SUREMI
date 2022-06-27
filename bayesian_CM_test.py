@@ -228,7 +228,7 @@ for name in name_array:
                     cval=0.0, 
                     sw_device=device, 
                     device=device,
-                    reconOrCM=True,
+                    reconOrCM=False,
                     )
             CM_data = CM.cpu().detach().numpy()
 
