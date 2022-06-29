@@ -170,16 +170,16 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # model = GCN(unet_dict_G, unet_dict_E)
 
 model = UNet( 
-    spatial_dims=unet_dict["spatial_dims"],
-    in_channels=unet_dict["in_channels"],
-    out_channels=unet_dict["out_channels"],
-    channels=unet_dict["channels"],
-    strides=unet_dict["strides"],
-    num_res_units=unet_dict["num_res_units"],
-    act=unet_dict["act"],
-    norm=unet_dict["normunet"],
-    dropout=unet_dict["dropout"],
-    bias=unet_dict["bias"],
+    spatial_dims=unet_dict_G["spatial_dims"],
+    in_channels=unet_dict_G["in_channels"],
+    out_channels=unet_dict_G["out_channels"],
+    channels=unet_dict_G["channels"],
+    strides=unet_dict_G["strides"],
+    num_res_units=unet_dict_G["num_res_units"],
+    act=unet_dict_G["act"],
+    norm=unet_dict_G["normunet"],
+    dropout=unet_dict_G["dropout"],
+    bias=unet_dict_G["bias"],
     )
 
 model.train()
