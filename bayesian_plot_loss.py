@@ -63,10 +63,12 @@ hub_CT_name = [
     # "RAY005_MRCT_ZD",
     # "RAY010_MRMR_ZD",
     # "RAY010_MRCT_ZD",
-    "GCN_0001",
-    "GCN_0010",
-    "GCN_0100",
-    "GCN_0500",
+    # "GCN_0001",
+    # "GCN_0010",
+    # "GCN_0100",
+    # "GCN_0500",
+    "model_G",
+    "model_E"
     ]
 hub_CT_folder = [
     # "./project_dir/Bayesian_unet_v1/",
@@ -143,10 +145,12 @@ hub_CT_folder = [
     # "Bayesian_HDMGD_CM_ZeroDropout_0010",
     # "Bayesian_HDMGD_CM_ZeroDropout_0100",
     # "Bayesian_HDMGD_CM_ZeroDropout_0500",
-    "Bayesian_HDMGD_GCN_0001",
-    "Bayesian_HDMGD_GCN_0010",
-    "Bayesian_HDMGD_GCN_0100",
-    "Bayesian_HDMGD_GCN_0500",
+    # "Bayesian_HDMGD_GCN_0001",
+    # "Bayesian_HDMGD_GCN_0010",
+    # "Bayesian_HDMGD_GCN_0100",
+    # "Bayesian_HDMGD_GCN_0500",
+    "Bayesian_HDMGD_GCN_v2",
+    "Bayesian_HDMGD_GCN_v3"
     ]
 
 train_loss = []
