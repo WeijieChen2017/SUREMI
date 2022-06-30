@@ -141,8 +141,7 @@ for name in name_array:
                     )
             output_data = y_hat.cpu().detach().numpy()
 
-        xy_cat = torch.cat([input_data, y_hat], axis=1)
-        xy_cat = torch.from_numpy(xy_cat).float().to(device)
+        xy_cat = torch.cat([input_data, y_hat], axis=1).float().to(device)
 
         with torch.no_grad():
             CM = sliding_window_inference(
