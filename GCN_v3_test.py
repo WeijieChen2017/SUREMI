@@ -96,8 +96,6 @@ for name in name_array:
     file_list = X_list
     iter_tag = "test"
     cnt_total_file = len(file_list)
-    model.eval()
-
     cnt_each_cube = 1
 
     for cnt_file, file_path in enumerate(file_list):
