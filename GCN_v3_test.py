@@ -123,10 +123,11 @@ for name in name_array:
         case_loss = 0
 
         input_data = np.expand_dims(x_data, (0,1))
+        input_data = torch.from_numpy(input_data).float().to(device)
 
         with torch.no_grad():
             y_hat = sliding_window_inference(
-                    inputs = torch.from_numpy(input_data).float().to(device), 
+                    inputs = input_data, 
                     roi_size = test_dict["input_size"], 
                     sw_batch_size = 8, 
                     predictor = model_G,
@@ -141,10 +142,11 @@ for name in name_array:
             output_data = y_hat.cpu().detach().numpy()
 
         xy_cat = torch.cat([input_data, y_hat], axis=1)
+        xy_cat = torch.from_numpy(xy_cat).float().to(device)
 
         with torch.no_grad():
             CM = sliding_window_inference(
-                    inputs = torch.from_numpy(xy_cat).float().to(device), 
+                    inputs = xy_cat, 
                     roi_size = test_dict["input_size"], 
                     sw_batch_size = 8, 
                     predictor = model_E,
