@@ -12,6 +12,7 @@ import random
 import numpy as np
 import nibabel as nib
 import torch.nn as nn
+import torch.nn.functional as F
 
 import torch
 import torchvision
@@ -264,7 +265,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
         random.shuffle(file_list)
         
-        case_loss = np.zeros((len(file_list)))
+        case_loss = np.zeros((len(file_list), 3)), # wL1, CM, recon L1
 
         # N, C, D, H, W
         x_data = nib.load(file_list[0]).get_fdata()
@@ -333,11 +334,19 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     optim.zero_grad()
                     y_hat = model_G(batch_x)
                     y_cm = model_E(torch.cat([batch_x, y_hat], axis=1))
-                    loss = weighted_L1Loss(y_true=batch_y, y_pred=y_hat, weight=y_cm)
+                    loss_recon = L1Loss(batch_y, y_hat)
+                    loss_weighted_recon = torch.mul(loss_recon, F.sigmoid(y_cm))
+                    loss_CM = nn.MSELoss()(y_cm, ONE_CM)
+                    loss = loss_recon + loss_CM
                     loss.backward()
                     optim.step()
-                    case_loss[cnt_file] = loss.item()
-                    print("Loss: ", loss.item())
+                    case_loss[cnt_file, 0] = loss_weighted_recon.item()
+                    case_loss[cnt_file, 1] = loss_CM.item()
+                    case_loss[cnt_file, 2] = loss_recon.item()
+                    print("Loss: ", loss.item(),
+                        "wRecon: ", case_loss[cnt_file, 0],
+                        "CM: ", case_loss[cnt_file, 1],
+                        "Recon: ", case_loss[cnt_file, 2])
 
             # if train_dict["n_MTGD"] > 1:
 
@@ -376,26 +385,39 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                     y_hat = model_G(batch_x)
                     y_cm = model_E(torch.cat([batch_x, y_hat], axis=1))
-                    loss = weighted_L1Loss(y_true=batch_y, y_pred=y_hat, weight=y_cm)
-                case_loss[cnt_file] = loss.item()
-                print("Loss: ", loss.item())
+                    loss_recon = L1Loss(batch_y, y_hat)
+                    loss_weighted_recon = torch.mul(loss_recon, F.sigmoid(y_cm))
+                    loss_CM = nn.MSELoss()(y_cm, ONE_CM)
+                    loss = loss_recon + loss_CM
+                case_loss[cnt_file, 0] = loss_weighted_recon.item()
+                case_loss[cnt_file, 1] = loss_CM.item()
+                case_loss[cnt_file, 2] = loss_recon.item()
+                print("Loss: ", loss.item(),
+                    "wRecon: ", case_loss[cnt_file, 0],
+                    "CM: ", case_loss[cnt_file, 1],
+                    "Recon: ", case_loss[cnt_file, 2])
 
+        epoch_loss = np.mean(case_loss[cnt_file, 0])+np.mean(case_loss[cnt_file, 1])
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
-        print("  Loss: ", np.mean(case_loss))
+        print("Loss: ", epoch_loss,
+            "wRecon: ", np.mean(case_loss[cnt_file, 0]),
+            "CM: ", np.mean(case_loss[cnt_file, 1]),
+            "Recon: ", np.mean(case_loss[cnt_file, 2]))
         np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), case_loss)
 
         if isVal:
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_x.npy", batch_x.cpu().detach().numpy())
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_y.npy", batch_y.cpu().detach().numpy())
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_yhat.npy", y_hat.cpu().detach().numpy())
+            np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_ycm.npy", y_cm.cpu().detach().numpy())
             torch.save(model, train_dict["save_folder"]+"model_.pth".format(idx_epoch + 1))
             
-            if np.mean(case_loss) < best_val_loss:
+            if epoch_loss < best_val_loss:
                 # save the best model
                 torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch + 1))
                 torch.save(optim, train_dict["save_folder"]+"optim_{:03d}.pth".format(idx_epoch + 1))
                 print("Checkpoint saved at Epoch {:03d}".format(idx_epoch + 1))
-                best_val_loss = np.mean(case_loss)
+                best_val_loss = epoch_loss
 
         # del batch_x, batch_y
         # gc.collect()
