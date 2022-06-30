@@ -91,7 +91,7 @@ train_dict["seed"] = 426
 train_dict["input_size"] = [96, 96, 96]
 train_dict["epochs"] = 200
 train_dict["batch"] = 32
-train_dict["well_trained_model"] = "./project_dir/Bayesian_HDMGD_GCN_v2/model_best_051.pth"
+train_dict["well_trained_model"] = "./project_dir/Unet_Monai_Iman_v2/model_best_181.pth"
 
 train_dict["beta"] = 1e6 # resize KL loss
 train_dict["model_term"] = "Monai_Unet3d"
@@ -333,9 +333,9 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                     optim.zero_grad()
                     y_hat = model_G(batch_x)
-                    y_cm = model_E(torch.cat([batch_x, y_hat], axis=1))
+                    y_cm = torch.sigmoid(model_E(torch.cat([batch_x, y_hat], axis=1)))
                     loss_recon = nn.SmoothL1Loss()(batch_y, y_hat)
-                    loss_weighted_recon = torch.mul(loss_recon, torch.sigmoid(y_cm))
+                    loss_weighted_recon = torch.mul(loss_recon,y_cm)
                     loss_CM = nn.MSELoss()(y_cm, ONE_CM)
                     loss = loss_recon + loss_CM
                     loss.backward()
@@ -385,9 +385,9 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 with torch.no_grad():
 
                     y_hat = model_G(batch_x)
-                    y_cm = model_E(torch.cat([batch_x, y_hat], axis=1))
+                    y_cm = torch.sigmoid(model_E(torch.cat([batch_x, y_hat], axis=1)))
                     loss_recon = nn.SmoothL1Loss()(batch_y, y_hat)
-                    loss_weighted_recon = torch.mul(loss_recon, torch.sigmoid(y_cm))
+                    loss_weighted_recon = torch.mul(loss_recon, y_cm)
                     loss_CM = nn.MSELoss()(y_cm, ONE_CM)
                     loss = loss_recon + loss_CM
 
