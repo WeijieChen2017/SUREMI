@@ -334,7 +334,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     optim.zero_grad()
                     y_hat = model_G(batch_x)
                     y_cm = model_E(torch.cat([batch_x, y_hat], axis=1))
-                    loss_recon = L1Loss(batch_y, y_hat)
+                    loss_recon = nn.SmoothL1Loss()(batch_y, y_hat)
                     loss_weighted_recon = torch.mul(loss_recon, F.sigmoid(y_cm))
                     loss_CM = nn.MSELoss()(y_cm, ONE_CM)
                     loss = loss_recon + loss_CM
@@ -385,7 +385,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                     y_hat = model_G(batch_x)
                     y_cm = model_E(torch.cat([batch_x, y_hat], axis=1))
-                    loss_recon = L1Loss(batch_y, y_hat)
+                    loss_recon = nn.SmoothL1Loss()(batch_y, y_hat)
                     loss_weighted_recon = torch.mul(loss_recon, F.sigmoid(y_cm))
                     loss_CM = nn.MSELoss()(y_cm, ONE_CM)
                     loss = loss_recon + loss_CM
