@@ -340,6 +340,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     loss = loss_recon + loss_CM
                     loss.backward()
                     optim.step()
+                    print(np.mean(loss_weighted_recon.cpu().detach().numpy()))
                     case_loss[cnt_file, 0] = np.mean(loss_weighted_recon.cpu().detach().numpy())
                     case_loss[cnt_file, 1] = loss_CM.item()
                     case_loss[cnt_file, 2] = loss_recon.item()
