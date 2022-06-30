@@ -412,7 +412,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_y.npy", batch_y.cpu().detach().numpy())
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_yhat.npy", y_hat.cpu().detach().numpy())
             np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_ycm.npy", y_cm.cpu().detach().numpy())
-            torch.save(model, train_dict["save_folder"]+"model_.pth".format(idx_epoch + 1))
+            torch.save(model_E, train_dict["save_folder"]+"model_curr.pth".format(idx_epoch + 1))
             
             if epoch_loss < best_val_loss:
                 # save the best model
