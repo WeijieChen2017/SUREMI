@@ -341,6 +341,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     loss.backward()
                     optim.step()
                     case_loss[cnt_file, 0] = loss_weighted_recon
+                    print(loss_weighted_recon)
                     case_loss[cnt_file, 1] = loss_CM.item()
                     case_loss[cnt_file, 2] = loss_recon.item()
                     print("Loss: ", loss.item(),
@@ -390,6 +391,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     loss_CM = nn.MSELoss()(y_cm, ONE_CM)
                     loss = loss_recon + loss_CM
                 case_loss[cnt_file, 0] = loss_weighted_recon
+
                 case_loss[cnt_file, 1] = loss_CM.item()
                 case_loss[cnt_file, 2] = loss_recon.item()
                 print("Loss: ", loss.item(),
