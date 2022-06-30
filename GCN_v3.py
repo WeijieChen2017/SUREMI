@@ -265,7 +265,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
         random.shuffle(file_list)
         
-        case_loss = np.zeros((len(file_list), 3)), # wL1, CM, recon L1
+        case_loss = np.zeros((len(file_list), 3)) # wL1, CM, recon L1
 
         # N, C, D, H, W
         x_data = nib.load(file_list[0]).get_fdata()
@@ -340,13 +340,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     loss = loss_recon + loss_CM
                     loss.backward()
                     optim.step()
-                    print(np.mean(loss_weighted_recon.cpu().detach().numpy()))
                     # case_loss[cnt_file, 0] = np.mean(loss_weighted_recon.cpu().detach().numpy())
-                    print(case_loss)
-                    print(cnt_file)
-                    print(case_loss[cnt_file, 0])
-                    print(type(case_loss))
-                    print(type(case_loss[cnt_file, 0]))
                     case_loss[cnt_file, 0] = loss_weighted_recon.item()
                     case_loss[cnt_file, 1] = loss_CM.item()
                     case_loss[cnt_file, 2] = loss_recon.item()
@@ -396,7 +390,8 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     loss_weighted_recon = torch.mul(loss_recon, torch.sigmoid(y_cm))
                     loss_CM = nn.MSELoss()(y_cm, ONE_CM)
                     loss = loss_recon + loss_CM
-                case_loss[cnt_file, 0] = np.mean(loss_weighted_recon.cpu().detach().numpy())
+                    
+                case_loss[cnt_file, 0] = loss_weighted_recon.item()
                 case_loss[cnt_file, 1] = loss_CM.item()
                 case_loss[cnt_file, 2] = loss_recon.item()
                 print("Loss: ", loss.item(),
