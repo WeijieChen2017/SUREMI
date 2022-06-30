@@ -161,8 +161,8 @@ for cnt_CT_folder, name_CT_folder in enumerate(hub_CT_folder):
     list_train_loss = sorted(glob.glob(CT_folder+"/loss/*train*.npy"))
     list_val_loss = sorted(glob.glob(CT_folder+"/loss/*val*.npy"))
     model_name = hub_CT_name[cnt_CT_folder]
-    curr_train_loss = np.zeros((len(list_train_loss), 2))
-    curr_val_loss = np.zeros((len(list_val_loss), 2))
+    curr_train_loss = np.zeros((len(list_train_loss), 3))
+    curr_val_loss = np.zeros((len(list_val_loss), 3))
     for cnt_epoch, filepath in enumerate(list_train_loss):
         print(filepath)
         data = np.load(filepath)
@@ -170,6 +170,7 @@ for cnt_CT_folder, name_CT_folder in enumerate(hub_CT_folder):
             if data.shape[1]> 1:
                 curr_train_loss[cnt_epoch, 0] = np.mean(data[:, 0])
                 curr_train_loss[cnt_epoch, 1] = np.mean(data[:, 1])
+                curr_train_loss[cnt_epoch, 2] = np.mean(data[:, 2])
             else:
                 curr_train_loss[cnt_epoch, 0] = np.mean(data)
         else:
@@ -181,6 +182,7 @@ for cnt_CT_folder, name_CT_folder in enumerate(hub_CT_folder):
             if data.shape[1]> 1:
                 curr_val_loss[cnt_epoch, 0] = np.mean(data[:, 0])
                 curr_val_loss[cnt_epoch, 1] = np.mean(data[:, 1])
+                curr_val_loss[cnt_epoch, 2] = np.mean(data[:, 2])
             else:
                 curr_val_loss[cnt_epoch, 0] = np.mean(data)
         else:
