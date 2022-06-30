@@ -340,9 +340,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     loss = loss_recon + loss_CM
                     loss.backward()
                     optim.step()
-                    print(loss_weighted_recon)
-                    case_loss[cnt_file, 0] = loss_weighted_recon
-                    
+                    case_loss[cnt_file, 0] = torch.mean(loss_weighted_recon)
                     case_loss[cnt_file, 1] = loss_CM.item()
                     case_loss[cnt_file, 2] = loss_recon.item()
                     print("Loss: ", loss.item(),
@@ -388,11 +386,10 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     y_hat = model_G(batch_x)
                     y_cm = model_E(torch.cat([batch_x, y_hat], axis=1))
                     loss_recon = nn.SmoothL1Loss()(batch_y, y_hat)
-                    loss_weighted_recon = torch.mul(loss_recon, F.sigmoid(y_cm))
+                    loss_weighted_recon = torch.mul(loss_recon, torch.sigmoid(y_cm))
                     loss_CM = nn.MSELoss()(y_cm, ONE_CM)
                     loss = loss_recon + loss_CM
-                case_loss[cnt_file, 0] = loss_weighted_recon
-
+                case_loss[cnt_file, 0] = torch.mean(loss_weighted_recon)
                 case_loss[cnt_file, 1] = loss_CM.item()
                 case_loss[cnt_file, 2] = loss_recon.item()
                 print("Loss: ", loss.item(),
