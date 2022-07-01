@@ -157,7 +157,7 @@ for name in name_array:
                     sw_device=device, 
                     device=device,
                     )
-            CM_data = CM.cpu().detach().numpy()
+            CM_data = torch.sigmoid(CM).cpu().detach().numpy()
 
         print(output_data.shape, CM_data.shape)
 
