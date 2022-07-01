@@ -120,7 +120,7 @@ train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
 train_dict["val_ratio"] = 0.3
 train_dict["test_ratio"] = 0.2
 
-train_dict["loss_term"] = "MSELoss"
+train_dict["loss_term"] = "BCELoss"
 train_dict["optimizer"] = "AdamW"
 train_dict["opt_lr"] = 1e-3 # default
 train_dict["opt_betas"] = (0.9, 0.999) # default
@@ -336,7 +336,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     y_cm = torch.sigmoid(model_E(torch.cat([batch_x, y_hat], axis=1)))
                     loss_recon = nn.SmoothL1Loss()(batch_y, y_hat)
                     loss_weighted_recon = torch.mul(loss_recon,y_cm)
-                    loss_CM = nn.MSELoss()(y_cm, ONE_CM)
+                    loss_CM = nn.BCELoss()(y_cm, ONE_CM)
                     loss = loss_recon + loss_CM
                     loss.backward()
                     optim.step()
@@ -388,7 +388,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     y_cm = torch.sigmoid(model_E(torch.cat([batch_x, y_hat], axis=1)))
                     loss_recon = nn.SmoothL1Loss()(batch_y, y_hat)
                     loss_weighted_recon = torch.mul(loss_recon, y_cm)
-                    loss_CM = nn.MSELoss()(y_cm, ONE_CM)
+                    loss_CM = nn.BCELoss()(y_cm, ONE_CM)
                     loss = loss_recon + loss_CM
 
                 case_loss[cnt_file, 0] = np.mean(loss_weighted_recon.cpu().detach().numpy())

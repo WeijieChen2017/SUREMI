@@ -1,4 +1,5 @@
 import torch
+import torch.nn.functional as F
 
 # from .. import _reduction as _Reduction
 
@@ -26,5 +27,5 @@ import torch
 
 def weighted_L1Loss(y_true, y_pred, weight):
     diff = torch.abs(y_pred - y_true)
-    loss = torch.mul(diff, weight)
+    loss = torch.mul(diff, F.sigmoid(weight))
     return torch.mean(loss)
