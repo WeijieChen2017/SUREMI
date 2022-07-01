@@ -41,7 +41,7 @@ from model import GCN
 
 model_list = [
     # ["CM_HighDropout", "None", (0, ), "CT", [7], 0.5, 11],
-    ["GCN_v3", "None", (0, ), "CT", [7], 0., 1, 0],
+    ["GCN_v4", "None", (0, ), "CT", [7], 0., 1, 0],
     # ["v1_Gau050_MRMR_dual", "Gaussian", (0, 0.5), "MR", [7]],
     # ["v1_Gau050_MRCT", "Gaussian", (0, 0.5), "CT", [7]],
     # ["v2_Gau025_MRMR", "Gaussian", (0, 0.25), "MR", [7]],
