@@ -41,7 +41,7 @@ from model import GCN
 
 model_list = [
     # ["CM_HighDropout", "None", (0, ), "CT", [7], 0.5, 11],
-    ["GCN_v4", "None", (0, ), "CT", [7], 0., 1, 0],
+    ["GCN_v5", "None", (0, ), "CT", [7], 0., 1, 1e-3],
     # ["v1_Gau050_MRMR_dual", "Gaussian", (0, 0.5), "MR", [7]],
     # ["v1_Gau050_MRCT", "Gaussian", (0, 0.5), "CT", [7]],
     # ["v2_Gau025_MRMR", "Gaussian", (0, 0.25), "MR", [7]],
@@ -84,7 +84,7 @@ train_dict["target_img"] = model_list[current_model_idx][3]
 train_dict["gpu_ids"] = model_list[current_model_idx][4]
 train_dict["dropout"] = model_list[current_model_idx][5]
 train_dict["n_MTGD"] = model_list[current_model_idx][6]
-train_dict["alpha_loss_CM"] = model_list[current_model_idx][7]
+train_dict["alpha_loss_recon"] = model_list[current_model_idx][7]
 
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
@@ -120,7 +120,7 @@ train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
 train_dict["val_ratio"] = 0.3
 train_dict["test_ratio"] = 0.2
 
-train_dict["loss_term"] = "BCELoss"
+train_dict["loss_term"] = "MSELoss"
 train_dict["optimizer"] = "AdamW"
 train_dict["opt_lr"] = 1e-3 # default
 train_dict["opt_betas"] = (0.9, 0.999) # default
@@ -335,9 +335,10 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     y_hat = model_G(batch_x)
                     y_cm = torch.sigmoid(model_E(torch.cat([batch_x, y_hat], axis=1)))
                     loss_recon = nn.SmoothL1Loss()(batch_y, y_hat)
-                    loss_weighted_recon = torch.mul(loss_recon,y_cm)
-                    loss_CM = nn.BCELoss()(y_cm, ONE_CM)
-                    loss = loss_recon + loss_CM
+                    y_cm2 = torch.mul(y_cm,y_cm)
+                    loss_weighted_recon = torch.mul(loss_recon, y_cm2)
+                    loss_CM = nn.MSELoss()(y_cm, ONE_CM)
+                    loss = loss_recon * train_dict["alpha_loss_recon"] + loss_CM
                     loss.backward()
                     optim.step()
                     case_loss[cnt_file, 0] = np.mean(loss_weighted_recon.cpu().detach().numpy())
