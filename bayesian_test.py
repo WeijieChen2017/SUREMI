@@ -97,22 +97,23 @@ class UnetBNN(nn.Module):
 # ]
 
 name_array = [
-    "Bayesian_HDMGD_v9_RIC005_MRMR",
-    "Bayesian_HDMGD_v9_RIC005_MRCT",
-    "Bayesian_HDMGD_v10_RIC010_MRMR",
-    "Bayesian_HDMGD_v10_RIC010_MRCT",
-    "Bayesian_HDMGD_v11_RAY005_MRMR",
-    "Bayesian_HDMGD_v11_RAY005_MRCT",
-    "Bayesian_HDMGD_v12_RAY010_MRMR",
-    "Bayesian_HDMGD_v12_RAY010_MRCT",
-    "Bayesian_ZDMGD_v9_RIC005_MRMR",
-    "Bayesian_ZDMGD_v9_RIC005_MRCT",
-    "Bayesian_ZDMGD_v10_RIC010_MRMR",
-    "Bayesian_ZDMGD_v10_RIC010_MRCT",
-    "Bayesian_ZDMGD_v11_RAY005_MRMR",
-    "Bayesian_ZDMGD_v11_RAY005_MRCT",
-    "Bayesian_ZDMGD_v12_RAY010_MRMR",
-    "Bayesian_ZDMGD_v12 _RAY010_MRCT",
+    # "Bayesian_HDMGD_v9_RIC005_MRMR",
+    # "Bayesian_HDMGD_v9_RIC005_MRCT",
+    # "Bayesian_HDMGD_v10_RIC010_MRMR",
+    # "Bayesian_HDMGD_v10_RIC010_MRCT",
+    # "Bayesian_HDMGD_v11_RAY005_MRMR",
+    # "Bayesian_HDMGD_v11_RAY005_MRCT",
+    # "Bayesian_HDMGD_v12_RAY010_MRMR",
+    # "Bayesian_HDMGD_v12_RAY010_MRCT",
+    # "Bayesian_ZDMGD_v9_RIC005_MRMR",
+    # "Bayesian_ZDMGD_v9_RIC005_MRCT",
+    # "Bayesian_ZDMGD_v10_RIC010_MRMR",
+    # "Bayesian_ZDMGD_v10_RIC010_MRCT",
+    # "Bayesian_ZDMGD_v11_RAY005_MRMR",
+    # "Bayesian_ZDMGD_v11_RAY005_MRCT",
+    # "Bayesian_ZDMGD_v12_RAY010_MRMR",
+    # "Bayesian_ZDMGD_v12 _RAY010_MRCT",
+    "Bayesian_HDMGD_GCN_v2",
 ]
 
 for name in name_array:
@@ -126,7 +127,7 @@ for name in name_array:
     test_dict["gpu_ids"] = [1]
     test_dict["eval_file_cnt"] = 1
     # test_dict["best_model_name"] = "model_best_193.pth"
-    test_dict["eval_sample"] = 51
+    test_dict["eval_sample"] = 1
     test_dict["eval_save_folder"] = "pred_monai"
 
     train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
@@ -180,7 +181,7 @@ for name in name_array:
     file_list = X_list
     iter_tag = "test"
     cnt_total_file = len(file_list)
-    model.train()
+    model.eval()
 
     cnt_each_cube = 1
     cov_array = []

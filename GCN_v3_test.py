@@ -22,7 +22,7 @@ from utils import add_noise
 from model import GCN
 
 name_array = [    
-    "Bayesian_HDMGD_GCN_v2",
+    "Bayesian_HDMGD_GCN_v3",
 ]
 
 for name in name_array:
