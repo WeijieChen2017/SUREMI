@@ -51,9 +51,9 @@ class Unet_sigmoid(nn.Module):
 
 model_list = [
     ["GCN_v8_pixelGAN_abs", [6], 0., 1e-3],
-    ["GCN_v8_pixelGAN_abs", [6], 0., 1e-2],
+    ["GCN_v8_pixelGAN_abs", [5], 0., 1e-2],
     ["GCN_v8_pixelGAN_abs", [7], 0., 1e-1],
-    ["GCN_v8_pixelGAN_abs", [7], 0., 1e0],
+    ["GCN_v8_pixelGAN_abs", [5], 0., 1e0],
     ]
 
 print("Model index: ", end="")
