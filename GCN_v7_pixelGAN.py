@@ -123,26 +123,27 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-# model_E = Unet_sigmoid(unet_dict_E)
+model_E = Unet_sigmoid(unet_dict_E)
 
-model_E = UNet( 
-    spatial_dims=unet_dict_E["spatial_dims"],
-    in_channels=unet_dict_E["in_channels"],
-    out_channels=unet_dict_E["out_channels"],
-    channels=unet_dict_E["channels"],
-    strides=unet_dict_E["strides"],
-    num_res_units=unet_dict_E["num_res_units"],
-    act=unet_dict_E["act"],
-    norm=unet_dict_E["normunet"],
-    dropout=unet_dict_E["dropout"],
-    bias=unet_dict_E["bias"],
-    )
+# model_E = UNet( 
+#     spatial_dims=unet_dict_E["spatial_dims"],
+#     in_channels=unet_dict_E["in_channels"],
+#     out_channels=unet_dict_E["out_channels"],
+#     channels=unet_dict_E["channels"],
+#     strides=unet_dict_E["strides"],
+#     num_res_units=unet_dict_E["num_res_units"],
+#     act=unet_dict_E["act"],
+#     norm=unet_dict_E["normunet"],
+#     dropout=unet_dict_E["dropout"],
+#     bias=unet_dict_E["bias"],
+#     )
 
 model_E.train()
 model_E = model_E.to(device)
 
 # optim = torch.optim.RMSprop(model_E.parameters(), lr=train_dict["opt_lr"])
-bin_loss = torch.nn.BCEWithLogitsLoss
+bin_loss = torch.nn.BCELoss(reduction='none')
+
 optim = torch.optim.AdamW(
     model_E.parameters(),
     lr = train_dict["opt_lr"],
@@ -265,7 +266,8 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                 optim.zero_grad()
                 fmap_hat = model_E(batch_xf)
-                loss = bin_loss(fmap_hat, batch_fmap, weight=torch.abs(batch_y-batch_z))
+                loss = bin_loss(fmap_hat, batch_fmap)
+                loss = torch.mean(torch.mul(loss, torch.abs(batch_y-batch_z)))
                 loss.backward()
                 optim.step()
                 case_loss[cnt_file] = loss.item()
@@ -276,6 +278,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 with torch.no_grad():
                     fmap_hat = model_E(batch_xf)
                     loss = bin_loss(fmap_hat, batch_fmap)
+                    loss = torch.mean(torch.mul(loss, torch.abs(batch_y-batch_z)))
 
                 case_loss[cnt_file] = loss.item()
                 print("Loss: ", case_loss[cnt_file])
