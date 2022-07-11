@@ -24,20 +24,30 @@ import bnn
 
 from utils import add_noise, weighted_L1Loss
 from model import GCN
-# from torchsummary import summary
 
-# v1 Gaussian mu=0, sigma=0.5
-# v2 Gaussian mu=0, sigma=0.25
-# v3 Poisson lambda=1
-# v4 Poisson lambda=0.25
-# v5 Salt&Pepper Salt=0.975, Pepper=0.025
-# v6 Salt&Pepper Salt=0.95, Pepper=0.05
-# v7 Speckle mu=0, sigma=0.25
-# v8 Speckle mu=0, sigma=0.5
-# v9 Racian snr=5
-# v10 Racian snr=10
-# v11 Rayleigh snr=5
-# v12 Rayleigh snr=10
+class Unet_sigmoid(nn.Module):
+    
+    def __init__(self, unet_dict_E) -> None:
+        super().__init__()
+
+        self.model_E = UNet(
+            spatial_dims=unet_dict_E["spatial_dims"],
+            in_channels=unet_dict_E["in_channels"],
+            out_channels=unet_dict_E["out_channels"],
+            channels=unet_dict_E["channels"],
+            strides=unet_dict_E["strides"],
+            num_res_units=unet_dict_E["num_res_units"],
+            act=unet_dict_E["act"],
+            norm=unet_dict_E["normunet"],
+            dropout=unet_dict_E["dropout"],
+            bias=unet_dict_E["bias"],
+            )
+
+        self.softmax = nn.Sigmoid()
+
+    def forward(self, x):
+        return self.softmax(self.model_E(x))
+
 
 model_list = [
     ["GCN_v7_pixelGAN", [7], 0., ],
@@ -113,18 +123,20 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-model_E = UNet( 
-    spatial_dims=unet_dict_E["spatial_dims"],
-    in_channels=unet_dict_E["in_channels"],
-    out_channels=unet_dict_E["out_channels"],
-    channels=unet_dict_E["channels"],
-    strides=unet_dict_E["strides"],
-    num_res_units=unet_dict_E["num_res_units"],
-    act=unet_dict_E["act"],
-    norm=unet_dict_E["normunet"],
-    dropout=unet_dict_E["dropout"],
-    bias=unet_dict_E["bias"],
-    )
+model_E = Unet_sigmoid(unet_dict_E)
+
+# model_E = UNet( 
+#     spatial_dims=unet_dict_E["spatial_dims"],
+#     in_channels=unet_dict_E["in_channels"],
+#     out_channels=unet_dict_E["out_channels"],
+#     channels=unet_dict_E["channels"],
+#     strides=unet_dict_E["strides"],
+#     num_res_units=unet_dict_E["num_res_units"],
+#     act=unet_dict_E["act"],
+#     norm=unet_dict_E["normunet"],
+#     dropout=unet_dict_E["dropout"],
+#     bias=unet_dict_E["bias"],
+#     )
 
 model_E.train()
 model_E = model_E.to(device)
