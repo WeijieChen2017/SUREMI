@@ -213,7 +213,7 @@ for name in name_array:
         input_data = np.expand_dims(x_data, (0,1))
 
         with torch.no_grad():
-            y_hat, cov = sliding_window_inference(
+            y_hat = sliding_window_inference(
                     inputs = torch.from_numpy(input_data).float().to(device), 
                     roi_size = test_dict["input_size"], 
                     sw_batch_size = 4, 
