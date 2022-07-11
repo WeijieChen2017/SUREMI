@@ -50,9 +50,10 @@ class Unet_sigmoid(nn.Module):
 
 
 model_list = [
-    ["GCN_v7_pixelGAN_abs", [6], 0., 1e-3],
-    ["GCN_v7_pixelGAN_abs", [6], 0., 1e-2],
-    ["GCN_v7_pixelGAN_abs", [6], 0., 1e-1],
+    ["GCN_v8_pixelGAN_abs", [6], 0., 1e-3],
+    ["GCN_v8_pixelGAN_abs", [6], 0., 1e-2],
+    ["GCN_v8_pixelGAN_abs", [7], 0., 1e-1],
+    ["GCN_v8_pixelGAN_abs", [7], 0., 1e0],
     ]
 
 print("Model index: ", end="")
@@ -271,7 +272,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                 with torch.no_grad():
                     loss = -torch.mean(model_E(batch_xy)) + torch.mean(model_E(batch_xz))
-                
+
                 case_loss[cnt_file] = loss.item()
                 print("Loss: ", case_loss[cnt_file])
 
