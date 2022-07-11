@@ -228,8 +228,8 @@ for name in name_array:
                     )
 
         output_data = y_hat.cpu().detach().numpy()
-        cov_array.append([file_name, cov])
-        print(output_data.shape, cov)
+        # cov_array.append([file_name, cov])
+        # print(output_data.shape, cov)
 
         # eval_output = []
         # for idx in range(test_dict["eval_sample"]):
@@ -251,7 +251,7 @@ for name in name_array:
         #     eval_output.append(y_hat.cpu().detach().numpy())
         # eval_output = np.asarray(eval_output)
         # output_data = np.median(eval_output, axis=0)
-        # print(output_data.shape)
+        print(output_data.shape)
 
         test_file = nib.Nifti1Image(np.squeeze(output_data), x_file.affine, x_file.header)
         test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name
