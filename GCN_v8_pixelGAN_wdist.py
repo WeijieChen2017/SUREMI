@@ -266,8 +266,8 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                 optim.zero_grad()
                 if train_dict["abs_weight"]:
-                    loss_1 = torch.mul(loss, model_E(batch_xy))
-                    loss_2 = torch.mul(loss, model_E(batch_xz))
+                    loss_1 = torch.mul(batch_yz_abs, model_E(batch_xy))
+                    loss_2 = torch.mul(batch_yz_abs, model_E(batch_xz))
                     loss = -torch.mean(loss_1) + torch.mean(loss_2)
                 else:
                     loss = -torch.mean(model_E(batch_xy)) + torch.mean(model_E(batch_xz))
@@ -283,8 +283,8 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                 with torch.no_grad():
                     if train_dict["abs_weight"]:
-                        loss_1 = torch.mul(loss, model_E(batch_xy))
-                        loss_2 = torch.mul(loss, model_E(batch_xz))
+                        loss_1 = torch.mul(batch_yz_abs, model_E(batch_xy))
+                        loss_2 = torch.mul(batch_yz_abs, model_E(batch_xz))
                         loss = -torch.mean(loss_1) + torch.mean(loss_2)
                     else:
                         loss = -torch.mean(model_E(batch_xy)) + torch.mean(model_E(batch_xz))
