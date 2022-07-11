@@ -53,8 +53,8 @@ time.sleep(1)
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 train_dict["project_name"] = model_list[current_model_idx][0]
-train_dict["gpu_ids"] = model_list[current_model_idx][4]
-train_dict["dropout"] = model_list[current_model_idx][5]
+train_dict["gpu_ids"] = model_list[current_model_idx][1]
+train_dict["dropout"] = model_list[current_model_idx][2]
 
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
