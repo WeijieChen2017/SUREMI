@@ -251,15 +251,18 @@ for idx_epoch_new in range(train_dict["epochs"]):
             
             batch_xy = np.concatenate([batch_x, batch_y], axis=1)
             batch_xz = np.concatenate([batch_x, batch_z], axis=1)
+            batch_yz_abs = np.abs(batch_y-batch_z)
 
             batch_xy = torch.from_numpy(batch_xy).float().to(device)
             batch_xz = torch.from_numpy(batch_xz).float().to(device)
+            batch_yz_abs = torch.from_numpy(batch_yz_abs).float().to(device)
 
             
             if isTrain:
 
                 optim.zero_grad()
                 loss = -torch.mean(model_E(batch_xy)) + torch.mean(model_E(batch_xz))
+                loss = torch.mul(loss, batch_yz_abs)
                 loss.backward()
                 optim.step()
                 case_loss[cnt_file] = loss.item()
@@ -272,7 +275,8 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                 with torch.no_grad():
                     loss = -torch.mean(model_E(batch_xy)) + torch.mean(model_E(batch_xz))
-
+                    loss = torch.mul(loss, batch_yz_abs)
+                    
                 case_loss[cnt_file] = loss.item()
                 print("Loss: ", case_loss[cnt_file])
 
