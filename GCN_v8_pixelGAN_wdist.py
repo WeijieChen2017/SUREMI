@@ -50,10 +50,12 @@ class Unet_sigmoid(nn.Module):
 
 
 model_list = [
-    ["GCN_v8_pixelGAN_abs", [6], 0., 1e-3],
-    ["GCN_v8_pixelGAN_abs", [5], 0., 1e-2],
-    ["GCN_v8_pixelGAN_abs", [7], 0., 1e-1],
-    ["GCN_v8_pixelGAN_abs", [5], 0., 1e0],
+    ["GCN_v8_pixelGAN_wdist_e3", [6], 0., 1e-3, False],
+    ["GCN_v8_pixelGAN_wdist_e2", [6], 0., 1e-2, False],
+    ["GCN_v8_pixelGAN_wdist_e1", [7], 0., 1e-1, False],
+    ["GCN_v8_pixelGAN_wdist_abs_e3", [7], 0., 1e-3, True],
+    ["GCN_v8_pixelGAN_wdist_abs_e2", [5], 0., 1e-2, True],
+    ["GCN_v8_pixelGAN_wdist_abs_e1", [5], 0., 1e-1, True],
     ]
 
 print("Model index: ", end="")
@@ -69,12 +71,13 @@ train_dict["project_name"] = model_list[current_model_idx][0]
 train_dict["gpu_ids"] = model_list[current_model_idx][1]
 train_dict["dropout"] = model_list[current_model_idx][2]
 train_dict["clip_value"] = model_list[current_model_idx][3]
+train_dict["abs_weight"] = model_list[current_model_idx][4]
 
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_size"] = [96, 96, 96]
 train_dict["epochs"] = 200
-train_dict["batch"] = 16
+train_dict["batch"] = 8
 train_dict["well_trained_model"] = "./project_dir/Unet_Monai_Iman_v2/model_best_181.pth"
 
 train_dict["beta"] = 1e6 # resize KL loss
@@ -251,18 +254,20 @@ for idx_epoch_new in range(train_dict["epochs"]):
             
             batch_xy = np.concatenate([batch_x, batch_y], axis=1)
             batch_xz = np.concatenate([batch_x, batch_z], axis=1)
-            batch_yz_abs = np.abs(batch_y-batch_z)
-
+            
             batch_xy = torch.from_numpy(batch_xy).float().to(device)
             batch_xz = torch.from_numpy(batch_xz).float().to(device)
-            batch_yz_abs = torch.from_numpy(batch_yz_abs).float().to(device)
-
             
+            if train_dict["abs_weight"]:
+                batch_yz_abs = np.abs(batch_y-batch_z)
+                batch_yz_abs = torch.from_numpy(batch_yz_abs).float().to(device)
+
             if isTrain:
 
                 optim.zero_grad()
                 loss = -torch.mean(model_E(batch_xy)) + torch.mean(model_E(batch_xz))
-                loss = torch.mul(loss, batch_yz_abs)
+                if train_dict["abs_weight"]:
+                    loss = torch.mul(loss, batch_yz_abs)
                 loss.backward()
                 optim.step()
                 case_loss[cnt_file] = loss.item()
@@ -275,8 +280,9 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                 with torch.no_grad():
                     loss = -torch.mean(model_E(batch_xy)) + torch.mean(model_E(batch_xz))
-                    loss = torch.mul(loss, batch_yz_abs)
-                    
+                    if train_dict["abs_weight"]:
+                        loss = torch.mul(loss, batch_yz_abs)
+
                 case_loss[cnt_file] = loss.item()
                 print("Loss: ", case_loss[cnt_file])
 
