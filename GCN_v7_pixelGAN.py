@@ -142,7 +142,7 @@ model_E.train()
 model_E = model_E.to(device)
 
 # optim = torch.optim.RMSprop(model_E.parameters(), lr=train_dict["opt_lr"])
-bin_loss = torch.nn.BCEWithLogitsLoss()
+bin_loss = torch.nn.BCEWithLogitsLoss
 optim = torch.optim.AdamW(
     model_E.parameters(),
     lr = train_dict["opt_lr"],
@@ -265,7 +265,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                 optim.zero_grad()
                 fmap_hat = model_E(batch_xf)
-                loss = bin_loss(fmap_hat, batch_fmap, pos_weight=torch.abs(batch_y-batch_z))
+                loss = bin_loss(fmap_hat, batch_fmap, weight=torch.abs(batch_y-batch_z))
                 loss.backward()
                 optim.step()
                 case_loss[cnt_file] = loss.item()
