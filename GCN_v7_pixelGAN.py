@@ -253,7 +253,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                 optim.zero_grad()
                 fmap_hat = model_E(batch_xf)
-                loss = bin_loss(bin_loss, batch_fmap)
+                loss = bin_loss(fmap_hat, batch_fmap)
                 loss.backward()
                 optim.step()
                 case_loss[cnt_file] = loss.item()
@@ -263,7 +263,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                 with torch.no_grad():
                     fmap_hat = model_E(batch_xf)
-                    loss = bin_loss(bin_loss, batch_fmap)
+                    loss = bin_loss(fmap_hat, batch_fmap)
 
                 case_loss[cnt_file] = loss.item()
                 print("Loss: ", case_loss[cnt_file])
