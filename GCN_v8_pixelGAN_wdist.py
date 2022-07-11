@@ -265,9 +265,12 @@ for idx_epoch_new in range(train_dict["epochs"]):
             if isTrain:
 
                 optim.zero_grad()
-                loss = -torch.mean(model_E(batch_xy)) + torch.mean(model_E(batch_xz))
                 if train_dict["abs_weight"]:
-                    loss = torch.mul(loss, batch_yz_abs)
+                    loss_1 = torch.mul(loss, model_E(batch_xy))
+                    loss_2 = torch.mul(loss, model_E(batch_xz))
+                    loss = -torch.mean(loss_1) + torch.mean(loss_2)
+                else:
+                    loss = -torch.mean(model_E(batch_xy)) + torch.mean(model_E(batch_xz))
                 loss.backward()
                 optim.step()
                 case_loss[cnt_file] = loss.item()
@@ -279,9 +282,12 @@ for idx_epoch_new in range(train_dict["epochs"]):
             if isVal:
 
                 with torch.no_grad():
-                    loss = -torch.mean(model_E(batch_xy)) + torch.mean(model_E(batch_xz))
                     if train_dict["abs_weight"]:
-                        loss = torch.mul(loss, batch_yz_abs)
+                        loss_1 = torch.mul(loss, model_E(batch_xy))
+                        loss_2 = torch.mul(loss, model_E(batch_xz))
+                        loss = -torch.mean(loss_1) + torch.mean(loss_2)
+                    else:
+                        loss = -torch.mean(model_E(batch_xy)) + torch.mean(model_E(batch_xz))
 
                 case_loss[cnt_file] = loss.item()
                 print("Loss: ", case_loss[cnt_file])
