@@ -23,10 +23,11 @@ test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 # test_dict["project_name"] = "UnetR_Iman_v4_mae"
 # test_dict["project_name"] = "UnetR_Iman_v3_mse"
-test_dict["project_name"] = "SwinUNETR_Iman_v4_mse"
+# test_dict["project_name"] = "SwinUNETR_Iman_v4_mse"
 # test_dict["project_name"] = "SwinUNETR_Iman_v5_mae"
+test_dict["project_name"] = "Unet_Monai_Iman_v2"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
-test_dict["gpu_ids"] = [2]
+test_dict["gpu_ids"] = [1]
 test_dict["eval_file_cnt"] = 0
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
@@ -67,9 +68,10 @@ loss_func = nn.SmoothL1Loss()
 # ==================== data division ====================
 
 data_div = np.load(os.path.join(test_dict["save_folder"], "data_division.npy"), allow_pickle=True)[()]
-X_list = data_div['test_list_X']
-if test_dict["eval_file_cnt"] > 0:
-    X_list = X_list[:test_dict["eval_file_cnt"]]
+X_list = data_div['train_list_X']
+# X_list = data_div['test_list_X']
+# if test_dict["eval_file_cnt"] > 0:
+#     X_list = X_list[:test_dict["eval_file_cnt"]]
 
 # ==================== Evaluating ====================
 
@@ -102,7 +104,7 @@ for cnt_file, file_path in enumerate(file_list):
         y_hat = sliding_window_inference(
             inputs = torch.from_numpy(input_data).float().to(device), 
             roi_size = test_dict["input_size"], 
-            sw_batch_size = 1, 
+            sw_batch_size = 32, 
             predictor = model,
             overlap=0.25, 
             mode="gaussian", 
@@ -118,7 +120,15 @@ for cnt_file, file_path in enumerate(file_list):
 
     # print(pad_y_hat.shape)
     test_file = nib.Nifti1Image(np.squeeze(output_data), x_file.affine, x_file.header)
-    test_save_name = train_dict["save_folder"]+"pred_monai/"+file_name
+    test_save_name = train_dict["save_folder"]+"pred_monai/"+file_name.replace(".nii.gz", "_ztr.nii.gz")
+    nib.save(test_file, test_save_name)
+
+    test_file = nib.Nifti1Image(np.squeeze(x_data), x_file.affine, x_file.header)
+    test_save_name = train_dict["save_folder"]+"pred_monai/"+file_name.replace(".nii.gz", "_xtr.nii.gz")
+    nib.save(test_file, test_save_name)
+
+    test_file = nib.Nifti1Image(np.squeeze(y_data), y_file.affine, y_file.header)
+    test_save_name = train_dict["save_folder"]+"pred_monai/"+file_name.replace(".nii.gz", "_ytr.nii.gz")
     nib.save(test_file, test_save_name)
 
 # total_loss /= cnt_total_file
