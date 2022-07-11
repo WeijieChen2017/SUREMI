@@ -233,14 +233,14 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 batch_z[idx_batch, 0, :, :, :] = z_slice
 
 
-            fusion_map = np.random.uniform(0,1,size=batch_y.shape)
+            fusion_map = np.random.uniform(0, 1, size=batch_y.shape)
             fusion_map[fusion_map<0.5] = 0.
             fusion_map[fusion_map>0.5] = 1.
             fusion = np.zeros(batch_y.shape)
             fusion[fusion_map == 0.] = batch_z[fusion_map == 0.]
             fusion[fusion_map == 1.] = batch_y[fusion_map == 1.]
             
-            batch_xf = np.concatenate([x_slice, fusion], axis=1)
+            batch_xf = np.concatenate([batch_x, fusion], axis=1)
             batch_fmap = torch.from_numpy(fusion_map).float().to(device)
             batch_xf = torch.from_numpy(batch_xf).float().to(device)
 
