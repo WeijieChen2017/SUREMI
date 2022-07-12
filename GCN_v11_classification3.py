@@ -246,19 +246,17 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 batch_y[idx_batch, 0, :, :, :] = y_slice
                 batch_z[idx_batch, 0, :, :, :] = z_slice
             
-            z_air = int(batch_z<1/8)
-            z_bon = int(batch_z>3/8)
+            z_air = np.asarray(batch_z<1/8).astype(int)
+            z_bon = np.asarray(batch_z>3/8).astype(int)
             z_sof_1 = batch_z<3/8
             z_sof_2 = batch_z>1/8
-            z_sof = int(z_sof_1 * z_sof_2)
+            z_sof = np.asarray(z_sof_1 * z_sof_2).astype(int)
 
-
-
-            y_air = int(batch_y<1/8)
-            y_bon = int(batch_y>3/8)
+            y_air = np.asarray(batch_y<1/8).astype(int)
+            y_bon = np.asarray(batch_y>3/8).astype(int)
             y_sof_1 = batch_y<3/8
             y_sof_2 = batch_y>1/8
-            y_sof = int(y_sof_1 * y_sof_2)
+            y_sof = np.asarray(y_sof_1 * y_sof_2).astype(int)
 
             cls3_z = np.concatenate([batch_x, z_air, z_sof, z_bon], axis=1)
             cls3_z = torch.from_numpy(cls3_z).float().to(device)
