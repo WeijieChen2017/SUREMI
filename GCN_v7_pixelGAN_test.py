@@ -138,10 +138,6 @@ for name in name_array:
         y_data = y_file.get_fdata()
         z_data = z_file.get_fdata()
 
-
-        if train_dict["target_img"] == "MR":
-            y_data = copy.deepcopy(x_data)
-
         ax, ay, az = x_data.shape
         case_loss = 0
 
