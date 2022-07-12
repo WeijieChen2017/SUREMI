@@ -141,6 +141,7 @@ for name in name_array:
         case_loss = 0
 
         batch_x = np.expand_dims(x_data, (0,1))
+        batch_y = np.expand_dims(y_data, (0,1))
         batch_z = np.expand_dims(z_data, (0,1))
 
         z_air = np.asarray(batch_z<1/8).astype(int)
