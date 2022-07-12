@@ -149,6 +149,12 @@ for name in name_array:
         z_sof_2 = batch_z>1/8
         z_sof = np.asarray(z_sof_1 * z_sof_2).astype(int)
 
+        y_air = np.asarray(batch_y<1/8).astype(int)
+        y_bon = np.asarray(batch_y>3/8).astype(int)
+        y_sof_1 = batch_y<3/8
+        y_sof_2 = batch_y>1/8
+        y_sof = np.asarray(y_sof_1 * y_sof_2).astype(int)
+
         cls3_z = np.concatenate([batch_x, batch_z, z_air, z_sof, z_bon], axis=1)
         cls3_z = torch.from_numpy(cls3_z).float().to(device)
 
@@ -176,17 +182,32 @@ for name in name_array:
         print(output_data.shape)
 
         test_file = nib.Nifti1Image(np.squeeze(output_data[0, :, :, :]), x_file.affine, x_file.header)
-        test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_air.nii.gz")
+        test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_zair.nii.gz")
         nib.save(test_file, test_save_name)
         print(test_save_name)
 
         test_file = nib.Nifti1Image(np.squeeze(output_data[1, :, :, :]), x_file.affine, x_file.header)
-        test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_sof.nii.gz")
+        test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_zsof.nii.gz")
         nib.save(test_file, test_save_name)
         print(test_save_name)
 
         test_file = nib.Nifti1Image(np.squeeze(output_data[2, :, :, :]), x_file.affine, x_file.header)
-        test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_bon.nii.gz")
+        test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_zbon.nii.gz")
+        nib.save(test_file, test_save_name)
+        print(test_save_name)
+
+        test_file = nib.Nifti1Image(np.squeeze(y_air), x_file.affine, x_file.header)
+        test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_yair.nii.gz")
+        nib.save(test_file, test_save_name)
+        print(test_save_name)
+
+        test_file = nib.Nifti1Image(np.squeeze(y_sof), x_file.affine, x_file.header)
+        test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_ysof.nii.gz")
+        nib.save(test_file, test_save_name)
+        print(test_save_name)
+
+        test_file = nib.Nifti1Image(np.squeeze(y_bon), x_file.affine, x_file.header)
+        test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_ybon.nii.gz")
         nib.save(test_file, test_save_name)
         print(test_save_name)
 
