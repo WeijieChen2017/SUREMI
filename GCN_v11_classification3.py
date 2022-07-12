@@ -84,7 +84,7 @@ train_dict["flip"] = False
 
 unet_dict_E = {}
 unet_dict_E["spatial_dims"] = 3
-unet_dict_E["in_channels"] = 4
+unet_dict_E["in_channels"] = 5
 unet_dict_E["out_channels"] = 3
 unet_dict_E["channels"] = (32, 64, 128, 256)
 unet_dict_E["strides"] = (2, 2, 2)
@@ -258,7 +258,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             y_sof_2 = batch_y>1/8
             y_sof = np.asarray(y_sof_1 * y_sof_2).astype(int)
 
-            cls3_z = np.concatenate([batch_x, z_air, z_sof, z_bon], axis=1)
+            cls3_z = np.concatenate([batch_x, batch_z, z_air, z_sof, z_bon], axis=1)
             cls3_z = torch.from_numpy(cls3_z).float().to(device)
             cls3_y = np.concatenate([y_air, y_sof, y_bon], axis=1)
             cls3_y = torch.from_numpy(cls3_y).float().to(device)
