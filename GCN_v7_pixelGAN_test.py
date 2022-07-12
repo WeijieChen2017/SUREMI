@@ -21,6 +21,31 @@ from utils import add_noise
 # from model import UNet_flat as UNet
 from model import GCN
 
+
+class Unet_sigmoid(nn.Module):
+    
+    def __init__(self, unet_dict_E) -> None:
+        super().__init__()
+
+        self.model_E = UNet(
+            spatial_dims=unet_dict_E["spatial_dims"],
+            in_channels=unet_dict_E["in_channels"],
+            out_channels=unet_dict_E["out_channels"],
+            channels=unet_dict_E["channels"],
+            strides=unet_dict_E["strides"],
+            num_res_units=unet_dict_E["num_res_units"],
+            act=unet_dict_E["act"],
+            norm=unet_dict_E["normunet"],
+            dropout=unet_dict_E["dropout"],
+            bias=unet_dict_E["bias"],
+            )
+
+        self.softmax = nn.Sigmoid()
+
+    def forward(self, x):
+        return self.softmax(self.model_E(x))
+
+
 name_array = [    
     "GCN_v7_pixelGAN",
     "GCN_v7_pixelGAN_abs",
