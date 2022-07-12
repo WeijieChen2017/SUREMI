@@ -151,7 +151,7 @@ for name in name_array:
                     inputs = input_data, 
                     roi_size = test_dict["input_size"], 
                     sw_batch_size = 8, 
-                    predictor = model_G,
+                    predictor = model_E,
                     overlap=0.25, 
                     mode="gaussian", 
                     sigma_scale=0.125, 
