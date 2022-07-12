@@ -22,7 +22,7 @@ from utils import add_noise
 from model import GCN
 
 
-class Unet_sigmoid(nn.Module):
+class Unet_softmax(nn.Module):
     
     def __init__(self, unet_dict_E) -> None:
         super().__init__()
@@ -40,7 +40,7 @@ class Unet_sigmoid(nn.Module):
             bias=unet_dict_E["bias"],
             )
 
-        self.softmax = nn.Sigmoid()
+        self.softmax = nn.Softmax(dim=1)
 
     def forward(self, x):
         return self.softmax(self.model_E(x))
