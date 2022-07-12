@@ -50,8 +50,8 @@ class Unet_sigmoid(nn.Module):
 
 
 model_list = [
-    ["GCN_v9_pixelGAN_epsilon_e2", [5], 0., 1e-2],
-    ["GCN_v9_pixelGAN_epsilon_e1", [5], 0., 1e-1],
+    ["GCN_v9_pixelGAN_epsilon_13579e2", [7], 0., 1e-2],
+    # ["GCN_v9_pixelGAN_epsilon_e1", [5], 0., 1e-1],
     ]
 
 print("Model index: ", end="")
@@ -87,7 +87,7 @@ train_dict["flip"] = False
 unet_dict_E = {}
 unet_dict_E["spatial_dims"] = 3
 unet_dict_E["in_channels"] = 2
-unet_dict_E["out_channels"] = 1
+unet_dict_E["out_channels"] = 5
 unet_dict_E["channels"] = (32, 64, 128, 256)
 unet_dict_E["strides"] = (2, 2, 2)
 unet_dict_E["num_res_units"] = 4
@@ -248,8 +248,18 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 batch_z[idx_batch, 0, :, :, :] = z_slice
             
             diff_yz = np.abs(batch_y-batch_z)
-            emap = np.zeros(diff_yz.shape) + 1.
-            emap[diff_yz > train_dict["error_epsilon"]] = 0.
+            emap1 = np.zeros(diff_yz.shape) + 1.
+            emap1[diff_yz > train_dict["error_epsilon"]*1] = 0.
+            emap3 = np.zeros(diff_yz.shape) + 1.
+            emap3[diff_yz > train_dict["error_epsilon"]*3] = 0.
+            emap5 = np.zeros(diff_yz.shape) + 1.
+            emap5[diff_yz > train_dict["error_epsilon"]*5] = 0.
+            emap7 = np.zeros(diff_yz.shape) + 1.
+            emap7[diff_yz > train_dict["error_epsilon"]*7] = 0.
+            emap9 = np.zeros(diff_yz.shape) + 1.
+            emap9[diff_yz > train_dict["error_epsilon"]*9] = 0.
+
+            emap = np.concatenate([emap1, emap3, emap5, emap7, emap9], axis=1)
             emap = torch.from_numpy(emap).float().to(device)
             batch_xz = np.concatenate([batch_x, batch_z], axis=1)
             batch_xz = torch.from_numpy(batch_xz).float().to(device)
