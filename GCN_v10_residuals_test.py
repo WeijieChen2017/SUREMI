@@ -47,8 +47,8 @@ class Unet_sigmoid(nn.Module):
 
 
 name_array = [    
-    "GCN_v9_pixelGAN_epsilon_e1",
-    "GCN_v9_pixelGAN_epsilon_e2",
+    "GCN_v10_residuals_L1",
+    "GCN_v10_residuals_L2"
 ]
 
 for name in name_array:
