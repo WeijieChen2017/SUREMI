@@ -50,7 +50,7 @@ class Unet_sigmoid(nn.Module):
 
 
 model_list = [
-    ["GCN_v10_residuals_L2", [5], 0.],
+    ["GCN_v10_residuals_L1", [5], ],
     ]
 
 print("Model index: ", end="")
@@ -64,8 +64,8 @@ train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 train_dict["project_name"] = model_list[current_model_idx][0]
 train_dict["gpu_ids"] = model_list[current_model_idx][1]
-train_dict["dropout"] = model_list[current_model_idx][2]
-train_dict["loss_term"] = "MSELoss"
+train_dict["dropout"] = 0.
+train_dict["loss_term"] = "SmoothL1Loss"
 train_dict["optimizer"] = "AdamW"
 
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
@@ -143,7 +143,7 @@ model_E = model_E.to(device)
 
 # optim = torch.optim.RMSprop(model_E.parameters(), lr=train_dict["opt_lr"])
 # bin_loss = torch.nn.BCELoss()
-bin_loss = torch.nn.MSELoss()
+bin_loss = torch.nn.SmoothL1Loss()
 
 optim = torch.optim.AdamW(
     model_E.parameters(),
