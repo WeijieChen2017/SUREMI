@@ -68,7 +68,17 @@ hub_CT_name = [
     # "GCN_0100",
     # "GCN_0500",
     # "model_G",
-    "model_E",
+    # "model_E",
+    "pixelGAN",
+    "pixelGAN_abs",
+    "pixelGAN_wdist_abs_clip_e1",
+    "pixelGAN_wdist_abs_clip_e2",
+    "pixelGAN_wdist_abs_clip_e3",
+    "pixelGAN_wdist_clip_e1",
+    "pixelGAN_wdist_clip_e2",
+    "pixelGAN_wdist_clip_e3",
+    "pixelGAN_epsilon_e1",
+    "pixelGAN_epsilon_e2",
     ]
 hub_CT_folder = [
     # "./project_dir/Bayesian_unet_v1/",
@@ -151,7 +161,17 @@ hub_CT_folder = [
     # "Bayesian_HDMGD_GCN_0500",
     # "Bayesian_HDMGD_GCN_v2",
     # "Bayesian_HDMGD_GCN_v3",
-    "Bayesian_HDMGD_GCN_v4",
+    # "Bayesian_HDMGD_GCN_v4",
+    "GCN_v7_pixelGAN",
+    "GCN_v7_pixelGAN_abs",
+    "GCN_v8_pixelGAN_wdist_abs_e1",
+    "GCN_v8_pixelGAN_wdist_abs_e2",
+    "GCN_v8_pixelGAN_wdist_abs_e3",
+    "GCN_v8_pixelGAN_wdist_e1",
+    "GCN_v8_pixelGAN_wdist_e2",
+    "GCN_v8_pixelGAN_wdist_e3",
+    "GCN_v9_pixelGAN_epsilon_e1",
+    "GCN_v9_pixelGAN_epsilon_e2",
     ]
 
 train_loss = []
