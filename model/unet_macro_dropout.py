@@ -232,7 +232,16 @@ class UNet_MDO(nn.Module):
                 ResidualUnit(3, self.out_channels, self.out_channels, strides=1,
                 kernel_size=self.kernel_size, subunits=1, act=self.act, norm=self.norm,
                 dropout=self.dropout, bias=self.bias, last_conv_only=True, adn_ordering=self.adn_ordering)) for i in range(self.macro_dropout[8])]
-        print(self.down1)
+        self.down1 = nn.ModuleList(self.down1)
+        self.down2 = nn.ModuleList(self.down2)
+        self.down3 = nn.ModuleList(self.down3)
+        self.down4 = nn.ModuleList(self.down4)
+        self.bottom = nn.ModuleList(self.bottom)
+        self.up1 = nn.ModuleList(self.up1)
+        self.up2 = nn.ModuleList(self.up2)
+        self.up3 = nn.ModuleList(self.up3)
+        self.up4 = nn.ModuleList(self.up4)
+        
 
     def forward(self, x: torch.Tensor, order:Sequence[int]) -> torch.Tensor:
 
