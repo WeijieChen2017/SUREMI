@@ -127,7 +127,7 @@ class UNet_MDO(nn.Module):
         bias: bool = True,
         adn_ordering: str = "NDA",
         dimensions: Optional[int] = None,
-        macro_dropout: Sequence[int],
+        macro_dropout: Sequence[int] = None,
     ) -> None:
 
         super().__init__()
