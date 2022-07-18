@@ -222,7 +222,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 optim.step()
                 case_loss[cnt_file, 0] = loss_recon.item()
                 case_loss[cnt_file, 1] = loss_rdrop.item()
-                print("Loss: ", case_loss[cnt_file], "Recon: ", loss_recon, "Rdropout: ", loss_rdrop)
+                print("Loss: ", np.mean(case_loss[cnt_file, :]), "Recon: ", loss_recon.item(), "Rdropout: ", loss_rdrop.item())
 
             if isVal:
 
@@ -235,7 +235,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                 case_loss[cnt_file, 0] = loss_recon.item()
                 case_loss[cnt_file, 1] = loss_rdrop.item()
-                print("Loss: ", case_loss[cnt_file], "Recon: ", loss_recon, "Rdropout: ", loss_rdrop)
+                print("Loss: ", np.mean(case_loss[cnt_file, :]), "Recon: ", loss_recon.item(), "Rdropout: ", loss_rdrop.item())
 
         epoch_loss = np.mean(case_loss)
         epoch_loss_recon = np.mean(case_loss[:, 0])
