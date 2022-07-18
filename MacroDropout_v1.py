@@ -26,7 +26,10 @@ from utils import add_noise, weighted_L1Loss
 from model import UNet_MDO as UNet
 
 model_list = [
-    ["MDO_v2_333333333", [4], ], # 0, 1/8, 3/8, 1
+    ["MDO_v1_222222222", [4], [2,2,2,2,2,2,2,2,2],],
+    ["MDO_v2_333333333", [4], [3,3,3,3,3,3,3,3,3],],
+    ["MDO_v3_224484422", [2], [2,2,4,4,8,4,4,2,2],],
+    ["MDO_v4_884424488", [2], [8,8,4,4,2,4,4,2,2]],
     ]
 
 print("Model index: ", end="")
@@ -40,6 +43,7 @@ train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 train_dict["project_name"] = model_list[current_model_idx][0]
 train_dict["gpu_ids"] = model_list[current_model_idx][1]
+train_dict["macro_dropout"] = model_list[current_model_idx][2]
 train_dict["dropout"] = 0.
 train_dict["loss_term"] = "SmoothL1Loss"
 train_dict["optimizer"] = "AdamW"
@@ -68,7 +72,7 @@ unet_dict["act"] = Act.PRELU
 unet_dict["normunet"] = Norm.INSTANCE
 unet_dict["dropout"] = 0.0
 unet_dict["bias"] = True
-unet_dict["macro_dropout"] = [3,3,3,3,3,3,3,3,3]
+unet_dict["macro_dropout"] = train_dict["macro_dropout"]
 train_dict["model_para"] = unet_dict
 
 
