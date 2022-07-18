@@ -113,6 +113,7 @@ model = UNet(
     macro_dropout=unet_dict["macro_dropout"],
     )
 
+print(model)
 model.train()
 model = model.to(device)
 
