@@ -23,3 +23,4 @@ from .transformer_pytorch import TransformerModel
 from .vq import VQ_single
 from .unet_monai_flat import UNet_flat
 from .GCN import GCN
+from .unet_macro_dropout import UNet_MDO
