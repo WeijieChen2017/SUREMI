@@ -162,8 +162,6 @@ class UNet_MDO(nn.Module):
         self.bias = bias
         self.adn_ordering = adn_ordering
         self.macro_dropout = macro_dropout
-        print(self.macro_dropout)
-
 
         # UNet( 
         # spatial_dims=unet_dict["spatial_dims"],
@@ -234,6 +232,7 @@ class UNet_MDO(nn.Module):
                 ResidualUnit(3, self.out_channels, self.out_channels, strides=1,
                 kernel_size=self.kernel_size, subunits=1, act=self.act, norm=self.norm,
                 dropout=self.dropout, bias=self.bias, last_conv_only=True, adn_ordering=self.adn_ordering)) for i in range(self.macro_dropout[8])]
+        print(self.down1)
 
     def forward(self, x: torch.Tensor, order:Sequence[int]) -> torch.Tensor:
 
