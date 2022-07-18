@@ -162,6 +162,7 @@ class UNet_MDO(nn.Module):
         self.bias = bias
         self.adn_ordering = adn_ordering
         self.macro_dropout = macro_dropout
+        print(self.macro_dropout)
 
 
         # UNet( 
