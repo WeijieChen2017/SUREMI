@@ -26,7 +26,7 @@ from utils import add_noise, weighted_L1Loss
 from model import UNet_MDO as UNet
 
 model_list = [
-    ["MDO_v1_222222222", [4], ], # 0, 1/8, 3/8, 1
+    ["MDO_v2_333333333", [4], ], # 0, 1/8, 3/8, 1
     ]
 
 print("Model index: ", end="")
@@ -68,7 +68,7 @@ unet_dict["act"] = Act.PRELU
 unet_dict["normunet"] = Norm.INSTANCE
 unet_dict["dropout"] = 0.0
 unet_dict["bias"] = True
-unet_dict["macro_dropout"] = [2,2,2,2,2,2,2,2,2]
+unet_dict["macro_dropout"] = [3,3,3,3,3,3,3,3,3]
 train_dict["model_para"] = unet_dict
 
 
