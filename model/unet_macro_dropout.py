@@ -21,7 +21,7 @@ from monai.networks.layers.factories import Act, Norm
 from monai.networks.layers.simplelayers import SkipConnection
 from monai.utils import alias, deprecated_arg, export
 
-__all__ = ["UNet", "Unet"]
+__all__ = ["UNet_MDO"]
 
 
 @export("monai.networks.nets")
@@ -259,5 +259,3 @@ class UNet_MDO(nn.Module):
         # print(x1.size())
 
         return x1
-
-Unet_flat = UNet_flat
