@@ -59,8 +59,8 @@ train_dict["flip"] = False
 
 unet_dict = {}
 unet_dict["spatial_dims"] = 3
-unet_dict["in_channels"] = 5
-unet_dict["out_channels"] = 3
+unet_dict["in_channels"] = 1
+unet_dict["out_channels"] = 1
 unet_dict["channels"] = (32, 64, 128, 256)
 unet_dict["strides"] = (2, 2, 2)
 unet_dict["num_res_units"] = 4
