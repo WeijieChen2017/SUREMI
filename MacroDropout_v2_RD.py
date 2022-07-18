@@ -71,7 +71,6 @@ unet_dict["act"] = Act.PRELU
 unet_dict["normunet"] = Norm.INSTANCE
 unet_dict["dropout"] = train_dict["dropout"]
 unet_dict["bias"] = True
-unet_dict["macro_dropout"] = train_dict["macro_dropout"]
 train_dict["model_para"] = unet_dict
 
 
