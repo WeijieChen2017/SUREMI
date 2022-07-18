@@ -236,11 +236,10 @@ class UNet_MDO(nn.Module):
 
     def forward(self, x: torch.Tensor, order:Sequence[int]) -> torch.Tensor:
 
-    	if order == []:
-        	order = [random.randint(0, self.macro_dropout[i]-1) for i in range(len(self.macro_dropout))]
+        if order == []:
+            order = [random.randint(0, self.macro_dropout[i]-1) for i in range(len(self.macro_dropout))]
         
-        module = self.down1[order[0]]
-        x1 = module(x)
+        x1 = self.down1[order[0]](x)
         # print(x1.size())
         x2 = self.down2[order[1]](x1)
         # print(x2.size())
