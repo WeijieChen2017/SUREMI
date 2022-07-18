@@ -25,7 +25,7 @@ __all__ = ["UNet_MDO"]
 
 
 @export("monai.networks.nets")
-@alias("Unet")
+@alias("UNet_MDO")
 class UNet_MDO(nn.Module):
     """
     Enhanced version of UNet which has residual units implemented with the ResidualUnit class.

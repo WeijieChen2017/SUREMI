@@ -18,11 +18,12 @@ import torch
 import torchvision
 import requests
 
-from monai.networks.nets.unet import UNet_MDO as UNet
+# from monai.networks.nets.unet import UNet
 from monai.networks.layers.factories import Act, Norm
 import bnn
 
 from utils import add_noise, weighted_L1Loss
+from model import UNet_MDO as UNet
 
 model_list = [
     ["MDO_v1_222222222", [4], ], # 0, 1/8, 3/8, 1
