@@ -26,10 +26,10 @@ from utils import add_noise, weighted_L1Loss
 from model import UNet_MDO as UNet
 
 model_list = [
-    ["MDO_v1_222222222"],
-    ["MDO_v2_333333333"],
-    ["MDO_v3_224484422"],
-    ["MDO_v4_884424488"],
+    "MDO_v1_222222222",
+    "MDO_v2_333333333",
+    "MDO_v3_224484422",
+    "MDO_v4_884424488",
 ]
 
 
