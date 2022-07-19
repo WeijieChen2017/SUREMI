@@ -165,10 +165,10 @@ for idx_epoch_new in range(train_dict["epochs"]):
         isVal = package[2]
         iter_tag = package[3]
 
-        if isTrain:
-            model.train()
-        else:
-            model.eval()
+        # if isTrain:
+        #     model.train()
+        # else:
+        #     model.eval()
 
         random.shuffle(file_list)
         
