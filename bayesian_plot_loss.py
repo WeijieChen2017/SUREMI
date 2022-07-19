@@ -79,11 +79,16 @@ hub_CT_name = [
     # "pixelGAN_wdist_clip_e3",
     # "pixelGAN_epsilon_e1",
     # "pixelGAN_epsilon_e2",
-    "222222222",
-    "333333333",
-    "224484422",
-    "884424488",
-    "base_unet"
+    # "222222222",
+    # "333333333",
+    # "224484422",
+    # "884424488",
+    "R00100_D50",
+    "R00010_D50",
+    "R00001_D50",
+    "R00100_D25",
+    "R00100_D75",
+    "base_unet",
     ]
 hub_CT_folder = [
     # "./project_dir/Bayesian_unet_v1/",
@@ -177,10 +182,15 @@ hub_CT_folder = [
     # "GCN_v8_pixelGAN_wdist_e3",
     # "GCN_v9_pixelGAN_epsilon_e1",
     # "GCN_v9_pixelGAN_epsilon_e2",
-    "MDO_v1_222222222",
-    "MDO_v2_333333333",
-    "MDO_v3_224484422",
-    "MDO_v4_884424488",
+    # "MDO_v1_222222222",
+    # "MDO_v2_333333333",
+    # "MDO_v3_224484422",
+    # "MDO_v4_884424488",
+    "RDO_v1_R00100_D50",
+    "RDO_v1_R00010_D50",
+    "RDO_v1_R00001_D50",
+    "RDO_v1_R00100_D25",
+    "RDO_v1_R00100_D75",
     "Unet_Monai_Iman_v2"
     ]
 
