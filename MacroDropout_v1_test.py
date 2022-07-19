@@ -42,7 +42,7 @@ for name in model_list:
     test_dict["gpu_ids"] = [2]
     test_dict["eval_file_cnt"] = 1
     # test_dict["best_model_name"] = "model_best_193.pth"
-    test_dict["eval_sample"] = 11
+    test_dict["eval_sample"] = 51
     test_dict["eval_save_folder"] = "pred_monai"
 
     train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
