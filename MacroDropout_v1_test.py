@@ -73,7 +73,7 @@ for name in model_list:
         model_list.pop()
     target_model = model_list[-1]
     # target_model = test_dict["save_folder"]+test_dict["best_model_name"]
-    model_E = torch.load(target_model, map_location=torch.device('cpu'))
+    model = torch.load(target_model, map_location=torch.device('cpu'))
     print("--->", target_model, " is loaded.")
 
     # ==================== data division ====================
@@ -90,6 +90,7 @@ for name in model_list:
     iter_tag = "test"
     cnt_total_file = len(file_list)
     cnt_each_cube = 1
+    model.eval()
 
     for cnt_file, file_path in enumerate(file_list):
         
@@ -116,7 +117,7 @@ for name in model_list:
                         inputs = input_data, 
                         roi_size = test_dict["input_size"], 
                         sw_batch_size = 8, 
-                        predictor = model_G,
+                        predictor = model,
                         overlap=0.25, 
                         mode="gaussian", 
                         sigma_scale=0.125, 
