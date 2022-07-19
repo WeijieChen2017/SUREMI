@@ -48,6 +48,7 @@ for name in model_list:
 
     train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
     print("input size:", train_dict["input_size"])
+    print(train_dict)
 
     test_dict["seed"] = train_dict["seed"]
     test_dict["input_size"] = train_dict["input_size"]
