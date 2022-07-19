@@ -91,6 +91,7 @@ for name in model_list:
     cnt_total_file = len(file_list)
     cnt_each_cube = 1
     model.eval()
+    model = model.to(device)
 
     for cnt_file, file_path in enumerate(file_list):
         
