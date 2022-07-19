@@ -20,9 +20,9 @@ import requests
 
 # from monai.networks.nets.unet import UNet
 from monai.networks.layers.factories import Act, Norm
+from monai.inferers import sliding_window_inference
 import bnn
 
-from utils import add_noise, weighted_L1Loss
 from model import UNet_MDO as UNet
 
 model_list = [
