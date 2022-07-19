@@ -243,7 +243,7 @@ class UNet_MDO(nn.Module):
         self.up4 = nn.ModuleList(self.up4)
         
 
-    def forward(self, x: torch.Tensor, order:Sequence[int]) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, order:Sequence[int] = []) -> torch.Tensor:
 
         if order == []:
             order = [random.randint(0, self.macro_dropout[i]-1) for i in range(len(self.macro_dropout))]
