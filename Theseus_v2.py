@@ -76,6 +76,22 @@ unet_dict["bias"] = True
 train_dict["model_para"] = unet_dict
 
 
+
+
+# state weights mapping
+swm = {}
+swm["down1"]   = "model.0"
+swm["down2"]   = "model.1.submodule.0"
+swm["down3"]   = "model.1.submodule.1.submodule.0"
+swm["bottom"]  = "model.1.submodule.1.submodule.1.submodule"
+swm["up3"]     = "model.1.submodule.1.submodule.2"
+swm["up2"]     = "model.1.submodule.2"
+swm["up1"]     = "model.2"
+train_dict["state_weight_mapping"] = swm
+train_dict["target_model_1"] = "./project_dir/Unet_Monai_Iman_v2/model_best_181.pth"
+train_dict["target_model_2"] = "./project_dir/Unet_Monai_Iman_v2/model_.pth"
+
+
 train_dict["folder_X"] = "./project_dir/Unet_Monai_Iman_v2/pred_monai/"
 train_dict["folder_Y"] = "./project_dir/Unet_Monai_Iman_v2/pred_monai/"
 # train_dict["pre_train"] = "swin_base_patch244_window1677_kinetics400_22k.pth"
@@ -115,6 +131,19 @@ model = UNet(
     dropout=unet_dict["dropout"],
     bias=unet_dict["bias"],
     )
+
+pretrain_1 = torch.load(train_dict["target_model_1"])
+pretrain_1_state = pretrain_1.state_dict()
+
+model_state_keys = model.state_dict().keys()
+new_model_state_1 = {}
+
+for model_key in model_state_keys:
+    weight_prefix = model_key[:model_key.find(".")]
+    weight_replacement = swm[weight_prefix]
+    new_model_state_1[model_key] = pretrain_1_state[model_key.replace(weight_prefix, weight_replacement)]
+
+model.load_state_dict(new_model_state_1)
 
 model.train()
 model = model.to(device)
