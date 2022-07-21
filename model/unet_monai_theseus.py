@@ -227,10 +227,10 @@ class UNet_Theseus(nn.Module):
         self.down2 = nn.ModuleList(self.down2)
         self.down3 = nn.ModuleList(self.down3)
         self.bottom = nn.ModuleList(self.bottom)
-        self.up1 = nn.ModuleList(self.up1)
-        self.up2 = nn.ModuleList(self.up2)
         self.up3 = nn.ModuleList(self.up3)
-
+        self.up2 = nn.ModuleList(self.up2)
+        self.up1 = nn.ModuleList(self.up1)
+        
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # print(x.size())
         x1 = self.down1(x)
