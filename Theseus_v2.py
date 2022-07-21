@@ -144,6 +144,9 @@ for model_key in model_state_keys:
     new_model_state_1[model_key] = pretrain_1_state[model_key.replace(weight_prefix, weight_replacement)]
 
 model.load_state_dict(new_model_state_1)
+pretrain_1.train()
+pretrain_1 = pretrain_1.to(device)
+
 
 model.train()
 model = model.to(device)
@@ -245,9 +248,9 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                 optim.zero_grad()
                 y_hat = model(batch_x)
-                y_rdo = model(batch_x)
+                y_ref = pretrain_1(batch_x)
                 loss_recon = loss_fnc(y_hat, batch_y)
-                loss_rdrop = loss_doc(y_hat, y_rdo)
+                loss_rdrop = loss_doc(y_hat, y_ref)
                 loss = loss_recon + loss_rdrop
                 loss.backward()
                 optim.step()
@@ -259,9 +262,9 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                 with torch.no_grad():
                     y_hat = model(batch_x)
-                    y_rdo = model(batch_x)
+                    y_ref = pretrain_1(batch_x)
                     loss_recon = loss_fnc(y_hat, batch_y)
-                    loss_rdrop = loss_doc(y_hat, y_rdo)
+                    loss_rdrop = loss_doc(y_hat, y_ref)
                     loss = loss_recon + loss_rdrop
 
                 case_loss[cnt_file, 0] = loss_recon.item()
