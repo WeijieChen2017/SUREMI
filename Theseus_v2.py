@@ -26,7 +26,7 @@ import bnn
 from model import UNet_Theseus as UNet
 
 model_list = [
-    ["Theseus_v2_best_two", [4], 1, 0,],
+    ["Theseus_v2_best_two", [4], 1, 0.5,],
     # ["RDO_v1_R00010_D50", [3], 0.1, 0.5,],
     # ["RDO_v1_R00001_D50", [3], 0.01, 0.5,],
     # ["RDO_v1_R00100_D25", [4], 1, 0.25,],
@@ -115,10 +115,6 @@ model = UNet(
     dropout=unet_dict["dropout"],
     bias=unet_dict["bias"],
     )
-
-print(model)
-
-exit()
 
 model.train()
 model = model.to(device)
