@@ -231,21 +231,25 @@ class UNet_Theseus(nn.Module):
         self.up2 = nn.ModuleList(self.up2)
         self.up1 = nn.ModuleList(self.up1)
         
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, order:Sequence[int] = []) -> torch.Tensor:
+
+        if order == []:
+            order = [random.randint(0, 1) for i in range(7)]
+
         # print(x.size())
-        x1 = self.down1(x)
+        x1 = self.down1[order[0]](x)
         # print(x1.size())
-        x2 = self.down2(x1)
+        x2 = self.down2[order[1]](x1)
         # print(x2.size())
-        x3 = self.down3(x2)
+        x3 = self.down3[order[2]](x2)
         # print(x3.size())
-        xb = self.bottom(x3)
+        xb = self.bottom[order[3]](x3)
         # print(xb.size())
-        x5 = self.up3(torch.cat([x3, xb], dim=1))
+        x5 = self.up3[order[4]](torch.cat([x3, xb], dim=1))
         # print(x5.size())
-        x6 = self.up2(torch.cat([x2, x5], dim=1))
+        x6 = self.up2[order[5]](torch.cat([x2, x5], dim=1))
         # print(x6.size())
-        x7 = self.up1(torch.cat([x1, x6], dim=1))
+        x7 = self.up1[order[6]](torch.cat([x1, x6], dim=1))
         # print(x7.size())
 
         # print(x.size())         torch.Size([4, 1, 96, 96, 96])
@@ -257,7 +261,6 @@ class UNet_Theseus(nn.Module):
         # print(x6.size())        torch.Size([4, 32, 48, 48, 48])
         # print(x7.size())        torch.Size([4, 1, 96, 96, 96])
 
-        
         return x7
 
 Unet_Theseus = UNet_Theseus

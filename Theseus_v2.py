@@ -26,11 +26,7 @@ import bnn
 from model import UNet_Theseus as UNet
 
 model_list = [
-    ["Theseus_v2_best_two", [4], 1, 0.],
-    # ["RDO_v1_R00010_D50", [3], 0.1, 0.5,],
-    # ["RDO_v1_R00001_D50", [3], 0.01, 0.5,],
-    # ["RDO_v1_R00100_D25", [4], 1, 0.25,],
-    # ["RDO_v1_R00100_D75", [4], 1, 0.75,],
+    ["Theseus_v2_181_200", [4], 1,],
     ]
 
 print("Model index: ", end="")
@@ -45,7 +41,8 @@ train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 train_dict["project_name"] = model_list[current_model_idx][0]
 train_dict["gpu_ids"] = model_list[current_model_idx][1]
 train_dict["alpha_dropout_consistency"] = model_list[current_model_idx][2]
-train_dict["dropout"] = model_list[current_model_idx][3]
+
+train_dict["dropout"] = 0.
 train_dict["loss_term"] = "SmoothL1Loss"
 train_dict["optimizer"] = "AdamW"
 
@@ -79,15 +76,25 @@ train_dict["model_para"] = unet_dict
 
 
 # state weights mapping
-swm = {}
-swm["down1"]   = "model.0"
-swm["down2"]   = "model.1.submodule.0"
-swm["down3"]   = "model.1.submodule.1.submodule.0"
-swm["bottom"]  = "model.1.submodule.1.submodule.1.submodule"
-swm["up3"]     = "model.1.submodule.1.submodule.2"
-swm["up2"]     = "model.1.submodule.2"
-swm["up1"]     = "model.2"
-train_dict["state_weight_mapping"] = swm
+swm_1 = {}
+swm_1["down1.0"]   = "model.0"
+swm_1["down2.0"]   = "model.1.submodule.0"
+swm_1["down3.0"]   = "model.1.submodule.1.submodule.0"
+swm_1["bottom.0"]  = "model.1.submodule.1.submodule.1.submodule"
+swm_1["up3.0"]     = "model.1.submodule.1.submodule.2"
+swm_1["up2.0"]     = "model.1.submodule.2"
+swm_1["up1.0"]     = "model.2"
+
+swm_2 = {}
+swm_1["down1.1"]   = "model.0"
+swm_1["down2.1"]   = "model.1.submodule.0"
+swm_1["down3.1"]   = "model.1.submodule.1.submodule.0"
+swm_1["bottom.1"]  = "model.1.submodule.1.submodule.1.submodule"
+swm_1["up3.1"]     = "model.1.submodule.1.submodule.2"
+swm_1["up2.1"]     = "model.1.submodule.2"
+swm_1["up1.1"]     = "model.2"
+train_dict["state_weight_mapping_1"] = swm_1
+train_dict["state_weight_mapping_2"] = swm_1
 train_dict["target_model_1"] = "./project_dir/Unet_Monai_Iman_v2/model_best_181.pth"
 train_dict["target_model_2"] = "./project_dir/Unet_Monai_Iman_v2/model_.pth"
 
@@ -134,19 +141,26 @@ model = UNet(
 
 pretrain_1 = torch.load(train_dict["target_model_1"])
 pretrain_1_state = pretrain_1.state_dict()
+pretrain_2 = torch.load(train_dict["target_model_2"])
+pretrain_2_state = pretrain_2.state_dict()
 
 model_state_keys = model.state_dict().keys()
-new_model_state_1 = {}
+new_model_state = {}
 
 for model_key in model_state_keys:
-    weight_prefix = model_key[:model_key.find(".")]
-    weight_replacement = swm[weight_prefix]
-    new_model_state_1[model_key] = pretrain_1_state[model_key.replace(weight_prefix, weight_replacement)]
+    weight_prefix = model_key[:model_key.find(".")+2]
 
-model.load_state_dict(new_model_state_1)
-pretrain_1.train()
-pretrain_1 = pretrain_1.to(device)
+    # in the first half
+    if weight_prefix in swm_1.keys():
+        weight_replacement = swm_1[weight_prefix]
+        new_model_state[model_key] = pretrain_1_state[model_key.replace(weight_prefix, weight_replacement)]
 
+    # in the second half
+    if weight_prefix in swm_2.keys():
+        weight_replacement = swm_2[weight_prefix]
+        new_model_state[model_key] = pretrain_2_state[model_key.replace(weight_prefix, weight_replacement)]
+    
+model.load_state_dict(new_model_state)
 
 model.train()
 model = model.to(device)
@@ -197,10 +211,10 @@ for idx_epoch_new in range(train_dict["epochs"]):
         isVal = package[2]
         iter_tag = package[3]
 
-        # if isTrain:
-        #     model.train()
-        # else:
-        #     model.eval()
+        if isTrain:
+            model.train()
+        else:
+            model.eval()
 
         random.shuffle(file_list)
         
@@ -248,10 +262,10 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                 optim.zero_grad()
                 y_hat = model(batch_x)
-                y_ref = pretrain_1(batch_x)
+                y_ref = model(batch_x)
                 loss_recon = loss_fnc(y_hat, batch_y)
                 loss_rdrop = loss_doc(y_ref, y_hat)
-                loss = loss_recon + loss_rdrop
+                loss = loss_recon + loss_rdrop * train_dict["alpha_dropout_consistency"]
                 loss.backward()
                 optim.step()
                 case_loss[cnt_file, 0] = loss_recon.item()
@@ -262,10 +276,10 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                 with torch.no_grad():
                     y_hat = model(batch_x)
-                    y_ref = pretrain_1(batch_x)
+                    y_ref = model(batch_x)
                     loss_recon = loss_fnc(y_hat, batch_y)
                     loss_rdrop = loss_doc(y_ref, y_hat)
-                    loss = loss_recon + loss_rdrop
+                    loss = loss_recon + loss_rdrop * train_dict["alpha_dropout_consistency"]
 
                 case_loss[cnt_file, 0] = loss_recon.item()
                 case_loss[cnt_file, 1] = loss_rdrop.item()
