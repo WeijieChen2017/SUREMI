@@ -26,7 +26,7 @@ import bnn
 from model import UNet_Theseus as UNet
 
 model_list = [
-    ["Theseus_v2_181_200", [4], 1,],
+    ["Theseus_v2_181_200", [5], 1,],
     ]
 
 print("Model index: ", end="")
