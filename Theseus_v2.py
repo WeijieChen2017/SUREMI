@@ -250,7 +250,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 y_hat = model(batch_x)
                 y_ref = pretrain_1(batch_x)
                 loss_recon = loss_fnc(y_hat, batch_y)
-                loss_rdrop = loss_doc(y_hat, y_ref)
+                loss_rdrop = loss_doc(y_ref, batch_y)
                 loss = loss_recon + loss_rdrop
                 loss.backward()
                 optim.step()
@@ -264,7 +264,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     y_hat = model(batch_x)
                     y_ref = pretrain_1(batch_x)
                     loss_recon = loss_fnc(y_hat, batch_y)
-                    loss_rdrop = loss_doc(y_hat, y_ref)
+                    loss_rdrop = loss_doc(y_ref, batch_y)
                     loss = loss_recon + loss_rdrop
 
                 case_loss[cnt_file, 0] = loss_recon.item()
