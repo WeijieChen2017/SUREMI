@@ -20,6 +20,8 @@ from monai.networks.layers.factories import Act, Norm
 from monai.networks.layers.simplelayers import SkipConnection
 from monai.utils import alias, deprecated_arg, export
 
+import random
+
 __all__ = ["UNet_Theseus", "UNet_theseus", "Unet_Theseus", "Unet_theseus"]
 
 
