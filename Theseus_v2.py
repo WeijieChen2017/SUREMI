@@ -153,7 +153,7 @@ model = model.to(device)
 
 # optim = torch.optim.RMSprop(model.parameters(), lr=train_dict["opt_lr"])
 loss_fnc = torch.nn.SmoothL1Loss()
-loss_doc = torch.nn.MSELoss()
+loss_doc = torch.nn.SmoothL1Loss()
 # loss_fnc = torch.nn.CrossEntropyLoss()
 
 optim = torch.optim.AdamW(
@@ -250,7 +250,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 y_hat = model(batch_x)
                 y_ref = pretrain_1(batch_x)
                 loss_recon = loss_fnc(y_hat, batch_y)
-                loss_rdrop = loss_doc(y_ref, batch_y)
+                loss_rdrop = loss_doc(y_ref, y_hat)
                 loss = loss_recon + loss_rdrop
                 loss.backward()
                 optim.step()
@@ -264,7 +264,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     y_hat = model(batch_x)
                     y_ref = pretrain_1(batch_x)
                     loss_recon = loss_fnc(y_hat, batch_y)
-                    loss_rdrop = loss_doc(y_ref, batch_y)
+                    loss_rdrop = loss_doc(y_ref, y_hat)
                     loss = loss_recon + loss_rdrop
 
                 case_loss[cnt_file, 0] = loss_recon.item()
