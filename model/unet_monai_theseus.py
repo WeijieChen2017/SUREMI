@@ -231,12 +231,22 @@ class UNet_Theseus(nn.Module):
         # print(x3.size())
         xb = self.bottom(x3)
         # print(xb.size())
-        x5 = self.up3(torch.cat([xb, x3], dim=1))
+        x5 = self.up3(torch.cat([x3, xb], dim=1))
         # print(x5.size())
-        x6 = self.up2(torch.cat([x5, x2], dim=1))
+        x6 = self.up2(torch.cat([x2, x5], dim=1))
         # print(x6.size())
-        x7 = self.up1(torch.cat([x6, x1], dim=1))
+        x7 = self.up1(torch.cat([x1, x6], dim=1))
         # print(x7.size())
+
+        # print(x.size())         torch.Size([4, 1, 96, 96, 96])
+        # print(x1.size())        torch.Size([4, 32, 48, 48, 48])
+        # print(x2.size())        torch.Size([4, 64, 24, 24, 24])
+        # print(x3.size())        torch.Size([4, 128, 12, 12, 12])
+        # print(xb.size())        torch.Size([4, 256, 12, 12, 12])
+        # print(x5.size())        torch.Size([4, 64, 24, 24, 24])
+        # print(x6.size())        torch.Size([4, 32, 48, 48, 48])
+        # print(x7.size())        torch.Size([4, 1, 96, 96, 96])
+
         
         return x7
 
