@@ -223,6 +223,14 @@ class UNet_Theseus(nn.Module):
                 kernel_size=self.kernel_size, subunits=1, act=self.act, norm=self.norm,
                 dropout=self.dropout, bias=self.bias, last_conv_only=True, adn_ordering=self.adn_ordering)) for i in range(self.alter_block)]
 
+        self.down1 = nn.ModuleList(self.down1)
+        self.down2 = nn.ModuleList(self.down2)
+        self.down3 = nn.ModuleList(self.down3)
+        self.bottom = nn.ModuleList(self.bottom)
+        self.up1 = nn.ModuleList(self.up1)
+        self.up2 = nn.ModuleList(self.up2)
+        self.up3 = nn.ModuleList(self.up3)
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # print(x.size())
         x1 = self.down1(x)
