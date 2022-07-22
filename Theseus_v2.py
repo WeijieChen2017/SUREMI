@@ -27,7 +27,9 @@ from model import UNet_Theseus as UNet
 
 model_list = [
     ["Theseus_v2_181_200", [5], 0,],
-    ["Theseus_v2_181_200_rdp", [5], 1,],
+    ["Theseus_v2_181_200_rdp1", [5], 1,],
+    ["Theseus_v2_181_200_rdp10", [4], 10,],
+    ["Theseus_v2_181_200_rdp100", [4], 100,],
     ]
 
 print("Model index: ", end="")
@@ -295,9 +297,10 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 case_loss[cnt_file, 1] = loss_rdrop.item()
                 print("Loss: ", np.mean(case_loss[cnt_file, :]), "Recon: ", loss_recon.item(), "Rdropout: ", loss_rdrop.item())
 
-        epoch_loss = np.mean(case_loss)
         epoch_loss_recon = np.mean(case_loss[:, 0])
         epoch_loss_rdrop = np.mean(case_loss[:, 1])
+        # epoch_loss = np.mean(case_loss)
+        epoch_loss = epoch_loss_recon
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
         print("Loss: ", epoch_loss, "Recon: ", epoch_loss_recon, "Rdropout: ", epoch_loss_rdrop)
         np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), case_loss)
