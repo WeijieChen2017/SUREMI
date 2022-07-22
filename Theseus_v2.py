@@ -26,7 +26,7 @@ import bnn
 from model import UNet_Theseus as UNet
 
 model_list = [
-    ["Theseus_v2_181_200", [5], 0,],
+    ["Theseus_v2_181_200_rdp0", [5], 0,],
     ["Theseus_v2_181_200_rdp1", [5], 1,],
     ["Theseus_v2_181_200_rdp10", [4], 10,],
     ["Theseus_v2_181_200_rdp100", [4], 100,],
@@ -265,15 +265,10 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                 optim.zero_grad()
                 y_hat = model(batch_x)
-                if train_dict["alpha_dropout_consistency"] > 0:
-                    y_ref = model(batch_x)
+                y_ref = model(batch_x)
                 loss_recon = loss_fnc(y_hat, batch_y)
-                if train_dict["alpha_dropout_consistency"] > 0:
-                    loss_rdrop = loss_doc(y_ref, y_hat)
-                    loss = loss_recon + loss_rdrop * train_dict["alpha_dropout_consistency"]
-                else:
-                    loss_rdrop = loss_recon
-                    loss = loss_recon
+                loss_rdrop = loss_doc(y_ref, y_hat)
+                loss = loss_recon + loss_rdrop * train_dict["alpha_dropout_consistency"]
                 loss.backward()
                 optim.step()
                 case_loss[cnt_file, 0] = loss_recon.item()
@@ -284,15 +279,11 @@ for idx_epoch_new in range(train_dict["epochs"]):
 
                 with torch.no_grad():
                     y_hat = model(batch_x)
-                    if train_dict["alpha_dropout_consistency"] > 0:
-                        y_ref = model(batch_x)
+                    y_ref = model(batch_x)
                     loss_recon = loss_fnc(y_hat, batch_y)
-                    if train_dict["alpha_dropout_consistency"] > 0:
-                        loss_rdrop = loss_doc(y_ref, y_hat)
-                        loss = loss_recon + loss_rdrop * train_dict["alpha_dropout_consistency"]
-                    else:
-                        loss_rdrop = loss_recon
-                        loss = loss_recon
+                    loss_rdrop = loss_doc(y_ref, y_hat)
+                    loss = loss_recon + loss_rdrop * train_dict["alpha_dropout_consistency"]
+
                 case_loss[cnt_file, 0] = loss_recon.item()
                 case_loss[cnt_file, 1] = loss_rdrop.item()
                 print("Loss: ", np.mean(case_loss[cnt_file, :]), "Recon: ", loss_recon.item(), "Rdropout: ", loss_rdrop.item())
