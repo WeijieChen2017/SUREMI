@@ -47,13 +47,15 @@ for name in model_list:
     test_dict["eval_save_folder"] = "pred_monai"
 
     train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
-    print("input size:", train_dict["input_size"])
-    print("alt_blk_depth", train_dict["model_para"]["macro_dropout"])
-
+    
     test_dict["seed"] = train_dict["seed"]
     test_dict["input_size"] = train_dict["input_size"]
     # test_dict["alt_blk_depth"] = train_dict["model_para"]["macro_dropout"]
     test_dict["alt_blk_depth"] = [2,2,2,2,2,2,2]
+
+    print("input size:", test_dict["input_size"])
+    print("alt_blk_depth", test_dict["alt_blk_depth"])
+
 
 
     for path in [test_dict["save_folder"], test_dict["save_folder"]+test_dict["eval_save_folder"]]:
