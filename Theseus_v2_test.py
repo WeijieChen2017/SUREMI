@@ -41,7 +41,7 @@ for name in model_list:
     test_dict["project_name"] = name # "Bayesian_MTGD_v2_unet_do10_MTGD15"
     test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
     test_dict["gpu_ids"] = [4]
-    test_dict["eval_file_cnt"] = 1
+    test_dict["eval_file_cnt"] = 5
     # test_dict["best_model_name"] = "model_best_193.pth"
     test_dict["eval_sample"] = 128
     test_dict["eval_save_folder"] = "pred_monai"
@@ -142,7 +142,7 @@ for name in model_list:
         output_data = np.median(output_array, axis=0)
         output_std = np.std(output_array, axis=0)
         output_mean = np.std(output_array, axis=0)
-        output_cov = np.divide(output_std, output_mean+1e-6)
+        output_cov = np.divide(output_std, output_mean+1e-12)
         print(output_data.shape)
 
         test_file = nib.Nifti1Image(np.squeeze(output_data), x_file.affine, x_file.header)
