@@ -30,6 +30,10 @@ model_list = [
     ["Theseus_v2_181_200_rdp1", [5], 1,],
     ["Theseus_v2_181_200_rdp10", [4], 10,],
     ["Theseus_v2_181_200_rdp100", [4], 100,],
+    ["Theseus_v2_181_200_rdp020", [3], 0.2,],
+    ["Theseus_v2_181_200_rdp040", [3], 0.4,],
+    ["Theseus_v2_181_200_rdp060", [4], 0.6,],
+    ["Theseus_v2_181_200_rdp080", [4], 0.8,],
     ]
 
 print("Model index: ", end="")
