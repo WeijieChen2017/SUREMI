@@ -96,7 +96,7 @@ hub_CT_name = [
     "rdp040",
     "rdp060",
     "rdp080",
-    "altr_unet"
+    "altr_unet",
     "base_unet",
     ]
 hub_CT_folder = [
