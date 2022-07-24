@@ -100,8 +100,8 @@ swm_1["up2.1"]     = "model.1.submodule.2"
 swm_1["up1.1"]     = "model.2"
 train_dict["state_weight_mapping_1"] = swm_1
 train_dict["state_weight_mapping_2"] = swm_1
-train_dict["target_model_1"] = "./project_dir/Unet_Monai_Iman_v3/model_best_47.pth"
-train_dict["target_model_2"] = "./project_dir/Unet_Monai_Iman_v3/model_best_57.pth"
+train_dict["target_model_1"] = "./project_dir/Unet_Monai_Iman_v3/model_best_047.pth"
+train_dict["target_model_2"] = "./project_dir/Unet_Monai_Iman_v3/model_best_057.pth"
 
 
 train_dict["folder_X"] = "./project_dir/Unet_Monai_Iman_v2/pred_monai/"
