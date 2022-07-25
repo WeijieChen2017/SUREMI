@@ -29,10 +29,10 @@ from utils import iter_all_order
 model_list = [
     "Theseus_v2_181_200_rdp0",
     "Theseus_v2_181_200_rdp1",
-    "Theseus_v2_181_200_rdp20",
-    "Theseus_v2_181_200_rdp40",
-    "Theseus_v2_181_200_rdp60",
-    "Theseus_v2_181_200_rdp80",
+    "Theseus_v2_181_200_rdp020",
+    "Theseus_v2_181_200_rdp040",
+    "Theseus_v2_181_200_rdp060",
+    "Theseus_v2_181_200_rdp080",
 ]
 
 
