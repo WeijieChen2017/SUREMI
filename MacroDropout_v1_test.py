@@ -40,7 +40,7 @@ for name in model_list:
     test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
     test_dict["project_name"] = name # "Bayesian_MTGD_v2_unet_do10_MTGD15"
     test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
-    test_dict["gpu_ids"] = [2]
+    test_dict["gpu_ids"] = [3]
     test_dict["eval_file_cnt"] = 10
     # test_dict["best_model_name"] = "model_best_193.pth"
     test_dict["eval_sample"] = 100
