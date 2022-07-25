@@ -153,7 +153,7 @@ for cnt_file, file_path in enumerate(file_list):
     output_data = np.median(output_array, axis=0)
     output_std = np.std(output_array, axis=0)
     output_mean = np.std(output_array, axis=0)
-    output_cov = np.divide(output_std, output_mean+1e-12)
+    # output_cov = np.divide(output_std, output_mean+1e-12)
     print(output_data.shape)
 
     test_file = nib.Nifti1Image(np.squeeze(output_data), x_file.affine, x_file.header)
@@ -166,7 +166,7 @@ for cnt_file, file_path in enumerate(file_list):
     nib.save(test_file, test_save_name)
     print(test_save_name)
 
-    test_file = nib.Nifti1Image(np.squeeze(output_cov), x_file.affine, x_file.header)
-    test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_cov.nii.gz")
+    test_file = nib.Nifti1Image(np.squeeze(output_mean), x_file.affine, x_file.header)
+    test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_mean.nii.gz")
     nib.save(test_file, test_save_name)
     print(test_save_name)
