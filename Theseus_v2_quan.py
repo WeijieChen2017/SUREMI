@@ -27,10 +27,10 @@ from model import UNet_MDO as UNet
 from utils import iter_all_order
 
 model_list = [
-    "MDO_v1_222222222",
-    "MDO_v2_333333333",
-    "MDO_v3_224484422",
-    "MDO_v4_884424488",
+    "Theseus_v2_181_200_rdp0",
+    "Theseus_v2_181_200_rdp1",
+    "Theseus_v2_181_200_rdp10",
+    "Theseus_v2_181_200_rdp100",
 ]
 
 
@@ -40,19 +40,22 @@ for name in model_list:
     test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
     test_dict["project_name"] = name # "Bayesian_MTGD_v2_unet_do10_MTGD15"
     test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
-    test_dict["gpu_ids"] = [2]
-    test_dict["eval_file_cnt"] = 10
+    test_dict["gpu_ids"] = [4]
+    test_dict["eval_file_cnt"] = 5
     # test_dict["best_model_name"] = "model_best_193.pth"
-    test_dict["eval_sample"] = 100
+    test_dict["eval_sample"] = 128
     test_dict["eval_save_folder"] = "pred_monai"
 
     train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
-    print("input size:", train_dict["input_size"])
-    print("alt_blk_depth", train_dict["model_para"]["macro_dropout"])
-
+    
     test_dict["seed"] = train_dict["seed"]
     test_dict["input_size"] = train_dict["input_size"]
-    test_dict["alt_blk_depth"] = train_dict["model_para"]["macro_dropout"]
+    # test_dict["alt_blk_depth"] = train_dict["model_para"]["macro_dropout"]
+    test_dict["alt_blk_depth"] = [2,2,2,2,2,2,2]
+
+    print("input size:", test_dict["input_size"])
+    print("alt_blk_depth", test_dict["alt_blk_depth"])
+
 
 
     for path in [test_dict["save_folder"], test_dict["save_folder"]+test_dict["eval_save_folder"]]:
@@ -113,12 +116,11 @@ for name in model_list:
         input_data = np.expand_dims(x_data, (0,1))
         input_data = torch.from_numpy(input_data).float().to(device)
 
-        # order_list = iter_all_order(test_dict["alt_blk_depth"])
-        order_list = iter_all_order([2,2,2,2,2,2,2,2,2])
+        order_list = iter_all_order(test_dict["alt_blk_depth"])
         order_list_cnt = len(order_list)
         output_array = np.zeros((order_list_cnt, ax, ay, az))
 
-        for idx_es in range(test_dict["eval_sample"]):
+        for idx_es in range(order_list_cnt):
             with torch.no_grad():
                 print(order_list[idx_es])
                 y_hat = sliding_window_inference(
@@ -133,14 +135,14 @@ for name in model_list:
                         cval=0.0, 
                         sw_device=device, 
                         device=device,
-                        # order=order_list[idx_es],
+                        order=order_list[idx_es],
                         )
                 output_array[idx_es, :, :, :] = y_hat.cpu().detach().numpy()
 
         output_data = np.median(output_array, axis=0)
         output_std = np.std(output_array, axis=0)
         output_mean = np.std(output_array, axis=0)
-        output_cov = np.divide(output_std, output_mean+1e-6)
+        output_cov = np.divide(output_std, output_mean+1e-12)
         print(output_data.shape)
 
         test_file = nib.Nifti1Image(np.squeeze(output_data), x_file.affine, x_file.header)
