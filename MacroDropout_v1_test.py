@@ -50,7 +50,7 @@ test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [3]
 test_dict["eval_file_cnt"] = 0
 # test_dict["best_model_name"] = "model_best_193.pth"
-test_dict["eval_sample"] = 40
+test_dict["eval_sample"] = 100
 test_dict["eval_save_folder"] = "pred_monai"
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
