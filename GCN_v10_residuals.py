@@ -50,7 +50,7 @@ class Unet_sigmoid(nn.Module):
 
 
 model_list = [
-    ["GCN_v10_residuals_L2", [5], ],
+    ["GCN_v10_residuals_L1", [5], ],
     ]
 
 print("Model index: ", end="")

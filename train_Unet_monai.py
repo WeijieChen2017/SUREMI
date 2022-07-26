@@ -2,7 +2,6 @@ import os
 import gc
 import glob
 import time
-# import wandb
 import random
 
 import numpy as np
@@ -59,18 +58,6 @@ for path in [train_dict["save_folder"], train_dict["save_folder"]+"npy/", train_
     if not os.path.exists(path):
         os.mkdir(path)
 
-# wandb.init(project=train_dict["project_name"])
-# config = wandb.config
-# config.in_chan = train_dict["input_channel"]
-# config.out_chan = train_dict["output_channel"]
-# config.epochs = train_dict["epochs"]
-# config.batch = train_dict["batch"]
-# config.dropout = train_dict["dropout"]
-# config.moodel_term = train_dict["model_term"]
-# config.loss_term = train_dict["loss_term"]
-# config.opt_lr = train_dict["opt_lr"]
-# config.opt_weight_decay = train_dict["opt_weight_decay"]
-
 np.save(train_dict["save_folder"]+"dict.npy", train_dict)
 
 
@@ -91,7 +78,6 @@ model = UNet(
     num_res_units=train_dict["model_related"]["num_res_units"]
     )
 
-# model = nn.DataParallel(model)
 model.train()
 model = model.to(device)
 criterion = nn.SmoothL1Loss()
@@ -198,7 +184,6 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 
             optimizer.zero_grad()
             y_hat = model(batch_x)
-            # print("Yhat size: ", y_hat.size())
             loss = criterion(y_hat, batch_y)
             if isTrain:
                 loss.backward()
@@ -223,6 +208,6 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 print("Checkpoint saved at Epoch {:03d}".format(idx_epoch + 1))
                 best_val_loss = np.mean(case_loss)
 
-        del batch_x, batch_y
-        gc.collect()
-        torch.cuda.empty_cache()
+        # del batch_x, batch_y
+        # gc.collect()
+        # torch.cuda.empty_cache()

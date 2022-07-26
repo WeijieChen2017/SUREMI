@@ -62,13 +62,15 @@ def filter_data(data, range_min, range_max):
 
 folder_CT_GT = "./data_dir/Iman_CT/norm/"
 hub_CT_name = [
-	"SUnetR_L2"
-	]
+    "SUnetR_L2"
+    ]
 hub_CT_folder = [
     "./project_dir/SwinUNETR_Iman_v4_mse/pred_monai/"
 ]
 
-hub_metric = ["rmse", "nrmse", "mae", "ssim", "psnr", "acutance", "dice_air", "dice_soft", "dice_bone"]
+hub_metric = ["rmse", "nrmse", "mae", "ssim", "psnr", "acutance", 
+              "dice_air", "dice_soft", "dice_bone",
+              "std_air", "std_soft", "std_bone"]
 
 for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
     list_CT_folder = sorted(glob.glob(CT_folder+"*.nii.gz"))

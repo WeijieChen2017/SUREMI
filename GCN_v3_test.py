@@ -27,7 +27,6 @@ name_array = [
 
 for name in name_array:
 
-
     test_dict = {}
     test_dict = {}
     test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
