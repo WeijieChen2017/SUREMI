@@ -102,7 +102,7 @@ table_metric = np.zeros((cnt_file_CT, cnt_metric))
 for cnt_CT, path_std in enumerate(list_std_folder):
     print(hub_CT_name[cnt_CT_folder]+" ===> [{:03d}]/[{:03d}]: --->".format(cnt_CT+1, cnt_file_CT), path_std, "<---")
     path_CT = path_std.replace("_std", "")
-    filename = os.path.basename(path_CT)
+    filename = os.path.basename(path_CT).replace("_xte", "")
     path_CT_GT = folder_CT_GT+filename
     file_std = nib.load(path_std)
     file_CT = nib.load(path_CT)
