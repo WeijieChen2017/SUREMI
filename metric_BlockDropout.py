@@ -85,7 +85,7 @@ hub_metric = ["rmse", "nrmse", "mae", "ssim", "psnr", "acutance",
 
 print("Model index: ", end="")
 current_model_idx = int(input()) - 1
-print(model_list[current_model_idx])
+print(hub_CT_folder[current_model_idx])
 time.sleep(1)
 
 cnt_CT_folder = current_model_idx
