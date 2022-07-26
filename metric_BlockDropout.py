@@ -43,7 +43,7 @@ def dice_coe(x, y, tissue="air"):
     return 2*TP / (2*TP + FN + FP)
 
 def std_region(std, ct, tissue):
-	if tissue == "air":
+    if tissue == "air":
         y_mask = filter_data(ct, -2000, -500)
     if tissue == "soft":
         y_mask = filter_data(ct, -500, 250)
@@ -64,12 +64,12 @@ def filter_data(data, range_min, range_max):
 
 folder_CT_GT = "./data_dir/Iman_CT/norm/"
 hub_CT_name = [
-	# "SUnetR_L2",
+    # "SUnetR_L2",
     "22222",
     "33333",
     "24842",
     "84248",
-	]
+    ]
 hub_CT_folder = [
     # "./project_dir/SwinUNETR_Iman_v4_mse/pred_monai/",
     "./project_dir/MDO_v1_222222222/pred_monai/",
