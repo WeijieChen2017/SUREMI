@@ -126,7 +126,7 @@ for cnt_file, file_path in enumerate(file_list):
     input_data = np.expand_dims(x_data, (0,1))
     input_data = torch.from_numpy(input_data).float().to(device)
 
-    order_list = iter_all_order(test_dict["alt_blk_depth"])
+    # order_list = iter_all_order(test_dict["alt_blk_depth"])
     order_list = iter_all_order([2,2,2,2,2,2,2,2,2])
     order_list_cnt = len(order_list)
     output_array = np.zeros((order_list_cnt, ax, ay, az))
@@ -152,7 +152,7 @@ for cnt_file, file_path in enumerate(file_list):
 
     output_data = np.median(output_array, axis=0)
     output_std = np.std(output_array, axis=0)
-    output_mean = np.std(output_array, axis=0)
+    output_mean = np.mean(output_array, axis=0)
     # output_cov = np.divide(output_std, output_mean+1e-12)
     print(output_data.shape)
 
