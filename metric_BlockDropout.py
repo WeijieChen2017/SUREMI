@@ -66,17 +66,29 @@ def filter_data(data, range_min, range_max):
 folder_CT_GT = "./data_dir/Iman_CT/norm/"
 hub_CT_name = [
     # "SUnetR_L2",
-    "22222",
-    "33333",
-    "24842",
-    "84248",
+    # "22222",
+    # "33333",
+    # "24842",
+    # "84248",
+    "e200_rdp_000",
+    "e200_rdp_020",
+    "e200_rdp_040",
+    "e200_rdp_060",
+    "e200_rdp_080",
+    "e200_rdp_100",
     ]
 hub_CT_folder = [
     # "./project_dir/SwinUNETR_Iman_v4_mse/pred_monai/",
-    "./project_dir/MDO_v1_222222222/pred_monai/",
-    "./project_dir/MDO_v2_333333333/pred_monai/",
-    "./project_dir/MDO_v3_224484422/pred_monai/",
-    "./project_dir/MDO_v4_884424488/pred_monai/",
+    # "./project_dir/MDO_v1_222222222/pred_monai/",
+    # "./project_dir/MDO_v2_333333333/pred_monai/",
+    # "./project_dir/MDO_v3_224484422/pred_monai/",
+    # "./project_dir/MDO_v4_884424488/pred_monai/",
+    "Theseus_v2_181_200_rdp0",
+    "Theseus_v2_181_200_rdp1",
+    "Theseus_v2_181_200_rdp020",
+    "Theseus_v2_181_200_rdp040",
+    "Theseus_v2_181_200_rdp060",
+    "Theseus_v2_181_200_rdp080",
 ]
 
 hub_metric = ["rmse", "nrmse", "mae", "ssim", "psnr", "acutance", 
@@ -90,7 +102,7 @@ print(hub_CT_folder[current_model_idx])
 time.sleep(1)
 
 cnt_CT_folder = current_model_idx
-CT_folder = hub_CT_folder[cnt_CT_folder]
+CT_folder = "./project_dir/"+hub_CT_folder[cnt_CT_folder]+"/pred_monai/"
 
 # for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
 list_std_folder = sorted(glob.glob(CT_folder+"*_std.nii.gz"))
@@ -100,10 +112,14 @@ cnt_metric = len(hub_metric)
 table_metric = np.zeros((cnt_file_CT, cnt_metric))
 
 for cnt_CT, path_std in enumerate(list_std_folder):
-    print(hub_CT_name[cnt_CT_folder]+" ===> [{:03d}]/[{:03d}]: --->".format(cnt_CT+1, cnt_file_CT), path_std, "<---")
+    # print(hub_CT_name[cnt_CT_folder]+" ===> [{:03d}]/[{:03d}]: --->".format(cnt_CT+1, cnt_file_CT), path_std, "<---")
     path_CT = path_std.replace("_std", "")
     filename = os.path.basename(path_CT).replace("_xte", "")
     path_CT_GT = folder_CT_GT+filename
+    print(path_std, path_CT, path_CT_GT)
+
+
+
     file_std = nib.load(path_std)
     file_CT = nib.load(path_CT)
     file_CT_GT = nib.load(path_CT_GT)

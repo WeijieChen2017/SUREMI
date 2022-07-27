@@ -98,7 +98,7 @@ data_div = np.load(os.path.join(test_dict["save_folder"], "data_division.npy"), 
 X_list = data_div['test_list_X']
 if test_dict["eval_file_cnt"] > 0:
     X_list = X_list[:test_dict["eval_file_cnt"]]
-
+X_list.sort()
 
 # ==================== training ====================
 
