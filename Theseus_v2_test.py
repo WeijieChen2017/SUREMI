@@ -27,12 +27,18 @@ from model import UNet_MDO as UNet
 from utils import iter_all_order
 
 model_list = [
-    "Theseus_v2_181_200_rdp0",
-    "Theseus_v2_181_200_rdp1",
-    "Theseus_v2_181_200_rdp020",
-    "Theseus_v2_181_200_rdp040",
-    "Theseus_v2_181_200_rdp060",
-    "Theseus_v2_181_200_rdp080",
+    # "Theseus_v2_181_200_rdp0",
+    # "Theseus_v2_181_200_rdp1",
+    # "Theseus_v2_181_200_rdp020",
+    # "Theseus_v2_181_200_rdp040",
+    # "Theseus_v2_181_200_rdp060",
+    # "Theseus_v2_181_200_rdp080",
+    "Theseus_v2_47_57_rdp000",
+    "Theseus_v2_47_57_rdp020",
+    "Theseus_v2_47_57_rdp040",
+    "Theseus_v2_47_57_rdp060",
+    "Theseus_v2_47_57_rdp080",
+    "Theseus_v2_47_57_rdp100",
 ]
 
 
@@ -50,10 +56,10 @@ test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 test_dict["project_name"] = name # "Bayesian_MTGD_v2_unet_do10_MTGD15"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
-test_dict["gpu_ids"] = [4]
+test_dict["gpu_ids"] = [2]
 test_dict["eval_file_cnt"] = 0
 # test_dict["best_model_name"] = "model_best_193.pth"
-test_dict["eval_sample"] = 100
+# test_dict["eval_sample"] = 100
 test_dict["eval_save_folder"] = "pred_monai"
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
@@ -98,7 +104,7 @@ data_div = np.load(os.path.join(test_dict["save_folder"], "data_division.npy"), 
 X_list = data_div['test_list_X']
 if test_dict["eval_file_cnt"] > 0:
     X_list = X_list[:test_dict["eval_file_cnt"]]
-X_list.sort()
+
 
 # ==================== training ====================
 
@@ -126,8 +132,8 @@ for cnt_file, file_path in enumerate(file_list):
     input_data = np.expand_dims(x_data, (0,1))
     input_data = torch.from_numpy(input_data).float().to(device)
 
-    # order_list = iter_all_order(test_dict["alt_blk_depth"])
-    order_list = iter_all_order([2,2,2,2,2,2,2,2,2])
+    order_list = iter_all_order(test_dict["alt_blk_depth"])
+    # order_list = iter_all_order([2,2,2,2,2,2,2,2,2])
     order_list_cnt = len(order_list)
     output_array = np.zeros((order_list_cnt, ax, ay, az))
 
@@ -146,7 +152,7 @@ for cnt_file, file_path in enumerate(file_list):
                     cval=0.0, 
                     sw_device=device, 
                     device=device,
-                    # order=order_list[idx_es],
+                    order=order_list[idx_es],
                     )
             output_array[idx_es, :, :, :] = y_hat.cpu().detach().numpy()
 
