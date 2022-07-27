@@ -48,7 +48,7 @@ test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 test_dict["project_name"] = name # "Bayesian_MTGD_v2_unet_do10_MTGD15"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [4]
-test_dict["eval_file_cnt"] = 1
+test_dict["eval_file_cnt"] = 0
 # test_dict["best_model_name"] = "model_best_193.pth"
 test_dict["eval_sample"] = 100
 test_dict["eval_save_folder"] = "pred_monai"
@@ -122,17 +122,18 @@ for cnt_file, file_path in enumerate(file_list):
     input_data = torch.from_numpy(input_data).float().to(device)
 
     # order_list = iter_all_order(test_dict["alt_blk_depth"])
-    order_list = iter_all_order([2,2,2,2,2,2,2,2,2])
-    order_list_cnt = len(order_list)
+    # order_list = iter_all_order([2,2,2,2,2,2,2,2,2])
+    # order_list_cnt = len(order_list)
+    order_list_cnt = test_dict["eval_sample"]
     output_array = np.zeros((order_list_cnt, ax, ay, az))
 
-    for idx_es in range(test_dict["eval_sample"]):
+    for idx_es in range(order_list_cnt):
         with torch.no_grad():
             # print(order_list[idx_es])
             y_hat = sliding_window_inference(
                     inputs = input_data, 
                     roi_size = test_dict["input_size"], 
-                    sw_batch_size = 8, 
+                    sw_batch_size = 16, 
                     predictor = model,
                     overlap=0.25, 
                     mode="gaussian", 
