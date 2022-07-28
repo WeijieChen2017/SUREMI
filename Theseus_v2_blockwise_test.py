@@ -228,7 +228,7 @@ for cnt_file, file_path in enumerate(file_list):
         cnt_input = 0
         for idx_x in range(set_feature_map[alt_idx].shape[0]):
             input_x1 = np.squeeze(set_feature_map[alt_idx][idx_x, :, :, :, :, :])
-            input_x2 = np.squeeze(set_feature_map[alt_idx][idx_x//2, :, :, :, :, :])
+            input_x2 = np.squeeze(set_feature_map[5-alt_idx][idx_x//2, :, :, :, :, :])
             input_x = np.concatenate([input_x1, input_x2], axis=1)
             input_x = torch.from_numpy(input_x).float().to(device)
             ans_blk = model(x=input_x, block_idx=block_idx+1)
