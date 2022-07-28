@@ -59,7 +59,7 @@ test_dict["project_name"] = name # "Bayesian_MTGD_v2_unet_do10_MTGD15"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [5]
 test_dict["eval_file_cnt"] = 0
-test_dict["batch"] = 8
+test_dict["batch"] = 12
 # test_dict["best_model_name"] = "model_best_193.pth"
 # test_dict["eval_sample"] = 100
 test_dict["eval_save_folder"] = "pred_monai"
@@ -243,9 +243,9 @@ for cnt_file, file_path in enumerate(file_list):
 
     for idx in range(len(set_feature_map)):
         std = np.std(set_feature_map[idx], axis=0)
-        mu = np.mean(set_feature_map[idx], axis=0)
-        cov = np.divide(std, np.abs(mu))
-        metric[cnt_file, idx] = np.mean(cov)
+        # mu = np.mean(set_feature_map[idx], axis=0)
+        # cov = np.divide(std, np.abs(mu))
+        metric[cnt_file, idx] = np.mean(std)
 
 save_name = "./metric/"+name+"_fm.npy"
 print(save_name)
