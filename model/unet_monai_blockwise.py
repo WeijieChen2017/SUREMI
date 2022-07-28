@@ -255,19 +255,19 @@ class UNet_Blockwise(nn.Module):
 
         else:
             if block_idx == 1:
-                return [self.down1[i](x) for i in range(self.alter_block[0])]
+                return [self.down1[i](x) for i in range(self.alter_block)]
             if block_idx == 2:
-                return [self.down2[i](x) for i in range(self.alter_block[1])]
+                return [self.down2[i](x) for i in range(self.alter_block)]
             if block_idx == 3:
-                return [self.down3[i](x) for i in range(self.alter_block[2])]
+                return [self.down3[i](x) for i in range(self.alter_block)]
             if block_idx == 4:
-                return [self.bottom[i](x) for i in range(self.alter_block[3])]
+                return [self.bottom[i](x) for i in range(self.alter_block)]
             if block_idx == 5:
-                return [self.up3[i](x) for i in range(self.alter_block[4])]
+                return [self.up3[i](x) for i in range(self.alter_block)]
             if block_idx == 6:
-                return [self.up2[i](x) for i in range(self.alter_block[5])]
+                return [self.up2[i](x) for i in range(self.alter_block)]
             if block_idx == 7:
-                return [self.up1[i](x) for i in range(self.alter_block[6])]
+                return [self.up1[i](x) for i in range(self.alter_block)]
 
         # print(x.size())         torch.Size([4, 1, 96, 96, 96])
         # print(x1.size())        torch.Size([4, 32, 48, 48, 48])
