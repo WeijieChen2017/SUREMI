@@ -243,13 +243,9 @@ for cnt_file, file_path in enumerate(file_list):
 
     for idx in range(len(set_feature_map)):
         # metric[cnt_file, idx]
-        print(set_feature_map[idx].shape)
         std = np.std(set_feature_map[idx], axis=0)
-        print(std.shape)
-        std = np.std(std, axis=0)
-        print(std.shape)
-        std = np.std(std)
-        print(std)
+        std_mean = np.mean(std)
+        print(std_mean)
 
 
 # save_name = "./metric/"+name+"_fm.npy"
