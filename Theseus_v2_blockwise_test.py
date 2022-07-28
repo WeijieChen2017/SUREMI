@@ -226,15 +226,17 @@ for cnt_file, file_path in enumerate(file_list):
         alt_idx = alt_idx_1 + 3
         block_idx = alt_idx + 1
         cnt_input = 0
+        de_factor = 2
         for idx_x in range(set_feature_map[alt_idx].shape[0]):
             input_x1 = np.squeeze(set_feature_map[alt_idx][idx_x, :, :, :, :, :])
-            input_x2 = np.squeeze(set_feature_map[5-alt_idx][idx_x//2, :, :, :, :, :])
+            input_x2 = np.squeeze(set_feature_map[5-alt_idx][idx_x//de_factor, :, :, :, :, :])
             input_x = np.concatenate([input_x1, input_x2], axis=1)
             input_x = torch.from_numpy(input_x).float().to(device)
             ans_blk = model(x=input_x, block_idx=block_idx+1)
             set_feature_map[block_idx][cnt_input, :, :, :, :, :] = ans_blk[0].cpu().detach().numpy()
             set_feature_map[block_idx][cnt_input+1, :, :, :, :, :] = ans_blk[1].cpu().detach().numpy()
             cnt_input += 2
+            de_factor *= de_factor
             print(input_x.shape)
 
 
