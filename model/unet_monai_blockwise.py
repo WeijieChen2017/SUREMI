@@ -27,7 +27,7 @@ __all__ = ["UNet_Blockwise", "UNet_blockwise", "Unet_Blockwise", "Unet_blockwise
 
 @export("monai.networks.nets")
 @alias("Unet")
-class UNet_Theseus(nn.Module):
+class UNet_Blockwise(nn.Module):
     """
     Enhanced version of UNet which has residual units implemented with the ResidualUnit class.
     The residual part uses a convolution to change the input dimensions to match the output dimensions
