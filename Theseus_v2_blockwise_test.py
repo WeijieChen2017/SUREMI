@@ -244,13 +244,12 @@ for cnt_file, file_path in enumerate(file_list):
     for idx in range(len(set_feature_map)):
         std = np.std(set_feature_map[idx], axis=0)
         mu = np.mean(set_feature_map[idx], axis=0)
-        cov = np.divide(std, mu)
-        print(np.mean(cov))
-#         metric[cnt_file, idx] = np.mean()
+        cov = np.divide(std, np.abs(mu))
+        metric[cnt_file, idx] = np.mean(cov)
 
-# save_name = "./metric/"+name+"_fm.npy"
-# print(save_name)
-# np.save(save_name, metric)
+save_name = "./metric/"+name+"_fm.npy"
+print(save_name)
+np.save(save_name, metric)
 
 
     # output_data = np.median(output_array, axis=0)
