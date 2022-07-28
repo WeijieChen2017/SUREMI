@@ -57,7 +57,7 @@ test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 test_dict["project_name"] = name # "Bayesian_MTGD_v2_unet_do10_MTGD15"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
-test_dict["gpu_ids"] = [2]
+test_dict["gpu_ids"] = [5]
 test_dict["eval_file_cnt"] = 0
 test_dict["batch"] = 8
 # test_dict["best_model_name"] = "model_best_193.pth"
@@ -160,6 +160,8 @@ np.zeros((128, test_dict["batch"], 1, 96, 96, 96)),
 
 # ==================== training ====================
 
+metric = np.zeros((len(X_list), len(set_feature_map)))
+
 file_list = X_list
 iter_tag = "test"
 cnt_total_file = len(file_list)
@@ -239,8 +241,16 @@ for cnt_file, file_path in enumerate(file_list):
             de_factor *= 2
             print(idx_x, input_x.shape)
 
-    for idx in range(6):
-        print(np.std(set_feature_map[idx]))
+    for idx in range(len(set_feature_map)):
+        # metric[cnt_file, idx]
+        std = np.std(set_feature_map[idx])
+        mean = np.std(set_feature_map[idx])
+        print(mean, std, std/mean)
+
+
+# save_name = "./metric/"+name+"_fm.npy"
+# print(save_name)
+# np.save(save_name, metric)
 
 
     # output_data = np.median(output_array, axis=0)
