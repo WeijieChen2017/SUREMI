@@ -236,7 +236,7 @@ for cnt_file, file_path in enumerate(file_list):
             set_feature_map[block_idx][cnt_input, :, :, :, :, :] = ans_blk[0].cpu().detach().numpy()
             set_feature_map[block_idx][cnt_input+1, :, :, :, :, :] = ans_blk[1].cpu().detach().numpy()
             cnt_input += 2
-            de_factor *= de_factor
+            de_factor *= 2
             print(input_x.shape)
 
 
