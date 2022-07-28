@@ -74,12 +74,24 @@ print("input size:", test_dict["input_size"])
 print("alt_blk_depth", test_dict["alt_blk_depth"])
 
 
+unet_dict = {}
+unet_dict["spatial_dims"] = 3
+unet_dict["in_channels"] = 1
+unet_dict["out_channels"] = 1
+unet_dict["channels"] = (32, 64, 128, 256)
+unet_dict["strides"] = (2, 2, 2)
+unet_dict["num_res_units"] = 4
+unet_dict["act"] = Act.PRELU
+unet_dict["normunet"] = Norm.INSTANCE
+unet_dict["dropout"] = 0.
+unet_dict["bias"] = True
+
 
 for path in [test_dict["save_folder"], test_dict["save_folder"]+test_dict["eval_save_folder"]]:
     if not os.path.exists(path):
         os.mkdir(path)
 
-np.save(test_dict["save_folder"]+"test_dict.npy", test_dict)
+np.save(test_dict["save_folder"]+"test_dict_blk.npy", test_dict)
 
 
 # ==================== basic settings ====================
