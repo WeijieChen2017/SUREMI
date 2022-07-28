@@ -239,6 +239,8 @@ for cnt_file, file_path in enumerate(file_list):
             de_factor *= 2
             print(idx_x, input_x.shape)
 
+    for idx in range(6):
+        print(np.std(set_feature_map[idx])
 
 
     # output_data = np.median(output_array, axis=0)
