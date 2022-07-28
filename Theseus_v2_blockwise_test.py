@@ -220,7 +220,7 @@ for cnt_file, file_path in enumerate(file_list):
             set_feature_map[block_idx][cnt_input, :, :, :, :, :] = ans_blk[0].cpu().detach().numpy()
             set_feature_map[block_idx][cnt_input+1, :, :, :, :, :] = ans_blk[1].cpu().detach().numpy()
             cnt_input += 2
-            print(cnt_input)
+            print(input_x.shape)
 
     for alt_idx_1 in range(3):
         alt_idx = alt_idx_1 + 3
@@ -229,13 +229,13 @@ for cnt_file, file_path in enumerate(file_list):
         for idx_x in range(set_feature_map[alt_idx].shape[0]):
             input_x1 = np.squeeze(set_feature_map[alt_idx][idx_x, :, :, :, :, :])
             input_x2 = np.squeeze(set_feature_map[alt_idx][idx_x//2, :, :, :, :, :])
-            input_x = np.concatenate([x1, x2], axis=1)
+            input_x = np.concatenate([input_x1, input_x2], axis=1)
             input_x = torch.from_numpy(input_x).float().to(device)
             ans_blk = model(x=input_x, block_idx=block_idx+1)
             set_feature_map[block_idx][cnt_input, :, :, :, :, :] = ans_blk[0].cpu().detach().numpy()
             set_feature_map[block_idx][cnt_input+1, :, :, :, :, :] = ans_blk[1].cpu().detach().numpy()
             cnt_input += 2
-            print(cnt_input)
+            print(input_x.shape)
 
 
 
