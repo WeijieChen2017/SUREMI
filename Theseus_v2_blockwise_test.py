@@ -244,7 +244,7 @@ for cnt_file, file_path in enumerate(file_list):
     for idx in range(len(set_feature_map)):
         std = np.std(set_feature_map[idx], axis=0)
         mu = np.mean(set_feature_map[idx], axis=0)
-        cov = np.divide(std/mu)
+        cov = np.divide(std, mu)
         print(np.mean(cov))
 #         metric[cnt_file, idx] = np.mean()
 
