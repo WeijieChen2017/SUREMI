@@ -43,6 +43,14 @@ def dice_coe(x, y, tissue="air"):
     TN, FP, FN, TP = CM.ravel()
     return 2*TP / (2*TP + FN + FP)
 
+def filter_data(data, range_min, range_max):
+    mask_1 = data < range_max
+    mask_2 = data > range_min
+    mask_1 = mask_1.astype(int)
+    mask_2 = mask_2.astype(int)
+    mask = mask_1 * mask_2
+    return mask
+
 def std_region(std, ct, tissue):
     if tissue == "air":
         y_mask = filter_data(ct, -2000, -500)
@@ -54,46 +62,65 @@ def std_region(std, ct, tissue):
     select_std = std[y_mask]
     return np.mean(select_std)
 
+def mae_region(pred, ct, tissue):
+    if tissue == "air":
+        y_mask = filter_data(ct, -2000, -500)
+    if tissue == "soft":
+        y_mask = filter_data(ct, -500, 250)
+    if tissue == "bone":
+        y_mask = filter_data(ct, 250, 3000)
+    y_mask = y_mask > 0.5
+    select_ct = ct[y_mask]
+    select_pred = pred[y_mask]
+    return np.mean(np.absolute(select_ct-select_pred))
 
-def filter_data(data, range_min, range_max):
-    mask_1 = data < range_max
-    mask_2 = data > range_min
-    mask_1 = mask_1.astype(int)
-    mask_2 = mask_2.astype(int)
-    mask = mask_1 * mask_2
-    return mask
+
 
 folder_CT_GT = "./data_dir/Iman_CT/norm/"
 hub_CT_name = [
     # "SUnetR_L2",
-    # "22222",
-    # "33333",
-    # "24842",
-    # "84248",
+    "22222",
+    "33333",
+    "24842",
+    "84248",
     "e200_rdp_000",
     "e200_rdp_020",
     "e200_rdp_040",
     "e200_rdp_060",
     "e200_rdp_080",
     "e200_rdp_100",
+    "e50_rdp_000",
+    "e50_rdp_020",
+    "e50_rdp_040",
+    "e50_rdp_060",
+    "e50_rdp_080",
+    "e50_rdp_100",
     ]
 hub_CT_folder = [
     # "./project_dir/SwinUNETR_Iman_v4_mse/pred_monai/",
-    # "./project_dir/MDO_v1_222222222/pred_monai/",
-    # "./project_dir/MDO_v2_333333333/pred_monai/",
-    # "./project_dir/MDO_v3_224484422/pred_monai/",
-    # "./project_dir/MDO_v4_884424488/pred_monai/",
+    "MDO_v1_222222222",
+    "MDO_v2_333333333",
+    "MDO_v3_224484422",
+    "MDO_v4_884424488",
     "Theseus_v2_181_200_rdp0",
     "Theseus_v2_181_200_rdp1",
     "Theseus_v2_181_200_rdp020",
     "Theseus_v2_181_200_rdp040",
     "Theseus_v2_181_200_rdp060",
     "Theseus_v2_181_200_rdp080",
+    "Theseus_v2_47_57_rdp000",
+    "Theseus_v2_47_57_rdp020",
+    "Theseus_v2_47_57_rdp040",
+    "Theseus_v2_47_57_rdp060",
+    "Theseus_v2_47_57_rdp080",
+    "Theseus_v2_47_57_rdp100",
 ]
 
-hub_metric = ["rmse", "nrmse", "mae", "ssim", "psnr", "acutance", 
+# "rmse", "nrmse", 
+hub_metric = ["mae", "ssim", "psnr", "acutance", 
               "dice_air", "dice_soft", "dice_bone",
-              "std_air", "std_soft", "std_bone",]
+              "std_air", "std_soft", "std_bone",
+              "mae_air", "mae_soft", "mae_bone",] 
 
 
 print("Model index: ", end="")
@@ -130,18 +157,21 @@ for cnt_CT, path_std in enumerate(list_std_folder):
     data_x = denorm_CT(data_CT)
     data_y = denorm_CT(data_CT_GT)
     
-    table_metric[cnt_CT, 0] = mean_squared_error(data_x, data_y)
-    table_metric[cnt_CT, 1] = np.sqrt(mean_squared_error(data_x, data_y))
-    table_metric[cnt_CT, 2] = mae(data_x, data_y)
-    table_metric[cnt_CT, 3] = ssim(data_x, data_y, data_range=4000)
-    table_metric[cnt_CT, 4] = psnr(data_x, data_y, data_range=4000)
-    table_metric[cnt_CT, 5] = acutance(data_x)
-    table_metric[cnt_CT, 6] = dice_coe(data_x, data_y, tissue="air")
-    table_metric[cnt_CT, 7] = dice_coe(data_x, data_y, tissue="soft")
-    table_metric[cnt_CT, 8] = dice_coe(data_x, data_y, tissue="bone")
-    table_metric[cnt_CT, 9] = std_region(data_std, data_y, tissue="air")
-    table_metric[cnt_CT, 10] = std_region(data_std, data_y, tissue="soft")
-    table_metric[cnt_CT, 11] = std_region(data_std, data_y, tissue="bone")
+    # table_metric[cnt_CT, 0] = mean_squared_error(data_x, data_y)
+    # table_metric[cnt_CT, 1] = np.sqrt(mean_squared_error(data_x, data_y))
+    table_metric[cnt_CT, 0] = mae(data_x, data_y)
+    table_metric[cnt_CT, 1] = ssim(data_x, data_y, data_range=4000)
+    table_metric[cnt_CT, 2] = psnr(data_x, data_y, data_range=4000)
+    table_metric[cnt_CT, 3] = acutance(data_x)
+    table_metric[cnt_CT, 4] = dice_coe(data_x, data_y, tissue="air")
+    table_metric[cnt_CT, 5] = dice_coe(data_x, data_y, tissue="soft")
+    table_metric[cnt_CT, 6] = dice_coe(data_x, data_y, tissue="bone")
+    table_metric[cnt_CT, 7] = std_region(data_std, data_y, tissue="air")
+    table_metric[cnt_CT, 8] = std_region(data_std, data_y, tissue="soft")
+    table_metric[cnt_CT, 9] = std_region(data_std, data_y, tissue="bone")
+    table_metric[cnt_CT, 10] = std_region(data_x, data_y, tissue="air")
+    table_metric[cnt_CT, 11] = std_region(data_x, data_y, tissue="soft")
+    table_metric[cnt_CT, 12] = std_region(data_x, data_y, tissue="bone")
 
 save_name = "./metric/"+hub_CT_name[cnt_CT_folder]+"_"+"_".join(hub_metric)+".npy"
 print(save_name)
