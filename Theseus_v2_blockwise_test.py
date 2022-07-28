@@ -34,12 +34,12 @@ model_list = [
     # "Theseus_v2_181_200_rdp040",
     # "Theseus_v2_181_200_rdp060",
     # "Theseus_v2_181_200_rdp080",
-    "Theseus_v2_47_57_rdp000",
-    "Theseus_v2_47_57_rdp020",
-    "Theseus_v2_47_57_rdp040",
-    "Theseus_v2_47_57_rdp060",
-    "Theseus_v2_47_57_rdp080",
-    "Theseus_v2_47_57_rdp100",
+    ["Theseus_v2_47_57_rdp000", [1]],
+    ["Theseus_v2_47_57_rdp020", [1]],
+    ["Theseus_v2_47_57_rdp040", [1]],
+    ["Theseus_v2_47_57_rdp060", [2]],
+    ["Theseus_v2_47_57_rdp080", [2]],
+    ["Theseus_v2_47_57_rdp100", [2]],
 ]
 
 
@@ -48,8 +48,9 @@ current_model_idx = int(input()) - 1
 print(model_list[current_model_idx])
 time.sleep(1)
 
-name = model_list[current_model_idx]
-
+item = model_list[current_model_idx]
+name = item[0]
+test_dict["gpu_ids"] = item[1]
 
 # for name in model_list:
 test_dict = {}
@@ -57,9 +58,8 @@ test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 test_dict["project_name"] = name # "Bayesian_MTGD_v2_unet_do10_MTGD15"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
-test_dict["gpu_ids"] = [5]
 test_dict["eval_file_cnt"] = 0
-test_dict["batch"] = 12
+test_dict["batch"] = 8
 # test_dict["best_model_name"] = "model_best_193.pth"
 # test_dict["eval_sample"] = 100
 test_dict["eval_save_folder"] = "pred_monai"
