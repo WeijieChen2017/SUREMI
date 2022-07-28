@@ -148,14 +148,14 @@ X_list.sort()
 # ==================== fm array ====================
 
 set_feature_map = [
-np.zeros((2, test_dict["batch"], 1, 96, 96, 96)),
-np.zeros((4, test_dict["batch"], 32, 48, 48, 48)),
-np.zeros((8, test_dict["batch"], 64, 24, 24, 24)),
-np.zeros((16, test_dict["batch"], 128, 12, 12, 12)),
-np.zeros((32, test_dict["batch"], 256, 12, 12, 12)),
-np.zeros((64, test_dict["batch"], 64, 24, 24, 24)),
-np.zeros((128, test_dict["batch"], 32, 48, 48, 48)),
-np.zeros((256, test_dict["batch"], 1, 96, 96, 96)),
+np.zeros((1, test_dict["batch"], 1, 96, 96, 96)),
+np.zeros((2, test_dict["batch"], 32, 48, 48, 48)),
+np.zeros((4, test_dict["batch"], 64, 24, 24, 24)),
+np.zeros((8, test_dict["batch"], 128, 12, 12, 12)),
+np.zeros((16, test_dict["batch"], 256, 12, 12, 12)),
+np.zeros((32, test_dict["batch"], 64, 24, 24, 24)),
+np.zeros((64, test_dict["batch"], 32, 48, 48, 48)),
+np.zeros((128, test_dict["batch"], 1, 96, 96, 96)),
 ]
 
 # ==================== training ====================
@@ -201,14 +201,16 @@ for cnt_file, file_path in enumerate(file_list):
         batch_x[idx_batch, 0, :, :, :] = x_slice
         # batch_y[idx_batch, 0, :, :, :] = y_slice
 
-    batch_x = torch.from_numpy(batch_x).float().to(device)
+    # batch_x = torch.from_numpy(batch_x).float().to(device)
     # batch_y = torch.from_numpy(batch_y).float().to(device)
 
-    ans_blk_1 = model(x=batch_x, block_idx=1)
-    set_feature_map[0][0, :, :, :, :, :] = ans_blk_1[0].cpu().detach().numpy()
-    set_feature_map[0][1, :, :, :, :, :] = ans_blk_1[1].cpu().detach().numpy()
+    set_feature_map[0][0, :, :, :, :, :] = batch_x
+
+    # ans_blk_1 = model(x=batch_x, block_idx=1)
+    # set_feature_map[0][0, :, :, :, :, :] = ans_blk_1[0].cpu().detach().numpy()
+    # set_feature_map[0][1, :, :, :, :, :] = ans_blk_1[1].cpu().detach().numpy()
     
-    for alt_idx in range(4):
+    for alt_idx in range(5):
         block_idx = alt_idx + 1
         cnt_input = 0
         for idx_x in range(set_feature_map[alt_idx].shape[0]):
