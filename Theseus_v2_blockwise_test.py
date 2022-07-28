@@ -216,7 +216,7 @@ for cnt_file, file_path in enumerate(file_list):
         for idx_x in range(set_feature_map[alt_idx].shape[0]):
             input_x = np.squeeze(set_feature_map[alt_idx][idx_x, :, :, :, :, :])
             input_x = torch.from_numpy(input_x).float().to(device)
-            ans_blk = model(x=input_x, block_idx=block_idx)
+            ans_blk = model(x=input_x, block_idx=block_idx+1)
             set_feature_map[block_idx][cnt_input, :, :, :, :, :] = ans_blk[0].cpu().detach().numpy()
             set_feature_map[block_idx][cnt_input+1, :, :, :, :, :] = ans_blk[1].cpu().detach().numpy()
             cnt_input += 2
