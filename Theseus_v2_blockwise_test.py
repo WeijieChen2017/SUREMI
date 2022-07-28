@@ -59,6 +59,7 @@ test_dict["project_name"] = name # "Bayesian_MTGD_v2_unet_do10_MTGD15"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [2]
 test_dict["eval_file_cnt"] = 0
+test_dict["batch"] = 8
 # test_dict["best_model_name"] = "model_best_193.pth"
 # test_dict["eval_sample"] = 100
 test_dict["eval_save_folder"] = "pred_monai"
