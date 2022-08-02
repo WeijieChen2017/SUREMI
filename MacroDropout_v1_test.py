@@ -59,12 +59,12 @@ test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = [4]
 test_dict["eval_file_cnt"] = 0
 # test_dict["best_model_name"] = "model_best_193.pth"
-test_dict["eval_sample"] = 100
+test_dict["eval_sample"] = 128
 test_dict["eval_save_folder"] = "pred_monai"
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
 print("input size:", train_dict["input_size"])
-print("alt_blk_depth", train_dict["model_para"]["macro_dropout"])
+# print("alt_blk_depth", train_dict["model_para"]["macro_dropout"])
 
 test_dict["seed"] = train_dict["seed"]
 test_dict["input_size"] = train_dict["input_size"]
