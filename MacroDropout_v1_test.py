@@ -27,10 +27,19 @@ from model import UNet_MDO as UNet
 from utils import iter_all_order
 
 model_list = [
-    "MDO_v1_222222222",
-    "MDO_v2_333333333",
-    "MDO_v3_224484422",
-    "MDO_v4_884424488",
+    # "MDO_v1_222222222",
+    # "MDO_v2_333333333",
+    # "MDO_v3_224484422",
+    # "MDO_v4_884424488",
+    # "Bayesian_unet_v12_unet_drop10",
+    # "Bayesian_unet_v13_unet_drop25",
+    # "Bayesian_unet_v14_unet_drop50",
+    # "Bayesian_unet_v15_unet_drop75",
+    "RDO_v1_R00001_D50",
+    "RDO_v1_R00010_D50",
+    "RDO_v1_R00100_D25",
+    "RDO_v1_R00100_D50",
+    "RDO_v1_R00100_D75",
 ]
 
 
