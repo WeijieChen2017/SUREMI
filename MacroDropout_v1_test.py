@@ -68,7 +68,7 @@ print("input size:", train_dict["input_size"])
 
 test_dict["seed"] = train_dict["seed"]
 test_dict["input_size"] = train_dict["input_size"]
-test_dict["alt_blk_depth"] = train_dict["model_para"]["macro_dropout"]
+# test_dict["alt_blk_depth"] = train_dict["model_para"]["macro_dropout"]
 
 
 for path in [test_dict["save_folder"], test_dict["save_folder"]+test_dict["eval_save_folder"]]:
