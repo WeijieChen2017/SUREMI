@@ -241,7 +241,7 @@ class UNet_channelDO(nn.Module):
             x = x[:, idx, :, :, :]
         else:
             score = torch.mean(x, axis=(0, 2, 3, 4))
-            base = torch.rand(score.size())
+            base = torch.rand(score.size()).to(torch.device('cuda'))
             score = torch.pow(base, score)
             order = torch.argsort(score)
             x = x[:, order, :, :, :]
