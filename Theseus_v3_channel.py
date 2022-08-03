@@ -27,10 +27,10 @@ import bnn
 from model import UNet_channelDO as UNet
 
 model_list = [
-    ["Theseus_v3_channelDO_rdp050", [6], 0.5,],
-    ["Theseus_v3_channelDO_rdp100", [6], 1,],
-    ["Theseus_v3_channelDOw_rdp050", [6], 0.5,],
-    ["Theseus_v3_channelDOw_rdp100", [6], 1,],
+    ["Theseus_v3_channelDO_rdp050", [6], 0.5, False],
+    ["Theseus_v3_channelDO_rdp100", [6], 1.0, False],
+    ["Theseus_v3_channelDOw_rdp050", [6], 0.5, True],
+    ["Theseus_v3_channelDOw_rdp100", [6], 1.0, True],
     ]
 
 print("Model index: ", end="")
@@ -45,6 +45,7 @@ train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 train_dict["project_name"] = model_list[current_model_idx][0]
 train_dict["gpu_ids"] = model_list[current_model_idx][1]
 train_dict["alpha_dropout_consistency"] = model_list[current_model_idx][2]
+train_dict["is_weighted_dropout"] = model_list[current_model_idx][3]
 
 train_dict["dropout"] = 0.
 train_dict["loss_term"] = "SmoothL1Loss"
@@ -141,6 +142,7 @@ model = UNet(
     norm=unet_dict["normunet"],
     dropout=unet_dict["dropout"],
     bias=unet_dict["bias"],
+    is_WDO = train_dict["is_weighted_dropout"],
     )
 
 # pretrain_1 = torch.load(train_dict["target_model_1"])

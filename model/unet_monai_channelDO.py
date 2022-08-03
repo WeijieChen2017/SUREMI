@@ -128,6 +128,7 @@ class UNet_channelDO(nn.Module):
         bias: bool = True,
         adn_ordering: str = "NDA",
         dimensions: Optional[int] = None,
+        is_WDO: False,
     ) -> None:
 
         super().__init__()
@@ -161,6 +162,7 @@ class UNet_channelDO(nn.Module):
         self.dropout = dropout
         self.bias = bias
         self.adn_ordering = adn_ordering
+        self.is_WDO = is_WDO
 
 
         # UNet( 
@@ -231,32 +233,38 @@ class UNet_channelDO(nn.Module):
         # self.up2 = nn.ModuleList(self.up2)
         # self.up1 = nn.ModuleList(self.up1)
         
-    def channel_dropout(self, x, is_weighted = False):
+    def channel_dropout(self, x, is_WDO = False):
 
         len_channel = x.size()[1]
-        idx = torch.randperm(x.shape[1])
-        x = x[:, idx, :, :, :].view(x.size())
-        x = x[:, len_channel//2:, :, :, :]
+        if not is_WDO:
+            idx = torch.randperm(x.shape[1])
+            x = x[:, idx, :, :, :]
+        else:
+            score = torch.mean(x, axis=(0, 2, 3, 4))
+            base = torch.rand(score.size())
+            score = torch.pow(base, score)
+            order = torch.argsort(score)
+            x = x[:, order, :, :, :]
 
-        return x
+        return x[:, len_channel//2:, :, :, :]
 
     def forward(self, x: torch.Tensor, order:Sequence[int] = []) -> torch.Tensor:
 
-        print(x.size())
-        x1 = self.channel_dropout(self.down1(x))
-        print(x1.size())
-        x2 = self.channel_dropout(self.down2(x1))
-        print(x2.size())
-        x3 = self.channel_dropout(self.down3(x2))
-        print(x3.size())
-        xb = self.channel_dropout(self.bottom(x3))
-        print(xb.size())
-        x5 = self.channel_dropout(self.up3(torch.cat([x3, xb], dim=1)))
-        print(x5.size())
-        x6 = self.channel_dropout(self.up2(torch.cat([x2, x5], dim=1)))
-        print(x6.size())
+        # print(x.size())
+        x1 = self.channel_dropout(self.down1(x), self.is_WDO)
+        # print(x1.size())
+        x2 = self.channel_dropout(self.down2(x1), self.is_WDO)
+        # print(x2.size())
+        x3 = self.channel_dropout(self.down3(x2), self.is_WDO)
+        # print(x3.size())
+        xb = self.channel_dropout(self.bottom(x3), self.is_WDO)
+        # print(xb.size())
+        x5 = self.channel_dropout(self.up3(torch.cat([x3, xb], dim=1)), self.is_WDO)
+        # print(x5.size())
+        x6 = self.channel_dropout(self.up2(torch.cat([x2, x5], dim=1)), self.is_WDO)
+        # print(x6.size())
         x7 = self.up1(torch.cat([x1, x6], dim=1))
-        print(x7.size())
+        # print(x7.size())
 
         # print(x.size())         torch.Size([4, 1, 96, 96, 96])
         # print(x1.size())        torch.Size([4, 32, 48, 48, 48])
