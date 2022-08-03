@@ -23,7 +23,8 @@ from monai.networks.layers.factories import Act, Norm
 import bnn
 
 # from utils import add_noise, weighted_L1Loss
-from model import UNet_Theseus as UNet
+# from model import UNet_Theseus as UNet
+from model import UNet_channelDO as UNet
 
 model_list = [
     ["Theseus_v3_channelDO_rdp050", [5], 0.5,],

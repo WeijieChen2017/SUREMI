@@ -26,3 +26,4 @@ from .GCN import GCN
 from .unet_macro_dropout import UNet_MDO
 from .unet_monai_theseus import UNet_Theseus
 from .unet_monai_blockwise import UNet_Blockwise
+from .unet_monai_channelDO import UNet_channelDO
