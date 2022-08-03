@@ -29,8 +29,8 @@ from model import UNet_channelDO as UNet
 model_list = [
     ["Theseus_v3_channelDO_rdp050", [6], 0.5, False],
     ["Theseus_v3_channelDO_rdp100", [6], 1.0, False],
-    ["Theseus_v3_channelDOw_rdp050", [6], 0.5, True],
-    ["Theseus_v3_channelDOw_rdp100", [6], 1.0, True],
+    ["Theseus_v3_channelDOw_rdp050", [7], 0.5, True],
+    ["Theseus_v3_channelDOw_rdp100", [7], 1.0, True],
     ]
 
 print("Model index: ", end="")
@@ -55,7 +55,7 @@ train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 train_dict["input_size"] = [96, 96, 96]
 train_dict["epochs"] = 200
-train_dict["batch"] = 16
+train_dict["batch"] = 12
 train_dict["well_trained_model"] = "./project_dir/Unet_Monai_Iman_v2/model_best_181.pth"
 
 train_dict["model_term"] = "Monai_Unet_MacroDropout"
