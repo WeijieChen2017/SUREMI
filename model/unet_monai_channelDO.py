@@ -235,7 +235,7 @@ class UNet_channelDO(nn.Module):
 
         len_channel = x.size()[1]
         idx = torch.randperm(x.shape[1])
-        x = t[idx].view(x.size())
+        x = x[idx].view(x.size())
         x = x[:, len_channel//2:, :, :, :]
 
         return x
