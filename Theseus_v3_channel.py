@@ -27,10 +27,10 @@ import bnn
 from model import UNet_channelDO as UNet
 
 model_list = [
-    ["Theseus_v3_channelDO_rdp050", [5], 0.5,],
-    ["Theseus_v3_channelDO_rdp100", [5], 1,],
-    ["Theseus_v3_channelDOw_rdp050", [5], 0.5,],
-    ["Theseus_v3_channelDOw_rdp100", [5], 1,],
+    ["Theseus_v3_channelDO_rdp050", [6], 0.5,],
+    ["Theseus_v3_channelDO_rdp100", [6], 1,],
+    ["Theseus_v3_channelDOw_rdp050", [6], 0.5,],
+    ["Theseus_v3_channelDOw_rdp100", [6], 1,],
     ]
 
 print("Model index: ", end="")
