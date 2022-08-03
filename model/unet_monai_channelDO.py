@@ -242,13 +242,13 @@ class UNet_channelDO(nn.Module):
 
     def forward(self, x: torch.Tensor, order:Sequence[int] = []) -> torch.Tensor:
 
-        x1 = channel_dropout(self.down1(x))
+        x1 = self.channel_dropout(self.down1(x))
 
-        x2 = channel_dropout(self.down2(x1))
-        x3 = channel_dropout(self.down3(x2))
-        xb = channel_dropout(self.bottom(x3))
-        x5 = channel_dropout(self.up3(torch.cat([x3, xb], dim=1)))
-        x6 = channel_dropout(self.up2(torch.cat([x2, x5], dim=1)))
+        x2 = self.channel_dropout(self.down2(x1))
+        x3 = self.channel_dropout(self.down3(x2))
+        xb = self.channel_dropout(self.bottom(x3))
+        x5 = self.channel_dropout(self.up3(torch.cat([x3, xb], dim=1)))
+        x6 = self.channel_dropout(self.up2(torch.cat([x2, x5], dim=1)))
         x7 = self.up1(torch.cat([x1, x6], dim=1))
 
         # print(x.size())         torch.Size([4, 1, 96, 96, 96])
