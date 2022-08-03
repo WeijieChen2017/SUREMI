@@ -128,7 +128,7 @@ class UNet_channelDO(nn.Module):
         bias: bool = True,
         adn_ordering: str = "NDA",
         dimensions: Optional[int] = None,
-        is_WDO: False,
+        is_WDO: bool = False,
     ) -> None:
 
         super().__init__()
