@@ -60,10 +60,11 @@ train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
 test_dict["seed"] = train_dict["seed"]
 test_dict["input_size"] = train_dict["input_size"]
 # test_dict["alt_blk_depth"] = train_dict["model_para"]["macro_dropout"]
-test_dict["alt_blk_depth"] = [2,2,2,2,2,2,2]
+# test_dict["alt_blk_depth"] = [2,2,2,2,2,2,2]
 
 print("input size:", test_dict["input_size"])
-print("alt_blk_depth", test_dict["alt_blk_depth"])
+# print("alt_blk_depth", test_dict["alt_blk_depth"])
+print("is weighted dropout?", model.is_WDO)
 
 
 
@@ -90,7 +91,6 @@ target_model = model_list[-1]
 # target_model = test_dict["save_folder"]+test_dict["best_model_name"]
 model = torch.load(target_model, map_location=torch.device('cpu'))
 print("--->", target_model, " is loaded.")
-print(model.is_WDO)
 
 # ==================== data division ====================
 
