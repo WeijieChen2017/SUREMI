@@ -45,6 +45,12 @@ model_list = [
     "Theseus_v3_channelDOw_rdp100",
 ]
 
+arg = [
+    False,
+    False,
+    True,
+    True,
+]
 
 print("Model index: ", end="")
 current_model_idx = int(input()) - 1
@@ -75,6 +81,7 @@ test_dict["alt_blk_depth"] = [2,2,2,2,2,2,2]
 
 print("input size:", test_dict["input_size"])
 print("alt_blk_depth", test_dict["alt_blk_depth"])
+print("is_WDO:", arg[current_model_idx])
 
 
 
@@ -157,6 +164,7 @@ for cnt_file, file_path in enumerate(file_list):
                     cval=0.0, 
                     sw_device=device, 
                     device=device,
+                    is_WDO=arg[current_model_idx],
                     # order=order_list[idx_es],
                     )
             output_array[idx_es, :, :, :] = y_hat.cpu().detach().numpy()
