@@ -33,12 +33,16 @@ model_list = [
     # "Theseus_v2_181_200_rdp040",
     # "Theseus_v2_181_200_rdp060",
     # "Theseus_v2_181_200_rdp080",
-    "Theseus_v2_47_57_rdp000",
-    "Theseus_v2_47_57_rdp020",
-    "Theseus_v2_47_57_rdp040",
-    "Theseus_v2_47_57_rdp060",
-    "Theseus_v2_47_57_rdp080",
-    "Theseus_v2_47_57_rdp100",
+    # "Theseus_v2_47_57_rdp000",
+    # "Theseus_v2_47_57_rdp020",
+    # "Theseus_v2_47_57_rdp040",
+    # "Theseus_v2_47_57_rdp060",
+    # "Theseus_v2_47_57_rdp080",
+    # "Theseus_v2_47_57_rdp100",
+    "Theseus_v3_channelDO_rdp050",
+    "Theseus_v3_channelDO_rdp100",
+    "Theseus_v3_channelDOw_rdp050",
+    "Theseus_v3_channelDOw_rdp100",
 ]
 
 
@@ -56,7 +60,7 @@ test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 test_dict["project_name"] = name # "Bayesian_MTGD_v2_unet_do10_MTGD15"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
-test_dict["gpu_ids"] = [2]
+test_dict["gpu_ids"] = [6]
 test_dict["eval_file_cnt"] = 0
 # test_dict["best_model_name"] = "model_best_193.pth"
 # test_dict["eval_sample"] = 100
@@ -153,7 +157,7 @@ for cnt_file, file_path in enumerate(file_list):
                     cval=0.0, 
                     sw_device=device, 
                     device=device,
-                    order=order_list[idx_es],
+                    # order=order_list[idx_es],
                     )
             output_array[idx_es, :, :, :] = y_hat.cpu().detach().numpy()
 
