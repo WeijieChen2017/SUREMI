@@ -90,6 +90,7 @@ target_model = model_list[-1]
 # target_model = test_dict["save_folder"]+test_dict["best_model_name"]
 model = torch.load(target_model, map_location=torch.device('cpu'))
 print("--->", target_model, " is loaded.")
+print(model.is_WDO)
 
 # ==================== data division ====================
 
@@ -147,7 +148,7 @@ for cnt_file, file_path in enumerate(file_list):
                     sw_device=device, 
                     device=device,
                     # order=order_list[idx_es],
-                    is_WDO=model_list[current_model_idx][-1],
+                    # is_WDO=model_list[current_model_idx][-1],
                     )
             output_array[idx_es, :, :, :] = y_hat.cpu().detach().numpy()
 
