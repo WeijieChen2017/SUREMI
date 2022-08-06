@@ -23,22 +23,15 @@ from monai.networks.layers.factories import Act, Norm
 from monai.inferers import sliding_window_inference
 import bnn
 
-from model import UNet_MDO as UNet
+# from model import UNet_MDO as UNet
 from utils import iter_all_order
+from model import UNet_channelDO as UNet
 
 model_list = [
-    # "Theseus_v2_181_200_rdp0",
-    # "Theseus_v2_181_200_rdp1",
-    # "Theseus_v2_181_200_rdp020",
-    # "Theseus_v2_181_200_rdp040",
-    # "Theseus_v2_181_200_rdp060",
-    # "Theseus_v2_181_200_rdp080",
-    "Theseus_v2_47_57_rdp000",
-    "Theseus_v2_47_57_rdp020",
-    "Theseus_v2_47_57_rdp040",
-    "Theseus_v2_47_57_rdp060",
-    "Theseus_v2_47_57_rdp080",
-    "Theseus_v2_47_57_rdp100",
+    ["Theseus_v3_channelDO_rdp050", [6], 0.5, False],
+    ["Theseus_v3_channelDO_rdp100", [6], 1.0, False],
+    ["Theseus_v3_channelDOw_rdp050", [7], 0.5, True],
+    ["Theseus_v3_channelDOw_rdp100", [7], 1.0, True],
 ]
 
 
@@ -47,7 +40,7 @@ current_model_idx = int(input()) - 1
 print(model_list[current_model_idx])
 time.sleep(1)
 
-name = model_list[current_model_idx]
+name = model_list[current_model_idx][0]
 
 
 # for name in model_list:
@@ -153,7 +146,8 @@ for cnt_file, file_path in enumerate(file_list):
                     cval=0.0, 
                     sw_device=device, 
                     device=device,
-                    order=order_list[idx_es],
+                    # order=order_list[idx_es],
+                    is_WDO=model_list[current_model_idx][-1],
                     )
             output_array[idx_es, :, :, :] = y_hat.cpu().detach().numpy()
 
