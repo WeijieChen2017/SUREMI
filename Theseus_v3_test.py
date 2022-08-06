@@ -64,7 +64,6 @@ test_dict["input_size"] = train_dict["input_size"]
 
 print("input size:", test_dict["input_size"])
 # print("alt_blk_depth", test_dict["alt_blk_depth"])
-print("is weighted dropout?", model.is_WDO)
 
 
 
@@ -90,7 +89,7 @@ if "curr" in model_list[-1]:
 target_model = model_list[-1]
 # target_model = test_dict["save_folder"]+test_dict["best_model_name"]
 model = torch.load(target_model, map_location=torch.device('cpu'))
-print("--->", target_model, " is loaded.")
+print("--->", target_model, " is loaded.", "Is it weighted dropout?", model.is_WDO)
 
 # ==================== data division ====================
 
