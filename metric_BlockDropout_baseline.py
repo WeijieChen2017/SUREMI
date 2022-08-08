@@ -81,7 +81,7 @@ hub_CT_name = [
     "base_unet",
     ]
 hub_CT_folder = [
-    "Theseus_v3_channelDO_rdp050",
+    "Unet_Monai_Iman_v2",
 ]
 
 # "rmse", "nrmse", 
@@ -100,18 +100,18 @@ cnt_CT_folder = current_model_idx
 CT_folder = "./project_dir/"+hub_CT_folder[cnt_CT_folder]+"/pred_monai/"
 
 # for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
-list_std_folder = sorted(glob.glob(CT_folder+"*_std.nii.gz"))
+list_std_folder = sorted(glob.glob(CT_folder+"*_zte.nii.gz"))
 cnt_file_CT = len(list_std_folder)
 cnt_metric = len(hub_metric)
 
 table_metric = np.zeros((cnt_file_CT, cnt_metric))
 
-for cnt_CT, path_std in enumerate(list_std_folder):
+for cnt_CT, path_CT in enumerate(list_std_folder):
     # print(hub_CT_name[cnt_CT_folder]+" ===> [{:03d}]/[{:03d}]: --->".format(cnt_CT+1, cnt_file_CT), path_std, "<---")
-    path_CT = path_std.replace("_std", "_ztr")
-    path_CT = path_CT.replace(hub_CT_folder[cnt_CT_folder], "Unet_Monai_Iman_v2")
+    # path_CT = path_std.replace("_std", "_ztr")
+    # path_CT = path_CT.replace(hub_CT_folder[cnt_CT_folder], "Unet_Monai_Iman_v2")
     filename = os.path.basename(path_CT)
-    path_CT_GT = path_CT.replace("_ztr", "_ytr")
+    path_CT_GT = path_CT.replace("_zte", "_yte")
     print(path_CT, path_CT_GT)
 
 #     file_std = nib.load(path_std)
