@@ -63,18 +63,15 @@ hub_CT_folder = [
 ]
 
 for idx_model, model_name in enumerate(hub_CT_folder):
-    model_folder = "./project_dir/"+model_name+"model_best_*.pth"
+    model_folder = "./project_dir/"+model_name+"/model_best_*.pth"
     model_list = sorted(model_folder)
-    if "curr" in model_list[-1]:
-        print("Remove model_best_curr")
-        model_list.pop()
     target_model = model_list[-1]
     # model = torch.load(target_model, map_location=torch.device('cpu'))
     print("--->", target_model, " is loaded.")
-    
+
 
 
 
 # save_name = "./metric/"+hub_CT_name[cnt_CT_folder]+"_"+"_".join(hub_metric)+".npy"
 # print(save_name)
-np.save(save_name, table_metric)
+# np.save(save_name, table_metric)
