@@ -59,11 +59,9 @@ noise_level_list = [
 
 print("Model index: ", end="")
 current_model_idx = int(input()) - 1
-print(model_list[current_model_idx])
-time.sleep(1)
-
 name = model_list[0]
 noise_level = noise_level_list[current_model_idx]
+time.sleep(1)
 
 
 # for name in model_list:
@@ -85,6 +83,7 @@ test_dict["input_size"] = train_dict["input_size"]
 # test_dict["alt_blk_depth"] = train_dict["model_para"]["macro_dropout"]
 test_dict["alt_blk_depth"] = [2,2,2,2,2,2,2]
 
+print("model name:", name)
 print("input size:", test_dict["input_size"])
 print("alt_blk_depth", test_dict["alt_blk_depth"])
 print("noise level:", noise_level)
