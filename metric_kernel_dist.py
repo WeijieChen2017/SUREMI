@@ -107,4 +107,4 @@ for idx_model, model_name in enumerate(hub_CT_folder):
 
 save_name = "./metric/kernel_consistency.npy"
 print(save_name)
-np.save(save_name, save_list)
+np.save(save_name, save_list, dtype=object)
