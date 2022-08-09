@@ -150,11 +150,11 @@ for cnt_file, file_path in enumerate(file_list):
     case_loss = 0
 
     input_data = add_noise(
-        x = input_data, 
+        x = x_data, 
         noise_type = "Gaussian",
         noise_params = (0, noise_level)
         )
-    input_data = np.expand_dims(x_data, (0,1))
+    input_data = np.expand_dims(input_data, (0,1))
     input_data = torch.from_numpy(input_data).float().to(device)
 
     order_list = iter_all_order(test_dict["alt_blk_depth"])
