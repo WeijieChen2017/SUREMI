@@ -27,8 +27,8 @@ import bnn
 from model import unet_monai_dropout_dim3 as UNet
 
 model_list = [
-    ["RDO_v2_dim3_R100_D50", [5], 1, 0.5,],
-    ["RDO_v2_dim3_R050_D50", [5], 0.5, 0.5,],
+    ["RDO_v2_dim3_R100_D50", [6], 1, 0.5,],
+    ["RDO_v2_dim3_R050_D50", [6], 0.5, 0.5,],
     ["RDO_v2_dim3_R100_D25", [6], 1, 0.25,],
     ["RDO_v2_dim3_R100_D75", [6], 1, 0.75,],
     ]
