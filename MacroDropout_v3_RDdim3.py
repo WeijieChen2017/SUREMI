@@ -18,18 +18,19 @@ import torch
 import torchvision
 import requests
 
-from monai.networks.nets.unet import UNet
+# from monai.networks.nets.unet import UNet
 from monai.networks.layers.factories import Act, Norm
 import bnn
 
 # from utils import add_noise, weighted_L1Loss
 # from model import UNet_MDO as UNet
+from model import unet_monai_dropout_dim3 as UNet
 
 model_list = [
-    ["RDO_v2_R00100_D50", [5], 1, 0.5,],
-    ["RDO_v2_R00050_D50", [5], 0.5, 0.5,],
-    ["RDO_v2_R00100_D25", [6], 1, 0.25,],
-    ["RDO_v2_R00100_D75", [6], 1, 0.75,],
+    ["RDO_v2_dim3_R100_D50", [5], 1, 0.5,],
+    ["RDO_v2_dim3_R050_D50", [5], 0.5, 0.5,],
+    ["RDO_v2_dim3_R100_D25", [6], 1, 0.25,],
+    ["RDO_v2_dim3_R100_D75", [6], 1, 0.75,],
     ]
 
 print("Model index: ", end="")
@@ -113,7 +114,6 @@ model = UNet(
     norm=unet_dict["normunet"],
     dropout=unet_dict["dropout"],
     bias=unet_dict["bias"],
-    dropout_dim=3,
     )
 
 model.train()
