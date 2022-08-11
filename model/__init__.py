@@ -28,3 +28,4 @@ from .unet_monai_theseus import UNet_Theseus
 from .unet_monai_blockwise import UNet_Blockwise
 from .unet_monai_channelDO import UNet_channelDO
 from .unet_monai_dropout_dim3 import unet_monai_dropout_dim3
+from .unet_monai_shuffle import UNet_shuffle
