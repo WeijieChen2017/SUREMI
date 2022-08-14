@@ -155,7 +155,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             
             
             x_path = file_path
-            y_path = file_path.replace("MR", "CT")
+            y_path = file_path.replace("img", "label")
             file_name = os.path.basename(file_path)
             print(iter_tag + " ===> Epoch[{:03d}]: --->".format(idx_epoch+1), x_path, "<---", end="")
             x_file = nib.load(x_path)
