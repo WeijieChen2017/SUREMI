@@ -28,10 +28,12 @@ from utils import iter_all_order
 from model import UNet_channelDO as UNet
 
 model_list = [
-    ["Theseus_v3_channelDO_rdp050", [6], 0.5, False],
-    ["Theseus_v3_channelDO_rdp100", [6], 1.0, False],
-    ["Theseus_v3_channelDOw_rdp050", [7], 0.5, True],
-    ["Theseus_v3_channelDOw_rdp100", [7], 1.0, True],
+    # ["Theseus_v3_channelDO_rdp050", [6], 0.5, False],
+    # ["Theseus_v3_channelDO_rdp100", [6], 1.0, False],
+    # ["Theseus_v3_channelDOw_rdp050", [7], 0.5, True],
+    # ["Theseus_v3_channelDOw_rdp100", [7], 1.0, True],
+    ["Theseus_v3_channelDOw_rdp050_fixed", [6], 0.5, True],
+    ["Theseus_v3_channelDOw_rdp100_fixed", [6], 1.0, True],
 ]
 
 

@@ -35,11 +35,15 @@ model_list = [
     # "Bayesian_unet_v13_unet_drop25",
     # "Bayesian_unet_v14_unet_drop50",
     # "Bayesian_unet_v15_unet_drop75",
-    "RDO_v1_R00001_D50",
-    "RDO_v1_R00010_D50",
-    "RDO_v1_R00100_D25",
-    "RDO_v1_R00100_D50",
-    "RDO_v1_R00100_D75",
+    # "RDO_v1_R00001_D50",
+    # "RDO_v1_R00010_D50",
+    # "RDO_v1_R00100_D25",
+    # "RDO_v1_R00100_D50",
+    # "RDO_v1_R00100_D75",
+    "RDO_v2_dim3_R100_D50",
+    "RDO_v2_dim3_R050_D50",
+    "RDO_v2_dim3_R100_D25",
+    "RDO_v2_dim3_R100_D75",
 ]
 
 
