@@ -55,7 +55,7 @@ test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 test_dict["project_name"] = name # "Bayesian_MTGD_v2_unet_do10_MTGD15"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
-test_dict["gpu_ids"] = [2]
+test_dict["gpu_ids"] = model_list[current_model_idx][1]
 test_dict["eval_file_cnt"] = 0
 # test_dict["best_model_name"] = "model_best_193.pth"
 # test_dict["eval_sample"] = 100
@@ -164,16 +164,16 @@ for cnt_file, file_path in enumerate(file_list):
     print(output_data.shape)
 
     test_file = nib.Nifti1Image(np.squeeze(output_data), x_file.affine, x_file.header)
-    test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name
+    test_save_name = test_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name
     nib.save(test_file, test_save_name)
     print(test_save_name)
 
     test_file = nib.Nifti1Image(np.squeeze(output_std), x_file.affine, x_file.header)
-    test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_std.nii.gz")
+    test_save_name = test_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_std.nii.gz")
     nib.save(test_file, test_save_name)
     print(test_save_name)
 
     test_file = nib.Nifti1Image(np.squeeze(output_mean), x_file.affine, x_file.header)
-    test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_mean.nii.gz")
+    test_save_name = test_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_mean.nii.gz")
     nib.save(test_file, test_save_name)
     print(test_save_name)
