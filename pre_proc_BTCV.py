@@ -150,7 +150,7 @@ for file_path  in file_list:
     #     value_seg[value_seg > value_max] = value_min
     #     value_seg = ( value_seg - value_min ) / (value_max - value_min)
 
-    save_folder = pre_proc_dict["dir_syn"] + pre_proc_dict["attr_seg"][idx] + "/"
+    save_folder = pre_proc_dict["dir_syn"] + pre_proc_dict["attr_seg"][0] + "/"
     if not os.path.exists(save_folder):
         os.makedirs(save_folder)
     save_name = os.path.basename(file_path)
