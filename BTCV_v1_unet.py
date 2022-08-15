@@ -173,8 +173,8 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     pad_x.append([0, 0])
                     pad_y.append([0, 0])
                 else:
-                    before = (train_dict["input_size"][i]-x_data.shape[i]) // 2
-                    after = train_dict["input_size"][i]-x_data.shape[i]-before + 1
+                    before = (train_dict["input_size"][i]-x_data.shape[i]) // 2 + 1
+                    after = train_dict["input_size"][i]-x_data.shape[i]-before + 2
                     pad_x.append([before, after])
                     pad_y.append([before, after])
             x_data = np.pad(x_data, pad_x)
