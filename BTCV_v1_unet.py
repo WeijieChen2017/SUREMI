@@ -13,7 +13,7 @@ import torchvision
 import requests
 
 from monai.networks.nets.unet import UNet as UNet
-from monai.networks.nets.unet import UNETR
+from monai.networks.nets import UNETR
 from monai.losses import DiceCELoss, DiceLoss
 
 # ==================== dict and config ====================
