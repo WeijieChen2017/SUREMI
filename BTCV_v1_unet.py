@@ -163,16 +163,16 @@ for idx_epoch_new in range(train_dict["epochs"]):
             x_data = x_file.get_fdata()
             y_data = y_file.get_fdata()
             # x_data = x_data / np.amax(x_data)
-            print(x_data.shape, y_data.shape)
+            # print(x_data.shape, y_data.shape)
 
             batch_x = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
             batch_y = np.zeros((train_dict["batch"], 14, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
 
             for idx_batch in range(train_dict["batch"]):
                 
-                d0_offset = np.random.randint(x_data.shape[0] - train_dict["input_size"][1])
-                d1_offset = np.random.randint(x_data.shape[1] - train_dict["input_size"][2])
-                d2_offset = np.random.randint(x_data.shape[2] - train_dict["input_size"][0])
+                d0_offset = np.random.randint(x_data.shape[0] - train_dict["input_size"][0])
+                d1_offset = np.random.randint(x_data.shape[1] - train_dict["input_size"][1])
+                d2_offset = np.random.randint(x_data.shape[2] - train_dict["input_size"][2])
 
                 x_slice = x_data[d0_offset:d0_offset+train_dict["input_size"][0],
                                  d1_offset:d1_offset+train_dict["input_size"][1],
