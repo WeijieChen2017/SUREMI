@@ -19,13 +19,13 @@ from monai.losses import DiceCELoss, DiceLoss
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "BTCV_v1_unet"
+train_dict["project_name"] = "BTCV_v2_unetr"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
 train_dict["input_size"] = [96, 96, 96]
-train_dict["gpu_ids"] = [7]
+train_dict["gpu_ids"] = [6]
 train_dict["epochs"] = 100
 train_dict["batch"] = 16
 train_dict["dropout"] = 0
@@ -70,14 +70,29 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-model = UNet( 
-    spatial_dims=train_dict["model_related"]["spatial_dims"],
-    in_channels=train_dict["model_related"]["in_channels"],
-    out_channels=train_dict["model_related"]["out_channels"],
-    channels=train_dict["model_related"]["channels"],
-    strides=train_dict["model_related"]["strides"],
-    num_res_units=train_dict["model_related"]["num_res_units"]
-    )
+# model = UNet( 
+#     spatial_dims=train_dict["model_related"]["spatial_dims"],
+#     in_channels=train_dict["model_related"]["in_channels"],
+#     out_channels=train_dict["model_related"]["out_channels"],
+#     channels=train_dict["model_related"]["channels"],
+#     strides=train_dict["model_related"]["strides"],
+#     num_res_units=train_dict["model_related"]["num_res_units"]
+#     )
+
+model = UNETR(
+    in_channels=1,
+    out_channels=14,
+    img_size=(96, 96, 96),
+    feature_size=16,
+    hidden_size=768,
+    mlp_dim=3072,
+    num_heads=12,
+    pos_embed='perceptron',
+    norm_name='instance',
+    conv_block=True,
+    res_block=True,
+    dropout_rate=0.0,
+)
 
 model.train()
 model = model.to(device)
