@@ -164,8 +164,8 @@ for idx_epoch_new in range(train_dict["epochs"]):
             x_data = x_file.get_fdata()
             y_data = y_file.get_fdata()
             # x_data = x_data / np.amax(x_data)
-            # print()
-            # print(x_data.shape, y_data.shape)
+            print()
+            print(x_data.shape, y_data.shape)
 
             pad_x = []
             pad_y = [[0, 0]]
@@ -178,9 +178,10 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     after = train_dict["input_size"][i]-x_data.shape[i]-before + 2
                     pad_x.append([before, after])
                     pad_y.append([before, after])
+            print(pad_x, pad_y)
             x_data = np.pad(x_data, pad_x)
             y_data = np.pad(y_data, pad_y)
-            # print(x_data.shape, y_data.shape)
+            print(x_data.shape, y_data.shape)
 
             batch_x = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
             batch_y = np.zeros((train_dict["batch"], 14, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
