@@ -27,7 +27,7 @@ train_dict["seed"] = 426
 train_dict["input_size"] = [96, 96, 96]
 train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 100
-train_dict["batch"] = 24
+train_dict["batch"] = 16
 train_dict["dropout"] = 0
 train_dict["model_term"] = "Monai_Unet3d"
 
@@ -233,6 +233,6 @@ for idx_epoch_new in range(train_dict["epochs"]):
                 print("Checkpoint saved at Epoch {:03d}".format(idx_epoch + 1))
                 best_val_loss = np.mean(case_loss)
 
-        # del batch_x, batch_y
-        # gc.collect()
-        # torch.cuda.empty_cache()
+        del batch_x, batch_y
+        gc.collect()
+        torch.cuda.empty_cache()
