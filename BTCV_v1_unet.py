@@ -174,12 +174,11 @@ for idx_epoch_new in range(train_dict["epochs"]):
                     pad_y.append([0, 0])
                 else:
                     before = (train_dict["input_size"][i]-x_data.shape[i]) // 2
-                    after = train_dict["input_size"][i]-x_data.shape[i]-before
+                    after = train_dict["input_size"][i]-x_data.shape[i]-before + 1
                     pad_x.append([before, after])
                     pad_y.append([before, after])
             x_data = np.pad(x_data, pad_x)
             y_data = np.pad(y_data, pad_y)
-            
             print(x_data.shape, y_data.shape)
 
             batch_x = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
