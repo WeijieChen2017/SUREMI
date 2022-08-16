@@ -142,7 +142,7 @@ for cnt_file, file_path in enumerate(file_list):
                     # is_WDO=model_list[current_model_idx][-1],
                     )
             output_array[idx_es, :, :, :, :] = y_hat.cpu().detach().numpy()
-        output_array = F.softmax(output_array[idx_es, :, :, :, :], dim=1)
+        output_array = nn.Softmax(dim=1)(output_array[idx_es, :, :, :, :], dim=1)
 
     # output_data = np.median(output_array, axis=0)
     # output_std = np.std(output_array, axis=0)
