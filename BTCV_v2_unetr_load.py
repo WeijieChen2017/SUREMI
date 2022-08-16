@@ -103,9 +103,11 @@ model_state_keys = model.state_dict().keys()
 new_model_state = {}
 
 for model_key in model_state_keys:
+    print(model_key)
     new_model_state[model_key] = pre_state[model_key]
     
 model.load_state_dict(new_model_state)
+print("./pre_train/UNETR_model_best_acc.pth has been loaded!")
 
 model.train()
 model = model.to(device)
