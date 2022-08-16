@@ -18,14 +18,8 @@ import torch
 import torchvision
 import requests
 
-# from monai.networks.nets.unet import UNet
-# from monai.networks.layers.factories import Act, Norm
 from monai.inferers import sliding_window_inference
-import bnn
-
-# from model import UNet_MDO as UNet
-# from utils import iter_all_order
-# from model import UNet_channelDO as UNet
+from utils import iter_all_order
 
 model_list = [
     ["BTCV_v1_unet",],
