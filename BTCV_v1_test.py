@@ -103,7 +103,7 @@ model = model.to(device)
 for cnt_file, file_path in enumerate(file_list):
     
     x_path = file_path
-    y_path = file_path.replace("x", "y")
+    y_path = file_path.replace("img", "label")
     file_name = os.path.basename(file_path)
     print(iter_tag + " ===> Case[{:03d}/{:03d}]: ".format(cnt_file+1, cnt_total_file), x_path, "<---", end="") # 
     x_file = nib.load(x_path)
@@ -122,6 +122,7 @@ for cnt_file, file_path in enumerate(file_list):
     # order_list = iter_all_order([2,2,2,2,2,2,2,2,2])
     order_list_cnt = len(order_list)
     output_array = np.zeros((order_list_cnt, n_seg, ax, ay, az))
+    print(order_list, output_array.shape)
 
     for idx_es in range(order_list_cnt):
         with torch.no_grad():
