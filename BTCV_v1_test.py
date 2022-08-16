@@ -121,7 +121,7 @@ for cnt_file, file_path in enumerate(file_list):
     order_list = iter_all_order(test_dict["alt_blk_depth"])
     # order_list = iter_all_order([2,2,2,2,2,2,2,2,2])
     order_list_cnt = len(order_list)
-    output_array = np.zeros((order_list_cnt, ax, ay, az, n_seg))
+    output_array = np.zeros((order_list_cnt, n_seg, ax, ay, az))
 
     for idx_es in range(order_list_cnt):
         with torch.no_grad():
@@ -144,7 +144,7 @@ for cnt_file, file_path in enumerate(file_list):
             y_hat = nn.Softmax(dim=1)(y_hat).cpu().detach().numpy()
             y_hat = np.squeeze(y_hat)
             for idx_seg in range(n_seg):
-                output_array[idx_es, :, :, :, idx_seg] = y_hat[idx_seg, :, :, :]
+                output_array[idx_es, idx_seg, :, :, :] = y_hat[idx_seg, :, :, :]
 
     output_data = np.median(output_array, axis=0)
     # output_std = np.std(output_array, axis=0)
