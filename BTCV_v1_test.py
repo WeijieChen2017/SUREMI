@@ -112,6 +112,7 @@ for cnt_file, file_path in enumerate(file_list):
     y_data = y_file.get_fdata()
 
     ax, ay, az = x_data.shape
+    n_seg = y_data.shape[0]
     case_loss = 0
 
     input_data = np.expand_dims(x_data, (0,1))
@@ -120,7 +121,7 @@ for cnt_file, file_path in enumerate(file_list):
     order_list = iter_all_order(test_dict["alt_blk_depth"])
     # order_list = iter_all_order([2,2,2,2,2,2,2,2,2])
     order_list_cnt = len(order_list)
-    output_array = np.zeros((order_list_cnt, ax, ay, az))
+    output_array = np.zeros((order_list_cnt, n_seg, ax, ay, az))
 
     for idx_es in range(order_list_cnt):
         with torch.no_grad():
