@@ -121,7 +121,7 @@ for cnt_file, file_path in enumerate(file_list):
     order_list = iter_all_order(test_dict["alt_blk_depth"])
     # order_list = iter_all_order([2,2,2,2,2,2,2,2,2])
     order_list_cnt = len(order_list)
-    output_array = np.zeros((order_list_cnt, n_seg, ax, ay, az))
+    output_array = np.zeros((order_list_cnt, ax, ay, az, n_seg))
 
     for idx_es in range(order_list_cnt):
         with torch.no_grad():
@@ -141,8 +141,9 @@ for cnt_file, file_path in enumerate(file_list):
                     # order=order_list[idx_es],
                     # is_WDO=model_list[current_model_idx][-1],
                     )
-            y_hat = nn.Softmax(dim=1)(y_hat)
-            output_array[idx_es, :, :, :, :] = y_hat.cpu().detach().numpy()
+            y_hat = nn.Softmax(dim=1)(y_hat).cpu().detach().numpy()
+            for idx_seg in range(n_seg):
+                output_array[idx_es, :, :, :, idx_seg] = y_hat[idx_seg, :, :, :]
 
     output_data = np.median(output_array, axis=0)
     # output_std = np.std(output_array, axis=0)
@@ -150,7 +151,7 @@ for cnt_file, file_path in enumerate(file_list):
     # output_cov = np.divide(output_std, output_mean+1e-12)
     # print(output_data.shape)
 
-    test_file = nib.Nifti1Image(np.squeeze(output_data), x_file.affine, x_file.header)
+    test_file = nib.Nifti1Image(np.squeeze(output_data), y_file.affine, y_file.header)
     test_save_name = test_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name
     nib.save(test_file, test_save_name)
     print(test_save_name)
