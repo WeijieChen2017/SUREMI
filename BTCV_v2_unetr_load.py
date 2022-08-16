@@ -97,8 +97,8 @@ model = UNETR(
 )
 
 
-model_pre = torch.load("./pre_train/UNETR_model_best_acc.pth", map_location=torch.device('cpu'))
-pre_state = model_pre.state_dict()
+pre_state = torch.load("./pre_train/UNETR_model_best_acc.pth", map_location=torch.device('cpu'))
+# pre_state = model_pre.state_dict()
 model_state_keys = model.state_dict().keys()
 new_model_state = {}
 
