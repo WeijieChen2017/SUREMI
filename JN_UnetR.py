@@ -44,8 +44,9 @@ print("Press any key to continue:", end="")
 _ = input()
 #--------------------------------------------------------------
 
-directory = os.environ.get("./project_dir/JN_UnetR/")
-root_dir = tempfile.mkdtemp() if directory is None else directory
+# directory = os.environ.get("./project_dir/JN_UnetR/")
+# root_dir = tempfile.mkdtemp() if directory is None else directory
+root_dir = "./project_dir/JN_UnetR/"
 print(root_dir)
 
 #--------------------------------------------------------------
