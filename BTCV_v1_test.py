@@ -142,7 +142,7 @@ for cnt_file, file_path in enumerate(file_list):
                     # is_WDO=model_list[current_model_idx][-1],
                     )
         y_hat = nn.Softmax(dim=1)(y_hat).cpu().detach().numpy()
-        print(y_hat.shape)
+        # print(y_hat.shape)
         y_hat = np.argmax(np.squeeze(y_hat), axis=0)
         output_array[idx_es, :, :, :] = y_hat
 
