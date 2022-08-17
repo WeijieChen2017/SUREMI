@@ -132,7 +132,7 @@ print("Press any key to continue:", end="")
 _ = input()
 #--------------------------------------------------------------
 
-data_dir = "/data_dir/JN_BTCV/"
+data_dir = "./data_dir/JN_BTCV/"
 split_JSON = "dataset_0.json"
 
 datasets = data_dir + split_JSON
