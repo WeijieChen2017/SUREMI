@@ -222,10 +222,8 @@ train_dict["state_weight_mapping_2"] = swm_1
 train_dict["target_model_1"] = "./project_dir/JN_UnetR/best_metric_model.pth"
 train_dict["target_model_2"] = "./project_dir/JN_UnetR/best_metric_model.pth"
 
-pretrain_1 = torch.load(train_dict["target_model_1"])
-pretrain_1_state = pretrain_1.state_dict()
-pretrain_2 = torch.load(train_dict["target_model_2"])
-pretrain_2_state = pretrain_2.state_dict()
+pretrain_1_state = torch.load(train_dict["target_model_1"])
+pretrain_2_state = torch.load(train_dict["target_model_2"])
 
 model_state_keys = model.state_dict().keys()
 new_model_state = {}
