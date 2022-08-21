@@ -1,4 +1,15 @@
 import os
+from model import UNETR_bdo as UNETR
+
+train_dict = {}
+train_dict["root_dir"] = "./project_dir/JN_Unet/"
+if not os.path.exists(train_dict["root_dir"]):
+    os.mkdir(train_dict["root_dir"])
+train_dict["data_dir"] = "./data_dir/JN_BTCV/"
+train_dict["split_JSON"] = "dataset_0.json"
+train_dict["gpu_list"] = [7]
+
+
 import shutil
 import tempfile
 
@@ -47,7 +58,7 @@ _ = input()
 
 # directory = os.environ.get("./project_dir/JN_UnetR/")
 # root_dir = tempfile.mkdtemp() if directory is None else directory
-root_dir = "./project_dir/JN_Unet/"
+root_dir = train_dict["root_dir"]
 print(root_dir)
 
 #--------------------------------------------------------------
@@ -133,8 +144,8 @@ print("Press any key to continue:", end="")
 _ = input()
 #--------------------------------------------------------------
 
-data_dir = "./data_dir/JN_BTCV/"
-split_JSON = "dataset_0.json"
+data_dir = train_dict["data_dir"]
+split_JSON = train_dict["split_JSON"]
 
 datasets = data_dir + split_JSON
 datalist = load_decathlon_datalist(datasets, True, "training")
@@ -161,7 +172,7 @@ print("Press any key to continue:", end="")
 _ = input()
 #--------------------------------------------------------------
 
-gpu_list = ','.join(str(x) for x in [7])
+gpu_list = ','.join(str(x) for x in train_dict["gpu_list"])
 os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -245,6 +256,7 @@ def train(global_step, train_loader, dice_val_best, global_step_best):
         epoch_iterator.set_description(
             "Training (%d / %d Steps) (loss=%2.5f)" % (global_step, max_iterations, loss)
         )
+        np.save(train_dict["root_dir"]+"step_loss_train_{:03d}.npy".format(step+1), loss.item())
         if (
             global_step % eval_num == 0 and global_step != 0
         ) or global_step == max_iterations:
@@ -252,6 +264,7 @@ def train(global_step, train_loader, dice_val_best, global_step_best):
                 val_loader, desc="Validate (X / X Steps) (dice=X.X)", dynamic_ncols=True
             )
             dice_val = validation(epoch_iterator_val)
+            np.save(train_dict["root_dir"]+"step_loss_cal_{:03d}.npy".format(step+1), dice_val)
             epoch_loss /= step
             epoch_loss_values.append(epoch_loss)
             metric_values.append(dice_val)
