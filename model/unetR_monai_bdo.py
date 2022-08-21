@@ -190,6 +190,7 @@ class UNETR_bdo(nn.Module):
         self.encoder3 = nn.ModuleList(self.encoder3)
         self.encoder4 = nn.ModuleList(self.encoder4)
         self.decoder5 = nn.ModuleList(self.decoder5)
+        self.decoder4 = nn.ModuleList(self.decoder4)
         self.decoder3 = nn.ModuleList(self.decoder3)
         self.decoder2 = nn.ModuleList(self.decoder2)
         self.out = nn.ModuleList(self.out)
