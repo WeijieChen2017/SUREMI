@@ -38,7 +38,7 @@ from monai.transforms import (
 
 from monai.config import print_config
 from monai.metrics import DiceMetric
-from monai.networks.nets import UNETR
+# from monai.networks.nets import UNETR
 
 from monai.data import (
     DataLoader,
