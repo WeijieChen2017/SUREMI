@@ -25,7 +25,7 @@ from monai.transforms import (
 
 from monai.config import print_config
 from monai.metrics import DiceMetric
-from monai.networks.nets import UNETR
+from monai.networks.nets import UNET
 
 from monai.data import (
     DataLoader,
@@ -181,7 +181,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 #     dropout_rate=0.0,
 # ).to(device)
 
-model = UNet( 
+model = UNET( 
     spatial_dims=3,
     in_channels=1,
     out_channels=14,
