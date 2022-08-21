@@ -47,7 +47,7 @@ _ = input()
 
 # directory = os.environ.get("./project_dir/JN_UnetR/")
 # root_dir = tempfile.mkdtemp() if directory is None else directory
-root_dir = "./project_dir/JN_UnetR/"
+root_dir = "./project_dir/JN_Unet/"
 print(root_dir)
 
 #--------------------------------------------------------------
@@ -133,7 +133,7 @@ print("Press any key to continue:", end="")
 _ = input()
 #--------------------------------------------------------------
 
-data_dir = "./data_dir/JN_BTCV_unet/"
+data_dir = "./data_dir/JN_BTCV/"
 split_JSON = "dataset_0.json"
 
 datasets = data_dir + split_JSON
