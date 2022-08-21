@@ -248,7 +248,7 @@ model.load_state_dict(new_model_state)
 
 
 loss_function_rec = DiceCELoss(to_onehot_y=True, softmax=True)
-loss_function_reg = DiceCELoss(to_onehot_y=False, softmax=False)
+loss_function_reg = torch.nn.MSELoss()
 torch.backends.cudnn.benchmark = True
 optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4, weight_decay=1e-5)
 
