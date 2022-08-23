@@ -4,6 +4,7 @@ from model import UNet_Theseus as UNet
 from monai.networks.layers.factories import Act, Norm
 from utils import iter_all_order
 
+n_cls = 14
 train_dict = {}
 train_dict["root_dir"] = "./project_dir/JN_Unet_bdo/"
 if not os.path.exists(train_dict["root_dir"]):
@@ -268,7 +269,7 @@ def prediction(epoch_iterator_val):
         for step, batch in enumerate(epoch_iterator_val):
             val_inputs, val_labels = (batch["image"].cuda(), batch["label"].cuda())
             print(val_labels.size())
-            (n_cls, ax, ay, ax) = val_labels.size()
+            (_, _, ax, ay, ax) = val_labels.size() # torch.Size([1, 1, 314, 214, 234])
             output_array = np.zeros((order_list_cnt, n_cls, ax, ay, az))
             for idx_bdo in range(order_list_cnt):
                 output_array[idx_bdo, :, :, :, :] = sliding_window_inference(
