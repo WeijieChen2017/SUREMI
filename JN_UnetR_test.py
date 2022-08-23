@@ -13,8 +13,9 @@ if not os.path.exists(train_dict["root_dir"]):
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_0.json"
 train_dict["gpu_list"] = [7]
+train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2]
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # [2,2,2,2,2,2,2] for unet
-train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
+# train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
 
 import os
 import gc
@@ -276,7 +277,7 @@ def prediction(epoch_iterator_val):
                 print(idx_bdo)
                 output_array[idx_bdo, :, :, :, :] = sliding_window_inference(
                     val_inputs, (96, 96, 96), 4, model,
-                    order=order_list[idx_bdo]
+                    # order=order_list[idx_bdo]
                     ).cpu().detach().numpy()
 
             val_outputs = np.median(output_array, axis=0)
