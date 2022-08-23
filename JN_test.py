@@ -159,16 +159,16 @@ split_JSON = train_dict["split_JSON"]
 datasets = data_dir + split_JSON
 datalist = load_decathlon_datalist(datasets, True, "training")
 val_files = load_decathlon_datalist(datasets, True, "validation")
-# train_ds = CacheDataset(
-#     data=datalist,
-#     transform=train_transforms,
-#     cache_num=24,
-#     cache_rate=1.0,
-#     num_workers=8,
-# )
-# train_loader = DataLoader(
-#     train_ds, batch_size=1, shuffle=True, num_workers=8, pin_memory=True
-# )
+train_ds = CacheDataset(
+    data=datalist,
+    transform=train_transforms,
+    cache_num=24,
+    cache_rate=1.0,
+    num_workers=8,
+)
+train_loader = DataLoader(
+    train_ds, batch_size=1, shuffle=True, num_workers=8, pin_memory=True
+)
 val_ds = CacheDataset(
     data=val_files, transform=val_transforms, cache_num=6, cache_rate=1.0, num_workers=4
 )
