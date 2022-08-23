@@ -1,20 +1,18 @@
 import os
 # from monai.networks.nets.unet import UNet
-# from model import UNet_Theseus as UNet
-from model import UNETR_bdo as UNETR
-# from monai.networks.layers.factories import Act, Norm
+from model import UNet_Theseus as UNet
+from monai.networks.layers.factories import Act, Norm
 from utils import iter_all_order
 
 n_cls = 14
 train_dict = {}
-train_dict["root_dir"] = "./project_dir/JN_UnetR_bdo/"
+train_dict["root_dir"] = "./project_dir/JN_Unet_bdo/"
 if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_0.json"
-train_dict["gpu_list"] = [7]
-train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2]
-# train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # [2,2,2,2,2,2,2] for unet
+train_dict["gpu_list"] = [6]
+train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # [2,2,2,2,2,2,2] for unet
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
 
 import os
@@ -190,19 +188,18 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-model = UNETR(
+model = UNet( 
+    spatial_dims=3,
     in_channels=1,
     out_channels=14,
-    img_size=(96, 96, 96),
-    feature_size=16,
-    hidden_size=768,
-    mlp_dim=3072,
-    num_heads=12,
-    pos_embed="perceptron",
-    norm_name="instance",
-    res_block=True,
-    dropout_rate=0.0,
-).to(device)
+    channels=(64, 128, 256, 512),
+    strides=(2, 2, 2),
+    num_res_units=6,
+    act=Act.PRELU,
+    norm=Norm.INSTANCE,
+    dropout=0.,
+    bias=True,
+    ).to(device)
 
 # state weights mapping
 # swm_1 = {}
