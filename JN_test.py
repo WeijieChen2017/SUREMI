@@ -290,12 +290,14 @@ def prediction(epoch_iterator_val):
             epoch_iterator_val.set_description(
                 "Validate (%d / %d Steps)" % (global_step, 10.0)
             )
+            val_outputs = val_outputs.cpu().detach().numpy()
+            print(val_outputs.shape)
+            np.save(train_dict["root_dir"]+"pred_step_[{:03d}].npy".format(step+1), val_outputs)
+            
         mean_dice_val = dice_metric.aggregate().item()
         dice_metric.reset()
 
-        val_outputs = val_outputs.cpu().detach().numpy()
-        print(val_outputs.shape)
-        np.save(train_dict["root_dir"]+"pred_step_[{:03d}].npy".format(step+1), val_outputs)
+        
     return mean_dice_val
 
 def validation(epoch_iterator_val):
