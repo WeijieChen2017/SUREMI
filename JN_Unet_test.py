@@ -299,8 +299,8 @@ def prediction(epoch_iterator_val):
             #     "Validate (%d / %d Steps)" % (global_step, 10.0)
             # )
             
-        mean_dice_val = dice_metric.aggregate().item()
-        dice_metric.reset()
+        # mean_dice_val = dice_metric.aggregate().item()
+        # dice_metric.reset()
 
         
     # return mean_dice_val
