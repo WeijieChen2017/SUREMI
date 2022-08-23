@@ -159,16 +159,16 @@ split_JSON = train_dict["split_JSON"]
 datasets = data_dir + split_JSON
 datalist = load_decathlon_datalist(datasets, True, "training")
 val_files = load_decathlon_datalist(datasets, True, "validation")
-train_ds = CacheDataset(
-    data=datalist,
-    transform=train_transforms,
-    cache_num=24,
-    cache_rate=1.0,
-    num_workers=8,
-)
-train_loader = DataLoader(
-    train_ds, batch_size=1, shuffle=True, num_workers=8, pin_memory=True
-)
+# train_ds = CacheDataset(
+#     data=datalist,
+#     transform=train_transforms,
+#     cache_num=24,
+#     cache_rate=1.0,
+#     num_workers=8,
+# )
+# train_loader = DataLoader(
+#     train_ds, batch_size=1, shuffle=True, num_workers=8, pin_memory=True
+# )
 val_ds = CacheDataset(
     data=val_files, transform=val_transforms, cache_num=6, cache_rate=1.0, num_workers=4
 )
@@ -232,7 +232,7 @@ model = UNet(
 pre_train_state = {}
 pre_train_model = torch.load(train_dict["root_dir"]+"best_metric_model.pth")
 
-for model_key in model.keys():
+for model_key in model.state_dict().keys():
     pre_train_state[model_key] = pre_train_model[model_key]
     # weight_prefix = model_key[:model_key.find(".")+2]
 
@@ -328,7 +328,7 @@ def train(global_step, train_loader, dice_val_best, global_step_best):
     epoch_iterator_val = tqdm(
         val_loader, desc="Validate (X / X Steps) (dice=X.X)", dynamic_ncols=True
     )
-    dice_val = validation(epoch_iterator_val)
+    dice_val = prediction(epoch_iterator_val)
     np.save(train_dict["root_dir"]+"pred_dice_val.npy", dice_val)
 
     return None
