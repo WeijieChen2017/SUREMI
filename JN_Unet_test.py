@@ -75,7 +75,7 @@ order_list = iter_all_order(train_dict["alt_blk_depth"])
 # order_list = iter_all_order([2,2,2,2,2,2,2,2,2])
 order_list_cnt = len(order_list)
 with torch.no_grad():
-    for val_tuple in enumerate(val_files):
+    for idx, val_tuple in enumerate(val_files):
         img_path = val_tuple['image']
         lab_path = val_tuple['label']
         file_name = os.path.basename(lab_path)
