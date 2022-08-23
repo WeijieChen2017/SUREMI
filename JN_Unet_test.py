@@ -81,7 +81,7 @@ with torch.no_grad():
         file_name = os.path.basename(lab_path)
         input_data = nib.load(img_path).get_fdata()
         lab_file = nib.load(lab_path)
-        ax, ay, az = input_data.size()
+        ax, ay, az = input_data.shape
         output_array = np.zeros((order_list_cnt, ax, ay, az))
         for idx_bdo in range(order_list_cnt):
             print(idx_bdo)
