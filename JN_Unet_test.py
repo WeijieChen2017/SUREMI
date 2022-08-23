@@ -82,13 +82,12 @@ with torch.no_grad():
         input_data = nib.load(img_path).get_fdata()
         lab_file = nib.load(lab_path)
         ax, ay, az = input_data.shape
-        print(input_data.shape)
         output_array = np.zeros((order_list_cnt, ax, ay, az))
         for idx_bdo in range(order_list_cnt):
             print(idx_bdo)
             y_hat = sliding_window_inference(
                     inputs = input_data, 
-                    roi_size = [96, 96, 96], 
+                    roi_size = 96, 
                     sw_batch_size = 4, 
                     predictor = model,
                     overlap=0.25, 
