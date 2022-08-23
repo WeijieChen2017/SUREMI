@@ -281,7 +281,7 @@ def prediction(epoch_iterator_val):
             val_std = np.std(output_array, axis=0)
             # val_outputs = torch.from_numpy(val_outputs).cuda()
             # val_outputs = val_outputs.cpu().detach().numpy()
-            print(val_outputs.shape)
+            print(val_median.shape)
             np.save(train_dict["root_dir"]+"pred_step_[{:03d}].npy".format(step+1), val_median)
             np.save(train_dict["root_dir"]+"std_step_[{:03d}].npy".format(step+1), val_std)
             
