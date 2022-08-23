@@ -87,7 +87,7 @@ with torch.no_grad():
         input_data = np.expand_dims(input_data, (0,1))
         input_data = torch.from_numpy(input_data).float().to(device)
         for idx_bdo in range(order_list_cnt):
-            print(idx_bdo)
+            # print(idx_bdo)
             y_hat = sliding_window_inference(
                     inputs = input_data, 
                     roi_size = [96, 96, 96], 
@@ -104,7 +104,7 @@ with torch.no_grad():
                     )
             y_hat = nn.Softmax(dim=1)(y_hat).cpu().detach().numpy()
             y_hat = np.argmax(np.squeeze(y_hat), axis=0)
-            print(y_hat.shape)
+            # print(y_hat.shape)
             output_array[idx_bdo, :, :, :] = y_hat
 
         val_median = np.median(output_array, axis=0)
