@@ -269,7 +269,7 @@ def prediction(epoch_iterator_val):
         for step, batch in enumerate(epoch_iterator_val):
             val_inputs, val_labels = (batch["image"].cuda(), batch["label"].cuda())
             (_, _, ax, ay, az) = val_labels.size() # torch.Size([1, 1, 314, 214, 234])
-            output_array = torch.from_array(np.zeros((order_list_cnt, n_cls, ax, ay, az))).cuda()
+            output_array = torch.from_numpy(np.zeros((order_list_cnt, n_cls, ax, ay, az))).cuda()
             for idx_bdo in range(order_list_cnt):
                 output_array[idx_bdo, :, :, :, :] = sliding_window_inference(
                     val_inputs, (96, 96, 96), 4, model,
