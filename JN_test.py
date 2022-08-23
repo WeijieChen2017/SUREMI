@@ -267,8 +267,8 @@ def prediction(epoch_iterator_val):
     with torch.no_grad():
         for step, batch in enumerate(epoch_iterator_val):
             val_inputs, val_labels = (batch["image"].cuda(), batch["label"].cuda())
-
-            n_cls, ax, ay, ax = val_labels.size()
+            print(val_labels.size())
+            (n_cls, ax, ay, ax) = val_labels.size()
             output_array = np.zeros((order_list_cnt, n_cls, ax, ay, az))
             for idx_bdo in range(order_list_cnt):
                 output_array[idx_bdo, :, :, :, :] = sliding_window_inference(
