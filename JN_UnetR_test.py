@@ -103,7 +103,7 @@ with torch.no_grad():
                     cval=0.0, 
                     sw_device=device, 
                     device=device,
-                    order=order_list[idx_bdo],
+                    # order=order_list[idx_bdo],
                     )
             y_hat = nn.Softmax(dim=1)(y_hat).cpu().detach().numpy()
             y_hat = np.argmax(np.squeeze(y_hat), axis=0)
