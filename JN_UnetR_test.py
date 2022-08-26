@@ -12,7 +12,7 @@ if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_0.json"
-train_dict["gpu_list"] = [7]
+train_dict["gpu_list"] = [6]
 train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # [2,2,2,2,2,2,2] for unet
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
 
@@ -87,6 +87,14 @@ with torch.no_grad():
         ax, ay, az = input_data.shape
         output_array = np.zeros((order_list_cnt, ax, ay, az))
 
+        a_min=-175
+        a_max=250
+        b_min=0.0
+        b_max=1.0
+        input_data = (input_data - a_min) / (a_max - a_min)
+        input_data[input_data > 1.] = 1.
+        input_data[input_data < 0.] = 0.
+
         input_data = np.expand_dims(input_data, (0,1))
         input_data = torch.from_numpy(input_data).float().to(device)
         for idx_bdo in range(order_list_cnt):
@@ -107,7 +115,6 @@ with torch.no_grad():
                     )
             y_hat = nn.Softmax(dim=1)(y_hat).cpu().detach().numpy()
             y_hat = np.argmax(np.squeeze(y_hat), axis=0)
-            # print(y_hat.shape)
             output_array[idx_bdo, :, :, :] = y_hat
 
         val_median = np.median(output_array, axis=0)

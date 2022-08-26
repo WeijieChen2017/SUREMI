@@ -11,8 +11,8 @@ if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_0.json"
-train_dict["gpu_list"] = [6]
-train_dict["alt_blk_depth"] = [2] # [2,2,2,2,2,2,2] for unet
+train_dict["gpu_list"] = [5]
+train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # [2,2,2,2,2,2,2] for unet
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
 
 import os
@@ -98,7 +98,6 @@ with torch.no_grad():
         input_data = np.expand_dims(input_data, (0,1))
         input_data = torch.from_numpy(input_data).float().to(device)
         for idx_bdo in range(order_list_cnt):
-            # print(idx_bdo)
             y_hat = sliding_window_inference(
                     inputs = input_data, 
                     roi_size = [96, 96, 96], 
@@ -111,25 +110,24 @@ with torch.no_grad():
                     cval=0.0, 
                     sw_device=device, 
                     device=device,
-                    # order=order_list[idx_bdo],
+                    order=order_list[idx_bdo],
                     )
-            print(y_hat.shape)
-            np.save("raw_output.npy", y_hat.cpu().detach().numpy())
-            exit()
-        #     y_hat = nn.Softmax(dim=1)(y_hat).cpu().detach().numpy()
-        #     y_hat = np.argmax(np.squeeze(y_hat), axis=0)
-        #     # print(y_hat.shape)
-        #     output_array[idx_bdo, :, :, :] = y_hat
+            # print(y_hat.shape)
+            # np.save("raw_output.npy", y_hat.cpu().detach().numpy())
+            # exit()
+            y_hat = nn.Softmax(dim=1)(y_hat).cpu().detach().numpy()
+            y_hat = np.argmx(np.squeeze(y_hat), axis=0)
+            output_array[idx_bdo, :, :, :] = y_hat
 
-        # val_median = np.median(output_array, axis=0)
-        # val_std = np.std(output_array, axis=0)
+        val_median = np.median(output_array, axis=0)
+        val_std = np.std(ouatput_array, axis=0)
 
-        # test_file = nib.Nifti1Image(np.squeeze(val_median), lab_file.affine, lab_file.header)
-        # test_save_name = train_dict["root_dir"]+file_name.replace(".nii.gz", "_pred.nii.gz")
-        # nib.save(test_file, test_save_name)
-        # print(test_save_name)
+        test_file = nib.Nifti1Image(np.squeeze(val_median), lab_file.affine, lab_file.header)
+        test_save_name = train_dict["root_dir"]+file_name.replace(".nii.gz", "_pred.nii.gz")
+        nib.save(test_file, test_save_name)
+        print(test_save_name)
 
-        # test_file = nib.Nifti1Image(np.squeeze(val_std), lab_file.affine, lab_file.header)
-        # test_save_name = train_dict["root_dir"]+file_name.replace(".nii.gz", "_std.nii.gz")
-        # nib.save(test_file, test_save_name)
-        # print(test_save_name)
+        test_file = nib.Nifti1Image(np.squeeze(val_std), lab_file.affine, lab_file.header)
+        test_save_name = train_dict["root_dir"]+file_name.replace(".nii.gz", "_std.nii.gz")
+        nib.save(test_file, test_save_name)
+        print(test_save_name)
