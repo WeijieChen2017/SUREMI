@@ -12,7 +12,7 @@ if not os.path.exists(train_dict["root_dir"]):
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_0.json"
 train_dict["gpu_list"] = [6]
-train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # [2,2,2,2,2,2,2] for unet
+train_dict["alt_blk_depth"] = [2] # [2,2,2,2,2,2,2] for unet
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
 
 import os
@@ -100,7 +100,7 @@ with torch.no_grad():
                     cval=0.0, 
                     sw_device=device, 
                     device=device,
-                    order=order_list[idx_bdo],
+                    # order=order_list[idx_bdo],
                     )
             y_hat = nn.Softmax(dim=1)(y_hat).cpu().detach().numpy()
             y_hat = np.argmax(np.squeeze(y_hat), axis=0)
@@ -110,12 +110,12 @@ with torch.no_grad():
         val_median = np.median(output_array, axis=0)
         val_std = np.std(output_array, axis=0)
 
-        test_file = nib.Nifti1Image(np.squeeze(val_median), lab_file.affine, lab_file.header)
-        test_save_name = train_dict["root_dir"]+file_name.replace(".nii.gz", "_pred.nii.gz")
-        nib.save(test_file, test_save_name)
-        print(test_save_name)
+        # test_file = nib.Nifti1Image(np.squeeze(val_median), lab_file.affine, lab_file.header)
+        # test_save_name = train_dict["root_dir"]+file_name.replace(".nii.gz", "_pred.nii.gz")
+        # nib.save(test_file, test_save_name)
+        # print(test_save_name)
 
-        test_file = nib.Nifti1Image(np.squeeze(val_std), lab_file.affine, lab_file.header)
-        test_save_name = train_dict["root_dir"]+file_name.replace(".nii.gz", "_std.nii.gz")
-        nib.save(test_file, test_save_name)
-        print(test_save_name)
+        # test_file = nib.Nifti1Image(np.squeeze(val_std), lab_file.affine, lab_file.header)
+        # test_save_name = train_dict["root_dir"]+file_name.replace(".nii.gz", "_std.nii.gz")
+        # nib.save(test_file, test_save_name)
+        # print(test_save_name)
