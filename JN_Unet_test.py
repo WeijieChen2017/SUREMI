@@ -84,6 +84,15 @@ with torch.no_grad():
         ax, ay, az = input_data.shape
         output_array = np.zeros((order_list_cnt, ax, ay, az))
 
+        # ScaleIntensityRanged(
+        #     keys=["image"], a_min=-175, a_max=250, b_min=0.0, b_max=1.0, clip=True
+        # ),
+        a_min=-175
+        a_max=250
+        b_min=0.0
+        b_max=1.0
+        input_data = (input_data - a_min) / (a_max - a_min)
+
         input_data = np.expand_dims(input_data, (0,1))
         input_data = torch.from_numpy(input_data).float().to(device)
         for idx_bdo in range(order_list_cnt):
@@ -104,6 +113,7 @@ with torch.no_grad():
                     )
             print(y_hat.shape)
             np.save("raw_output.npy", y_hat.cpu().detach().numpy())
+            exit()
         #     y_hat = nn.Softmax(dim=1)(y_hat).cpu().detach().numpy()
         #     y_hat = np.argmax(np.squeeze(y_hat), axis=0)
         #     # print(y_hat.shape)
