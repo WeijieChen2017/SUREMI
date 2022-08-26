@@ -120,7 +120,7 @@ with torch.no_grad():
             output_array[idx_bdo, :, :, :] = y_hat
 
         val_median = np.median(output_array, axis=0)
-        val_std = np.std(ouatput_array, axis=0)
+        val_std = np.std(output_array, axis=0)
 
         test_file = nib.Nifti1Image(np.squeeze(val_median), lab_file.affine, lab_file.header)
         test_save_name = train_dict["root_dir"]+file_name.replace(".nii.gz", "_pred.nii.gz")
