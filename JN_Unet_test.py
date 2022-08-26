@@ -101,7 +101,7 @@ with torch.no_grad():
             y_hat = sliding_window_inference(
                     inputs = input_data, 
                     roi_size = [96, 96, 96], 
-                    sw_batch_size = 4, 
+                    sw_batch_size = 1, 
                     predictor = model,
                     overlap=0.25, 
                     mode="gaussian", 
