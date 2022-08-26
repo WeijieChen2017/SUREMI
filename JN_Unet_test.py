@@ -92,6 +92,8 @@ with torch.no_grad():
         b_min=0.0
         b_max=1.0
         input_data = (input_data - a_min) / (a_max - a_min)
+        input_data[input_data > 1.] = 1.
+        input_data[input_data < 0.] = 0.
 
         input_data = np.expand_dims(input_data, (0,1))
         input_data = torch.from_numpy(input_data).float().to(device)
