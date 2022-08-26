@@ -103,14 +103,14 @@ with torch.no_grad():
                     # order=order_list[idx_bdo],
                     )
             print(y_hat.shape)
-            np.save("raw_output.npy", y_hat)
-            y_hat = nn.Softmax(dim=1)(y_hat).cpu().detach().numpy()
-            y_hat = np.argmax(np.squeeze(y_hat), axis=0)
-            # print(y_hat.shape)
-            output_array[idx_bdo, :, :, :] = y_hat
+            np.save("raw_output.npy", y_hat.cpu().detach().numpy())
+        #     y_hat = nn.Softmax(dim=1)(y_hat).cpu().detach().numpy()
+        #     y_hat = np.argmax(np.squeeze(y_hat), axis=0)
+        #     # print(y_hat.shape)
+        #     output_array[idx_bdo, :, :, :] = y_hat
 
-        val_median = np.median(output_array, axis=0)
-        val_std = np.std(output_array, axis=0)
+        # val_median = np.median(output_array, axis=0)
+        # val_std = np.std(output_array, axis=0)
 
         # test_file = nib.Nifti1Image(np.squeeze(val_median), lab_file.affine, lab_file.header)
         # test_save_name = train_dict["root_dir"]+file_name.replace(".nii.gz", "_pred.nii.gz")
