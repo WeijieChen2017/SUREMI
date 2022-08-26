@@ -117,9 +117,10 @@ with torch.no_grad():
             # exit()
             y_hat = nn.Softmax(dim=1)(y_hat).cpu().detach().numpy()
             y_hat = np.argmax(np.squeeze(y_hat), axis=0)
-            print(np.unique(y_hat))
+            # print(np.unique(y_hat))
             output_array[idx_bdo, :, :, :] = y_hat
 
+        print(np.unique(output_array))
         val_median = np.median(output_array, axis=0)
         val_std = np.std(output_array, axis=0)
 
