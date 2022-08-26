@@ -262,21 +262,29 @@ def validation(epoch_iterator_val):
     with torch.no_grad():
         for step, batch in enumerate(epoch_iterator_val):
             val_inputs, val_labels = (batch["image"].cuda(), batch["label"].cuda())
+            np.save("val_inputs.npy", val_inputs.cpu().detach().numpy())
+            np.save("val_labels.npy", val_labels.cpu().detach().numpy())
             val_outputs = sliding_window_inference(val_inputs, (96, 96, 96), 4, model)
+            np.save("val_outputs.npy", val_outputs.cpu().detach().numpy())
             val_labels_list = decollate_batch(val_labels)
+            np.save("val_labels_list.npy", val_labels_list.cpu().detach().numpy())
             val_labels_convert = [
                 post_label(val_label_tensor) for val_label_tensor in val_labels_list
             ]
+            np.save("val_labels_convert.npy", val_labels_convert.cpu().detach().numpy())
             val_outputs_list = decollate_batch(val_outputs)
+            np.save("val_outputs_list.npy", val_outputs_list.cpu().detach().numpy())
             val_output_convert = [
                 post_pred(val_pred_tensor) for val_pred_tensor in val_outputs_list
             ]
+            np.save("val_output_convert.npy", val_output_convert.cpu().detach().numpy())
             dice_metric(y_pred=val_output_convert, y=val_labels_convert)
             epoch_iterator_val.set_description(
                 "Validate (%d / %d Steps)" % (global_step, 10.0)
             )
         mean_dice_val = dice_metric.aggregate().item()
         dice_metric.reset()
+        exit()
     return mean_dice_val
 
 
@@ -334,7 +342,7 @@ def train(global_step, train_loader, dice_val_best, global_step_best):
 
 
 max_iterations = 25000
-eval_num = 500
+eval_num = 1
 post_label = AsDiscrete(to_onehot=14)
 post_pred = AsDiscrete(argmax=True, to_onehot=14)
 dice_metric = DiceMetric(include_background=True, reduction="mean", get_not_nans=False)
