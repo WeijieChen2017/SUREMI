@@ -125,8 +125,8 @@ with torch.no_grad():
         # val_std = np.std(output_array, axis=0)
         val_mode = np.squeeze(mode(output_array, axis=0).mode)
         val_std = np.zeros((val_mode.shape))
-        for idx in range(order_list_cnt):
-            val_std += np.square(output_array[idx, :, :, :]-val_mode)
+        for idx_std in range(order_list_cnt):
+            val_std += np.square(output_array[idx_std, :, :, :]-val_mode)
         val_std = np.sqrt(val_std) 
 
         test_file = nib.Nifti1Image(np.squeeze(val_mode), lab_file.affine, lab_file.header)
