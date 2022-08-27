@@ -87,6 +87,9 @@ with torch.no_grad():
         ax, ay, az = input_data.shape
         output_array = np.zeros((order_list_cnt, ax, ay, az))
 
+        # ScaleIntensityRanged(
+        #     keys=["image"], a_min=-175, a_max=250, b_min=0.0, b_max=1.0, clip=True
+        # ),
         a_min=-175
         a_max=250
         b_min=0.0
@@ -98,7 +101,6 @@ with torch.no_grad():
         input_data = np.expand_dims(input_data, (0,1))
         input_data = torch.from_numpy(input_data).float().to(device)
         for idx_bdo in range(order_list_cnt):
-            # print(idx_bdo)
             y_hat = sliding_window_inference(
                     inputs = input_data, 
                     roi_size = [96, 96, 96], 
@@ -113,14 +115,25 @@ with torch.no_grad():
                     device=device,
                     # order=order_list[idx_bdo],
                     )
+            print(y_hat.shape)
+            # np.save("raw_output.npy", y_hat.cpu().detach().numpy())
+            # exit()
             y_hat = nn.Softmax(dim=1)(y_hat).cpu().detach().numpy()
             y_hat = np.argmax(np.squeeze(y_hat), axis=0)
+            print(np.unique(y_hat))
             output_array[idx_bdo, :, :, :] = y_hat
 
-        val_median = np.median(output_array, axis=0)
-        val_std = np.std(output_array, axis=0)
+        # val_median = np.median(output_array, axis=0)
+        # val_std = np.std(output_array, axis=0)
+        val_mode = np.squeeze(mode(output_array, axis=0).mode)
+        print(np.unique(val_mode))
+        val_std = np.zeros((val_mode.shape))
+        for idx_std in range(order_list_cnt):
+            val_std += np.square(output_array[idx_std, :, :, :]-val_mode)
+            print(np.mean(val_std))
+        val_std = np.sqrt(val_std) 
 
-        test_file = nib.Nifti1Image(np.squeeze(val_median), lab_file.affine, lab_file.header)
+        test_file = nib.Nifti1Image(np.squeeze(val_mode), lab_file.affine, lab_file.header)
         test_save_name = train_dict["root_dir"]+file_name.replace(".nii.gz", "_pred.nii.gz")
         nib.save(test_file, test_save_name)
         print(test_save_name)

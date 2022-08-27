@@ -111,7 +111,7 @@ with torch.no_grad():
                     cval=0.0, 
                     sw_device=device, 
                     device=device,
-                    # order=order_list[idx_bdo],
+                    order=order_list[idx_bdo],
                     )
             print(y_hat.shape)
             # np.save("raw_output.npy", y_hat.cpu().detach().numpy())
