@@ -118,15 +118,17 @@ with torch.no_grad():
             # exit()
             y_hat = nn.Softmax(dim=1)(y_hat).cpu().detach().numpy()
             y_hat = np.argmax(np.squeeze(y_hat), axis=0)
-            # print(np.unique(y_hat))
+            print(np.unique(y_hat))
             output_array[idx_bdo, :, :, :] = y_hat
 
         # val_median = np.median(output_array, axis=0)
         # val_std = np.std(output_array, axis=0)
         val_mode = np.squeeze(mode(output_array, axis=0).mode)
+        print(np.unique(val_mode))
         val_std = np.zeros((val_mode.shape))
         for idx_std in range(order_list_cnt):
             val_std += np.square(output_array[idx_std, :, :, :]-val_mode)
+            print(np.mean(val_std))
         val_std = np.sqrt(val_std) 
 
         test_file = nib.Nifti1Image(np.squeeze(val_mode), lab_file.affine, lab_file.header)
