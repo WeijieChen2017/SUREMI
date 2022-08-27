@@ -13,7 +13,7 @@ if not os.path.exists(train_dict["root_dir"]):
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_0.json"
 train_dict["gpu_list"] = [5]
-train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # [2,2,2,2,2,2,2] for unet
+train_dict["alt_blk_depth"] = [2,2] # [2,2,2,2,2,2,2] for unet
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
 
 import os
@@ -111,7 +111,7 @@ with torch.no_grad():
                     cval=0.0, 
                     sw_device=device, 
                     device=device,
-                    order=order_list[idx_bdo],
+                    # order=order_list[idx_bdo],
                     )
             print(y_hat.shape)
             # np.save("raw_output.npy", y_hat.cpu().detach().numpy())
