@@ -3,6 +3,7 @@ import os
 from model import UNet_Theseus as UNet
 from monai.networks.layers.factories import Act, Norm
 from utils import iter_all_order
+from scipy.stats import mode
 
 n_cls = 14
 train_dict = {}
@@ -120,11 +121,15 @@ with torch.no_grad():
             # print(np.unique(y_hat))
             output_array[idx_bdo, :, :, :] = y_hat
 
-        print(np.unique(output_array))
-        val_median = np.median(output_array, axis=0)
-        val_std = np.std(output_array, axis=0)
+        # val_median = np.median(output_array, axis=0)
+        # val_std = np.std(output_array, axis=0)
+        val_mode = np.squeeze(mode(output_array, axis=0).mode)
+        val_std = np.zeros((val_mode.shape))
+        for idx in range(order_list_cnt):
+            val_std += np.square(output_array[idx, :, :, :]-val_mode)
+        val_std = np.sqrt(val_std) 
 
-        test_file = nib.Nifti1Image(np.squeeze(val_median), lab_file.affine, lab_file.header)
+        test_file = nib.Nifti1Image(np.squeeze(val_mode), lab_file.affine, lab_file.header)
         test_save_name = train_dict["root_dir"]+file_name.replace(".nii.gz", "_pred.nii.gz")
         nib.save(test_file, test_save_name)
         print(test_save_name)
