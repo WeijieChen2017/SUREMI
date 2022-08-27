@@ -134,11 +134,11 @@ with torch.no_grad():
         val_std = np.sqrt(val_std) 
 
         test_file = nib.Nifti1Image(np.squeeze(val_mode), lab_file.affine, lab_file.header)
-        test_save_name = train_dict["root_dir"]+file_name.replace(".nii.gz", "_pred.nii.gz")
+        test_save_name = train_dict["root_dir"]+file_name.replace(".nii.gz", "_pred_seg.nii.gz")
         nib.save(test_file, test_save_name)
         print(test_save_name)
 
         test_file = nib.Nifti1Image(np.squeeze(val_std), lab_file.affine, lab_file.header)
-        test_save_name = train_dict["root_dir"]+file_name.replace(".nii.gz", "_std.nii.gz")
+        test_save_name = train_dict["root_dir"]+file_name.replace(".nii.gz", "_std_seg.nii.gz")
         nib.save(test_file, test_save_name)
         print(test_save_name)
