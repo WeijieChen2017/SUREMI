@@ -118,7 +118,7 @@ slice_map = {
 }
 case_num = 0
 print(val_ds[case_num])
-img_name = os.path.split(val_ds[case_num]["image"].meta["filename_or_obj"])[1]
+img_name = os.path.split(val_ds[case_num]["image"].image_meta_dict["filename_or_obj"])[1]
 img = val_ds[case_num]["image"]
 label = val_ds[case_num]["label"]
 img_shape = img.shape
@@ -139,7 +139,7 @@ case_num = 4
 model.load_state_dict(torch.load(os.path.join(root_dir, "best_metric_model.pth")))
 model.eval()
 with torch.no_grad():
-    img_name = os.path.split(val_ds[case_num]["image"].meta["filename_or_obj"])[1]
+    img_name = os.path.split(val_ds[case_num]["image"].image_meta_dict["filename_or_obj"])[1]
     img = val_ds[case_num]["image"]
     label = val_ds[case_num]["label"]
     val_inputs = torch.unsqueeze(img, 1).cuda()
