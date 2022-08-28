@@ -108,6 +108,32 @@ model = UNETR(
 ).to(device)
 
 
+slice_map = {
+    "img0035.nii.gz": 170,
+    "img0036.nii.gz": 230,
+    "img0037.nii.gz": 204,
+    "img0038.nii.gz": 204,
+    "img0039.nii.gz": 204,
+    "img0040.nii.gz": 180,
+}
+case_num = 0
+print(val_ds[case_num])
+img_name = os.path.split(val_ds[case_num]["image"].meta["filename_or_obj"])[1]
+img = val_ds[case_num]["image"]
+label = val_ds[case_num]["label"]
+img_shape = img.shape
+label_shape = label.shape
+print(f"image shape: {img_shape}, label shape: {label_shape}")
+plt.figure("image", (18, 6))
+plt.subplot(1, 2, 1)
+plt.title("image")
+plt.imshow(img[0, :, :, slice_map[img_name]].detach().cpu(), cmap="gray")
+plt.subplot(1, 2, 2)
+plt.title("label")
+plt.imshow(label[0, :, :, slice_map[img_name]].detach().cpu())
+plt.show()
+plt.savefig("JN_plot_1.png", dpi=300)
+
 
 case_num = 4
 model.load_state_dict(torch.load(os.path.join(root_dir, "best_metric_model.pth")))
@@ -134,4 +160,4 @@ with torch.no_grad():
         torch.argmax(val_outputs, dim=1).detach().cpu()[0, :, :, slice_map[img_name]]
     )
     # plt.show()
-    plt.savefig("JN_plot.png", dpi=300)
+    plt.savefig("JN_plot_2.png", dpi=300)
