@@ -142,8 +142,8 @@ with torch.no_grad():
     img_name = os.path.split(val_ds[case_num]["image_meta_dict"]["filename_or_obj"])[1]
     img = val_ds[case_num]["image"]
     label = val_ds[case_num]["label"]
-    val_inputs = torch.from_numpy(np.expand_dims(x_data, 1)).float().cuda()
-    val_labels = torch.from_numpy(np.expand_dims(x_data, 1)).float().cuda()
+    val_inputs = torch.from_numpy(np.expand_dims(img, 1)).float().cuda()
+    val_labels = torch.from_numpy(np.expand_dims(label, 1)).float().cuda()
     val_outputs = sliding_window_inference(
         val_inputs, (96, 96, 96), 4, model, overlap=0.8
     )
