@@ -2,7 +2,7 @@ import os
 
 n_cls = 14
 train_dict = {}
-train_dict["root_dir"] = "./project_dir/JN_UnetR_bdo/"
+train_dict["root_dir"] = "./project_dir/JN_UnetR/"
 if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
