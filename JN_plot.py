@@ -11,6 +11,8 @@ train_dict["gpu_list"] = [6]
 train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # [2,2,2,2,2,2,2] for unet
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
 
+root_dir = train_dict["root_dir"]
+print(root_dir)
 
 import os
 import shutil
