@@ -140,8 +140,8 @@ model.load_state_dict(torch.load(os.path.join(root_dir, "best_metric_model.pth")
 model.eval()
 with torch.no_grad():
     img_name = os.path.split(val_ds[case_num]["image_meta_dict"]["filename_or_obj"])[1]
-    img = val_ds[case_num]["image"]
-    label = val_ds[case_num]["label"]
+    img = val_ds[case_num]["image"].to(device)
+    label = val_ds[case_num]["label"].to(device)
     val_inputs = torch.unsqueeze(img, 1).cuda()
     val_labels = torch.unsqueeze(label, 1).cuda()
     val_outputs = sliding_window_inference(
