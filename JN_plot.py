@@ -53,6 +53,12 @@ import torch
 
 print_config()
 
+gpu_list = ','.join(str(x) for x in train_dict["gpu_list"])
+os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
+print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 
 model = UNETR(
     in_channels=1,
