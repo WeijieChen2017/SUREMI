@@ -61,6 +61,37 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+val_transforms = Compose(
+    [
+        LoadImaged(keys=["image", "label"]),
+        EnsureChannelFirstd(keys=["image", "label"]),
+        Orientationd(keys=["image", "label"], axcodes="RAS"),
+        Spacingd(
+            keys=["image", "label"],
+            pixdim=(1.5, 1.5, 2.0),
+            mode=("bilinear", "nearest"),
+        ),
+        ScaleIntensityRanged(
+            keys=["image"], a_min=-175, a_max=250, b_min=0.0, b_max=1.0, clip=True
+        ),
+        CropForegroundd(keys=["image", "label"], source_key="image"),
+    ]
+)
+
+data_dir = "./data_dir/JN_BTCV/"
+split_JSON = "dataset_0.json"
+
+datasets = data_dir + split_JSON
+datalist = load_decathlon_datalist(datasets, True, "training")
+val_files = load_decathlon_datalist(datasets, True, "validation")
+
+val_ds = CacheDataset(
+    data=val_files, transform=val_transforms, cache_num=6, cache_rate=1.0, num_workers=4
+)
+val_loader = DataLoader(
+    val_ds, batch_size=1, shuffle=False, num_workers=4, pin_memory=True
+)
+
 
 model = UNETR(
     in_channels=1,
