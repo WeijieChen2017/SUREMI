@@ -1,6 +1,7 @@
 import os
 # from model import UNet_Theseus as UNet
 # from monai.networks.layers.factories import Act, Norm
+from model import UNETR_bdo as UNETR
 from utils import iter_all_order
 from scipy.stats import mode
 
@@ -48,7 +49,7 @@ from monai.transforms import (
 
 from monai.config import print_config
 from monai.metrics import DiceMetric
-from monai.networks.nets import UNETR
+# from monai.networks.nets import UNETR
 
 from monai.data import (
     DataLoader,
