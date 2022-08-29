@@ -2,7 +2,7 @@ import os
 
 n_cls = 14
 train_dict = {}
-train_dict["root_dir"] = "./project_dir/JN_Unet/"
+train_dict["root_dir"] = "./project_dir/JN_UnetR/"
 if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
@@ -93,18 +93,20 @@ val_loader = DataLoader(
 )
 
 
-model = UNet( 
-    spatial_dims=3,
+model = UNETR(
     in_channels=1,
     out_channels=14,
-    channels=(64, 128, 256, 512),
-    strides=(2, 2, 2),
-    num_res_units=6,
-    act=Act.PRELU,
-    norm=Norm.INSTANCE,
-    dropout=0.,
-    bias=True,
-    ).to(device)
+    img_size=(96, 96, 96),
+    feature_size=16,
+    hidden_size=768,
+    mlp_dim=3072,
+    num_heads=12,
+    pos_embed="perceptron",
+    norm_name="instance",
+    res_block=True,
+    dropout_rate=0.0,
+).to(device)
+
 
 slice_map = {
     "img0035.nii.gz": 170,
@@ -147,17 +149,17 @@ for case_num in range(6):
         )
         print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0.npy"))
 
-        plt.figure("check", (18, 6))
-        plt.subplot(1, 3, 1)
-        plt.title("image")
-        plt.imshow(val_inputs.cpu().numpy()[0, 0, :, :, slice_map[img_name]], cmap="gray")
-        plt.subplot(1, 3, 2)
-        plt.title("label")
-        plt.imshow(val_labels.cpu().numpy()[0, 0, :, :, slice_map[img_name]])
-        plt.subplot(1, 3, 3)
-        plt.title("output")
-        plt.imshow(
-            torch.argmax(val_outputs, dim=1).detach().cpu()[0, :, :, slice_map[img_name]]
-        )
-        # plt.show()
-        plt.savefig(train_dict["root_dir"]+"JN_{}.png".format(img_name), dpi=300)
+        # plt.figure("check", (18, 6))
+        # plt.subplot(1, 3, 1)
+        # plt.title("image")
+        # plt.imshow(val_inputs.cpu().numpy()[0, 0, :, :, slice_map[img_name]], cmap="gray")
+        # plt.subplot(1, 3, 2)
+        # plt.title("label")
+        # plt.imshow(val_labels.cpu().numpy()[0, 0, :, :, slice_map[img_name]])
+        # plt.subplot(1, 3, 3)
+        # plt.title("output")
+        # plt.imshow(
+        #     torch.argmax(val_outputs, dim=1).detach().cpu()[0, :, :, slice_map[img_name]]
+        # )
+        # # plt.show()
+        # plt.savefig("JN_{}.png".format(img_name), dpi=300)
