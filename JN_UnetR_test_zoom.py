@@ -149,17 +149,17 @@ for case_num in range(6):
         )
         print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0.npy"))
 
-        # plt.figure("check", (18, 6))
-        # plt.subplot(1, 3, 1)
-        # plt.title("image")
-        # plt.imshow(val_inputs.cpu().numpy()[0, 0, :, :, slice_map[img_name]], cmap="gray")
-        # plt.subplot(1, 3, 2)
-        # plt.title("label")
-        # plt.imshow(val_labels.cpu().numpy()[0, 0, :, :, slice_map[img_name]])
-        # plt.subplot(1, 3, 3)
-        # plt.title("output")
-        # plt.imshow(
-        #     torch.argmax(val_outputs, dim=1).detach().cpu()[0, :, :, slice_map[img_name]]
-        # )
-        # # plt.show()
-        # plt.savefig("JN_{}.png".format(img_name), dpi=300)
+        plt.figure("check", (18, 6))
+        plt.subplot(1, 3, 1)
+        plt.title("image")
+        plt.imshow(val_inputs.cpu().numpy()[0, 0, :, :, slice_map[img_name]], cmap="gray")
+        plt.subplot(1, 3, 2)
+        plt.title("label")
+        plt.imshow(val_labels.cpu().numpy()[0, 0, :, :, slice_map[img_name]])
+        plt.subplot(1, 3, 3)
+        plt.title("output")
+        plt.imshow(
+            torch.argmax(val_outputs, dim=1).detach().cpu()[0, :, :, slice_map[img_name]]
+        )
+        # plt.show()
+        plt.savefig(train_dict["root_dir"]+"JN_{}.png".format(img_name), dpi=300)
