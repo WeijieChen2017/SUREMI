@@ -9,7 +9,7 @@ order_list_cnt = len(order_list)
 
 # n_cls = 14
 train_dict = {}
-train_dict["root_dir"] = "./project_dir/JN_Unet/"
+train_dict["root_dir"] = "./project_dir/JN_Unet_bdo/"
 if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
@@ -136,10 +136,18 @@ for case_num in range(6):
         _, _, ax, ay, az = val_labels.size()
         output_array = np.zeros((order_list_cnt, ax, ay, az))
         for idx_bdo in range(order_list_cnt):
+            print(idx_bdo)
             val_outputs = sliding_window_inference(
                 val_inputs, (96, 96, 96), 4, model, overlap=0.8, order=order_list[idx_bdo],
             )
             output_array[idx_bdo, :, :, :] = torch.argmax(val_outputs, dim=1).detach().cpu()[0, :, :, :],
+
+        val_mode = np.squeeze(mode(output_array, axis=0).mode)
+        val_std = np.zeros((val_mode.shape))
+        for idx_std in range(order_list_cnt):
+            val_std += np.square(output_array[idx_std, :, :, :]-val_mode)
+            print(np.mean(val_std))
+        val_std = np.sqrt(val_std) 
 
         np.save(
             train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0.npy"), 
@@ -155,9 +163,15 @@ for case_num in range(6):
 
         np.save(
             train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0.npy"), 
-            
+            val_mode,
         )
         print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0.npy"))
+
+        np.save(
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_std_RAS_1.5_1.5_2.0.npy"), 
+            val_std,
+        )
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_std_RAS_1.5_1.5_2.0.npy"))
 
         plt.figure("check", (18, 6))
         plt.subplot(1, 3, 1)
