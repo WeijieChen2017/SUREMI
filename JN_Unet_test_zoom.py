@@ -118,20 +118,20 @@ slice_map = {
 }
 
 for case_num in range(6):
-	# case_num = 4
-	model.load_state_dict(torch.load(os.path.join(root_dir, "best_metric_model.pth")))
-	model.eval()
-	with torch.no_grad():
-	    img_name = os.path.split(val_ds[case_num]["image_meta_dict"]["filename_or_obj"])[1]
-	    img = val_ds[case_num]["image"]
-	    label = val_ds[case_num]["label"]
-	    val_inputs = torch.from_numpy(np.expand_dims(img, 1)).float().cuda()
-	    val_labels = torch.from_numpy(np.expand_dims(label, 1)).float().cuda()
-	    val_outputs = sliding_window_inference(
-	        val_inputs, (96, 96, 96), 4, model, overlap=0.8
-	    )
+    # case_num = 4
+    model.load_state_dict(torch.load(os.path.join(root_dir, "best_metric_model.pth")))
+    model.eval()
+    with torch.no_grad():
+        img_name = os.path.split(val_ds[case_num]["image_meta_dict"]["filename_or_obj"])[1]
+        img = val_ds[case_num]["image"]
+        label = val_ds[case_num]["label"]
+        val_inputs = torch.from_numpy(np.expand_dims(img, 1)).float().cuda()
+        val_labels = torch.from_numpy(np.expand_dims(label, 1)).float().cuda()
+        val_outputs = sliding_window_inference(
+            val_inputs, (96, 96, 96), 4, model, overlap=0.8
+        )
 
-	    np.save(
+        np.save(
             train_dict["root_dir"]+img_name.replace(".nii.gz", "_x.nii.gz"), 
             val_inputs.cpu().numpy()[0, 0, :, :, :],
         )
@@ -149,17 +149,17 @@ for case_num in range(6):
         )
         print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_z.nii.gz"))
 
-	    # plt.figure("check", (18, 6))
-	    # plt.subplot(1, 3, 1)
-	    # plt.title("image")
-	    # plt.imshow(val_inputs.cpu().numpy()[0, 0, :, :, slice_map[img_name]], cmap="gray")
-	    # plt.subplot(1, 3, 2)
-	    # plt.title("label")
-	    # plt.imshow(val_labels.cpu().numpy()[0, 0, :, :, slice_map[img_name]])
-	    # plt.subplot(1, 3, 3)
-	    # plt.title("output")
-	    # plt.imshow(
-	    #     torch.argmax(val_outputs, dim=1).detach().cpu()[0, :, :, slice_map[img_name]]
-	    # )
-	    # # plt.show()
-	    # plt.savefig("JN_{}.png".format(img_name), dpi=300)
+        # plt.figure("check", (18, 6))
+        # plt.subplot(1, 3, 1)
+        # plt.title("image")
+        # plt.imshow(val_inputs.cpu().numpy()[0, 0, :, :, slice_map[img_name]], cmap="gray")
+        # plt.subplot(1, 3, 2)
+        # plt.title("label")
+        # plt.imshow(val_labels.cpu().numpy()[0, 0, :, :, slice_map[img_name]])
+        # plt.subplot(1, 3, 3)
+        # plt.title("output")
+        # plt.imshow(
+        #     torch.argmax(val_outputs, dim=1).detach().cpu()[0, :, :, slice_map[img_name]]
+        # )
+        # # plt.show()
+        # plt.savefig("JN_{}.png".format(img_name), dpi=300)
