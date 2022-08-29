@@ -139,7 +139,7 @@ for case_num in range(6):
         for idx_bdo in range(order_list_cnt):
             print(idx_bdo)
             val_outputs = sliding_window_inference(
-                val_inputs, (96, 96, 96), 4, model, overlap=0.8, order=order_list[idx_bdo],
+                val_inputs, (96, 96, 96), 4, model, overlap=0.8, # order=order_list[idx_bdo],
             )
             output_array[idx_bdo, :, :, :] = torch.argmax(val_outputs, dim=1).detach().cpu().numpy()[0, :, :, :]
 
