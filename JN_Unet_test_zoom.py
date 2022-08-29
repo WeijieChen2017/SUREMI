@@ -132,22 +132,22 @@ for case_num in range(6):
         )
 
         np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_x.nii.gz"), 
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_x.npy"), 
             val_inputs.cpu().numpy()[0, 0, :, :, :],
         )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_x.nii.gz"))
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_x.npy"))
 
         np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_y.nii.gz"), 
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_y.npy"), 
             val_labels.cpu().numpy()[0, 0, :, :, :],
         )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_y.nii.gz"))
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_y.npy"))
 
         np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_z.nii.gz"), 
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_z.npy"), 
             torch.argmax(val_outputs, dim=1).detach().cpu()[0, :, :, :],
         )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_z.nii.gz"))
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_z.npy"))
 
         # plt.figure("check", (18, 6))
         # plt.subplot(1, 3, 1)
