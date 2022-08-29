@@ -1,5 +1,6 @@
 import os
 from monai.networks.nets.unet import UNet
+from monai.networks.layers.factories import Act, Norm
 
 # n_cls = 14
 train_dict = {}
