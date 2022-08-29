@@ -1,6 +1,7 @@
 import os
+from monai.networks.nets.unet import UNet
 
-n_cls = 14
+# n_cls = 14
 train_dict = {}
 train_dict["root_dir"] = "./project_dir/JN_Unet/"
 if not os.path.exists(train_dict["root_dir"]):
@@ -8,7 +9,7 @@ if not os.path.exists(train_dict["root_dir"]):
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_0.json"
 train_dict["gpu_list"] = [6]
-train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # [2,2,2,2,2,2,2] for unet
+# train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # [2,2,2,2,2,2,2] for unet
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
 
 root_dir = train_dict["root_dir"]
