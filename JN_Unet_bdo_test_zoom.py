@@ -136,11 +136,10 @@ for case_num in range(6):
         _, _, ax, ay, az = val_labels.size()
         output_array = np.zeros((order_list_cnt, ax, ay, az))
         for idx_bdo in range(order_list_cnt):
-            print(idx_bdo)
-             = sliding_window_inference(
+            print(idx_bdo) = sliding_window_inference(
                 val_inputs, (96, 96, 96), 4, model, overlap=0.8, order=order_list[idx_bdo],
             )
-            output_array[idx_bdo, :, :, :] = torch.argmax(val_outputs, dim=1).detach().cpu().numpy()[0, :, :, :],
+            output_array[idx_bdo, :, :, :] = torch.argmax(val_outputs, dim=1).detach().cpu().numpy()[0, :, :, :]
 
         val_mode = np.squeeze(mode(output_array, axis=0).mode)
         val_std = np.zeros((val_mode.shape))
