@@ -22,8 +22,8 @@ import glob
 x_path = "./data_dir/JN_BTCV/imagesTr_re/"
 y_path = "./data_dir/JN_BTCV/labelsTr_re/"
 
-x_list = glob.glob(x_path+"*.nii.gz")
-y_list = glob.glob(y_path+"*.nii.gz")
+x_list = sorted(glob.glob(x_path+"*.nii.gz"))
+y_list = sorted(glob.glob(y_path+"*.nii.gz"))
 
 for x_name in x_list:
     print(x_name)
