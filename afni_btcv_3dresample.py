@@ -26,7 +26,7 @@ x_list = glob.glob(x_path+"*.nii.gz")
 y_list = glob.glob(y_path+"*.nii.gz")
 
 for x_name in x_list:
-	cmd = "3dresample -input "+x_path+x_name+" -rmode Cu -dxyz 1.5, 1.5, 2.0 -orient RAS "
-	cmd += "-prefix "+x_path+x_name
+	cmd = "3dresample -input "+x_name+" -rmode Cu -dxyz 1.5, 1.5, 2.0 -orient RAS "
+	cmd += "-prefix "+x_name
 	print(cmd)
 	os.system(cmd)
