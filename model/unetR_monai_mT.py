@@ -41,7 +41,7 @@ class UNETR_mT(nn.Module):
         res_block: bool = True,
         dropout_rate: float = 0.0,
         spatial_dims: int = 3,
-        alter_block: Union[Sequence[int], int],
+        alter_block: Union[Sequence[int], int] = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
     ) -> None:
         """
         Args:
@@ -86,7 +86,7 @@ class UNETR_mT(nn.Module):
         self.feat_size = tuple(img_d // p_d for img_d, p_d in zip(img_size, self.patch_size))
         self.hidden_size = hidden_size
         self.classification = False
-        self.alter_block = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+        self.alter_block = alter_block
         self.vit = [ViT(
             in_channels=in_channels,
             img_size=img_size,
