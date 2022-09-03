@@ -1,5 +1,5 @@
 import os
-from model import UNETR_mT as UNETR
+from model import UNETR_mT
 
 train_dict = {}
 train_dict["root_dir"] = "./project_dir/JN_UnetR_mT_4222211111/"
