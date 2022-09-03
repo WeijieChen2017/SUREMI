@@ -224,8 +224,7 @@ swm["out.1"] = "out"
 
 
 train_dict["state_weight_mapping"] = swm
-train_dict["target_model_1"] = "./project_dir/JN_UnetR/best_metric_model.pth"
-train_dict["target_model_2"] = "./project_dir/JN_UnetR/best_metric_model.pth"
+train_dict["target_model"] = "./project_dir/JN_UnetR/best_metric_model.pth"
 
 pretrain_state = torch.load(train_dict["target_model"])
 
