@@ -41,6 +41,7 @@ class UNETR_mT(nn.Module):
         res_block: bool = True,
         dropout_rate: float = 0.0,
         spatial_dims: int = 3,
+        alter_block: Union[Sequence[int], int],
     ) -> None:
         """
         Args:
