@@ -210,7 +210,7 @@ class UNETR_mT(nn.Module):
     def forward(self, x_in, order:Sequence[int] = []):
 
         if order == []:
-            order = [random.randint(0, self.alter_block[i]) for i in range(10)]
+            order = [random.randint(0, self.alter_block[i]-1) for i in range(10)]
 
         x, hidden_states_out = self.vit[order[0]](x_in)
         enc1 = self.encoder1[order[1]](x_in)
