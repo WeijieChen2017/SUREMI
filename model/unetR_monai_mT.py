@@ -85,7 +85,7 @@ class UNETR_mT(nn.Module):
         self.feat_size = tuple(img_d // p_d for img_d, p_d in zip(img_size, self.patch_size))
         self.hidden_size = hidden_size
         self.classification = False
-        self.alter_block = [4, 2, 2, 2, 2, 1, 1, 1, 1, 1]
+        self.alter_block = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
         self.vit = [ViT(
             in_channels=in_channels,
             img_size=img_size,
