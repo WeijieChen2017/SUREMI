@@ -1,13 +1,13 @@
 import os
-from model import UNETR_bdo as UNETR
+from model import UNETR_mT as UNETR
 
 train_dict = {}
-train_dict["root_dir"] = "./project_dir/JN_UnetR_bdo/"
+train_dict["root_dir"] = "./project_dir/JN_UnetR_mT/"
 if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_0.json"
-train_dict["gpu_list"] = [6,7]
+train_dict["gpu_list"] = [6]
 
 import os
 import gc
@@ -197,36 +197,37 @@ model = UNETR(
 ).to(device)
 
 # state weights mapping
-swm_1 = {}
-swm_1["vit.0"]      = "vit"
-swm_1["encoder1.0"] = "encoder1"
-swm_1["encoder2.0"] = "encoder2"
-swm_1["encoder3.0"] = "encoder3"
-swm_1["encoder4.0"] = "encoder4"
-swm_1["decoder5.0"] = "decoder5"
-swm_1["decoder4.0"] = "decoder4"
-swm_1["decoder3.0"] = "decoder3"
-swm_1["decoder2.0"] = "decoder2"
-swm_1["out.0"] = "out"
+swm = {}
+swm["vit.0"]      = "vit"
+swm["vit.1"]      = "vit"
+swm["vit.2"]      = "vit"
+swm["vit.3"]      = "vit"
+swm["encoder1.0"] = "encoder1"
+swm["encoder1.1"] = "encoder1"
+swm["encoder2.0"] = "encoder2"
+swm["encoder2.1"] = "encoder2"
+swm["encoder3.0"] = "encoder3"
+swm["encoder3.1"] = "encoder3"
+swm["encoder4.0"] = "encoder4"
+swm["encoder4.1"] = "encoder4"
+swm["decoder5.0"] = "decoder5"
+swm["decoder4.0"] = "decoder4"
+swm["decoder3.0"] = "decoder3"
+swm["decoder2.0"] = "decoder2"
+swm["out.0"] = "out"
+swm["out.1"] = "out"
 
-swm_2 = {}
-swm_2["vit.1"]      = "vit"
-swm_2["encoder1.1"] = "encoder1"
-swm_2["encoder2.1"] = "encoder2"
-swm_2["encoder3.1"] = "encoder3"
-swm_2["encoder4.1"] = "encoder4"
-swm_2["decoder5.1"] = "decoder5"
-swm_2["decoder4.1"] = "decoder4"
-swm_2["decoder3.1"] = "decoder3"
-swm_2["decoder2.1"] = "decoder2"
-swm_2["out.1"] = "out"
-train_dict["state_weight_mapping_1"] = swm_1
-train_dict["state_weight_mapping_2"] = swm_1
+# swm["decoder5.1"] = "decoder5"
+# swm["decoder4.1"] = "decoder4"
+# swm["decoder3.1"] = "decoder3"
+# swm["decoder2.1"] = "decoder2"
+
+
+train_dict["state_weight_mapping"] = swm
 train_dict["target_model_1"] = "./project_dir/JN_UnetR/best_metric_model.pth"
 train_dict["target_model_2"] = "./project_dir/JN_UnetR/best_metric_model.pth"
 
-pretrain_1_state = torch.load(train_dict["target_model_1"])
-pretrain_2_state = torch.load(train_dict["target_model_2"])
+pretrain_state = torch.load(train_dict["target_model"])
 
 model_state_keys = model.state_dict().keys()
 new_model_state = {}
@@ -235,15 +236,10 @@ for model_key in model_state_keys:
     weight_prefix = model_key[:model_key.find(".")+2]
 
     # in the first half
-    if weight_prefix in swm_1.keys():
-        weight_replacement = swm_1[weight_prefix]
-        new_model_state[model_key] = pretrain_1_state[model_key.replace(weight_prefix, weight_replacement)]
+    if weight_prefix in swm.keys():
+        weight_replacement = swm[weight_prefix]
+        new_model_state[model_key] = pretrain_state[model_key.replace(weight_prefix, weight_replacement)]
 
-    # in the second half
-    if weight_prefix in swm_2.keys():
-        weight_replacement = swm_2[weight_prefix]
-        new_model_state[model_key] = pretrain_2_state[model_key.replace(weight_prefix, weight_replacement)]
-    
 model.load_state_dict(new_model_state)
 
 

@@ -30,3 +30,4 @@ from .unet_monai_channelDO import UNet_channelDO
 from .unet_monai_dropout_dim3 import unet_monai_dropout_dim3
 from .unet_monai_shuffle import UNet_shuffle
 from .unetR_monai_bdo import UNETR_bdo
+from .unetR_monai_mT import UNETR_mT
