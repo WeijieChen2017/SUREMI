@@ -182,7 +182,7 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-model = UNETR(
+model = UNETR_mT(
     in_channels=1,
     out_channels=14,
     img_size=(96, 96, 96),
