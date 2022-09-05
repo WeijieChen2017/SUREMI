@@ -9,20 +9,21 @@ import numpy as np
 
 # n_cls = 14
 train_dict = {}
-train_dict["root_dir"] = "./project_dir/JN_UnetR_mT_4222211111/"
+train_dict["root_dir"] = "./project_dir/JN_UnetR_mT_4111122222/"
 if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_0.json"
-train_dict["gpu_list"] = [5]
-train_dict["alt_blk_depth"] = [4,2,2,2,2,1,1,1,1,1]
+train_dict["gpu_list"] = [6]
+train_dict["alt_blk_depth"] = [4,1,1,1,1,2,2,2,2,2,]
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # [2,2,2,2,2,2,2] for unet
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
 # JN_UnetR_mT_4222211111
+# JN_UnetR_mT_4111122222
 root_dir = train_dict["root_dir"]
 print(root_dir)
 
-order_list, time_frame = iter_all_order(train_dict["alt_blk_depth"])
+order_list, time_frame = iter_some_order(train_dict["alt_blk_depth"], 128)
 order_list_cnt = len(order_list)
 np.save(root_dir+"order_list_"+time_frame+".npy", order_list)
 
@@ -130,7 +131,6 @@ model = UNETR_mT(
     norm_name="instance",
     res_block=True,
     dropout_rate=0.0,
-    # alter_block=[4, 2, 2, 2, 2, 1, 1, 1, 1, 1],
     alter_block=train_dict["alt_blk_depth"],
 ).to(device)
 model.load_state_dict(torch.load(os.path.join(root_dir, "best_metric_model.pth")))
