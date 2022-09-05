@@ -2,11 +2,8 @@ import os
 # from model import UNet_Theseus as UNet
 # from monai.networks.layers.factories import Act, Norm
 from model import UNETR_bdo as UNETR
-from utils import iter_all_order
+from utils import iter_all_order, iter_some_order
 from scipy.stats import mode
-
-order_list = iter_all_order([2,2,2,2,2,2,2])
-order_list_cnt = len(order_list)
 
 # n_cls = 14
 train_dict = {}
@@ -21,6 +18,10 @@ train_dict["gpu_list"] = [7]
 
 root_dir = train_dict["root_dir"]
 print(root_dir)
+
+order_list, time_frame = iter_some_order([2, 2, 2, 2, 2, 2, 2, 2, 2, 2], 128)
+order_list_cnt = len(order_list)
+np.save(root_dir+"order_list_"+time_frame+".npy", order_list)
 
 import os
 import shutil
