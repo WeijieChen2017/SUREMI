@@ -4,6 +4,7 @@ import os
 from model import UNETR_bdo as UNETR
 from utils import iter_all_order, iter_some_order
 from scipy.stats import mode
+import numpy as np
 
 # n_cls = 14
 train_dict = {}
