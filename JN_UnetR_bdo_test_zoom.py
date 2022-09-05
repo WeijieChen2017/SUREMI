@@ -2,6 +2,7 @@ import os
 # from model import UNet_Theseus as UNet
 # from monai.networks.layers.factories import Act, Norm
 from model import UNETR_bdo as UNETR
+from model import UNETR_mT
 from utils import iter_all_order, iter_some_order
 from scipy.stats import mode
 import numpy as np
@@ -14,13 +15,14 @@ if not os.path.exists(train_dict["root_dir"]):
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_0.json"
 train_dict["gpu_list"] = [5]
+train_dict["alt_blk_depth"] = [4,2,2,2,2,1,1,1,1,1]
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # [2,2,2,2,2,2,2] for unet
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
 # JN_UnetR_mT_4222211111
 root_dir = train_dict["root_dir"]
 print(root_dir)
 
-order_list, time_frame = iter_all_order([4,2,2,2,2,1,1,1,1,1])
+order_list, time_frame = iter_all_order(train_dict["alt_blk_depth"])
 order_list_cnt = len(order_list)
 np.save(root_dir+"order_list_"+time_frame+".npy", order_list)
 
@@ -103,7 +105,20 @@ val_loader = DataLoader(
 )
 
 
-model = UNETR(
+# model = UNETR(
+#     in_channels=1,
+#     out_channels=14,
+#     img_size=(96, 96, 96),
+#     feature_size=16,
+#     hidden_size=768,
+#     mlp_dim=3072,
+#     num_heads=12,
+#     pos_embed="perceptron",
+#     norm_name="instance",
+#     res_block=True,
+#     dropout_rate=0.0,
+# ).to(device)
+model = UNETR_mT(
     in_channels=1,
     out_channels=14,
     img_size=(96, 96, 96),
@@ -115,6 +130,8 @@ model = UNETR(
     norm_name="instance",
     res_block=True,
     dropout_rate=0.0,
+    # alter_block=[4, 2, 2, 2, 2, 1, 1, 1, 1, 1],
+    alter_block=train_dict["alt_blk_depth"],
 ).to(device)
 model.load_state_dict(torch.load(os.path.join(root_dir, "best_metric_model.pth")))
 
