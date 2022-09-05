@@ -1,4 +1,5 @@
 import itertools
+import random
 import time
 
 def Cartesian_product(a,b):
