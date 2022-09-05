@@ -20,7 +20,7 @@ train_dict["gpu_list"] = [5]
 root_dir = train_dict["root_dir"]
 print(root_dir)
 
-order_list, time_frame = iter_some_order([4,2,2,2,2,1,1,1,1,1], 128)
+order_list, time_frame = iter_all_order([4,2,2,2,2,1,1,1,1,1])
 order_list_cnt = len(order_list)
 np.save(root_dir+"order_list_"+time_frame+".npy", order_list)
 
