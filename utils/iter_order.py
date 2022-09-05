@@ -49,6 +49,6 @@ def iter_some_order(alter_block, order_need):
     #         print("Replica!")
     time_frame = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
     # print(time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime()))
-    return sorted(order_list), 
+    return sorted(order_list), time_frame
     
 
