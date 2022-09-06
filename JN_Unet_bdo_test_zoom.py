@@ -26,7 +26,7 @@ train_dict["alt_blk_depth"] = [1]
 root_dir = train_dict["root_dir"]
 print(root_dir)
 
-order_list, time_frame = iter_some_order(train_dict["alt_blk_depth"], 63)
+order_list, time_frame = iter_some_order(train_dict["alt_blk_depth"], 1)
 order_list_cnt = len(order_list)
 np.save(root_dir+"order_list_"+time_frame+".npy", order_list)
 
