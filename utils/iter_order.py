@@ -23,7 +23,7 @@ def iter_all_order(alter_block_depth):
     # print(time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime()))
     return set_1, time_frame
 
-def iter_some_order(alter_block, order_need):
+def iter_some_order(alter_block, order_need=128):
     # alter_block = [4,2,2,2,2,1,1,1,1,1]
     # alter_block = [2,2,2,2,2,2]
     order_max = 1

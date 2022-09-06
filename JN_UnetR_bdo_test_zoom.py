@@ -15,7 +15,7 @@ if not os.path.exists(train_dict["root_dir"]):
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_0.json"
 train_dict["gpu_list"] = [6]
-train_dict["alt_blk_depth"] = [4,1,1,1,1,2,2,2,2,2,]
+train_dict["alt_blk_depth"] = [4,1,1,1,1,2,2,2,2,2]
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # [2,2,2,2,2,2,2] for unet
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
 # JN_UnetR_mT_4222211111
@@ -164,6 +164,13 @@ for case_num in range(6):
             output_array[idx_bdo, :, :, :] = torch.argmax(val_outputs, dim=1).detach().cpu().numpy()[0, :, :, :]
 
         val_mode = np.squeeze(mode(output_array, axis=0).mode)
+        np.save(
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_output_array.npy"), 
+            output_array.cpu().numpy(),
+        )
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_output_array.npy"))
+        exit()
+        
         val_std = np.zeros((val_mode.shape))
         for idx_std in range(order_list_cnt):
             val_std += np.square(output_array[idx_std, :, :, :]-val_mode)
