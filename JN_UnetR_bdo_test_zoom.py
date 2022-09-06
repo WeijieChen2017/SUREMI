@@ -14,7 +14,7 @@ if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_0.json"
-train_dict["gpu_list"] = [6]
+train_dict["gpu_list"] = [7]
 train_dict["alt_blk_depth"] = [4,1,1,1,1,2,2,2,2,2]
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # [2,2,2,2,2,2,2] for unet
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
@@ -23,7 +23,7 @@ train_dict["alt_blk_depth"] = [4,1,1,1,1,2,2,2,2,2]
 root_dir = train_dict["root_dir"]
 print(root_dir)
 
-order_list, time_frame = iter_some_order(train_dict["alt_blk_depth"], 8)
+order_list, time_frame = iter_some_order(train_dict["alt_blk_depth"], 128)
 order_list_cnt = len(order_list)
 np.save(root_dir+"order_list_"+time_frame+".npy", order_list)
 
@@ -159,7 +159,7 @@ for case_num in range(6):
         for idx_bdo in range(order_list_cnt):
             print(idx_bdo)
             val_outputs = sliding_window_inference(
-                val_inputs, (96, 96, 96), 4, model, overlap=0.25, # order=order_list[idx_bdo],
+                val_inputs, (96, 96, 96), 8, model, overlap=0.25, # order=order_list[idx_bdo],
             )
             output_array[:, :, :, idx_bdo] = torch.argmax(val_outputs, dim=1).detach().cpu().numpy()[0, :, :, :]
 
@@ -195,28 +195,28 @@ for case_num in range(6):
 
 
         np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0.npy"), 
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0_64.npy"), 
             val_inputs.cpu().numpy()[0, 0, :, :, :],
         )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0.npy"))
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0_64.npy"))
 
         np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_y_RAS_1.5_1.5_2.0.npy"), 
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_y_RAS_1.5_1.5_2.0_64.npy"), 
             val_labels.cpu().numpy()[0, 0, :, :, :],
         )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_y_RAS_1.5_1.5_2.0.npy"))
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_y_RAS_1.5_1.5_2.0_64.npy"))
 
         np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0.npy"), 
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0_64.npy"), 
             val_mode,
         )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0.npy"))
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0_64.npy"))
 
         np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_pct_RAS_1.5_1.5_2.0.npy"), 
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_pct_RAS_1.5_1.5_2.0_64.npy"), 
             val_pct,
         )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_pct_RAS_1.5_1.5_2.0.npy"))
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_pct_RAS_1.5_1.5_2.0_64.npy"))
 
 
         # np.save(
