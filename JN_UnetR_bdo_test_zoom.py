@@ -164,18 +164,19 @@ for case_num in range(6):
             output_array[:, :, :, idx_bdo] = torch.argmax(val_outputs, dim=1).detach().cpu().numpy()[0, :, :, :]
 
         val_mode = np.squeeze(mode(output_array, axis=3).mode)
-        val_mode = np.asarray(val_mode, dtype=int)
         # np.save(
         #     train_dict["root_dir"]+img_name.replace(".nii.gz", "_output_array.npy"), 
         #     output_array,
         # )
         # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_output_array.npy"))
         # exit()
-
-        val_onehot = np.identity(n_cls)[val_mode]
+        output_onehot = np.zeros((ax, ay, az, n_cls))
+        for idx_onehot in range(order_list_cnt):
+            output_onehot += np.identity(n_cls)[np.asarrat(output_array[:, :, :, idx_onehot], dtype=int)]
+        val_onehot = np.identity(n_cls)[np.asarray(val_mode, dtype=int)]
         val_onehot_com = 1-val_onehot
-        print(output_array.shape, val_onehot.shape)
-        val_diff = np.abs(val_onehot*order_list_cnt-output_array)/order_list_cnt # how many votes in difference
+        print(output_onehot.shape, val_onehot.shape)
+        val_diff = np.abs(val_onehot*order_list_cnt-output_onehot)/order_list_cnt # how many votes in difference
         val_diff = np.multiply(val_diff, val_onehot_com) # multiply with mask to remove correct votes
         val_L1 = np.sum(val_diff, axis=3)
         val_L2 = np.square(val_diff, axis=3)
