@@ -4,9 +4,6 @@ from monai.networks.layers.factories import Act, Norm
 from utils import iter_all_order
 from scipy.stats import mode
 
-order_list = iter_all_order([2,2,2,2,2,2,2])
-order_list_cnt = len(order_list)
-
 # n_cls = 14
 train_dict = {}
 train_dict["root_dir"] = "./project_dir/JN_Unet_bdo/"
@@ -15,11 +12,21 @@ if not os.path.exists(train_dict["root_dir"]):
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_0.json"
 train_dict["gpu_list"] = [6]
-# train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # [2,2,2,2,2,2,2] for unet
-# train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
 
 root_dir = train_dict["root_dir"]
 print(root_dir)
+
+train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2]
+# train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # [2,2,2,2,2,2,2] for unet
+# train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
+# JN_UnetR_mT_4222211111
+# JN_UnetR_mT_4111122222
+root_dir = train_dict["root_dir"]
+print(root_dir)
+
+order_list, time_frame = iter_some_order(train_dict["alt_blk_depth"], 63)
+order_list_cnt = len(order_list)
+np.save(root_dir+"order_list_"+time_frame+".npy", order_list)
 
 import os
 import shutil
@@ -134,44 +141,81 @@ for case_num in range(6):
         val_labels = torch.from_numpy(np.expand_dims(label, 1)).float().cuda()
 
         _, _, ax, ay, az = val_labels.size()
-        output_array = np.zeros((order_list_cnt, ax, ay, az))
+        output_array = np.zeros((ax, ay, az, order_list_cnt))
         for idx_bdo in range(order_list_cnt):
             print(idx_bdo)
             val_outputs = sliding_window_inference(
-                val_inputs, (96, 96, 96), 4, model, overlap=0.8, order=order_list[idx_bdo],
+                val_inputs, (96, 96, 96), 8, model, overlap=0.25, # order=order_list[idx_bdo],
             )
-            output_array[idx_bdo, :, :, :] = torch.argmax(val_outputs, dim=1).detach().cpu().numpy()[0, :, :, :]
+            output_array[:, :, :, idx_bdo] = torch.argmax(val_outputs, dim=1).detach().cpu().numpy()[0, :, :, :]
 
-        val_mode = np.squeeze(mode(output_array, axis=0).mode)
-        val_std = np.zeros((val_mode.shape))
-        for idx_std in range(order_list_cnt):
-            val_std += np.square(output_array[idx_std, :, :, :]-val_mode)
-            print(np.mean(val_std))
-        val_std = np.sqrt(val_std) 
+        val_mode = np.asarray(np.squeeze(mode(output_array, axis=3).mode), dtype=int)
+
+        # np.save(
+        #     train_dict["root_dir"]+img_name.replace(".nii.gz", "_output_array.npy"), 
+        #     output_array,
+        # )
+        # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_output_array.npy"))
+        # exit()
+
+        # all to one hot for predictions
+        # output_onehot = np.zeros((ax, ay, az, n_cls))
+        # for idx_onehot in range(order_list_cnt):
+        #     output_onehot += np.identity(n_cls)[np.asarray(output_array[:, :, :, idx_onehot], dtype=int)]
+        # val_onehot = np.identity(n_cls)[np.asarray(val_mode, dtype=int)]
+        # val_onehot_com = 1-val_onehot
+        # print(output_onehot.shape, val_onehot.shape)
+        # val_diff = np.abs(val_onehot*order_list_cnt-output_onehot)/order_list_cnt # how many votes in difference
+        # val_diff = np.multiply(val_diff, val_onehot_com) # multiply with mask to remove correct votes
+        # val_L1 = np.sum(val_diff, axis=3)
+        # val_L2 = np.square(val_diff, axis=3)
+        # val_L2 = np.sum(val_L2, axis=3)
+        # val_L2 = np.aqrt(val_L2, axis=3)
+
+        for idx_diff in range(order_list_cnt):
+            output_array[:, :, :, idx_diff] -= val_mode
+
+        output_array = np.abs(output_array)
+        output_array[output_array>0] = 1
+        val_pct = np.sum(output_array, axis=3)/order_list_cnt
+
 
         np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0.npy"), 
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0_64.npy"), 
             val_inputs.cpu().numpy()[0, 0, :, :, :],
         )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0.npy"))
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0_64.npy"))
 
         np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_y_RAS_1.5_1.5_2.0.npy"), 
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_y_RAS_1.5_1.5_2.0_64.npy"), 
             val_labels.cpu().numpy()[0, 0, :, :, :],
         )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_y_RAS_1.5_1.5_2.0.npy"))
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_y_RAS_1.5_1.5_2.0_64.npy"))
 
         np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0.npy"), 
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0_64.npy"), 
             val_mode,
         )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0.npy"))
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0_64.npy"))
 
         np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_std_RAS_1.5_1.5_2.0.npy"), 
-            val_std,
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_pct_RAS_1.5_1.5_2.0_64.npy"), 
+            val_pct,
         )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_std_RAS_1.5_1.5_2.0.npy"))
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_pct_RAS_1.5_1.5_2.0_64.npy"))
+
+
+        # np.save(
+        #     train_dict["root_dir"]+img_name.replace(".nii.gz", "_L1_RAS_1.5_1.5_2.0.npy"), 
+        #     val_L1,
+        # )
+        # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_L1_RAS_1.5_1.5_2.0.npy"))
+
+        # np.save(
+        #     train_dict["root_dir"]+img_name.replace(".nii.gz", "_L2_RAS_1.5_1.5_2.0.npy"), 
+        #     val_L2,
+        # )
+        # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_L2_RAS_1.5_1.5_2.0.npy"))
 
         plt.figure("check", (18, 6))
         plt.subplot(1, 3, 1)
