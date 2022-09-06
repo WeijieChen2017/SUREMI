@@ -1,4 +1,5 @@
 import os
+import numpy as np
 from model import UNet_Theseus as UNet
 from monai.networks.layers.factories import Act, Norm
 from utils import iter_all_order, iter_some_order
@@ -33,7 +34,6 @@ import shutil
 import tempfile
 
 import matplotlib.pyplot as plt
-import numpy as np
 from tqdm import tqdm
 
 from monai.losses import DiceCELoss
