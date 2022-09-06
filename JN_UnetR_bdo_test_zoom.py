@@ -23,7 +23,7 @@ train_dict["alt_blk_depth"] = [4,1,1,1,1,2,2,2,2,2]
 root_dir = train_dict["root_dir"]
 print(root_dir)
 
-order_list, time_frame = iter_some_order(train_dict["alt_blk_depth"], 128)
+order_list, time_frame = iter_some_order(train_dict["alt_blk_depth"], 16)
 order_list_cnt = len(order_list)
 np.save(root_dir+"order_list_"+time_frame+".npy", order_list)
 
@@ -170,7 +170,7 @@ for case_num in range(6):
         )
         print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_output_array.npy"))
         exit()
-        
+
         val_std = np.zeros((val_mode.shape))
         for idx_std in range(order_list_cnt):
             val_std += np.square(output_array[idx_std, :, :, :]-val_mode)
