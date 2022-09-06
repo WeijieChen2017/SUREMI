@@ -159,7 +159,7 @@ for case_num in range(6):
         for idx_bdo in range(order_list_cnt):
             print(idx_bdo)
             val_outputs = sliding_window_inference(
-                val_inputs, (96, 96, 96), 4, model, overlap=0.8, # order=order_list[idx_bdo],
+                val_inputs, (96, 96, 96), 4, model, overlap=0.25, # order=order_list[idx_bdo],
             )
             output_array[:, :, :, idx_bdo] = torch.argmax(val_outputs, dim=1).detach().cpu().numpy()[0, :, :, :]
 
@@ -189,8 +189,9 @@ for case_num in range(6):
         for idx_diff in range(order_list_cnt):
             output_array[:, :, :, idx_diff] -= val_mode
 
+        output_array = np.abs(output_array)
         output_array[output_array>0] = 1
-        val_pct = np.sum(np.abs(output_array), axis=3)/order_list_cnt
+        val_pct = np.sum(output_array, axis=3)/order_list_cnt
 
 
         np.save(
