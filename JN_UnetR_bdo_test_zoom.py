@@ -7,7 +7,7 @@ from utils import iter_all_order, iter_some_order
 from scipy.stats import mode
 import numpy as np
 
-# n_cls = 14
+n_cls = 14
 train_dict = {}
 train_dict["root_dir"] = "./project_dir/JN_UnetR_mT_4111122222/"
 if not os.path.exists(train_dict["root_dir"]):
@@ -121,7 +121,7 @@ val_loader = DataLoader(
 # ).to(device)
 model = UNETR_mT(
     in_channels=1,
-    out_channels=14,
+    out_channels=n_cls,
     img_size=(96, 96, 96),
     feature_size=16,
     hidden_size=768,
@@ -155,27 +155,32 @@ for case_num in range(6):
         val_labels = torch.from_numpy(np.expand_dims(label, 1)).float().cuda()
 
         _, _, ax, ay, az = val_labels.size()
-        output_array = np.zeros((order_list_cnt, ax, ay, az))
+        output_array = np.zeros((ax, ay, az, order_list_cnt))
         for idx_bdo in range(order_list_cnt):
             print(idx_bdo)
             val_outputs = sliding_window_inference(
                 val_inputs, (96, 96, 96), 4, model, overlap=0.8, # order=order_list[idx_bdo],
             )
-            output_array[idx_bdo, :, :, :] = torch.argmax(val_outputs, dim=1).detach().cpu().numpy()[0, :, :, :]
+            output_array[:, :, :, idx_bdo] = torch.argmax(val_outputs, dim=1).detach().cpu().numpy()[0, :, :, :]
 
-        val_mode = np.squeeze(mode(output_array, axis=0).mode)
-        np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_output_array.npy"), 
-            output_array,
-        )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_output_array.npy"))
-        exit()
+        val_mode = np.squeeze(mode(output_array, axis=3).mode)
+        val_mode = np.asarray(val_mode, dtype=int)
+        # np.save(
+        #     train_dict["root_dir"]+img_name.replace(".nii.gz", "_output_array.npy"), 
+        #     output_array,
+        # )
+        # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_output_array.npy"))
+        # exit()
 
-        val_std = np.zeros((val_mode.shape))
-        for idx_std in range(order_list_cnt):
-            val_std += np.square(output_array[idx_std, :, :, :]-val_mode)
-            print(np.mean(val_std))
-        val_std = np.sqrt(val_std) 
+        val_onehot = np.identity(n_cls)[val_mode]
+        val_onehot_com = 1-val_onehot
+        print(output_array.shape, val_onehot.shape)
+        val_diff = np.abs(val_onehot*order_list_cnt-output_array)/order_list_cnt # how many votes in difference
+        val_diff = np.multiply(val_diff, val_onehot_com) # multiply with mask to remove correct votes
+        val_L1 = np.sum(val_diff, axis=3)
+        val_L2 = np.square(val_diff, axis=3)
+        val_L2 = np.sum(val_L2, axis=3)
+        val_L2 = np.aqrt(val_L2, axis=3)
 
         np.save(
             train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0.npy"), 
@@ -196,10 +201,16 @@ for case_num in range(6):
         print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0.npy"))
 
         np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_std_RAS_1.5_1.5_2.0.npy"), 
-            val_std,
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_L1_RAS_1.5_1.5_2.0.npy"), 
+            val_L1,
         )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_std_RAS_1.5_1.5_2.0.npy"))
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_L1_RAS_1.5_1.5_2.0.npy"))
+
+        np.save(
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_L2_RAS_1.5_1.5_2.0.npy"), 
+            val_L2,
+        )
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_L2_RAS_1.5_1.5_2.0.npy"))
 
         plt.figure("check", (18, 6))
         plt.subplot(1, 3, 1)
