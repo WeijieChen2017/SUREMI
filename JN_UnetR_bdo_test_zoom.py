@@ -163,25 +163,35 @@ for case_num in range(6):
             )
             output_array[:, :, :, idx_bdo] = torch.argmax(val_outputs, dim=1).detach().cpu().numpy()[0, :, :, :]
 
-        val_mode = np.squeeze(mode(output_array, axis=3).mode)
+        val_mode = np.asarray(np.squeeze(mode(output_array, axis=3).mode), dtype=int)
+
         # np.save(
         #     train_dict["root_dir"]+img_name.replace(".nii.gz", "_output_array.npy"), 
         #     output_array,
         # )
         # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_output_array.npy"))
         # exit()
-        output_onehot = np.zeros((ax, ay, az, n_cls))
-        for idx_onehot in range(order_list_cnt):
-            output_onehot += np.identity(n_cls)[np.asarrat(output_array[:, :, :, idx_onehot], dtype=int)]
-        val_onehot = np.identity(n_cls)[np.asarray(val_mode, dtype=int)]
-        val_onehot_com = 1-val_onehot
-        print(output_onehot.shape, val_onehot.shape)
-        val_diff = np.abs(val_onehot*order_list_cnt-output_onehot)/order_list_cnt # how many votes in difference
-        val_diff = np.multiply(val_diff, val_onehot_com) # multiply with mask to remove correct votes
-        val_L1 = np.sum(val_diff, axis=3)
-        val_L2 = np.square(val_diff, axis=3)
-        val_L2 = np.sum(val_L2, axis=3)
-        val_L2 = np.aqrt(val_L2, axis=3)
+
+        # all to one hot for predictions
+        # output_onehot = np.zeros((ax, ay, az, n_cls))
+        # for idx_onehot in range(order_list_cnt):
+        #     output_onehot += np.identity(n_cls)[np.asarray(output_array[:, :, :, idx_onehot], dtype=int)]
+        # val_onehot = np.identity(n_cls)[np.asarray(val_mode, dtype=int)]
+        # val_onehot_com = 1-val_onehot
+        # print(output_onehot.shape, val_onehot.shape)
+        # val_diff = np.abs(val_onehot*order_list_cnt-output_onehot)/order_list_cnt # how many votes in difference
+        # val_diff = np.multiply(val_diff, val_onehot_com) # multiply with mask to remove correct votes
+        # val_L1 = np.sum(val_diff, axis=3)
+        # val_L2 = np.square(val_diff, axis=3)
+        # val_L2 = np.sum(val_L2, axis=3)
+        # val_L2 = np.aqrt(val_L2, axis=3)
+
+        for idx_diff in range(order_list_cnt):
+            output_array[:, :, :, idx_diff] -= val_mode
+
+        output_array[output_array>0] = 1
+        val_pct = np.sum(np.abs(output_array), axis=3)/order_list_cnt
+
 
         np.save(
             train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0.npy"), 
@@ -202,16 +212,23 @@ for case_num in range(6):
         print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0.npy"))
 
         np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_L1_RAS_1.5_1.5_2.0.npy"), 
-            val_L1,
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_pct_RAS_1.5_1.5_2.0.npy"), 
+            val_pct,
         )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_L1_RAS_1.5_1.5_2.0.npy"))
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_pct_RAS_1.5_1.5_2.0.npy"))
 
-        np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_L2_RAS_1.5_1.5_2.0.npy"), 
-            val_L2,
-        )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_L2_RAS_1.5_1.5_2.0.npy"))
+
+        # np.save(
+        #     train_dict["root_dir"]+img_name.replace(".nii.gz", "_L1_RAS_1.5_1.5_2.0.npy"), 
+        #     val_L1,
+        # )
+        # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_L1_RAS_1.5_1.5_2.0.npy"))
+
+        # np.save(
+        #     train_dict["root_dir"]+img_name.replace(".nii.gz", "_L2_RAS_1.5_1.5_2.0.npy"), 
+        #     val_L2,
+        # )
+        # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_L2_RAS_1.5_1.5_2.0.npy"))
 
         plt.figure("check", (18, 6))
         plt.subplot(1, 3, 1)
