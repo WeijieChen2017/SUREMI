@@ -1,7 +1,7 @@
 import os
 from model import UNet_Theseus as UNet
 from monai.networks.layers.factories import Act, Norm
-from utils import iter_all_order
+from utils import iter_all_order, iter_some_order
 from scipy.stats import mode
 
 # n_cls = 14
