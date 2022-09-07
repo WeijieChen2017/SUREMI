@@ -177,6 +177,7 @@ for case_num in range(6):
         val_labels = torch.from_numpy(np.expand_dims(label, 1)).float().cuda()
 
         _, _, ax, ay, az = val_labels.size()
+        total_pixel = ax * ay * az
         output_array = np.zeros((ax, ay, az, order_list_cnt))
         for idx_bdo in range(order_list_cnt):
             print(idx_bdo)
