@@ -200,7 +200,7 @@ for case_num in range(6):
 
         np.save(
             train_dict["root_dir"]+img_name.replace(".nii.gz", "_vote.npy"), 
-            val_inputs.cpu().numpy()[0, 0, :, :, :],
+            path_vote,
         )
         print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_vote.npy"))
 
