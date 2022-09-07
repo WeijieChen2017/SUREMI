@@ -198,6 +198,14 @@ for case_num in range(6):
                 # e.g. [*,*,1,*,*] then errors go to this list
                 path_vote[idx_path][order_list[idx_path]].append(curr_error)
 
+        np.save(
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_vote.npy"), 
+            val_inputs.cpu().numpy()[0, 0, :, :, :],
+        )
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_vote.npy"))
+
+
+
         # np.save(
         #     train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0_vote.npy"), 
         #     val_inputs.cpu().numpy()[0, 0, :, :, :],
