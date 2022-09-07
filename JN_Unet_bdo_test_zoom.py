@@ -152,7 +152,7 @@ for case_num in range(6):
         total_pixel = ax * ay * az
         output_array = np.zeros((ax, ay, az, order_list_cnt))
         for idx_bdo in range(order_list_cnt):
-            print(idx_bdo, "-", end="")
+            print(idx_bdo, "- ", end="")
             val_outputs = sliding_window_inference(
                 val_inputs, (96, 96, 96), 8, model, overlap=0.25, order=order_list[idx_bdo],
             )
@@ -196,7 +196,7 @@ for case_num in range(6):
             curr_error = np.sum(output_array[:, :, :, idx_vote])/total_pixel
             for idx_path in range(len(train_dict["alt_blk_depth"])):
                 # e.g. [*,*,1,*,*] then errors go to this list
-                path_vote[idx_path][order_list[idx_path]].append(curr_error)
+                path_vote[idx_path][order_list[idx_vote][idx_path]].append(curr_error)
 
         np.save(
             train_dict["root_dir"]+img_name.replace(".nii.gz", "_vote.npy"), 
