@@ -152,7 +152,7 @@ for case_num in range(6):
         total_pixel = ax * ay * az
         output_array = np.zeros((ax, ay, az, order_list_cnt))
         for idx_bdo in range(order_list_cnt):
-            print(idx_bdo, "- ", end="")
+            print(idx_bdo)
             val_outputs = sliding_window_inference(
                 val_inputs, (96, 96, 96), 8, model, overlap=0.25, order=order_list[idx_bdo],
             )
