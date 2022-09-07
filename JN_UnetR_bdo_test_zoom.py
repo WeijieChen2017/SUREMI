@@ -7,28 +7,46 @@ from utils import iter_all_order, iter_some_order
 from scipy.stats import mode
 import numpy as np
 
+model_list = [
+    ["./project_dir/JN_UnetR_mT_4222211111/",[4,2,2,2,2,1,1,1,1,1], 2],
+    ["./project_dir/JN_UnetR_mT_4111122222/",[4,1,1,1,1,2,2,2,2,2], 2],
+    ["./project_dir/JN_UnetR_bdo/",[2,2,2,2,2,2,2,2,2,2],3]
+]
+
+print("Model index: ", end="")
+current_model_idx = int(input()) - 1
+print(model_list[current_model_idx])
+time.sleep(1)
+
+
 n_cls = 14
 train_dict = {}
 # train_dict["root_dir"] = "./project_dir/JN_UnetR_bdo/"
-train_dict["root_dir"] = "./project_dir/JN_UnetR_mT_4222211111/"
+train_dict["root_dir"] = model_list[current_model_idx][0]
 if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_0.json"
-train_dict["gpu_list"] = [7]
-train_dict["alt_blk_depth"] = [4,2,2,2,2,1,1,1,1,1]
+train_dict["alt_blk_depth"] = model_list[current_model_idx][1]
+train_dict["gpu_list"] = [model_list[current_model_idx][2]]
 # train_dict["alt_blk_depth"] = [4,1,1,1,1,2,2,2,2,2]
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2,2]
-# train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # [2,2,2,2,2,2,2] for unet
-# train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
 # JN_UnetR_mT_4222211111
 # JN_UnetR_mT_4111122222
 root_dir = train_dict["root_dir"]
 print(root_dir)
 
-order_list, time_frame = iter_some_order(train_dict["alt_blk_depth"], 63)
+order_list, time_frame = iter_all_order(train_dict["alt_blk_depth"])
 order_list_cnt = len(order_list)
 np.save(root_dir+"order_list_"+time_frame+".npy", order_list)
+
+path_vote =[]
+for idx in range(len(train_dict["alt_blk_depth"])):
+    path_vote_sub = []
+    for idx_sub in range(train_dict["alt_blk_depth"][idx]):
+        path_vote_sub.append([])
+    path_vote.append(path_vote_sub)
+
 
 import os
 import shutil
@@ -194,57 +212,71 @@ for case_num in range(6):
 
         output_array = np.abs(output_array)
         output_array[output_array>0] = 1
-        val_pct = np.sum(output_array, axis=3)/order_list_cnt
-
-
-        np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0_64.npy"), 
-            val_inputs.cpu().numpy()[0, 0, :, :, :],
-        )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0_64.npy"))
-
-        np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_y_RAS_1.5_1.5_2.0_64.npy"), 
-            val_labels.cpu().numpy()[0, 0, :, :, :],
-        )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_y_RAS_1.5_1.5_2.0_64.npy"))
+        # val_pct = np.sum(output_array, axis=3)/order_list_cnt
+        
+        # vote recorder
+        # 128 list * 128 error
+        for idx_vote in range(order_list_cnt):
+            curr_path = order_list[idx_vote]
+            curr_error = np.sum(output_array[:, :, :, idx_vote])/total_pixel
+            for idx_path in range(len(train_dict["alt_blk_depth"])):
+                # e.g. [*,*,1,*,*] then errors go to this list
+                path_vote[idx_path][order_list[idx_vote][idx_path]].append(curr_error)
 
         np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0_64.npy"), 
-            val_mode,
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_vote.npy"), 
+            path_vote,
         )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0_64.npy"))
-
-        np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_pct_RAS_1.5_1.5_2.0_64.npy"), 
-            val_pct,
-        )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_pct_RAS_1.5_1.5_2.0_64.npy"))
-
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_vote.npy"))
 
         # np.save(
-        #     train_dict["root_dir"]+img_name.replace(".nii.gz", "_L1_RAS_1.5_1.5_2.0.npy"), 
-        #     val_L1,
+        #     train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0_64.npy"), 
+        #     val_inputs.cpu().numpy()[0, 0, :, :, :],
         # )
-        # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_L1_RAS_1.5_1.5_2.0.npy"))
+        # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0_64.npy"))
 
         # np.save(
-        #     train_dict["root_dir"]+img_name.replace(".nii.gz", "_L2_RAS_1.5_1.5_2.0.npy"), 
-        #     val_L2,
+        #     train_dict["root_dir"]+img_name.replace(".nii.gz", "_y_RAS_1.5_1.5_2.0_64.npy"), 
+        #     val_labels.cpu().numpy()[0, 0, :, :, :],
         # )
-        # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_L2_RAS_1.5_1.5_2.0.npy"))
+        # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_y_RAS_1.5_1.5_2.0_64.npy"))
 
-        plt.figure("check", (18, 6))
-        plt.subplot(1, 3, 1)
-        plt.title("image")
-        plt.imshow(val_inputs.cpu().numpy()[0, 0, :, :, slice_map[img_name]], cmap="gray")
-        plt.subplot(1, 3, 2)
-        plt.title("label")
-        plt.imshow(val_labels.cpu().numpy()[0, 0, :, :, slice_map[img_name]])
-        plt.subplot(1, 3, 3)
-        plt.title("output")
-        plt.imshow(
-            torch.argmax(val_outputs, dim=1).detach().cpu()[0, :, :, slice_map[img_name]]
-        )
-        # plt.show()
-        plt.savefig(train_dict["root_dir"]+"JN_{}.png".format(img_name), dpi=300)
+        # np.save(
+        #     train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0_64.npy"), 
+        #     val_mode,
+        # )
+        # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0_64.npy"))
+
+        # np.save(
+        #     train_dict["root_dir"]+img_name.replace(".nii.gz", "_pct_RAS_1.5_1.5_2.0_64.npy"), 
+        #     val_pct,
+        # )
+        # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_pct_RAS_1.5_1.5_2.0_64.npy"))
+
+
+        # # np.save(
+        # #     train_dict["root_dir"]+img_name.replace(".nii.gz", "_L1_RAS_1.5_1.5_2.0.npy"), 
+        # #     val_L1,
+        # # )
+        # # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_L1_RAS_1.5_1.5_2.0.npy"))
+
+        # # np.save(
+        # #     train_dict["root_dir"]+img_name.replace(".nii.gz", "_L2_RAS_1.5_1.5_2.0.npy"), 
+        # #     val_L2,
+        # # )
+        # # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_L2_RAS_1.5_1.5_2.0.npy"))
+
+        # plt.figure("check", (18, 6))
+        # plt.subplot(1, 3, 1)
+        # plt.title("image")
+        # plt.imshow(val_inputs.cpu().numpy()[0, 0, :, :, slice_map[img_name]], cmap="gray")
+        # plt.subplot(1, 3, 2)
+        # plt.title("label")
+        # plt.imshow(val_labels.cpu().numpy()[0, 0, :, :, slice_map[img_name]])
+        # plt.subplot(1, 3, 3)
+        # plt.title("output")
+        # plt.imshow(
+        #     torch.argmax(val_outputs, dim=1).detach().cpu()[0, :, :, slice_map[img_name]]
+        # )
+        # # plt.show()
+        # plt.savefig(train_dict["root_dir"]+"JN_{}.png".format(img_name), dpi=300)
