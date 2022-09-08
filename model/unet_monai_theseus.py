@@ -128,7 +128,7 @@ class UNet_Theseus(nn.Module):
         bias: bool = True,
         adn_ordering: str = "NDA",
         dimensions: Optional[int] = None,
-        alter_block: int = 2,
+        alter_block = 2,
     ) -> None:
 
         super().__init__()
@@ -162,6 +162,9 @@ class UNet_Theseus(nn.Module):
         self.dropout = dropout
         self.bias = bias
         self.adn_ordering = adn_ordering
+
+        if isinstance(alter_block, int):
+            alter_block = [alter_block for i in range(7)]
         self.alter_block = alter_block
 
 
@@ -190,40 +193,40 @@ class UNet_Theseus(nn.Module):
         self.down1 = [ResidualUnit(3, self.in_channels, self.channels[0], self.strides[0],
                 kernel_size=self.kernel_size, subunits=self.num_res_units,
                 act=self.act, norm=self.norm, dropout=self.dropout,
-                bias=self.bias, adn_ordering=self.adn_ordering) for i in range(self.alter_block)]
+                bias=self.bias, adn_ordering=self.adn_ordering) for i in range(self.alter_block[0])]
         self.down2 = [ResidualUnit(3, self.channels[0], self.channels[1], self.strides[1],
                 kernel_size=self.kernel_size, subunits=self.num_res_units,
                 act=self.act, norm=self.norm, dropout=self.dropout,
-                bias=self.bias, adn_ordering=self.adn_ordering) for i in range(self.alter_block)]
+                bias=self.bias, adn_ordering=self.adn_ordering) for i in range(self.alter_block[1])]
         self.down3 = [ResidualUnit(3, self.channels[1], self.channels[2], self.strides[2],
                 kernel_size=self.kernel_size, subunits=self.num_res_units,
                 act=self.act, norm=self.norm, dropout=self.dropout,
-                bias=self.bias, adn_ordering=self.adn_ordering) for i in range(self.alter_block)]
+                bias=self.bias, adn_ordering=self.adn_ordering) for i in range(self.alter_block[2])]
         self.bottom = [ResidualUnit(3, self.channels[2], self.channels[3], 1,
                 kernel_size=self.kernel_size, subunits=self.num_res_units,
                 act=self.act, norm=self.norm, dropout=self.dropout,
-                bias=self.bias, adn_ordering=self.adn_ordering) for i in range(self.alter_block)]
+                bias=self.bias, adn_ordering=self.adn_ordering) for i in range(self.alter_block[3])]
         self.up3 = [nn.Sequential(
                 Convolution(3, self.channels[3]+self.channels[2], self.channels[1], strides=self.strides[2],
                 kernel_size=self.up_kernel_size, act=self.act, norm=self.norm, dropout=self.dropout, 
                 bias=self.bias, conv_only=False, is_transposed=True, adn_ordering=self.adn_ordering),
                 ResidualUnit(3, self.channels[1], self.channels[1], strides=1,
                 kernel_size=self.kernel_size, subunits=1, act=self.act, norm=self.norm,
-                dropout=self.dropout, bias=self.bias, last_conv_only=False, adn_ordering=self.adn_ordering,)) for i in range(self.alter_block)]
+                dropout=self.dropout, bias=self.bias, last_conv_only=False, adn_ordering=self.adn_ordering,)) for i in range(self.alter_block[4])]
         self.up2 = [nn.Sequential(
                 Convolution(3, self.channels[1]*2, self.channels[0], strides=self.strides[1],
                 kernel_size=self.up_kernel_size, act=self.act, norm=self.norm, dropout=self.dropout, 
                 bias=self.bias, conv_only=False, is_transposed=True, adn_ordering=self.adn_ordering),
                 ResidualUnit(3, self.channels[0], self.channels[0], strides=1,
                 kernel_size=self.kernel_size, subunits=1, act=self.act, norm=self.norm,
-                dropout=self.dropout, bias=self.bias, last_conv_only=False, adn_ordering=self.adn_ordering,)) for i in range(self.alter_block)]
+                dropout=self.dropout, bias=self.bias, last_conv_only=False, adn_ordering=self.adn_ordering,)) for i in range(self.alter_block[5])]
         self.up1 = [nn.Sequential(
                 Convolution(3, self.channels[0]*2, self.out_channels, strides=self.strides[0],
                 kernel_size=self.up_kernel_size, act=self.act, norm=self.norm, dropout=self.dropout, 
                 bias=self.bias, conv_only=False, is_transposed=True, adn_ordering=self.adn_ordering),
                 ResidualUnit(3, self.out_channels, self.out_channels, strides=1,
                 kernel_size=self.kernel_size, subunits=1, act=self.act, norm=self.norm,
-                dropout=self.dropout, bias=self.bias, last_conv_only=True, adn_ordering=self.adn_ordering)) for i in range(self.alter_block)]
+                dropout=self.dropout, bias=self.bias, last_conv_only=True, adn_ordering=self.adn_ordering)) for i in range(self.alter_block[6])]
 
         self.down1 = nn.ModuleList(self.down1)
         self.down2 = nn.ModuleList(self.down2)
@@ -236,7 +239,7 @@ class UNet_Theseus(nn.Module):
     def forward(self, x: torch.Tensor, order:Sequence[int] = []) -> torch.Tensor:
 
         if order == []:
-            order = [random.randint(0, 1) for i in range(7)]
+            order = [random.randint(0, self.alter_block[i]-1) for i in range(7)]
 
         # print(x.size())
         x1 = self.down1[order[0]](x)

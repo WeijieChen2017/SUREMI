@@ -4,13 +4,13 @@ from model import UNet_Theseus as UNet
 from monai.networks.layers.factories import Act, Norm
 
 train_dict = {}
-train_dict["root_dir"] = "./project_dir/JN_Unet_bdo_ab4/"
+train_dict["root_dir"] = "./project_dir/JN_Unet_bdo_ab2468642/"
 if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_0.json"
-train_dict["gpu_list"] = [5]
-train_dict["alter_block"] = 4
+train_dict["gpu_list"] = [6]
+train_dict["alter_block"] = [2,4,6,8,6,4,2]
 train_dict["batch_size"] = 1
 
 
