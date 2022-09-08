@@ -37,7 +37,11 @@ train_dict["gpu_list"] = [model_list[current_model_idx][2]]
 root_dir = train_dict["root_dir"]
 print(root_dir)
 
-order_list, time_frame = iter_all_order(train_dict["alt_blk_depth"])
+raw_order_list, time_frame = iter_all_order(train_dict["alt_blk_depth"])
+order_list = []
+for order in raw_order_list:
+    if order[0] != 0:
+        order_list.append(order)
 order_list_cnt = len(order_list)
 np.save(root_dir+"order_list_"+time_frame+".npy", order_list)
 
