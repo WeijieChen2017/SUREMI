@@ -324,7 +324,7 @@ def train(global_step, train_loader, dice_val_best, global_step_best):
 
 
 max_iterations = 25000
-eval_num = 1
+eval_num = 500
 post_label = AsDiscrete(to_onehot=14)
 post_pred = AsDiscrete(argmax=True, to_onehot=14)
 dice_metric = DiceMetric(include_background=True, reduction="mean", get_not_nans=False)
