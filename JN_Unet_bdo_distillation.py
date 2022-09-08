@@ -207,7 +207,7 @@ if isinstance(train_dict["alter_block"], int):
     max_alter_block = train_dict["alter_block"]
 else:
     max_alter_block = max(train_dict["alter_block"])
-for idx_alter_block in range(train_dict["alter_block"]):
+for idx_alter_block in range(max_alter_block):
     swm["down1."+str(idx_alter_block)]   = "model.0"
     swm["down2."+str(idx_alter_block)]   = "model.1.submodule.0"
     swm["down3."+str(idx_alter_block)]   = "model.1.submodule.1.submodule.0"
