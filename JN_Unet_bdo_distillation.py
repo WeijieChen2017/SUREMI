@@ -11,6 +11,8 @@ train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_0.json"
 train_dict["gpu_list"] = [5]
 train_dict["alter_block"] = 4
+train_dict["batch_size"] = 1
+
 
 import os
 import gc
@@ -165,13 +167,13 @@ train_ds = CacheDataset(
     num_workers=8,
 )
 train_loader = DataLoader(
-    train_ds, batch_size=4, shuffle=True, num_workers=8, pin_memory=True
+    train_ds, batch_size=train_dict["batch_size"], shuffle=True, num_workers=8, pin_memory=True
 )
 val_ds = CacheDataset(
     data=val_files, transform=val_transforms, cache_num=6, cache_rate=1.0, num_workers=4
 )
 val_loader = DataLoader(
-    val_ds, batch_size=4, shuffle=False, num_workers=4, pin_memory=True
+    val_ds, batch_size=train_dict["batch_size"], shuffle=False, num_workers=4, pin_memory=True
 )
 
 #--------------------------------------------------------------
