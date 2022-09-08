@@ -2,12 +2,12 @@ import os
 from model import UNETR_bdo as UNETR
 
 train_dict = {}
-train_dict["root_dir"] = "./project_dir/JN_Unet/"
+train_dict["root_dir"] = "./project_dir/Seg532_Unet/"
 if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
-train_dict["split_JSON"] = "dataset_0.json"
-train_dict["gpu_list"] = [7]
+train_dict["split_JSON"] = "dataset_532.json"
+train_dict["gpu_list"] = [5]
 
 
 import shutil
