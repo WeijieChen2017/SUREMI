@@ -28,9 +28,9 @@ from model import UNet_shuffle as UNet
 
 model_list = [
     ["Theseus_v4_shuffle_rdp050", [5], 0.5, False],
-    ["Theseus_v3_shuffle_rdp100", [5], 1.0, False],
-    ["Theseus_v3_shuffleW_rdp050", [5], 0.5, True],
-    ["Theseus_v3_shuffleW_rdp100", [5], 1.0, True],
+    ["Theseus_v4_shuffle_rdp100", [5], 1.0, False],
+    ["Theseus_v4_shuffleW_rdp050", [5], 0.5, True],
+    ["Theseus_v4_shuffleW_rdp100", [5], 1.0, True],
     ]
 
 print("Model index: ", end="")

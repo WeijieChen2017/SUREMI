@@ -9,7 +9,6 @@ train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_532.json"
 train_dict["gpu_list"] = [5]
 
-
 import shutil
 import tempfile
 

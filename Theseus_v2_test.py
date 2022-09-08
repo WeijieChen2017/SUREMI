@@ -29,17 +29,19 @@ from utils import iter_all_order
 model_list = [
     # "Theseus_v2_181_200_rdp0",
     # "Theseus_v2_181_200_rdp1",
-    # "Theseus_v2_181_200_rdp020",
+    "Theseus_v2_181_200_rdp020",
     # "Theseus_v2_181_200_rdp040",
     # "Theseus_v2_181_200_rdp060",
     # "Theseus_v2_181_200_rdp080",
-    "Theseus_v2_47_57_rdp000",
-    "Theseus_v2_47_57_rdp020",
-    "Theseus_v2_47_57_rdp040",
-    "Theseus_v2_47_57_rdp060",
-    "Theseus_v2_47_57_rdp080",
-    "Theseus_v2_47_57_rdp100",
+    # "Theseus_v2_47_57_rdp000",
+    # "Theseus_v2_47_57_rdp020",
+    # "Theseus_v2_47_57_rdp040",
+    # "Theseus_v2_47_57_rdp060",
+    # "Theseus_v2_47_57_rdp080",
+    # "Theseus_v2_47_57_rdp100",
 ]
+
+
 
 
 print("Model index: ", end="")
@@ -97,8 +99,8 @@ target_model = model_list[-1]
 # target_model = test_dict["save_folder"]+test_dict["best_model_name"]
 model = torch.load(target_model, map_location=torch.device('cpu'))
 print("--->", target_model, " is loaded.")
-print(model)
-exit()
+# print(model)
+# exit()
 
 # ==================== data division ====================
 
