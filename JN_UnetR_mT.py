@@ -198,7 +198,7 @@ model = UNETR_mT(
     res_block=True,
     dropout_rate=0.0,
     # alter_block=[4, 2, 2, 2, 2, 1, 1, 1, 1, 1],
-    alter_block=[4, 1, 1, 1, 1, 2, 2, 2, 2, 2],
+    alter_block=train_dict["alter_block"],
 ).to(device)
 
 # state weights mapping
