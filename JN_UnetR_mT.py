@@ -208,13 +208,18 @@ if isinstance(train_dict["alter_block"], int):
 else:
     max_alter_block = max(train_dict["alter_block"])
 for idx_alter_block in range(max_alter_block):
-    swm["down1."+str(idx_alter_block)]   = "model.0"
-    swm["down2."+str(idx_alter_block)]   = "model.1.submodule.0"
-    swm["down3."+str(idx_alter_block)]   = "model.1.submodule.1.submodule.0"
-    swm["bottom."+str(idx_alter_block)]  = "model.1.submodule.1.submodule.1.submodule"
-    swm["up3."+str(idx_alter_block)]     = "model.1.submodule.1.submodule.2"
-    swm["up2."+str(idx_alter_block)]     = "model.1.submodule.2"
-    swm["up1."+str(idx_alter_block)]     = "model.2"
+
+    swm["vit."+str(idx_alter_block)]   = "vit.0"
+    swm["encoder1."+str(idx_alter_block)] = "encoder1"
+    swm["encoder2."+str(idx_alter_block)] = "encoder2"
+    swm["encoder3."+str(idx_alter_block)] = "encoder3"
+    swm["encoder4."+str(idx_alter_block)] = "encoder4"
+    swm["decoder5."+str(idx_alter_block)] = "decoder5"
+    swm["decoder4."+str(idx_alter_block)] = "decoder4"
+    swm["decoder3."+str(idx_alter_block)] = "decoder3"
+    swm["decoder2."+str(idx_alter_block)] = "decoder2"
+    swm["out."+str(idx_alter_block)] = "out"
+
 
 
 train_dict["state_weight_mapping"] = swm
