@@ -17,7 +17,7 @@ train_dict["gpu_list"] = [5]
 root_dir = train_dict["root_dir"]
 print(root_dir)
 
-train_dict["alt_blk_depth"] = 4
+train_dict["alt_blk_depth"] = [4,4,4,4,4,4,4]
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # [2,2,2,2,2,2,2] for unet
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
 # JN_UnetR_mT_4222211111
