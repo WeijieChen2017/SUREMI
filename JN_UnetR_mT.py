@@ -3,12 +3,14 @@ from model import UNETR_mT
 
 train_dict = {}
 # train_dict["root_dir"] = "./project_dir/JN_UnetR_mT_4222211111/"
-train_dict["root_dir"] = "./project_dir/JN_UnetR_mT_4111122222/"
+train_dict["root_dir"] = "./project_dir/Seg532_UnetR_ab2/"
 if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
-train_dict["split_JSON"] = "dataset_0.json"
-train_dict["gpu_list"] = [7]
+train_dict["split_JSON"] = "dataset_532.json"
+train_dict["gpu_list"] = [6]
+train_dict["alter_block"] = [2,2,2,2,2,2,2,2,2]
+train_dict["best_metric_model"] = "Seg532_UnetR"
 
 import os
 import gc
@@ -201,33 +203,22 @@ model = UNETR_mT(
 
 # state weights mapping
 swm = {}
-swm["vit.0"]      = "vit"
-swm["vit.1"]      = "vit"
-swm["vit.2"]      = "vit"
-swm["vit.3"]      = "vit"
-swm["encoder1.0"] = "encoder1"
-swm["encoder2.0"] = "encoder2"
-swm["encoder3.0"] = "encoder3"
-swm["encoder4.0"] = "encoder4"
-swm["decoder5.0"] = "decoder5"
-swm["decoder4.0"] = "decoder4"
-swm["decoder3.0"] = "decoder3"
-swm["decoder2.0"] = "decoder2"
-swm["out.0"] = "out"
-swm["out.1"] = "out"
-
-swm["encoder1.1"] = "encoder1"
-swm["encoder2.1"] = "encoder2"
-swm["encoder3.1"] = "encoder3"
-swm["encoder4.1"] = "encoder4"
-swm["decoder5.1"] = "decoder5"
-swm["decoder4.1"] = "decoder4"
-swm["decoder3.1"] = "decoder3"
-swm["decoder2.1"] = "decoder2"
+if isinstance(train_dict["alter_block"], int):
+    max_alter_block = train_dict["alter_block"]
+else:
+    max_alter_block = max(train_dict["alter_block"])
+for idx_alter_block in range(max_alter_block):
+    swm["down1."+str(idx_alter_block)]   = "model.0"
+    swm["down2."+str(idx_alter_block)]   = "model.1.submodule.0"
+    swm["down3."+str(idx_alter_block)]   = "model.1.submodule.1.submodule.0"
+    swm["bottom."+str(idx_alter_block)]  = "model.1.submodule.1.submodule.1.submodule"
+    swm["up3."+str(idx_alter_block)]     = "model.1.submodule.1.submodule.2"
+    swm["up2."+str(idx_alter_block)]     = "model.1.submodule.2"
+    swm["up1."+str(idx_alter_block)]     = "model.2"
 
 
 train_dict["state_weight_mapping"] = swm
-train_dict["target_model"] = "./project_dir/JN_UnetR/best_metric_model.pth"
+train_dict["target_model"] = "./project_dir/"+train_dict["best_metric_model"] +"/best_metric_model.pth"
 
 pretrain_state = torch.load(train_dict["target_model"])
 
