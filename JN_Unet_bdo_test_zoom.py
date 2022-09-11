@@ -7,17 +7,17 @@ from scipy.stats import mode
 
 # n_cls = 14
 train_dict = {}
-train_dict["root_dir"] = "./project_dir/JN_Unet_bdo/"
+train_dict["root_dir"] = "./project_dir/JN_Unet_bdo_ab4/"
 if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_0.json"
-train_dict["gpu_list"] = [3]
+train_dict["gpu_list"] = [5]
 
 root_dir = train_dict["root_dir"]
 print(root_dir)
 
-train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2]
+train_dict["alt_blk_depth"] = 4
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # [2,2,2,2,2,2,2] for unet
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
 # JN_UnetR_mT_4222211111
@@ -126,6 +126,7 @@ model = UNet(
     norm=Norm.INSTANCE,
     dropout=0.,
     bias=True,
+    alter_block=train_dict["alt_blk_depth"],
     ).to(device)
 model.load_state_dict(torch.load(os.path.join(root_dir, "best_metric_model.pth")))
 
@@ -206,29 +207,29 @@ for case_num in range(6):
 
 
 
-        # np.save(
-        #     train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0_vote.npy"), 
-        #     val_inputs.cpu().numpy()[0, 0, :, :, :],
-        # )
-        # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0_vote.npy"))
+        np.save(
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0_vote.npy"), 
+            val_inputs.cpu().numpy()[0, 0, :, :, :],
+        )
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0_vote.npy"))
 
-        # np.save(
-        #     train_dict["root_dir"]+img_name.replace(".nii.gz", "_y_RAS_1.5_1.5_2.0_vote.npy"), 
-        #     val_labels.cpu().numpy()[0, 0, :, :, :],
-        # )
-        # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_y_RAS_1.5_1.5_2.0_vote.npy"))
+        np.save(
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_y_RAS_1.5_1.5_2.0_vote.npy"), 
+            val_labels.cpu().numpy()[0, 0, :, :, :],
+        )
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_y_RAS_1.5_1.5_2.0_vote.npy"))
 
-        # np.save(
-        #     train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0_vote.npy"), 
-        #     val_mode,
-        # )
-        # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0_vote.npy"))
+        np.save(
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0_vote.npy"), 
+            val_mode,
+        )
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0_vote.npy"))
 
-        # np.save(
-        #     train_dict["root_dir"]+img_name.replace(".nii.gz", "_pct_RAS_1.5_1.5_2.0_vote.npy"), 
-        #     val_pct,
-        # )
-        # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_pct_RAS_1.5_1.5_2.0_vote.npy"))
+        np.save(
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_pct_RAS_1.5_1.5_2.0_vote.npy"), 
+            val_pct,
+        )
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_pct_RAS_1.5_1.5_2.0_vote.npy"))
 
 
         # np.save(
@@ -243,17 +244,17 @@ for case_num in range(6):
         # )
         # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_L2_RAS_1.5_1.5_2.0.npy"))
 
-        # plt.figure("check", (18, 6))
-        # plt.subplot(1, 3, 1)
-        # plt.title("image")
-        # plt.imshow(val_inputs.cpu().numpy()[0, 0, :, :, slice_map[img_name]], cmap="gray")
-        # plt.subplot(1, 3, 2)
-        # plt.title("label")
-        # plt.imshow(val_labels.cpu().numpy()[0, 0, :, :, slice_map[img_name]])
-        # plt.subplot(1, 3, 3)
-        # plt.title("output")
-        # plt.imshow(
-        #     torch.argmax(val_outputs, dim=1).detach().cpu()[0, :, :, slice_map[img_name]]
-        # )
-        # # plt.show()
-        # plt.savefig(train_dict["root_dir"]+"JN_{}.png".format(img_name), dpi=300)
+        plt.figure("check", (18, 6))
+        plt.subplot(1, 3, 1)
+        plt.title("image")
+        plt.imshow(val_inputs.cpu().numpy()[0, 0, :, :, slice_map[img_name]], cmap="gray")
+        plt.subplot(1, 3, 2)
+        plt.title("label")
+        plt.imshow(val_labels.cpu().numpy()[0, 0, :, :, slice_map[img_name]])
+        plt.subplot(1, 3, 3)
+        plt.title("output")
+        plt.imshow(
+            torch.argmax(val_outputs, dim=1).detach().cpu()[0, :, :, slice_map[img_name]]
+        )
+        # plt.show()
+        plt.savefig(train_dict["root_dir"]+"JN_{}.png".format(img_name), dpi=300)
