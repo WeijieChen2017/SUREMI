@@ -7,7 +7,7 @@ from scipy.stats import mode
 
 # n_cls = 14
 train_dict = {}
-train_dict["root_dir"] = "./project_dir/JN_Unet_bdo_ab2468642/"
+train_dict["root_dir"] = "./project_dir/JN_Unet_bdo_ab4/"
 if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
@@ -17,7 +17,8 @@ train_dict["gpu_list"] = [5]
 root_dir = train_dict["root_dir"]
 print(root_dir)
 
-train_dict["alt_blk_depth"] = [2,4,6,8,6,4,2]
+train_dict["alt_blk_depth"] = [4,4,4,4,4,4,4]
+# train_dict["alt_blk_depth"] = [2,4,6,8,6,4,2]
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # [2,2,2,2,2,2,2] for unet
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
 # JN_UnetR_mT_4222211111
