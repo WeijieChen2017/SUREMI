@@ -209,7 +209,7 @@ else:
     max_alter_block = max(train_dict["alter_block"])
 for idx_alter_block in range(max_alter_block):
 
-    swm["vit."+str(idx_alter_block)]   = "vit.0"
+    swm["vit."+str(idx_alter_block)]   = "vit"
     swm["encoder1."+str(idx_alter_block)] = "encoder1"
     swm["encoder2."+str(idx_alter_block)] = "encoder2"
     swm["encoder3."+str(idx_alter_block)] = "encoder3"
