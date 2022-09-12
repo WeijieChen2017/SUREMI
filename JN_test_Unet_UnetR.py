@@ -38,7 +38,7 @@ model_list = [
         "", 
         "UnetR",
         "dataset_532.json",
-        0,],
+        256,],
 ]
 
 print("Model index: ", end="")
