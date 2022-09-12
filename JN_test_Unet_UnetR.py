@@ -49,7 +49,7 @@ time.sleep(1)
 
 
 
-# n_cls = 14
+n_cls = 14
 config_dict = {}
 config_dict["root_dir"] = model_list[cmi][0]
 config_dict["alt_blk_depth"] = model_list[cmi][1]
@@ -171,7 +171,7 @@ if config_dict["model_type"] == "Unet":
     model = UNet( 
         spatial_dims=3,
         in_channels=1,
-        out_channels=14,
+        out_channels=n_cls,
         channels=(64, 128, 256, 512),
         strides=(2, 2, 2),
         num_res_units=6,
