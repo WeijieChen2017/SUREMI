@@ -7,7 +7,7 @@ from scipy.stats import mode
 
 model_list = [
     ["./project_dir/JN_Unet_bdo_ab4/",      # project root folder
-        [4,2,2,2,2,1,1,1,1,1],              # alter block number of each block
+        [4,4,4,4,4,4,4],                    # alter block number of each block
         6,                                  # GPU number for using
         "",                                 # special tag for input/output files
         "Unet",                             # model type
@@ -15,20 +15,28 @@ model_list = [
         256,],                              # how many predictios for one single case
     
     ["./project_dir/JN_Unet_bdo_ab2468642/",
-        [4,1,1,1,1,2,2,2,2,2], 
+        [2,4,6,8,6,4,2], 
         6, 
         "", 
         "Unet",
         "dataset_0.json",
         256,],
 
-    ["./project_dir/JN_Unet_bdo_ab2468642/",
-        [4,1,1,1,1,2,2,2,2,2], 
-        6, 
+    ["./project_dir/Seg532_Unet_ab2/",
+        [2,2,2,2,2,2,2], 
+        5, 
         "", 
         "Unet",
-        "dataset_0.json",
-        256,],
+        "dataset_532.json",
+        0,],
+
+    ["./project_dir/Seg532_UnetR_ab2/",
+        [2,2,2,2,2,2,2,2,2,2], 
+        5, 
+        "", 
+        "UnetR",
+        "dataset_532.json",
+        0,],
 ]
 
 print("Model index: ", end="")
@@ -143,8 +151,11 @@ data_dir = config_dict["data_dir"]
 split_JSON = config_dict["split_JSON"]
 
 datasets = data_dir + split_JSON
-datalist = load_decathlon_datalist(datasets, True, "training")
-val_files = load_decathlon_datalist(datasets, True, "validation")
+# datalist = load_decathlon_datalist(datasets, True, "training")
+if config_dict["split_JSON"] == "dataset_0.json":
+    val_files = load_decathlon_datalist(datasets, True, "validation")
+if config_dict["split_JSON"] == "dataset_532.json":
+    val_files = load_decathlon_datalist(datasets, True, "test")
 
 val_ds = CacheDataset(
     data=val_files, transform=val_transforms, cache_num=6, cache_rate=1.0, num_workers=4
