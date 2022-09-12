@@ -5,37 +5,64 @@ from monai.networks.layers.factories import Act, Norm
 from utils import iter_all_order, iter_some_order
 from scipy.stats import mode
 
+model_list = [
+    ["./project_dir/JN_Unet_bdo_ab4/",      # project root folder
+        [4,2,2,2,2,1,1,1,1,1],              # alter block number of each block
+        6,                                  # GPU number for using
+        "",                                 # special tag for input/output files
+        "Unet",                             # model type
+        "dataset_0.json",                   # data division file
+        256,                                # how many predictios for one single case
+    ],
+    ["./project_dir/JN_Unet_bdo_ab2468642/",
+        [4,1,1,1,1,2,2,2,2,2], 
+        6, 
+        "", 
+        "Unet",
+        "dataset_0.json",
+        256,
+    ],
+    # ["./project_dir/JN_UnetR_bdo/",[2,2,2,2,2,2,2,2,2,2], 7, ""],
+]
+
+print("Model index: ", end="")
+current_model_idx = int(input()) - 1
+cmi = current_model_idx
+print(model_list[current_model_idx])
+time.sleep(1)
+
+
+
 # n_cls = 14
 train_dict = {}
-train_dict["root_dir"] = "./project_dir/JN_Unet_bdo_ab4/"
+train_dict["root_dir"] = model_list[cmi][0]
+train_dict["alt_blk_depth"] = model_list[cmi][1]
+train_dict["gpu_list"] = [model_list[cmi][2]]
+train_dict["tag"] = model_list[cmi][3]
+train_dict["model_type"] = model_list[cmi][4]
+train_dict["split_JSON"] = model_list[cmi][5]
+
+root_dir = train_dict["root_dir"]
+print(root_dir)
+
 if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
-train_dict["split_JSON"] = "dataset_0.json"
-train_dict["gpu_list"] = [5]
-
+# train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # for unet
+# train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2,2] # for unetR
 root_dir = train_dict["root_dir"]
 print(root_dir)
 
-train_dict["alt_blk_depth"] = [4,4,4,4,4,4,4]
-# train_dict["alt_blk_depth"] = [2,4,6,8,6,4,2]
-# train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # [2,2,2,2,2,2,2] for unet
-# train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
-# JN_UnetR_mT_4222211111
-# JN_UnetR_mT_4111122222
-root_dir = train_dict["root_dir"]
-print(root_dir)
-
-order_list, time_frame = iter_some_order(train_dict["alt_blk_depth"], 256)
+order_list, time_frame = iter_some_order(train_dict["alt_blk_depth"], )
 order_list_cnt = len(order_list)
 np.save(root_dir+"order_list_"+time_frame+".npy", order_list)
 
 path_vote =[]
 for idx in range(len(train_dict["alt_blk_depth"])):
-    path_vote_sub = []
+    path"+train_dict["tag"]+"_sub = []
     for idx_sub in range(train_dict["alt_blk_depth"][idx]):
-        path_vote_sub.append([])
-    path_vote.append(path_vote_sub)
+        path"+train_dict["tag"]+"_sub.append([])
+    path"+train_dict["tag"]+".append(path"+train_dict["tag"]+"_sub)
 
 
 import os
@@ -101,8 +128,8 @@ val_transforms = Compose(
     ]
 )
 
-data_dir = "./data_dir/JN_BTCV/"
-split_JSON = "dataset_0.json"
+data_dir = train_dict["data_dir"]
+split_JSON = train_dict["split_JSON"]
 
 datasets = data_dir + split_JSON
 datalist = load_decathlon_datalist(datasets, True, "training")
@@ -115,20 +142,40 @@ val_loader = DataLoader(
     val_ds, batch_size=1, shuffle=False, num_workers=4, pin_memory=True
 )
 
+if train_dict["model_type"] == "Unet":
 
-model = UNet( 
-    spatial_dims=3,
-    in_channels=1,
-    out_channels=14,
-    channels=(64, 128, 256, 512),
-    strides=(2, 2, 2),
-    num_res_units=6,
-    act=Act.PRELU,
-    norm=Norm.INSTANCE,
-    dropout=0.,
-    bias=True,
-    alter_block=train_dict["alt_blk_depth"],
-    ).to(device)
+    model = UNet( 
+        spatial_dims=3,
+        in_channels=1,
+        out_channels=14,
+        channels=(64, 128, 256, 512),
+        strides=(2, 2, 2),
+        num_res_units=6,
+        act=Act.PRELU,
+        norm=Norm.INSTANCE,
+        dropout=0.,
+        bias=True,
+        alter_block=train_dict["alt_blk_depth"],
+        ).to(device)
+
+if train_dict["model_type"] == "UnetR":
+
+    model = UNETR_mT(
+        in_channels=1,
+        out_channels=n_cls,
+        img_size=(96, 96, 96),
+        feature_size=16,
+        hidden_size=768,
+        mlp_dim=3072,
+        num_heads=12,
+        pos_embed="perceptron",
+        norm_name="instance",
+        res_block=True,
+        dropout_rate=0.0,
+        alter_block=train_dict["alt_blk_depth"],
+        ).to(device)
+
+
 model.load_state_dict(torch.load(os.path.join(root_dir, "best_metric_model.pth")))
 
 slice_map = {
@@ -190,47 +237,49 @@ for case_num in range(6):
 
         val_pct = np.sum(output_array, axis=3)/order_list_cnt
 
-
         # vote recorder
         # 128 list * 128 error
         for idx_vote in range(order_list_cnt):
-            curr_path = order_list[idx_vote]
+            curr_path = order_list[idxidx_vote]
             curr_error = np.sum(output_array[:, :, :, idx_vote])/total_pixel
             for idx_path in range(len(train_dict["alt_blk_depth"])):
                 # e.g. [*,*,1,*,*] then errors go to this list
                 path_vote[idx_path][order_list[idx_vote][idx_path]].append(curr_error)
 
+        # path_vote
         np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_vote.npy"), 
+            train_dict["root_dir"]+img_name.replace(".nii.gz", ""+train_dict["tag"]+".npy"), 
             path_vote,
         )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_vote.npy"))
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", ""+train_dict["tag"]+".npy"))
 
-
-
+        # val_inputs (X)
         np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0_vote.npy"), 
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0"+train_dict["tag"]+".npy"), 
             val_inputs.cpu().numpy()[0, 0, :, :, :],
         )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0_vote.npy"))
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0"+train_dict["tag"]+".npy"))
 
+        # val_labels (Y)
         np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_y_RAS_1.5_1.5_2.0_vote.npy"), 
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_y_RAS_1.5_1.5_2.0"+train_dict["tag"]+".npy"), 
             val_labels.cpu().numpy()[0, 0, :, :, :],
         )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_y_RAS_1.5_1.5_2.0_vote.npy"))
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_y_RAS_1.5_1.5_2.0"+train_dict["tag"]+".npy"))
 
+        # val_mode (Z) from mode of all predictions
         np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0_vote.npy"), 
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0"+train_dict["tag"]+".npy"), 
             val_mode,
         )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0_vote.npy"))
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0"+train_dict["tag"]+".npy"))
 
+        # val_pct (Z_pct) percentage of mode in all predictions
         np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_pct_RAS_1.5_1.5_2.0_vote.npy"), 
+            train_dict["root_dir"]+img_name.replace(".nii.gz", "_pct_RAS_1.5_1.5_2.0"+train_dict["tag"]+".npy"), 
             val_pct,
         )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_pct_RAS_1.5_1.5_2.0_vote.npy"))
+        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_pct_RAS_1.5_1.5_2.0"+train_dict["tag"]+".npy"))
 
 
         # np.save(
@@ -245,6 +294,7 @@ for case_num in range(6):
         # )
         # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_L2_RAS_1.5_1.5_2.0.npy"))
 
+        # quick view images
         plt.figure("check", (18, 6))
         plt.subplot(1, 3, 1)
         plt.title("image")
@@ -258,4 +308,4 @@ for case_num in range(6):
             torch.argmax(val_outputs, dim=1).detach().cpu()[0, :, :, slice_map[img_name]]
         )
         # plt.show()
-        plt.savefig(train_dict["root_dir"]+"JN_{}.png".format(img_name), dpi=300)
+        plt.savefig(train_dict["root_dir"]+"JN"+train_dict["tag"]+"_{}.png".format(img_name), dpi=300)
