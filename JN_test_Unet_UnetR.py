@@ -78,10 +78,10 @@ np.save(root_dir+"order_list_"+time_frame+".npy", order_list)
 
 path_vote =[]
 for idx in range(len(config_dict["alt_blk_depth"])):
-    path"+config_dict["tag"]+"_sub = []
+    path_vote_sub = []
     for idx_sub in range(config_dict["alt_blk_depth"][idx]):
-        path"+config_dict["tag"]+"_sub.append([])
-    path"+config_dict["tag"]+".append(path"+config_dict["tag"]+"_sub)
+        path_vote_sub.append([])
+    path_vote.append(path_vote_sub)
 
 
 import os
