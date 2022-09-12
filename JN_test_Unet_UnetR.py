@@ -12,17 +12,23 @@ model_list = [
         "",                                 # special tag for input/output files
         "Unet",                             # model type
         "dataset_0.json",                   # data division file
-        256,                                # how many predictios for one single case
-    ],
+        256,],                              # how many predictios for one single case
+    
     ["./project_dir/JN_Unet_bdo_ab2468642/",
         [4,1,1,1,1,2,2,2,2,2], 
         6, 
         "", 
         "Unet",
         "dataset_0.json",
-        256,
-    ],
-    # ["./project_dir/JN_UnetR_bdo/",[2,2,2,2,2,2,2,2,2,2], 7, ""],
+        256,],
+
+    ["./project_dir/JN_Unet_bdo_ab2468642/",
+        [4,1,1,1,1,2,2,2,2,2], 
+        6, 
+        "", 
+        "Unet",
+        "dataset_0.json",
+        256,],
 ]
 
 print("Model index: ", end="")
@@ -34,35 +40,40 @@ time.sleep(1)
 
 
 # n_cls = 14
-train_dict = {}
-train_dict["root_dir"] = model_list[cmi][0]
-train_dict["alt_blk_depth"] = model_list[cmi][1]
-train_dict["gpu_list"] = [model_list[cmi][2]]
-train_dict["tag"] = model_list[cmi][3]
-train_dict["model_type"] = model_list[cmi][4]
-train_dict["split_JSON"] = model_list[cmi][5]
+config_dict = {}
+config_dict["root_dir"] = model_list[cmi][0]
+config_dict["alt_blk_depth"] = model_list[cmi][1]
+config_dict["gpu_list"] = [model_list[cmi][2]]
+config_dict["tag"] = model_list[cmi][3]
+config_dict["model_type"] = model_list[cmi][4]
+config_dict["split_JSON"] = model_list[cmi][5]
+config_dict["num_trial"] = model_list[cmi][6]
+np.save(config_dict["root_dir"]+"config_dict.npy", config_dict)
 
-root_dir = train_dict["root_dir"]
+root_dir = config_dict["root_dir"]
 print(root_dir)
 
-if not os.path.exists(train_dict["root_dir"]):
-    os.mkdir(train_dict["root_dir"])
-train_dict["data_dir"] = "./data_dir/JN_BTCV/"
-# train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # for unet
-# train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2,2] # for unetR
-root_dir = train_dict["root_dir"]
+if not os.path.exists(config_dict["root_dir"]):
+    os.mkdir(config_dict["root_dir"])
+config_dict["data_dir"] = "./data_dir/JN_BTCV/"
+# config_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # for unet
+# config_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2,2] # for unetR
+root_dir = config_dict["root_dir"]
 print(root_dir)
 
-order_list, time_frame = iter_some_order(train_dict["alt_blk_depth"], )
+if config_dict["num_trial"] > 0:
+    order_list, time_frame = iter_some_order(config_dict["alt_blk_depth"], config_dict["num_trial"])
+else:
+    order_list, time_frame = iter_all_order(config_dict["alt_blk_depth"])
 order_list_cnt = len(order_list)
 np.save(root_dir+"order_list_"+time_frame+".npy", order_list)
 
 path_vote =[]
-for idx in range(len(train_dict["alt_blk_depth"])):
-    path"+train_dict["tag"]+"_sub = []
-    for idx_sub in range(train_dict["alt_blk_depth"][idx]):
-        path"+train_dict["tag"]+"_sub.append([])
-    path"+train_dict["tag"]+".append(path"+train_dict["tag"]+"_sub)
+for idx in range(len(config_dict["alt_blk_depth"])):
+    path"+config_dict["tag"]+"_sub = []
+    for idx_sub in range(config_dict["alt_blk_depth"][idx]):
+        path"+config_dict["tag"]+"_sub.append([])
+    path"+config_dict["tag"]+".append(path"+config_dict["tag"]+"_sub)
 
 
 import os
@@ -105,7 +116,7 @@ import torch
 
 print_config()
 
-gpu_list = ','.join(str(x) for x in train_dict["gpu_list"])
+gpu_list = ','.join(str(x) for x in config_dict["gpu_list"])
 os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -128,8 +139,8 @@ val_transforms = Compose(
     ]
 )
 
-data_dir = train_dict["data_dir"]
-split_JSON = train_dict["split_JSON"]
+data_dir = config_dict["data_dir"]
+split_JSON = config_dict["split_JSON"]
 
 datasets = data_dir + split_JSON
 datalist = load_decathlon_datalist(datasets, True, "training")
@@ -142,7 +153,7 @@ val_loader = DataLoader(
     val_ds, batch_size=1, shuffle=False, num_workers=4, pin_memory=True
 )
 
-if train_dict["model_type"] == "Unet":
+if config_dict["model_type"] == "Unet":
 
     model = UNet( 
         spatial_dims=3,
@@ -155,10 +166,10 @@ if train_dict["model_type"] == "Unet":
         norm=Norm.INSTANCE,
         dropout=0.,
         bias=True,
-        alter_block=train_dict["alt_blk_depth"],
+        alter_block=config_dict["alt_blk_depth"],
         ).to(device)
 
-if train_dict["model_type"] == "UnetR":
+if config_dict["model_type"] == "UnetR":
 
     model = UNETR_mT(
         in_channels=1,
@@ -172,7 +183,7 @@ if train_dict["model_type"] == "UnetR":
         norm_name="instance",
         res_block=True,
         dropout_rate=0.0,
-        alter_block=train_dict["alt_blk_depth"],
+        alter_block=config_dict["alt_blk_depth"],
         ).to(device)
 
 
@@ -210,10 +221,10 @@ for case_num in range(6):
         val_mode = np.asarray(np.squeeze(mode(output_array, axis=3).mode), dtype=int)
 
         # np.save(
-        #     train_dict["root_dir"]+img_name.replace(".nii.gz", "_output_array.npy"), 
+        #     config_dict["root_dir"]+img_name.replace(".nii.gz", "_output_array.npy"), 
         #     output_array,
         # )
-        # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_output_array.npy"))
+        # print(config_dict["root_dir"]+img_name.replace(".nii.gz", "_output_array.npy"))
         # exit()
 
         # all to one hot for predictions
@@ -242,57 +253,57 @@ for case_num in range(6):
         for idx_vote in range(order_list_cnt):
             curr_path = order_list[idxidx_vote]
             curr_error = np.sum(output_array[:, :, :, idx_vote])/total_pixel
-            for idx_path in range(len(train_dict["alt_blk_depth"])):
+            for idx_path in range(len(config_dict["alt_blk_depth"])):
                 # e.g. [*,*,1,*,*] then errors go to this list
                 path_vote[idx_path][order_list[idx_vote][idx_path]].append(curr_error)
 
         # path_vote
         np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", ""+train_dict["tag"]+".npy"), 
+            config_dict["root_dir"]+img_name.replace(".nii.gz", ""+config_dict["tag"]+".npy"), 
             path_vote,
         )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", ""+train_dict["tag"]+".npy"))
+        print(config_dict["root_dir"]+img_name.replace(".nii.gz", ""+config_dict["tag"]+".npy"))
 
         # val_inputs (X)
         np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0"+train_dict["tag"]+".npy"), 
+            config_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0"+config_dict["tag"]+".npy"), 
             val_inputs.cpu().numpy()[0, 0, :, :, :],
         )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0"+train_dict["tag"]+".npy"))
+        print(config_dict["root_dir"]+img_name.replace(".nii.gz", "_x_RAS_1.5_1.5_2.0"+config_dict["tag"]+".npy"))
 
         # val_labels (Y)
         np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_y_RAS_1.5_1.5_2.0"+train_dict["tag"]+".npy"), 
+            config_dict["root_dir"]+img_name.replace(".nii.gz", "_y_RAS_1.5_1.5_2.0"+config_dict["tag"]+".npy"), 
             val_labels.cpu().numpy()[0, 0, :, :, :],
         )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_y_RAS_1.5_1.5_2.0"+train_dict["tag"]+".npy"))
+        print(config_dict["root_dir"]+img_name.replace(".nii.gz", "_y_RAS_1.5_1.5_2.0"+config_dict["tag"]+".npy"))
 
         # val_mode (Z) from mode of all predictions
         np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0"+train_dict["tag"]+".npy"), 
+            config_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0"+config_dict["tag"]+".npy"), 
             val_mode,
         )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0"+train_dict["tag"]+".npy"))
+        print(config_dict["root_dir"]+img_name.replace(".nii.gz", "_z_RAS_1.5_1.5_2.0"+config_dict["tag"]+".npy"))
 
         # val_pct (Z_pct) percentage of mode in all predictions
         np.save(
-            train_dict["root_dir"]+img_name.replace(".nii.gz", "_pct_RAS_1.5_1.5_2.0"+train_dict["tag"]+".npy"), 
+            config_dict["root_dir"]+img_name.replace(".nii.gz", "_pct_RAS_1.5_1.5_2.0"+config_dict["tag"]+".npy"), 
             val_pct,
         )
-        print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_pct_RAS_1.5_1.5_2.0"+train_dict["tag"]+".npy"))
+        print(config_dict["root_dir"]+img_name.replace(".nii.gz", "_pct_RAS_1.5_1.5_2.0"+config_dict["tag"]+".npy"))
 
 
         # np.save(
-        #     train_dict["root_dir"]+img_name.replace(".nii.gz", "_L1_RAS_1.5_1.5_2.0.npy"), 
+        #     config_dict["root_dir"]+img_name.replace(".nii.gz", "_L1_RAS_1.5_1.5_2.0.npy"), 
         #     val_L1,
         # )
-        # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_L1_RAS_1.5_1.5_2.0.npy"))
+        # print(config_dict["root_dir"]+img_name.replace(".nii.gz", "_L1_RAS_1.5_1.5_2.0.npy"))
 
         # np.save(
-        #     train_dict["root_dir"]+img_name.replace(".nii.gz", "_L2_RAS_1.5_1.5_2.0.npy"), 
+        #     config_dict["root_dir"]+img_name.replace(".nii.gz", "_L2_RAS_1.5_1.5_2.0.npy"), 
         #     val_L2,
         # )
-        # print(train_dict["root_dir"]+img_name.replace(".nii.gz", "_L2_RAS_1.5_1.5_2.0.npy"))
+        # print(config_dict["root_dir"]+img_name.replace(".nii.gz", "_L2_RAS_1.5_1.5_2.0.npy"))
 
         # quick view images
         plt.figure("check", (18, 6))
@@ -308,4 +319,4 @@ for case_num in range(6):
             torch.argmax(val_outputs, dim=1).detach().cpu()[0, :, :, slice_map[img_name]]
         )
         # plt.show()
-        plt.savefig(train_dict["root_dir"]+"JN"+train_dict["tag"]+"_{}.png".format(img_name), dpi=300)
+        plt.savefig(config_dict["root_dir"]+"JN"+config_dict["tag"]+"_{}.png".format(img_name), dpi=300)
