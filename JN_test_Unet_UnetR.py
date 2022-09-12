@@ -2,6 +2,7 @@ import os
 import time
 import numpy as np
 from model import UNet_Theseus as UNet
+from model import UNETR_mT
 from monai.networks.layers.factories import Act, Norm
 from utils import iter_all_order, iter_some_order
 from scipy.stats import mode
