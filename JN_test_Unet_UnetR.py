@@ -264,7 +264,7 @@ for case_num in range(6):
         # vote recorder
         # 128 list * 128 error
         for idx_vote in range(order_list_cnt):
-            curr_path = order_list[idxidx_vote]
+            curr_path = order_list[idx_vote]
             curr_error = np.sum(output_array[:, :, :, idx_vote])/total_pixel
             for idx_path in range(len(config_dict["alt_blk_depth"])):
                 # e.g. [*,*,1,*,*] then errors go to this list
