@@ -70,6 +70,6 @@ def iter_some_order(alter_block, order_need=128, remove_blocks=[]):
 
     time_frame = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
     # print(time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime()))
-    print(sorted(order_list), time_frame)
+    return sorted(order_list), time_frame
     
 
