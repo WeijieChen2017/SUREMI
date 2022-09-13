@@ -202,14 +202,14 @@ if config_dict["model_type"] == "UnetR":
 
 model.load_state_dict(torch.load(os.path.join(root_dir, "best_metric_model.pth")))
 
-slice_map = {
-    "img0035.nii.gz": 170,
-    "img0036.nii.gz": 230,
-    "img0037.nii.gz": 204,
-    "img0038.nii.gz": 204,
-    "img0039.nii.gz": 204,
-    "img0040.nii.gz": 180,
-}
+# slice_map = {
+#     "img0035.nii.gz": 170,
+#     "img0036.nii.gz": 230,
+#     "img0037.nii.gz": 204,
+#     "img0038.nii.gz": 204,
+#     "img0039.nii.gz": 204,
+#     "img0040.nii.gz": 180,
+# }
 
 for case_num in range(6):
     # case_num = 4
@@ -319,17 +319,17 @@ for case_num in range(6):
         # print(config_dict["root_dir"]+img_name.replace(".nii.gz", "_L2_RAS_1.5_1.5_2.0.npy"))
 
         # quick view images
-        plt.figure("check", (18, 6))
-        plt.subplot(1, 3, 1)
-        plt.title("image")
-        plt.imshow(val_inputs.cpu().numpy()[0, 0, :, :, slice_map[img_name]], cmap="gray")
-        plt.subplot(1, 3, 2)
-        plt.title("label")
-        plt.imshow(val_labels.cpu().numpy()[0, 0, :, :, slice_map[img_name]])
-        plt.subplot(1, 3, 3)
-        plt.title("output")
-        plt.imshow(
-            torch.argmax(val_outputs, dim=1).detach().cpu()[0, :, :, slice_map[img_name]]
-        )
-        # plt.show()
-        plt.savefig(config_dict["root_dir"]+"JN"+config_dict["tag"]+"_{}.png".format(img_name), dpi=300)
+        # plt.figure("check", (18, 6))
+        # plt.subplot(1, 3, 1)
+        # plt.title("image")
+        # plt.imshow(val_inputs.cpu().numpy()[0, 0, :, :, slice_map[img_name]], cmap="gray")
+        # plt.subplot(1, 3, 2)
+        # plt.title("label")
+        # plt.imshow(val_labels.cpu().numpy()[0, 0, :, :, slice_map[img_name]])
+        # plt.subplot(1, 3, 3)
+        # plt.title("output")
+        # plt.imshow(
+        #     torch.argmax(val_outputs, dim=1).detach().cpu()[0, :, :, slice_map[img_name]]
+        # )
+        # # plt.show()
+        # plt.savefig(config_dict["root_dir"]+"JN"+config_dict["tag"]+"_{}.png".format(img_name), dpi=300)
