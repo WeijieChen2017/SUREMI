@@ -129,7 +129,7 @@ for name in name_array:
         print(output_data.shape)
 
         test_file = nib.Nifti1Image(np.squeeze(output_data), x_file.affine, x_file.header)
-        test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name
+        test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii", ".nii.gz")
         nib.save(test_file, test_save_name)
         print(test_save_name)
 
