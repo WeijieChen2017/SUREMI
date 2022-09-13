@@ -43,19 +43,19 @@ model_list = [
     ["./project_dir/JN_Unet_bdo_ab4/",                              # project root folder
         [4,4,4,4,4,4,4],                                            # alter block number of each block
         6,                                                          # GPU number for using
-        "",                                                         # special tag for input/output files
+        "_r2",                                                      # special tag for input/output files
         "Unet",                                                     # model type
         "dataset_0.json",                                           # data division file
-        256,                                                        # how many predictios for one single case
+        128,                                                        # how many predictios for one single case
         [[0, 3], [3, 2], [1, 2], [1, 2], [0, 1], [2, 3], [0, 1]],], # remove bad blocks
     
     ["./project_dir/JN_Unet_bdo_ab2468642/",
         [2,4,6,8,6,4,2], 
         6, 
-        "", 
+        "r2", 
         "Unet",
         "dataset_0.json",
-        256,
+        128,
         [[], [[1, 3]], [3, 2, 0, 1], [6, 3, 0, 1, 5, 4], [2, 5, 3, 1], [1, 2], []],],
 ]
 
