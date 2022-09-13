@@ -144,7 +144,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
         case_loss = np.zeros((len(file_list)))
 
         # N, C, D, H, W
-        x_data = nib.load(file_list[0]).get_fdata()
+        # x_data = nib.load(file_list[0]).get_fdata()
 
         for cnt_file, file_path in enumerate(file_list):
             

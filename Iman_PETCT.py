@@ -125,6 +125,18 @@ package_train = [test_list, True, False, "train"]
 package_val = [test_list, False, True, "val"]
 # package_test = [test_list, False, False, "test"]
 
+cnt_file = 0
+file_path = test_list[cnt_file]
+
+x_path = file_path
+y_path = file_path.replace("X", "Y")
+file_name = os.path.basename(file_path)
+x_file = nib.load(x_path)
+y_file = nib.load(y_path)
+x_data = x_file.get_fdata()
+y_data = y_file.get_fdata()
+
+
 for idx_epoch_new in range(train_dict["epochs"]):
     idx_epoch = idx_epoch_new
     print("~~~~~~Epoch[{:03d}]~~~~~~".format(idx_epoch+1))
@@ -141,57 +153,39 @@ for idx_epoch_new in range(train_dict["epochs"]):
         else:
             model.eval()
 
-        random.shuffle(file_list)
-        
         case_loss = np.zeros((len(file_list)))
 
-        # N, C, D, H, W
-        x_data = nib.load(file_list[0]).get_fdata()
+        batch_x = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
+        batch_y = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
 
-        for cnt_file, file_path in enumerate(file_list):
+        for idx_batch in range(train_dict["batch"]):
             
+            d0_offset = np.random.randint(x_data.shape[0] - train_dict["input_size"][0])
+            d1_offset = np.random.randint(x_data.shape[1] - train_dict["input_size"][1])
+            d2_offset = np.random.randint(x_data.shape[2] - train_dict["input_size"][2])
+
+            x_slice = x_data[d0_offset:d0_offset+train_dict["input_size"][0],
+                             d1_offset:d1_offset+train_dict["input_size"][1],
+                             d2_offset:d2_offset+train_dict["input_size"][2]
+                             ]
+            y_slice = y_data[d0_offset:d0_offset+train_dict["input_size"][0],
+                             d1_offset:d1_offset+train_dict["input_size"][1],
+                             d2_offset:d2_offset+train_dict["input_size"][2]
+                             ]
+            batch_x[idx_batch, 0, :, :, :] = x_slice
+            batch_y[idx_batch, 0, :, :, :] = y_slice
+
+        batch_x = torch.from_numpy(batch_x).float().to(device)
+        batch_y = torch.from_numpy(batch_y).float().to(device)
             
-            x_path = file_path
-            y_path = file_path.replace("X", "Y")
-            file_name = os.path.basename(file_path)
-            print(iter_tag + " ===> Epoch[{:03d}]: --->".format(idx_epoch+1), x_path, "<---", end="")
-            x_file = nib.load(x_path)
-            y_file = nib.load(y_path)
-            x_data = x_file.get_fdata()
-            y_data = y_file.get_fdata()
-            x_data = x_data / np.amax(x_data)
-
-            batch_x = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
-            batch_y = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
-
-            for idx_batch in range(train_dict["batch"]):
-                
-                d0_offset = np.random.randint(x_data.shape[0] - train_dict["input_size"][0])
-                d1_offset = np.random.randint(x_data.shape[1] - train_dict["input_size"][1])
-                d2_offset = np.random.randint(x_data.shape[2] - train_dict["input_size"][2])
-
-                x_slice = x_data[d0_offset:d0_offset+train_dict["input_size"][0],
-                                 d1_offset:d1_offset+train_dict["input_size"][1],
-                                 d2_offset:d2_offset+train_dict["input_size"][2]
-                                 ]
-                y_slice = y_data[d0_offset:d0_offset+train_dict["input_size"][0],
-                                 d1_offset:d1_offset+train_dict["input_size"][1],
-                                 d2_offset:d2_offset+train_dict["input_size"][2]
-                                 ]
-                batch_x[idx_batch, 0, :, :, :] = x_slice
-                batch_y[idx_batch, 0, :, :, :] = y_slice
-
-            batch_x = torch.from_numpy(batch_x).float().to(device)
-            batch_y = torch.from_numpy(batch_y).float().to(device)
-                
-            optimizer.zero_grad()
-            y_hat = model(batch_x)
-            loss = criterion(y_hat, batch_y)
-            if isTrain:
-                loss.backward()
-                optimizer.step()
-            case_loss[cnt_file] = loss.item()
-            print("Loss: ", case_loss[cnt_file])
+        optimizer.zero_grad()
+        y_hat = model(batch_x)
+        loss = criterion(y_hat, batch_y)
+        if isTrain:
+            loss.backward()
+            optimizer.step()
+        case_loss[cnt_file] = loss.item()
+        print("Loss: ", case_loss[cnt_file])
 
         print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
         print("  Loss: ", np.mean(case_loss))
