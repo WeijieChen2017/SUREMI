@@ -18,14 +18,14 @@ from monai.networks.nets.unet import UNet as UNet
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Iman_PETCT_v1"
+train_dict["project_name"] = "Iman_PETCT_v2"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
 train_dict["input_size"] = [96, 96, 96]
 train_dict["gpu_ids"] = [6]
-train_dict["epochs"] = 100
+train_dict["epochs"] = 1000
 train_dict["batch"] = 8
 train_dict["dropout"] = 0
 train_dict["model_term"] = "Monai_Unet3d"
@@ -34,7 +34,7 @@ train_dict["model_related"] = {}
 train_dict["model_related"]["spatial_dims"] = 3
 train_dict["model_related"]["in_channels"] = 1
 train_dict["model_related"]["out_channels"] = 1
-train_dict["model_related"]["channels"] = (32, 64, 128, 256)
+train_dict["model_related"]["channels"] = (64, 128, 256, 512)
 train_dict["model_related"]["strides"] = (2, 2, 2)
 train_dict["model_related"]["num_res_units"] = 4
             
@@ -198,11 +198,11 @@ for idx_epoch_new in range(train_dict["epochs"]):
         np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), case_loss)
 
         if isVal:
-            np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_x.npy", batch_x.cpu().detach().numpy())
-            np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_y.npy", batch_y.cpu().detach().numpy())
-            np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_z.npy", y_hat.cpu().detach().numpy())
+            # np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_x.npy", batch_x.cpu().detach().numpy())
+            # np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_y.npy", batch_y.cpu().detach().numpy())
+            # np.save(train_dict["save_folder"]+"npy/Epoch[{:03d}]_Case[{}]_".format(idx_epoch+1, file_name)+iter_tag+"_z.npy", y_hat.cpu().detach().numpy())
 
-            torch.save(model, train_dict["save_folder"]+"model_.pth".format(idx_epoch + 1))
+            # torch.save(model, train_dict["save_folder"]+"model_.pth".format(idx_epoch + 1))
             if np.mean(case_loss) < best_val_loss:
                 # save the best model
                 torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(idx_epoch + 1))
