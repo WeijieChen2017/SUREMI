@@ -110,8 +110,8 @@ train_list.sort()
 print(train_list, val_list, test_list)
 
 data_division_dict = {
-    "train_list_X" : train_list,
-    "val_list_X" : val_list,
+    "train_list_X" : test_list,
+    "val_list_X" : test_list,
     "test_list_X" : test_list}
 np.save(train_dict["save_folder"]+"data_division.npy", data_division_dict)
 
@@ -121,8 +121,8 @@ best_val_loss = 1
 best_epoch = 0
 # wandb.watch(model)
 
-package_train = [train_list, True, False, "train"]
-package_val = [train_list, False, True, "val"]
+package_train = [test_list, True, False, "train"]
+package_val = [test_list, False, True, "val"]
 # package_test = [test_list, False, False, "test"]
 
 for idx_epoch_new in range(train_dict["epochs"]):
