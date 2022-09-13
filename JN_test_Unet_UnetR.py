@@ -8,13 +8,46 @@ from utils import iter_all_order, iter_some_order
 from scipy.stats import mode
 
 model_list = [
-    ["./project_dir/JN_Unet_bdo_ab4/",      # project root folder
-        [4,4,4,4,4,4,4],                    # alter block number of each block
-        6,                                  # GPU number for using
-        "",                                 # special tag for input/output files
-        "Unet",                             # model type
-        "dataset_0.json",                   # data division file
-        256,],                              # how many predictios for one single case
+    # ["./project_dir/JN_Unet_bdo_ab4/",      # project root folder
+    #     [4,4,4,4,4,4,4],                    # alter block number of each block
+    #     6,                                  # GPU number for using
+    #     "",                                 # special tag for input/output files
+    #     "Unet",                             # model type
+    #     "dataset_0.json",                   # data division file
+    #     256,],                              # how many predictios for one single case
+    
+    # ["./project_dir/JN_Unet_bdo_ab2468642/",
+    #     [2,4,6,8,6,4,2], 
+    #     6, 
+    #     "", 
+    #     "Unet",
+    #     "dataset_0.json",
+    #     256,],
+
+    # ["./project_dir/Seg532_Unet_ab2/",
+    #     [2,2,2,2,2,2,2], 
+    #     5, 
+    #     "", 
+    #     "Unet",
+    #     "dataset_532.json",
+    #     0,],
+
+    # ["./project_dir/Seg532_UnetR_ab2/",
+    #     [2,2,2,2,2,2,2,2,2,2], 
+    #     5, 
+    #     "", 
+    #     "UnetR",
+    #     "dataset_532.json",
+    #     256,],
+
+    ["./project_dir/JN_Unet_bdo_ab4/",                              # project root folder
+        [4,4,4,4,4,4,4],                                            # alter block number of each block
+        6,                                                          # GPU number for using
+        "",                                                         # special tag for input/output files
+        "Unet",                                                     # model type
+        "dataset_0.json",                                           # data division file
+        256,                                                        # how many predictios for one single case
+        [[0, 3], [3, 2], [1, 2], [1, 2], [0, 1], [2, 3], [0, 1]],], # remove bad blocks
     
     ["./project_dir/JN_Unet_bdo_ab2468642/",
         [2,4,6,8,6,4,2], 
@@ -22,23 +55,8 @@ model_list = [
         "", 
         "Unet",
         "dataset_0.json",
-        256,],
-
-    ["./project_dir/Seg532_Unet_ab2/",
-        [2,2,2,2,2,2,2], 
-        5, 
-        "", 
-        "Unet",
-        "dataset_532.json",
-        0,],
-
-    ["./project_dir/Seg532_UnetR_ab2/",
-        [2,2,2,2,2,2,2,2,2,2], 
-        5, 
-        "", 
-        "UnetR",
-        "dataset_532.json",
-        256,],
+        256,
+        [[], [[1, 3]], [3, 2, 0, 1], [6, 3, 0, 1, 5, 4], [2, 5, 3, 1], [1, 2], []],],
 ]
 
 print("Model index: ", end="")
@@ -58,6 +76,7 @@ config_dict["tag"] = model_list[cmi][3]
 config_dict["model_type"] = model_list[cmi][4]
 config_dict["split_JSON"] = model_list[cmi][5]
 config_dict["num_trial"] = model_list[cmi][6]
+config_dict["remove_block"] = model_list[cmi][7]
 np.save(config_dict["root_dir"]+"config_dict.npy", config_dict)
 
 root_dir = config_dict["root_dir"]
@@ -72,7 +91,7 @@ root_dir = config_dict["root_dir"]
 print(root_dir)
 
 if config_dict["num_trial"] > 0:
-    order_list, time_frame = iter_some_order(config_dict["alt_blk_depth"], config_dict["num_trial"])
+    order_list, time_frame = iter_some_order(config_dict["alt_blk_depth"], config_dict["num_trial"], config_dict["remove_block"])
 else:
     order_list, time_frame = iter_all_order(config_dict["alt_blk_depth"])
 order_list_cnt = len(order_list)
@@ -272,10 +291,10 @@ for case_num in range(6):
 
         # path_vote
         np.save(
-            config_dict["root_dir"]+img_name.replace(".nii.gz", ""+config_dict["tag"]+".npy"), 
+            config_dict["root_dir"]+img_name.replace(".nii.gz", ""+config_dict["tag"]+"_vote_records.npy"), 
             path_vote,
         )
-        print(config_dict["root_dir"]+img_name.replace(".nii.gz", ""+config_dict["tag"]+".npy"))
+        print(config_dict["root_dir"]+img_name.replace(".nii.gz", ""+config_dict["tag"]+"_vote_records.npy"))
 
         # val_inputs (X)
         np.save(

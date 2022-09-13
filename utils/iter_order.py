@@ -23,21 +23,39 @@ def iter_all_order(alter_block_depth):
     # print(time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime()))
     return set_1, time_frame
 
-def iter_some_order(alter_block, order_need=128):
+def iter_some_order(alter_block, order_need=128, remove_blocks=[]):
     # alter_block = [4,2,2,2,2,1,1,1,1,1]
     # alter_block = [2,2,2,2,2,2]
     order_max = 1
     for i in alter_block:
         order_max *= i
-    # print(order_max)
-    # order_need = 64
+        
+    if len(remove_blocks) == 0:
+        remove_blocks = [[] for i in range(len(alter_block))]
+
     assert order_need <= order_max
+    assert len(alter_block) == len(remove_blocks)
+
+    order_available_list = []
+    for idx in range(len(alter_block)):
+        curr_available = []
+        for idx_available in range(alter_block[idx]):
+            if not idx_available in remove_blocks[idx]:
+                curr_available.append(idx_available)
+        order_available_list.append(curr_available)
+
+
     order_curr = 0
     order_list = []
     order_dict = []
 
     while order_curr < order_need:
-        order_single = [random.randint(0, alter_block[i]-1) for i in range(len(alter_block))]
+            
+        order_single = []
+        for idx in range(len(alter_block)):
+            curr_random_int = random.randint(0, len(order_available_list[idx])-1)
+            order_single.append(order_available_list[idx][curr_random_int])
+
         order_str = ""
         for i in order_single:
             order_str = order_str+str(i)
@@ -49,8 +67,9 @@ def iter_some_order(alter_block, order_need=128):
             order_curr += 1
     #     else:
     #         print("Replica!")
+
     time_frame = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
     # print(time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime()))
-    return sorted(order_list), time_frame
+    print(sorted(order_list), time_frame)
     
 
