@@ -22,7 +22,7 @@ from utils import add_noise
 # ==================== dict and config ====================
 
 name_array = [
-    "Iman_PETCT_v1",
+    "Iman_PETCT_v2",
 ]
 
 for name in name_array:
