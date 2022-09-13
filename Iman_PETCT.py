@@ -18,13 +18,13 @@ from monai.networks.nets.unet import UNet as UNet
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = "Unet_Monai_Iman_v3"
+train_dict["project_name"] = "Iman_PETCT_v1"
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["seed"] = 426
 # train_dict["input_channel"] = 30
 # train_dict["output_channel"] = 30
 train_dict["input_size"] = [96, 96, 96]
-train_dict["gpu_ids"] = [7]
+train_dict["gpu_ids"] = [6]
 train_dict["epochs"] = 100
 train_dict["batch"] = 32
 train_dict["dropout"] = 0
@@ -40,11 +40,11 @@ train_dict["model_related"]["num_res_units"] = 4
             
 
 
-train_dict["folder_X"] = "./data_dir/Iman_MR/norm/"
-train_dict["folder_Y"] = "./data_dir/Iman_CT/norm/"
+train_dict["folder_X"] = "./data_dir/Iman_PET_CT/"
+train_dict["folder_Y"] = "./data_dir/Iman_PET_CT/"
 # train_dict["pre_train"] = "swin_base_patch244_window1677_kinetics400_22k.pth"
-train_dict["val_ratio"] = 0.3
-train_dict["test_ratio"] = 0.2
+train_dict["val_ratio"] = 0.
+train_dict["test_ratio"] = 0.
 
 train_dict["loss_term"] = "SmoothL1Loss"
 train_dict["optimizer"] = "AdamW"
@@ -93,8 +93,8 @@ optimizer = torch.optim.AdamW(
 
 # ==================== data division ====================
 
-X_list = sorted(glob.glob(train_dict["folder_X"]+"*.nii.gz"))
-Y_list = sorted(glob.glob(train_dict["folder_Y"]+"*.nii.gz"))
+X_list = sorted(glob.glob(train_dict["folder_X"]+"X*.nii.gz"))
+Y_list = sorted(glob.glob(train_dict["folder_Y"]+"Y*.nii.gz"))
 
 selected_list = np.asarray(X_list)
 np.random.shuffle(selected_list)
@@ -150,7 +150,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             
             
             x_path = file_path
-            y_path = file_path.replace("MR", "CT")
+            y_path = file_path.replace("X", "Y")
             file_name = os.path.basename(file_path)
             print(iter_tag + " ===> Epoch[{:03d}]: --->".format(idx_epoch+1), x_path, "<---", end="")
             x_file = nib.load(x_path)
