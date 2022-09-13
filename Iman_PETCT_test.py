@@ -105,16 +105,6 @@ for name in name_array:
         x_data = x_file.get_fdata()
         y_data = y_file.get_fdata()
 
-
-        if train_dict["target_img"] == "MR":
-            y_data = copy.deepcopy(x_data)
-
-        x_data = add_noise(
-            x = x_data, 
-            noise_type = train_dict["noise_type"],
-            noise_params = train_dict["noise_params"],
-            )
-
         ax, ay, az = x_data.shape
         case_loss = 0
 
