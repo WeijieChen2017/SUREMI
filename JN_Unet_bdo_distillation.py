@@ -4,7 +4,7 @@ from model import UNet_Theseus as UNet
 from monai.networks.layers.factories import Act, Norm
 
 train_dict = {}
-train_dict["root_dir"] = "./project_dir/Seg532_Unet_ab111444/"
+train_dict["root_dir"] = "./project_dir/Seg532_Unet_ab1114444/"
 if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
