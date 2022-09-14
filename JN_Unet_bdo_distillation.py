@@ -9,7 +9,7 @@ if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_532.json"
-train_dict["gpu_list"] = [6]
+train_dict["gpu_list"] = [4]
 train_dict["alter_block"] = [4,4,4,4,1,1,1]
 train_dict["batch_size"] = 1
 train_dict["best_metric_model"] = "Seg532_Unet"
