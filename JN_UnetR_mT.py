@@ -60,7 +60,7 @@ print_config()
 
 #--------------------------------------------------------------
 print("Press any key to continue:", end="")
-_ = input()
+# _ = input()
 #--------------------------------------------------------------
 
 # directory = os.environ.get("./project_dir/JN_UnetR/")
@@ -70,7 +70,7 @@ print(root_dir)
 
 #--------------------------------------------------------------
 print("Press any key to continue:", end="")
-_ = input()
+# _ = input()
 #--------------------------------------------------------------
 
 train_transforms = Compose(
@@ -148,7 +148,7 @@ val_transforms = Compose(
 
 #--------------------------------------------------------------
 print("Press any key to continue:", end="")
-_ = input()
+# _ = input()
 #--------------------------------------------------------------
 
 data_dir = train_dict["data_dir"]
@@ -176,7 +176,7 @@ val_loader = DataLoader(
 
 #--------------------------------------------------------------
 print("Press any key to continue:", end="")
-_ = input()
+# _ = input()
 #--------------------------------------------------------------
 
 gpu_list = ','.join(str(x) for x in train_dict["gpu_list"])
@@ -248,7 +248,7 @@ optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4, weight_decay=1e-5)
 
 #--------------------------------------------------------------
 print("Press any key to continue:", end="")
-_ = input()
+# _ = input()
 #--------------------------------------------------------------
 
 def validation(epoch_iterator_val):
