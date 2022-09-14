@@ -3,13 +3,13 @@ from model import UNETR_mT
 
 train_dict = {}
 # train_dict["root_dir"] = "./project_dir/JN_UnetR_mT_4222211111/"
-train_dict["root_dir"] = "./project_dir/Seg532_UnetR_ab2444444444/"
+train_dict["root_dir"] = "./project_dir/Seg532_UnetR_ab41111111111/"
 if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_532.json"
 train_dict["gpu_list"] = [3]
-train_dict["alter_block"] = [2,4,4,4,4,4,4,4,4,4]
+train_dict["alter_block"] = [4,1,1,1,1,1,1,1,1,1]
 train_dict["best_metric_model"] = "Seg532_UnetR"
 
 import os
