@@ -77,7 +77,6 @@ config_dict["model_type"] = model_list[cmi][4]
 config_dict["split_JSON"] = model_list[cmi][5]
 config_dict["num_trial"] = model_list[cmi][6]
 config_dict["remove_block"] = model_list[cmi][7]
-np.save(config_dict["root_dir"]+"config_dict.npy", config_dict)
 
 root_dir = config_dict["root_dir"]
 print(root_dir)
@@ -96,6 +95,7 @@ else:
     order_list, time_frame = iter_all_order(config_dict["alt_blk_depth"])
 order_list_cnt = len(order_list)
 np.save(root_dir+"order_list_"+time_frame+".npy", order_list)
+np.save(config_dict["root_dir"]+"config_dict"+time_frame+".npy", config_dict)
 
 path_vote =[]
 for idx in range(len(config_dict["alt_blk_depth"])):
