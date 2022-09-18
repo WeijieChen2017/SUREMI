@@ -21,10 +21,12 @@ import requests
 # from monai.networks.nets.unet import UNet
 from monai.networks.layers.factories import Act, Norm
 from monai.inferers import sliding_window_inference
-import bnn
+from scipy.stats import zscore
+# import bnn
 
 from model import UNet_MDO as UNet
 from utils import iter_all_order
+
 
 model_list = [
     # "Theseus_v2_181_200_rdp0",
@@ -161,23 +163,47 @@ for cnt_file, file_path in enumerate(file_list):
                     )
             output_array[idx_es, :, :, :] = y_hat.cpu().detach().numpy()
 
-    output_data = np.median(output_array, axis=0)
-    output_std = np.std(output_array, axis=0)
-    output_mean = np.mean(output_array, axis=0)
+    # output_data = np.median(output_array, axis=0)
+
+    output_array[output_array>1] = 1
+    output_array[output_array<0] = 0
+    mask_air = output_array[output_array<0.125]
+    mask_bone = output_array[output_array>0.375]
+    mask_1 = output_array < 0.375
+    mask_2 = output_array > 0.125
+    mask_1 = mask_1.astype(int)
+    mask_2 = mask_2.astype(int)
+    mask_soft = (mask_1 * mask_2).astype(bool)
+
+    output_array[mask_air] *= 8 # (0,0.125) >>> (0., 1.)
+    output_array[mask_soft] -= 0.125 # (0.125, 0.375) >>> (0., 0.250)
+    output_array[mask_soft] *= 4 # (0., 0.250) >>> (0., 1.)
+    output_array[mask_bone] -= 0.375 # (0.375, 1) >>> (0., 0.625)
+    output_array[mask_soft] *= 1.6 # (0., 0.625) >>> (0., 1.)
+    
+    output_norm_std = np.std(output_array, axis=0)
+
+    # output_std = np.std(output_array, axis=0)
+    # output_mean = np.mean(output_array, axis=0)
     # output_cov = np.divide(output_std, output_mean+1e-12)
-    print(output_data.shape)
+    # print(output_data.shape)
 
-    test_file = nib.Nifti1Image(np.squeeze(output_data), x_file.affine, x_file.header)
-    test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name
-    nib.save(test_file, test_save_name)
-    print(test_save_name)
+    # test_file = nib.Nifti1Image(np.squeeze(output_data), x_file.affine, x_file.header)
+    # test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name
+    # nib.save(test_file, test_save_name)
+    # print(test_save_name)
 
-    test_file = nib.Nifti1Image(np.squeeze(output_std), x_file.affine, x_file.header)
-    test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_std.nii.gz")
-    nib.save(test_file, test_save_name)
-    print(test_save_name)
+    # test_file = nib.Nifti1Image(np.squeeze(output_std), x_file.affine, x_file.header)
+    # test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_std.nii.gz")
+    # nib.save(test_file, test_save_name)
+    # print(test_save_name)
 
-    test_file = nib.Nifti1Image(np.squeeze(output_mean), x_file.affine, x_file.header)
-    test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_mean.nii.gz")
+    # test_file = nib.Nifti1Image(np.squeeze(output_mean), x_file.affine, x_file.header)
+    # test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_mean.nii.gz")
+    # nib.save(test_file, test_save_name)
+    # print(test_save_name)
+
+    test_file = nib.Nifti1Image(np.squeeze(output_norm_std), x_file.affine, x_file.header)
+    test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_norm_std.nii.gz")
     nib.save(test_file, test_save_name)
     print(test_save_name)
