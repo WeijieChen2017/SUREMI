@@ -167,6 +167,7 @@ for cnt_file, file_path in enumerate(file_list):
 
     output_array[output_array>1] = 1
     output_array[output_array<0] = 0
+    output_z = copy.deepcopy(output_array)
     mask_air = output_array < 0.125
     mask_bone = output_array > 0.375
     mask_1 = output_array < 0.375
@@ -180,8 +181,19 @@ for cnt_file, file_path in enumerate(file_list):
     output_array[mask_soft] = output_array[mask_soft] * 4 # (0., 0.250) >>> (0., 1.)
     output_array[mask_bone] = output_array[mask_bone] - 0.375 # (0.375, 1) >>> (0., 0.625)
     output_array[mask_bone] = output_array[mask_bone] * 1.6 # (0., 0.625) >>> (0., 1.)
-    
     output_norm_std = np.std(output_array, axis=0)
+
+    air_mean = np.mean(output_z[mask_air])
+    air_std = np.std(output_z[mask_air])
+    soft_mean = np.mean(output_z[mask_soft])
+    soft_std = np.std(output_z[mask_soft])
+    bone_mean = np.mean(output_z[mask_bone])
+    bone_std = np.std(output_z[mask_bone])
+
+    output_z[mask_air] = (output_z[mask_air] - air_mean) / air_std
+    output_z[mask_soft] = (output_z[mask_soft] - soft_mean) / soft_std
+    output_z[mask_bone] = (output_z[mask_bone] - bone_mean) / bone_std
+    output_z_std = np.std(output_z, axis=0)
 
     # output_std = np.std(output_array, axis=0)
     # output_mean = np.mean(output_array, axis=0)
@@ -205,5 +217,10 @@ for cnt_file, file_path in enumerate(file_list):
 
     test_file = nib.Nifti1Image(np.squeeze(output_norm_std), x_file.affine, x_file.header)
     test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_norm_std.nii.gz")
+    nib.save(test_file, test_save_name)
+    print(test_save_name)
+
+    test_file = nib.Nifti1Image(np.squeeze(output_z_std), x_file.affine, x_file.header)
+    test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_z_std.nii.gz")
     nib.save(test_file, test_save_name)
     print(test_save_name)
