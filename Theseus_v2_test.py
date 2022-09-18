@@ -167,8 +167,8 @@ for cnt_file, file_path in enumerate(file_list):
 
     output_array[output_array>1] = 1
     output_array[output_array<0] = 0
-    mask_air = output_array[output_array<0.125]
-    mask_bone = output_array[output_array>0.375]
+    mask_air = output_array < 0.125
+    mask_bone = output_array > 0.375
     mask_1 = output_array < 0.375
     mask_2 = output_array > 0.125
     mask_1 = mask_1.astype(int)
