@@ -179,7 +179,7 @@ for cnt_file, file_path in enumerate(file_list):
     output_array[mask_soft] = output_array[mask_soft] - 0.125 # (0.125, 0.375) >>> (0., 0.250)
     output_array[mask_soft] = output_array[mask_soft] * 4 # (0., 0.250) >>> (0., 1.)
     output_array[mask_bone] = output_array[mask_bone] - 0.375 # (0.375, 1) >>> (0., 0.625)
-    output_array[mask_soft] = output_array[mask_bone] * 1.6 # (0., 0.625) >>> (0., 1.)
+    output_array[mask_bone] = output_array[mask_bone] * 1.6 # (0., 0.625) >>> (0., 1.)
     
     output_norm_std = np.std(output_array, axis=0)
 
