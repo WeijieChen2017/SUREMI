@@ -61,7 +61,7 @@ model_list = [
         "pre", 
         "UnetR",
         "dataset_532.json",
-        128,
+        4,
         [],],
 
     ["./project_dir/Seg532_UnetR_ab2444444444/",
