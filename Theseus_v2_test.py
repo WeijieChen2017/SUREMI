@@ -66,10 +66,11 @@ test_dict["eval_file_cnt"] = 0
 # test_dict["eval_sample"] = 100
 test_dict["eval_save_folder"] = "analysis"
 test_dict["special_cases"] = [
-    "03773",
-    "05628",
+    "03773.nii.gz",
+    "05628.nii.gz",
 ]
 test_dict["save_tag"] = "_srd8"
+test_dict["stride_division"] = 8
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
 
@@ -163,7 +164,7 @@ for cnt_file, file_path in enumerate(file_list):
                     roi_size = test_dict["input_size"], 
                     sw_batch_size = 16, 
                     predictor = model,
-                    overlap=0.25, 
+                    overlap=1/test_dict["stride_division"], 
                     mode="gaussian", 
                     sigma_scale=0.125, 
                     padding_mode="constant", 
