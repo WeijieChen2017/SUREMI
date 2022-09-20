@@ -66,8 +66,8 @@ test_dict["eval_file_cnt"] = 0
 # test_dict["eval_sample"] = 100
 test_dict["eval_save_folder"] = "analysis"
 test_dict["special_cases"] = [
-    "03773.nii.gz",
-    "05628.nii.gz",
+    "03773",
+    "05628",
 ]
 test_dict["save_tag"] = "_srd8"
 test_dict["stride_division"] = 8
@@ -123,8 +123,9 @@ X_list.sort()
 file_list = []
 if len(test_dict["special_cases"]) > 0:
     for case_name in X_list:
-        if os.path.basename(case_name) in test_dict["special_cases"]:
-            file_list.append(case_name)
+        for spc_case_name in test_dict["special_cases"]
+            if spc_case_name in os.path.basename(case_name):
+                file_list.append(case_name)
 else:
     file_list = X_list
 
