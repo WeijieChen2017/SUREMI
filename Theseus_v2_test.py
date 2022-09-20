@@ -123,7 +123,7 @@ X_list.sort()
 file_list = []
 if len(test_dict["special_cases"]) > 0:
     for case_name in X_list:
-        for spc_case_name in test_dict["special_cases"]
+        for spc_case_name in test_dict["special_cases"]:
             if spc_case_name in os.path.basename(case_name):
                 file_list.append(case_name)
 else:
