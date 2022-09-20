@@ -64,7 +64,12 @@ test_dict["gpu_ids"] = [2]
 test_dict["eval_file_cnt"] = 0
 # test_dict["best_model_name"] = "model_best_193.pth"
 # test_dict["eval_sample"] = 100
-test_dict["eval_save_folder"] = "pred_monai"
+test_dict["eval_save_folder"] = "analysis"
+test_dict["special_cases"] = [
+    "03773",
+    "05628",
+]
+test_dict["save_tag"] = "_srd8"
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
 
@@ -114,8 +119,14 @@ X_list.sort()
 
 
 # ==================== training ====================
+file_list = []
+if len(test_dict["special_cases"]) > 0:
+    for case_name in X_list:
+        if os.path.basename(case_name) in test_dict["special_cases"]:
+            file_list.append(case_name)
+else:
+    file_list = X_list
 
-file_list = X_list
 iter_tag = "test"
 cnt_total_file = len(file_list)
 cnt_each_cube = 1
@@ -163,7 +174,12 @@ for cnt_file, file_path in enumerate(file_list):
                     )
             output_array[idx_es, :, :, :] = y_hat.cpu().detach().numpy()
 
-    # output_data = np.median(output_array, axis=0)
+    output_data = np.median(output_array, axis=0)
+    output_std = np.std(output_array, axis=0)
+    # output_mean = np.mean(output_array, axis=0)
+    # output_cov = np.divide(output_std, output_mean+1e-12)
+    # print(output_data.shape)
+
 
     output_array[output_array>1] = 1
     output_array[output_array<0] = 0
@@ -195,20 +211,15 @@ for cnt_file, file_path in enumerate(file_list):
     output_z[mask_bone] = (output_z[mask_bone] - bone_mean) / bone_std
     output_z_std = np.std(output_z, axis=0)
 
-    # output_std = np.std(output_array, axis=0)
-    # output_mean = np.mean(output_array, axis=0)
-    # output_cov = np.divide(output_std, output_mean+1e-12)
-    # print(output_data.shape)
+    test_file = nib.Nifti1Image(np.squeeze(output_data), x_file.affine, x_file.header)
+    test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", test_dict["save_tag"]+".nii.gz")
+    nib.save(test_file, test_save_name)
+    print(test_save_name)
 
-    # test_file = nib.Nifti1Image(np.squeeze(output_data), x_file.affine, x_file.header)
-    # test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name
-    # nib.save(test_file, test_save_name)
-    # print(test_save_name)
-
-    # test_file = nib.Nifti1Image(np.squeeze(output_std), x_file.affine, x_file.header)
-    # test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_std.nii.gz")
-    # nib.save(test_file, test_save_name)
-    # print(test_save_name)
+    test_file = nib.Nifti1Image(np.squeeze(output_std), x_file.affine, x_file.header)
+    test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", test_dict["save_tag"]+"_std.nii.gz")
+    nib.save(test_file, test_save_name)
+    print(test_save_name)
 
     # test_file = nib.Nifti1Image(np.squeeze(output_mean), x_file.affine, x_file.header)
     # test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_mean.nii.gz")
@@ -216,11 +227,11 @@ for cnt_file, file_path in enumerate(file_list):
     # print(test_save_name)
 
     test_file = nib.Nifti1Image(np.squeeze(output_norm_std), x_file.affine, x_file.header)
-    test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_norm_std.nii.gz")
+    test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", test_dict["save_tag"]+"_norm_std.nii.gz")
     nib.save(test_file, test_save_name)
     print(test_save_name)
 
     test_file = nib.Nifti1Image(np.squeeze(output_z_std), x_file.affine, x_file.header)
-    test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_z_std.nii.gz")
+    test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", test_dict["save_tag"]+"_z_std.nii.gz")
     nib.save(test_file, test_save_name)
     print(test_save_name)
