@@ -149,7 +149,7 @@ for cnt_file, file_path in enumerate(file_list):
     ax, ay, az = x_data.shape
     case_loss = 0
 
-    input_data = np.pad(x_data, (96,96,96,96,96,96), 'constant', constant_values=0)
+    input_data = np.pad(x_data, (96,96,96,96,96,96), 'constant')
     input_data = np.expand_dims(input_data, (0,1))
     input_data = torch.from_numpy(input_data).float().to(device)
 
