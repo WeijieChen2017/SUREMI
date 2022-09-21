@@ -149,8 +149,8 @@ for cnt_file, file_path in enumerate(file_list):
     ax, ay, az = x_data.shape
     case_loss = 0
 
-    input_data = np.pad(input_data, 96)
-    input_data = np.expand_dims(x_data, (0,1))
+    input_data = np.pad(x_data, 96)
+    input_data = np.expand_dims(input_data, (0,1))
     input_data = torch.from_numpy(input_data).float().to(device)
 
     order_list, _ = iter_all_order(test_dict["alt_blk_depth"])
