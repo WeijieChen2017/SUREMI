@@ -69,8 +69,8 @@ test_dict["special_cases"] = [
     "03773",
     "05628",
 ]
-test_dict["save_tag"] = "_srd16"
-test_dict["stride_division"] = 16
+test_dict["save_tag"] = "_srd4pad"
+test_dict["stride_division"] = 4
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
 
@@ -149,6 +149,7 @@ for cnt_file, file_path in enumerate(file_list):
     ax, ay, az = x_data.shape
     case_loss = 0
 
+    input_data = np.pad(input_data, 96)
     input_data = np.expand_dims(x_data, (0,1))
     input_data = torch.from_numpy(input_data).float().to(device)
 
@@ -174,7 +175,7 @@ for cnt_file, file_path in enumerate(file_list):
                     device=device,
                     order=order_list[idx_es],
                     )
-            output_array[idx_es, :, :, :] = y_hat.cpu().detach().numpy()
+            output_array[idx_es, :, :, :] = y_hat.cpu().detach().numpy()[96:-96, 96:-96, 96:-96]
 
     output_data = np.median(output_array, axis=0)
     output_std = np.std(output_array, axis=0)
