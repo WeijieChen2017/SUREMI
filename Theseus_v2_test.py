@@ -175,7 +175,7 @@ for cnt_file, file_path in enumerate(file_list):
                     device=device,
                     order=order_list[idx_es],
                     )
-            output_array[idx_es, :, :, :] = y_hat.cpu().detach().numpy()[96:-96, 96:-96, 96:-96]
+            output_array[idx_es, :, :, :] = y_hat.cpu().detach().numpy()[:, :, 96:-96, 96:-96, 96:-96]
 
     output_data = np.median(output_array, axis=0)
     output_std = np.std(output_array, axis=0)
