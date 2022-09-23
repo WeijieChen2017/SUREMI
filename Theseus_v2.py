@@ -26,14 +26,15 @@ import bnn
 from model import UNet_Theseus as UNet
 
 model_list = [
-    ["Theseus_v2_181_200_rdp0", [5], 0,],
-    ["Theseus_v2_181_200_rdp1", [5], 1,],
-    ["Theseus_v2_181_200_rdp10", [4], 10,],
-    ["Theseus_v2_181_200_rdp100", [4], 100,],
-    ["Theseus_v2_181_200_rdp020", [3], 0.2,],
-    ["Theseus_v2_181_200_rdp040", [3], 0.4,],
-    ["Theseus_v2_181_200_rdp060", [4], 0.6,],
-    ["Theseus_v2_181_200_rdp080", [4], 0.8,],
+    # ["Theseus_v2_181_200_rdp0", [5], 0,],
+    # ["Theseus_v2_181_200_rdp1", [5], 1,],
+    # ["Theseus_v2_181_200_rdp10", [4], 10,],
+    # ["Theseus_v2_181_200_rdp100", [4], 100,],
+    # ["Theseus_v2_181_200_rdp020", [3], 0.2,],
+    # ["Theseus_v2_181_200_rdp040", [3], 0.4,],
+    # ["Theseus_v2_181_200_rdp060", [4], 0.6,],
+    # ["Theseus_v2_181_200_rdp080", [4], 0.8,],
+    ["Theseus_v6_pad", [5], 1,],
     ]
 
 print("Model index: ", end="")
@@ -241,6 +242,8 @@ for idx_epoch_new in range(train_dict["epochs"]):
             y_file = nib.load(y_path)
             x_data = x_file.get_fdata()
             y_data = y_file.get_fdata()
+            x_data = np.pad(x_data, ((96,96),(96,96),(96,96)), 'constant')
+            y_data = np.pad(y_data, ((96,96),(96,96),(96,96)), 'constant')
 
             batch_x = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
             batch_y = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
