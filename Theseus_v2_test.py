@@ -31,7 +31,7 @@ from utils import iter_all_order
 model_list = [
     # "Theseus_v2_181_200_rdp0",
     # "Theseus_v2_181_200_rdp1",
-    "Theseus_v2_181_200_rdp020",
+    # "Theseus_v2_181_200_rdp020",
     # "Theseus_v2_181_200_rdp040",
     # "Theseus_v2_181_200_rdp060",
     # "Theseus_v2_181_200_rdp080",
@@ -41,6 +41,7 @@ model_list = [
     # "Theseus_v2_47_57_rdp060",
     # "Theseus_v2_47_57_rdp080",
     # "Theseus_v2_47_57_rdp100",
+    "Theseus_v6_pad",
 ]
 
 
@@ -60,7 +61,7 @@ test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 test_dict["project_name"] = name # "Bayesian_MTGD_v2_unet_do10_MTGD15"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
-test_dict["gpu_ids"] = [4]
+test_dict["gpu_ids"] = [3]
 test_dict["eval_file_cnt"] = 0
 # test_dict["best_model_name"] = "model_best_193.pth"
 # test_dict["eval_sample"] = 100
@@ -70,7 +71,7 @@ test_dict["special_cases"] = [
     "05628",
 ]
 test_dict["save_tag"] = "_srd4reflect"
-test_dict["stride_division"] = 4
+test_dict["stride_division"] = 8
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
 
@@ -149,7 +150,7 @@ for cnt_file, file_path in enumerate(file_list):
     ax, ay, az = x_data.shape
     case_loss = 0
 
-    input_data = np.pad(x_data, ((96,96),(96,96),(96,96)), 'reflect')
+    input_data = np.pad(x_data, ((96,96),(96,96),(96,96)), 'constant')
     input_data = np.expand_dims(input_data, (0,1))
     input_data = torch.from_numpy(input_data).float().to(device)
 
