@@ -70,9 +70,9 @@ test_dict["special_cases"] = [
     # "03773",
     # "05628",
 ]
-test_dict["save_tag"] = ""
-# test_dict["save_tag"] = "_srd8_edge"
-# test_dict["stride_division"] = 8
+# test_dict["save_tag"] = ""
+test_dict["save_tag"] = "_srd8_edge"
+test_dict["stride_division"] = 8
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
 
