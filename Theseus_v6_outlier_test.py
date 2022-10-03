@@ -239,5 +239,5 @@ for cnt_file, file_path in enumerate(file_list):
     print(test_save_name)
 
     test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", test_dict["save_tag"]+"_sum_voxel.npy")
-    nib.save(test_save_name, total_unstable_voxel)
+    np.save(test_save_name, total_unstable_voxel)
     print(test_save_name)
