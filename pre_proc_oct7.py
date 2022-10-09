@@ -62,7 +62,7 @@ pre_proc_dict = {}
 
 pre_proc_dict["dir_orig"] = "./data_dir/dgx2/MR/"
 pre_proc_dict["name_orig"] = "*.nii.gz"
-pre_proc_dict["dir_syn"] = "./data_dir/dgx2_MR/"
+pre_proc_dict["dir_syn"] = "./data_dir/dgx2/MR_norm/"
 pre_proc_dict["is_seg"] = False
 pre_proc_dict["attr_seg"] = ["norm"]
 pre_proc_dict["range_seg"] = [[0, 10000]]
