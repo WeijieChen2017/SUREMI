@@ -60,7 +60,7 @@ import nibabel as nib
 
 pre_proc_dict = {}
 
-pre_proc_dict["dir_orig"] = "./data_dir/Iman/dgx2/MR/"
+pre_proc_dict["dir_orig"] = "./data_dir/dgx2/MR/"
 pre_proc_dict["name_orig"] = "*.nii.gz"
 pre_proc_dict["dir_syn"] = "./data_dir/dgx2_MR/"
 pre_proc_dict["is_seg"] = False
