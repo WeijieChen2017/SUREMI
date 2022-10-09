@@ -65,7 +65,7 @@ test_dict["gpu_ids"] = [2]
 test_dict["eval_file_cnt"] = 0
 # test_dict["best_model_name"] = "model_best_193.pth"
 # test_dict["eval_sample"] = 100
-test_dict["eval_save_folder"] = "outlier"
+test_dict["eval_save_folder"] = "dgx2"
 test_dict["special_cases"] = [
     # "03773",
     # "05628",
@@ -114,8 +114,9 @@ print("--->", target_model, " is loaded.")
 
 # ==================== data division ====================
 
-data_div = np.load(os.path.join(test_dict["save_folder"], "data_division.npy"), allow_pickle=True)[()]
-X_list = sorted(data_div['test_list_X'] + data_div["train_list_X"] + data_div["val_list_X"])
+# data_div = np.load(os.path.join(test_dict["save_folder"], "data_division.npy"), allow_pickle=True)[()]
+# X_list = sorted(data_div['test_list_X'] + data_div["train_list_X"] + data_div["val_list_X"])
+X_list = sorted(glob.glob("./data_dir/dgx2/MR_norm/*.nii.gz"))
 # if test_dict["eval_file_cnt"] > 0:
 #     X_list = X_list[:test_dict["eval_file_cnt"]]
 # X_list.sort()
@@ -141,7 +142,8 @@ model = model.to(device)
 for cnt_file, file_path in enumerate(file_list):
     
     x_path = file_path
-    y_path = file_path.replace("x", "y")
+    # y_path = file_path.replace("x", "y")
+    y_path = file_path.replace("MR", "CT")
     file_name = os.path.basename(file_path)
     print(iter_tag + " ===> Case[{:03d}/{:03d}]: ".format(cnt_file+1, cnt_total_file), x_path, "<---", end="") # 
     x_file = nib.load(x_path)
