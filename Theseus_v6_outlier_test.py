@@ -116,7 +116,7 @@ print("--->", target_model, " is loaded.")
 
 # data_div = np.load(os.path.join(test_dict["save_folder"], "data_division.npy"), allow_pickle=True)[()]
 # X_list = sorted(data_div['test_list_X'] + data_div["train_list_X"] + data_div["val_list_X"])
-X_list = sorted(glob.glob("./data_dir/dgx2/MR_norm/*.nii.gz"))
+X_list = sorted(glob.glob("./data_dir/dgx2/MR_norm/norm/*.nii.gz"))
 # if test_dict["eval_file_cnt"] > 0:
 #     X_list = X_list[:test_dict["eval_file_cnt"]]
 # X_list.sort()
