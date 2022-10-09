@@ -94,7 +94,7 @@ for file_path  in file_list:
         save_folder = pre_proc_dict["dir_syn"] + pre_proc_dict["attr_seg"][idx] + "/"
         if not os.path.exists(save_folder):
             os.makedirs(save_folder)
-        save_name = os.path.basename(file_path)
+        save_name = os.path.basename(file_path)[7:12]
         save_nifty = nib.Nifti1Image(value_seg, file_nifty.affine, file_nifty.header)
         nib.save(save_nifty, save_folder+save_name)
         print(save_folder+save_name, " "*4, np.amin(value_seg), " "*4, np.amax(value_seg))
