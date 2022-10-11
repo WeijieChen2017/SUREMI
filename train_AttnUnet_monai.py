@@ -128,14 +128,14 @@ fine_val_list = {}
 for item in train_list:
     case_num = os.path.basename(item)[:5]
     if not case_num in mis_reg:
-        fine_train_list.append(fine_train_list)
+        fine_train_list.append(item)
     else:
         print(case_num, "detected!")
 
 for item in val_list:
     case_num = os.path.basename(item)[:5]
     if not case_num in mis_reg:
-        fine_train_list.append(fine_val_list)
+        fine_train_list.append(item)
     else:
         print(case_num, "detected!")
 
