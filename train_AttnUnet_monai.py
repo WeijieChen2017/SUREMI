@@ -179,16 +179,8 @@ for idx_epoch_new in range(train_dict["epochs"]):
             x_data = x_file.get_fdata()
             y_data = y_file.get_fdata()
 
-            x_data = np.pad(x_data, (
-                (train_dict["input_size"][0],train_dict["input_size"][0]),
-                (train_dict["input_size"][1],train_dict["input_size"][1]),
-                (train_dict["input_size"][2],train_dict["input_size"][2]),
-                'constant'))
-            y_data = np.pad(y_data, (
-                (train_dict["input_size"][0],train_dict["input_size"][0]),
-                (train_dict["input_size"][1],train_dict["input_size"][1]),
-                (train_dict["input_size"][2],train_dict["input_size"][2]),
-                'constant'))
+            x_data = np.pad(x_data, ((96,96),(96,96),(96,96)), 'constant')
+            y_data = np.pad(y_data, ((96,96),(96,96),(96,96)), 'constant')
 
             # x_data = x_data / np.amax(x_data)
 
