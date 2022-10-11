@@ -29,7 +29,7 @@ train_dict["seed"] = 426
 train_dict["input_size"] = [96, 96, 96]
 train_dict["gpu_ids"] = [0]
 train_dict["epochs"] = 100
-train_dict["batch"] = 16
+train_dict["batch"] = 8
 train_dict["dropout"] = 0
 train_dict["model_term"] = "Monai_Unet3d"
 
