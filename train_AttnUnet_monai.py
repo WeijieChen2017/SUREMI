@@ -122,8 +122,8 @@ best_val_loss = 1
 best_epoch = 0
 # wandb.watch(model)
 
-fine_train_list = {}
-fine_val_list = {}
+fine_train_list = []
+fine_val_list = []
 
 for item in train_list:
     case_num = os.path.basename(item)[:5]
