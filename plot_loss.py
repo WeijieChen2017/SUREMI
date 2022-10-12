@@ -4,7 +4,7 @@ import glob
 import copy
 import os
 
-n_epoch = 200
+n_epoch = 100
 folder = "./project_dir/AttnUnet_Monai_Iman_v1/"
 
 stage_hub = []
