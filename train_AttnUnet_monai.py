@@ -135,7 +135,7 @@ for item in train_list:
 for item in val_list:
     case_num = os.path.basename(item)[:5]
     if not case_num in mis_reg:
-        fine_train_list.append(item)
+        fine_val_list.append(item)
     else:
         print(case_num, "detected!")
 
