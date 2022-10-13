@@ -155,7 +155,7 @@ for cnt_file, file_path in enumerate(file_list):
     case_loss = 0
 
     input_data = x_data
-    # input_data = np.pad(x_data, ((96,96),(96,96),(96,96)), 'edge')
+    input_data = np.pad(x_data, ((96,96),(96,96),(96,96)), 'edge')
     input_data = np.expand_dims(input_data, (0,1))
     input_data = torch.from_numpy(input_data).float().to(device)
 
@@ -181,8 +181,8 @@ for cnt_file, file_path in enumerate(file_list):
                     device=device,
                     order=order_list[idx_es],
                     )
-            # output_array[idx_es, :, :, :] = y_hat.cpu().detach().numpy()[:, :, 96:-96, 96:-96, 96:-96]
-            output_array[idx_es, :, :, :] = y_hat.cpu().detach().numpy()[:, :, :, :, :]
+            output_array[idx_es, :, :, :] = y_hat.cpu().detach().numpy()[:, :, 96:-96, 96:-96, 96:-96]
+            # output_array[idx_es, :, :, :] = y_hat.cpu().detach().numpy()[:, :, :, :, :]
 
     output_data = np.median(output_array, axis=0)
     output_std = np.std(output_array, axis=0)
