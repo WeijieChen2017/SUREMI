@@ -174,7 +174,7 @@ for cnt_file, file_path in enumerate(file_list):
                     predictor = model,
                     overlap=1/test_dict["stride_division"], 
                     mode="gaussian", 
-                    sigma_scale=1/test_dict["stride_division"], 
+                    sigma_scale=1/8, 
                     padding_mode="constant", 
                     cval=0.0, 
                     sw_device=device, 
