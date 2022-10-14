@@ -174,7 +174,7 @@ for cnt_file, file_path in enumerate(file_list):
                     predictor = model,
                     overlap=1/test_dict["stride_division"], 
                     mode="gaussian", 
-                    sigma_scale=1/8, 
+                    sigma_scale=1/test_dict["stride_division"], 
                     padding_mode="constant", 
                     cval=0.0, 
                     sw_device=device, 
@@ -185,6 +185,7 @@ for cnt_file, file_path in enumerate(file_list):
             # output_array[idx_es, :, :, :] = y_hat.cpu().detach().numpy()[:, :, :, :, :]
 
     output_data = np.median(output_array, axis=0)
+    output_mean = np.mean(output_array, axis=0)
     output_std = np.std(output_array, axis=0)
     # output_mean = np.mean(output_array, axis=0)
     # output_cov = np.divide(output_std, output_mean+1e-12)
@@ -227,6 +228,11 @@ for cnt_file, file_path in enumerate(file_list):
 
     test_file = nib.Nifti1Image(np.squeeze(output_data), x_file.affine, x_file.header)
     test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", test_dict["save_tag"]+"_pred.nii.gz")
+    nib.save(test_file, test_save_name)
+    print(test_save_name)
+
+    test_file = nib.Nifti1Image(np.squeeze(output_mean), x_file.affine, x_file.header)
+    test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", test_dict["save_tag"]+"_mean.nii.gz")
     nib.save(test_file, test_save_name)
     print(test_save_name)
 
