@@ -154,7 +154,7 @@ hub_CT_folder = [
 
 # "rmse", "nrmse", 
 hub_metric = ["rmse", "mae", "ssim", "psnr", "acutance", 
-              "dice_air", "dice_soft", "dice_bone",
+              "dice_air", "dice_soft", "dice_bone",]
               # "std_air", "std_soft", "std_bone",
               # "mae_air", "mae_soft", "mae_bone",] 
 
