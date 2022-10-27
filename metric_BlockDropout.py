@@ -162,7 +162,8 @@ hub_metric = ["rmse", "mae", "ssim", "psnr", "acutance",
 for idx_model in range(len(hub_CT_folder)):
 
     print("Model index: ", end="")
-    current_model_idx = int(input()) - 1
+    # current_model_idx = int(input()) - 1
+    current_model_idx = idx_model
     print(hub_CT_folder[current_model_idx])
 
     cnt_CT_folder = current_model_idx
