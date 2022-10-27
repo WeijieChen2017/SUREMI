@@ -181,14 +181,15 @@ for idx_model in range(len(hub_CT_folder)):
         path_CT = path_std.replace("_std", "")
         filename = os.path.basename(path_CT).replace("_xte", "")
         path_CT_GT = folder_CT_GT+filename
-        print(path_std, path_CT, path_CT_GT)
+        # print(path_std, path_CT, path_CT_GT)
+        print(path_CT, path_CT_GT)
 
 
 
-        file_std = nib.load(path_std)
+        # file_std = nib.load(path_std)
         file_CT = nib.load(path_CT)
         file_CT_GT = nib.load(path_CT_GT)
-        data_std = file_std.get_fdata()
+        # data_std = file_std.get_fdata()
         data_CT = file_CT.get_fdata()
         data_CT_GT = file_CT_GT.get_fdata()
         
