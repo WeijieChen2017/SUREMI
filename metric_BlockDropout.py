@@ -211,6 +211,6 @@ for cnt_CT, path_std in enumerate(list_std_folder):
     # table_metric[cnt_CT, 11] = mae_region(data_x, data_y, tissue="soft")
     # table_metric[cnt_CT, 12] = mae_region(data_x, data_y, tissue="bone")
 
-save_name = "./metric/"+hub_CT_name[cnt_CT_folder]+"_"+"_".join(hub_metric)+".npy"
+save_name = "./metric_Oct27/"+hub_CT_name[cnt_CT_folder]+"_"+"_".join(hub_metric)+".npy"
 print(save_name)
 np.save(save_name, table_metric)
