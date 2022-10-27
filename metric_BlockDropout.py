@@ -13,11 +13,11 @@ from skimage.metrics import mean_squared_error
 
 def denorm_CT(data):
     data *= 4000
-    data -= 1024
+    data -= 1000
     return data
 
 def rmse(x,y):
-    return np.mean(np.sqrt(np.sum(np.square(x-y))))
+    return np.sqrt(np.mean(np.square(x-y)))
 
 def nrmse(x,y):
     # return rmse(x,y)
@@ -34,11 +34,11 @@ def dice_coe(x, y, tissue="air"):
         x_mask = filter_data(x, -2000, -500)
         y_mask = filter_data(y, -2000, -500)
     if tissue == "soft":
-        x_mask = filter_data(x, -500, 250)
-        y_mask = filter_data(y, -500, 250)
+        x_mask = filter_data(x, -500, 500)
+        y_mask = filter_data(y, -500, 500)
     if tissue == "bone":
-        x_mask = filter_data(x, 250, 3000)
-        y_mask = filter_data(y, 250, 3000)
+        x_mask = filter_data(x, 500, 3000)
+        y_mask = filter_data(y, 500, 3000)
     CM = confusion_matrix(np.ravel(x_mask), np.ravel(y_mask))
     TN, FP, FN, TP = CM.ravel()
     return 2*TP / (2*TP + FN + FP)
@@ -55,9 +55,9 @@ def std_region(std, ct, tissue):
     if tissue == "air":
         y_mask = filter_data(ct, -2000, -500)
     if tissue == "soft":
-        y_mask = filter_data(ct, -500, 250)
+        y_mask = filter_data(ct, -500, 500)
     if tissue == "bone":
-        y_mask = filter_data(ct, 250, 3000)
+        y_mask = filter_data(ct, 500, 3000)
     y_mask = y_mask > 0.5
     select_std = std[y_mask]
     return np.mean(select_std)
@@ -66,9 +66,9 @@ def mae_region(pred, ct, tissue):
     if tissue == "air":
         y_mask = filter_data(ct, -2000, -500)
     if tissue == "soft":
-        y_mask = filter_data(ct, -500, 250)
+        y_mask = filter_data(ct, -500, 500)
     if tissue == "bone":
-        y_mask = filter_data(ct, 250, 3000)
+        y_mask = filter_data(ct, 500, 3000)
     y_mask = y_mask > 0.5
     select_ct = ct[y_mask]
     select_pred = pred[y_mask]
@@ -83,25 +83,25 @@ hub_CT_name = [
     # "33333",
     # "24842",
     # "84248",
-    # "e200_rdp_000",
-    # "e200_rdp_020",
-    # "e200_rdp_040",
-    # "e200_rdp_060",
-    # "e200_rdp_080",
-    # "e200_rdp_100",
-    # "e50_rdp_000",
-    # "e50_rdp_020",
-    # "e50_rdp_040",
-    # "e50_rdp_060",
-    # "e50_rdp_080",
-    # "e50_rdp_100",
-    # "R001_D50",
-    # "R010_D50",
-    # "R100_D25",
-    # "R100_D50",
-    # "R100_D75",
-    # "cDO_r050",
-    # "cDO_r100",
+    "e200_rdp_000",
+    "e200_rdp_020",
+    "e200_rdp_040",
+    "e200_rdp_060",
+    "e200_rdp_080",
+    "e200_rdp_100",
+    "e50_rdp_000",
+    "e50_rdp_020",
+    "e50_rdp_040",
+    "e50_rdp_060",
+    "e50_rdp_080",
+    "e50_rdp_100",
+    "R001_D50",
+    "R010_D50",
+    "R100_D25",
+    "R100_D50",
+    "R100_D75",
+    "cDO_r050",
+    "cDO_r100",
     "cDO_w050f",
     "cDO_w100f",
     "shuffle_rdp050",
@@ -119,25 +119,25 @@ hub_CT_folder = [
     # "MDO_v2_333333333",
     # "MDO_v3_224484422",
     # "MDO_v4_884424488",
-    # "Theseus_v2_181_200_rdp0",
-    # "Theseus_v2_181_200_rdp1",
-    # "Theseus_v2_181_200_rdp020",
-    # "Theseus_v2_181_200_rdp040",
-    # "Theseus_v2_181_200_rdp060",
-    # "Theseus_v2_181_200_rdp080",
-    # "Theseus_v2_47_57_rdp000",
-    # "Theseus_v2_47_57_rdp020",
-    # "Theseus_v2_47_57_rdp040",
-    # "Theseus_v2_47_57_rdp060",
-    # "Theseus_v2_47_57_rdp080",
-    # "Theseus_v2_47_57_rdp100",
-    # "RDO_v1_R00001_D50",
-    # "RDO_v1_R00010_D50",
-    # "RDO_v1_R00100_D25",
-    # "RDO_v1_R00100_D50",
-    # "RDO_v1_R00100_D75",
-    # "Theseus_v3_channelDO_rdp050",
-    # "Theseus_v3_channelDO_rdp100",
+    "Theseus_v2_181_200_rdp0",
+    "Theseus_v2_181_200_rdp1",
+    "Theseus_v2_181_200_rdp020",
+    "Theseus_v2_181_200_rdp040",
+    "Theseus_v2_181_200_rdp060",
+    "Theseus_v2_181_200_rdp080",
+    "Theseus_v2_47_57_rdp000",
+    "Theseus_v2_47_57_rdp020",
+    "Theseus_v2_47_57_rdp040",
+    "Theseus_v2_47_57_rdp060",
+    "Theseus_v2_47_57_rdp080",
+    "Theseus_v2_47_57_rdp100",
+    "RDO_v1_R00001_D50",
+    "RDO_v1_R00010_D50",
+    "RDO_v1_R00100_D25",
+    "RDO_v1_R00100_D50",
+    "RDO_v1_R00100_D75",
+    "Theseus_v3_channelDO_rdp050",
+    "Theseus_v3_channelDO_rdp100",
     # "Theseus_v3_channelDOw_rdp050",
     # "Theseus_v3_channelDOw_rdp100",
     "Theseus_v3_channelDOw_rdp050_fixed",
@@ -195,19 +195,21 @@ for cnt_CT, path_std in enumerate(list_std_folder):
     
     # table_metric[cnt_CT, 0] = mean_squared_error(data_x, data_y)
     # table_metric[cnt_CT, 1] = np.sqrt(mean_squared_error(data_x, data_y))
-    table_metric[cnt_CT, 0] = mae(data_x, data_y)
-    table_metric[cnt_CT, 1] = ssim(data_x, data_y, data_range=4000)
-    table_metric[cnt_CT, 2] = psnr(data_x, data_y, data_range=4000)
-    table_metric[cnt_CT, 3] = acutance(data_x)
-    table_metric[cnt_CT, 4] = dice_coe(data_x, data_y, tissue="air")
-    table_metric[cnt_CT, 5] = dice_coe(data_x, data_y, tissue="soft")
-    table_metric[cnt_CT, 6] = dice_coe(data_x, data_y, tissue="bone")
-    table_metric[cnt_CT, 7] = std_region(data_std, data_y, tissue="air")
-    table_metric[cnt_CT, 8] = std_region(data_std, data_y, tissue="soft")
-    table_metric[cnt_CT, 9] = std_region(data_std, data_y, tissue="bone")
-    table_metric[cnt_CT, 10] = mae_region(data_x, data_y, tissue="air")
-    table_metric[cnt_CT, 11] = mae_region(data_x, data_y, tissue="soft")
-    table_metric[cnt_CT, 12] = mae_region(data_x, data_y, tissue="bone")
+
+    table_metric[cnt_CT, 0] = rmse(data_x, data_y)
+    table_metric[cnt_CT, 1] = mae(data_x, data_y)
+    table_metric[cnt_CT, 2] = ssim(data_x, data_y, data_range=4000)
+    table_metric[cnt_CT, 3] = psnr(data_x, data_y, data_range=4000)
+    table_metric[cnt_CT, 4] = acutance(data_x)
+    table_metric[cnt_CT, 5] = dice_coe(data_x, data_y, tissue="air")
+    table_metric[cnt_CT, 6] = dice_coe(data_x, data_y, tissue="soft")
+    table_metric[cnt_CT, 7] = dice_coe(data_x, data_y, tissue="bone")
+    # table_metric[cnt_CT, 7] = std_region(data_std, data_y, tissue="air")
+    # table_metric[cnt_CT, 8] = std_region(data_std, data_y, tissue="soft")
+    # table_metric[cnt_CT, 9] = std_region(data_std, data_y, tissue="bone")
+    # table_metric[cnt_CT, 10] = mae_region(data_x, data_y, tissue="air")
+    # table_metric[cnt_CT, 11] = mae_region(data_x, data_y, tissue="soft")
+    # table_metric[cnt_CT, 12] = mae_region(data_x, data_y, tissue="bone")
 
 save_name = "./metric/"+hub_CT_name[cnt_CT_folder]+"_"+"_".join(hub_metric)+".npy"
 print(save_name)
