@@ -120,11 +120,11 @@ hub_CT_folder = [
     # "MDO_v3_224484422",
     # "MDO_v4_884424488",
     "Theseus_v2_181_200_rdp0",
-    "Theseus_v2_181_200_rdp1",
     "Theseus_v2_181_200_rdp020",
     "Theseus_v2_181_200_rdp040",
     "Theseus_v2_181_200_rdp060",
     "Theseus_v2_181_200_rdp080",
+    "Theseus_v2_181_200_rdp1",
     "Theseus_v2_47_57_rdp000",
     "Theseus_v2_47_57_rdp020",
     "Theseus_v2_47_57_rdp040",
@@ -170,15 +170,16 @@ for idx_model in range(len(hub_CT_folder)):
     CT_folder = "./project_dir/"+hub_CT_folder[cnt_CT_folder]+"/pred_monai/"
 
     # for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
-    list_std_folder = sorted(glob.glob(CT_folder+"*_std.nii.gz"))
-    cnt_file_CT = len(list_std_folder)
+    list_pred_folder = sorted(glob.glob(CT_folder+"*_xte.nii.gz"))
+    cnt_file_CT = len(list_pred_folder)
     cnt_metric = len(hub_metric)
 
     table_metric = np.zeros((cnt_file_CT, cnt_metric))
 
-    for cnt_CT, path_std in enumerate(list_std_folder):
+    for cnt_CT, path_pred in enumerate(list_pred_folder):
         # print(hub_CT_name[cnt_CT_folder]+" ===> [{:03d}]/[{:03d}]: --->".format(cnt_CT+1, cnt_file_CT), path_std, "<---")
-        path_CT = path_std.replace("_std", "")
+        # path_CT = path_std.replace("_std", "")
+        path_CT = path_pred
         filename = os.path.basename(path_CT).replace("_xte", "")
         path_CT_GT = folder_CT_GT+filename
         # print(path_std, path_CT, path_CT_GT)
