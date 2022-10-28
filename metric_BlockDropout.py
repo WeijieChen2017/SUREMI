@@ -158,8 +158,21 @@ hub_metric = ["rmse", "mae", "ssim", "psnr", "acutance",
               # "std_air", "std_soft", "std_bone",
               # "mae_air", "mae_soft", "mae_bone",] 
 
+hub_compute = [
+[0,1,2,3,4,5],
+[6,7,8,9,10,11],
+[12,13,14,15,16],
+[17,18,19,20],
+[21,22,23,24],
+[25,26,27,28]
+]
 
-for idx_model in range(len(hub_CT_folder)):
+print("Compute group index: ", end="")
+compute_group_idx = int(input()) - 1
+for model_idx in hub_compute[compute_group_idx]:
+    print(hub_CT_name[model_idx],"     ", hub_CT_folder[model_idx])
+
+for idx_model in hub_compute[compute_group_idx]:
 
     print("Model index: ", end="")
     # current_model_idx = int(input()) - 1
