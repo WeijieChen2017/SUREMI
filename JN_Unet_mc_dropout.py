@@ -8,8 +8,8 @@ from monai.networks.layers.factories import Act, Norm
 model_hub = [
     ["Seg532_Unet_MC_D25_R100", 0.25, 1, [1]],
     ["Seg532_Unet_MC_D50_R100", 0.50, 1, [1]],
-    ["Seg532_Unet_MC_D75_R100", 0.75, 1, [1]],
-    ["Seg532_Unet_MC_D50_R010", 0.75, 1, [1]],
+    ["Seg532_Unet_MC_D75_R100", 0.75, 1, [0]],
+    ["Seg532_Unet_MC_D50_R010", 0.75, 1, [4]],
     ["Seg532_Unet_MC_D50_R001", 0.75, 1, [1]],
 ]
 
