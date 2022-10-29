@@ -174,7 +174,7 @@ for model_idx in hub_compute[compute_group_idx]:
 
 for idx_model in hub_compute[compute_group_idx]:
 
-    print("Model index: ", end="")
+    print("Model name: ", end="")
     # current_model_idx = int(input()) - 1
     current_model_idx = idx_model
     print(hub_CT_folder[current_model_idx])

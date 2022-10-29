@@ -17,7 +17,7 @@ def denorm_CT(data):
     return data
 
 def rmse(x,y):
-    return np.mean(np.sqrt(np.sum(np.square(x-y))))
+    return np.sqrt(np.mean(np.square(x-y)))
 
 def nrmse(x,y):
     # return rmse(x,y)
@@ -34,11 +34,11 @@ def dice_coe(x, y, tissue="air"):
         x_mask = filter_data(x, -2000, -500)
         y_mask = filter_data(y, -2000, -500)
     if tissue == "soft":
-        x_mask = filter_data(x, -500, 250)
-        y_mask = filter_data(y, -500, 250)
+        x_mask = filter_data(x, -500, 500)
+        y_mask = filter_data(y, -500, 500)
     if tissue == "bone":
-        x_mask = filter_data(x, 250, 3000)
-        y_mask = filter_data(y, 250, 3000)
+        x_mask = filter_data(x, 500, 3000)
+        y_mask = filter_data(y, 500, 3000)
     CM = confusion_matrix(np.ravel(x_mask), np.ravel(y_mask))
     TN, FP, FN, TP = CM.ravel()
     return 2*TP / (2*TP + FN + FP)
@@ -84,11 +84,17 @@ hub_CT_folder = [
     "Unet_Monai_Iman_v2",
 ]
 
+# # "rmse", "nrmse", 
+# hub_metric = ["mae", "ssim", "psnr", "acutance", 
+#               "dice_air", "dice_soft", "dice_bone",
+#               "std_air", "std_soft", "std_bone",
+#               "mae_air", "mae_soft", "mae_bone",] 
+
 # "rmse", "nrmse", 
-hub_metric = ["mae", "ssim", "psnr", "acutance", 
-              "dice_air", "dice_soft", "dice_bone",
-              "std_air", "std_soft", "std_bone",
-              "mae_air", "mae_soft", "mae_bone",] 
+hub_metric = ["rmse", "mae", "ssim", "psnr", "acutance", 
+              "dice_air", "dice_soft", "dice_bone",]
+              # "std_air", "std_soft", "std_bone",
+              # "mae_air", "mae_soft", "mae_bone",] 
 
 
 print("Model index: ", end="")
@@ -124,19 +130,28 @@ for cnt_CT, path_CT in enumerate(list_std_folder):
     
     # table_metric[cnt_CT, 0] = mean_squared_error(data_x, data_y)
     # table_metric[cnt_CT, 1] = np.sqrt(mean_squared_error(data_x, data_y))
-    table_metric[cnt_CT, 0] = mae(data_x, data_y)
-    table_metric[cnt_CT, 1] = ssim(data_x, data_y, data_range=4000)
-    table_metric[cnt_CT, 2] = psnr(data_x, data_y, data_range=4000)
-    table_metric[cnt_CT, 3] = acutance(data_x)
-    table_metric[cnt_CT, 4] = dice_coe(data_x, data_y, tissue="air")
-    table_metric[cnt_CT, 5] = dice_coe(data_x, data_y, tissue="soft")
-    table_metric[cnt_CT, 6] = dice_coe(data_x, data_y, tissue="bone")
-    table_metric[cnt_CT, 7] = 0.
-    table_metric[cnt_CT, 8] = 0.
-    table_metric[cnt_CT, 9] = 0.
-    table_metric[cnt_CT, 10] = mae_region(data_x, data_y, tissue="air")
-    table_metric[cnt_CT, 11] = mae_region(data_x, data_y, tissue="soft")
-    table_metric[cnt_CT, 12] = mae_region(data_x, data_y, tissue="bone")
+    # table_metric[cnt_CT, 0] = mae(data_x, data_y)
+    # table_metric[cnt_CT, 1] = ssim(data_x, data_y, data_range=4000)
+    # table_metric[cnt_CT, 2] = psnr(data_x, data_y, data_range=4000)
+    # table_metric[cnt_CT, 3] = acutance(data_x)
+    # table_metric[cnt_CT, 4] = dice_coe(data_x, data_y, tissue="air")
+    # table_metric[cnt_CT, 5] = dice_coe(data_x, data_y, tissue="soft")
+    # table_metric[cnt_CT, 6] = dice_coe(data_x, data_y, tissue="bone")
+    # table_metric[cnt_CT, 7] = 0.
+    # table_metric[cnt_CT, 8] = 0.
+    # table_metric[cnt_CT, 9] = 0.
+    # table_metric[cnt_CT, 10] = mae_region(data_x, data_y, tissue="air")
+    # table_metric[cnt_CT, 11] = mae_region(data_x, data_y, tissue="soft")
+    # table_metric[cnt_CT, 12] = mae_region(data_x, data_y, tissue="bone")
+
+    table_metric[cnt_CT, 0] = rmse(data_x, data_y)
+    table_metric[cnt_CT, 1] = mae(data_x, data_y)
+    table_metric[cnt_CT, 2] = ssim(data_x, data_y, data_range=4000)
+    table_metric[cnt_CT, 3] = psnr(data_x, data_y, data_range=4000)
+    table_metric[cnt_CT, 4] = acutance(data_x)
+    table_metric[cnt_CT, 5] = dice_coe(data_x, data_y, tissue="air")
+    table_metric[cnt_CT, 6] = dice_coe(data_x, data_y, tissue="soft")
+    table_metric[cnt_CT, 7] = dice_coe(data_x, data_y, tissue="bone")
 
 save_name = "./metric/"+hub_CT_name[cnt_CT_folder]+"_"+"_".join(hub_metric)+".npy"
 print(save_name)
