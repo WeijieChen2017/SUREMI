@@ -1,4 +1,5 @@
 import os
+import torch
 # from model import UNETR_bdo as UNETR
 
 model_hub = [
@@ -67,8 +68,8 @@ from monai.data import (
 print_config()
 
 #--------------------------------------------------------------
-print("Press any key to continue:", end="")
-_ = input()
+# print("Press any key to continue:", end="")
+# _ = input()
 #--------------------------------------------------------------
 
 # directory = os.environ.get("./project_dir/JN_UnetR/")
@@ -155,8 +156,8 @@ val_transforms = Compose(
 )
 
 #--------------------------------------------------------------
-print("Press any key to continue:", end="")
-_ = input()
+# print("Press any key to continue:", end="")
+# _ = input()
 #--------------------------------------------------------------
 
 data_dir = train_dict["data_dir"]
@@ -183,8 +184,8 @@ val_loader = DataLoader(
 )
 
 #--------------------------------------------------------------
-print("Press any key to continue:", end="")
-_ = input()
+# print("Press any key to continue:", end="")
+# _ = input()
 #--------------------------------------------------------------
 
 gpu_list = ','.join(str(x) for x in train_dict["gpu_list"])
@@ -227,8 +228,8 @@ torch.backends.cudnn.benchmark = True
 optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4, weight_decay=1e-5)
 
 #--------------------------------------------------------------
-print("Press any key to continue:", end="")
-_ = input()
+# print("Press any key to continue:", end="")
+# _ = input()
 #--------------------------------------------------------------
 
 def validation(epoch_iterator_val):
@@ -333,8 +334,8 @@ while global_step < max_iterations:
 model.load_state_dict(torch.load(os.path.join(root_dir, "best_metric_model.pth")))
 
 #--------------------------------------------------------------
-print("Press any key to continue:", end="")
-_ = input()
+# print("Press any key to continue:", end="")
+# _ = input()
 #--------------------------------------------------------------
 
 print(
