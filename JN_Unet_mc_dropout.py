@@ -1,5 +1,8 @@
 import os
 import torch
+from model import UNet_Theseus as UNet
+from monai.networks.layers.factories import Act, Norm
+
 # from model import UNETR_bdo as UNETR
 
 model_hub = [
@@ -78,8 +81,8 @@ root_dir = train_dict["root_dir"]
 print(root_dir)
 
 #--------------------------------------------------------------
-print("Press any key to continue:", end="")
-_ = input()
+# print("Press any key to continue:", end="")
+# _ = input()
 #--------------------------------------------------------------
 
 train_transforms = Compose(
