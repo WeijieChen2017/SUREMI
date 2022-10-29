@@ -1,13 +1,31 @@
 import os
 # from model import UNETR_bdo as UNETR
 
+model_hub = [
+    ["Seg532_Unet_MC_D25_R100", 0.25, 1, [1]],
+    ["Seg532_Unet_MC_D50_R100", 0.50, 1, [1]],
+    ["Seg532_Unet_MC_D75_R100", 0.75, 1, [1]],
+    ["Seg532_Unet_MC_D50_R010", 0.75, 1, [1]],
+    ["Seg532_Unet_MC_D50_R001", 0.75, 1, [1]],
+]
+
+print("Model index: ", end="")
+model_idx = int(input()) - 1
+
+
+model_name = model_hub[model_idx][0]
+dropout_ratio = model_hub[model_idx][1]
+reg_coef = model_hub[model_idx][2]
+GPU_available = model_hub[model_idx][3]
+
+
 train_dict = {}
-train_dict["root_dir"] = "./project_dir/Seg532_Unet/"
+train_dict["root_dir"] = "./project_dir/"+model_name+"/"
 if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_532.json"
-train_dict["gpu_list"] = [0]
+train_dict["gpu_list"] = GPU_available
 
 import shutil
 import tempfile
@@ -198,7 +216,7 @@ model = UNet(
     num_res_units=6,
     act=Act.PRELU,
     norm=Norm.INSTANCE,
-    dropout=0.5,
+    dropout=dropout_ratio,
     bias=True,
     ).to(device)
 
@@ -257,7 +275,7 @@ def train(global_step, train_loader, dice_val_best, global_step_best):
         x, y = (batch["image"].cuda(), batch["label"].cuda())
         logit_map = model(x)
         logit_map_reg = model(x)
-        loss = loss_function_rec(logit_map, y)+loss_function_reg(logit_map, logit_map_reg)
+        loss = loss_function_rec(logit_map, y)+loss_function_reg(logit_map, logit_map_reg) * reg_coef
         loss.backward()
         epoch_loss += loss.item()
         optimizer.step()
