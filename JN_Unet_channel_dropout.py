@@ -7,11 +7,8 @@ from monai.networks.layers.factories import Act, Norm
 # from model import UNETR_bdo as UNETR
 
 model_hub = [
-    ["Seg532_Unet_MC_D25_R100", 0.25, 1, [0]],
-    ["Seg532_Unet_MC_D50_R100", 0.50, 1, [0]],
-    ["Seg532_Unet_MC_D75_R100", 0.75, 1, [4]],
-    ["Seg532_Unet_MC_D50_R010", 0.75, 1, [5]],
-    ["Seg532_Unet_MC_D50_R001", 0.75, 1, [5]],
+    ["Seg532_Unet_channnel_r100" , 0.50, 1, [0], False],
+    ["Seg532_Unet_channnel_r100w", 0.50, 1, [0], True],
 ]
 
 print("Model index: ", end="")
@@ -22,6 +19,7 @@ model_name = model_hub[model_idx][0]
 dropout_ratio = model_hub[model_idx][1]
 reg_coef = model_hub[model_idx][2]
 GPU_available = model_hub[model_idx][3]
+is_WDO = model_hub[model_idx][4]
 
 
 train_dict = {}
@@ -58,7 +56,7 @@ from monai.transforms import (
 
 from monai.config import print_config
 from monai.metrics import DiceMetric
-from monai.networks.nets.unet import UNet
+# from monai.networks.nets.unet import UNet
 
 from monai.data import (
     DataLoader,
@@ -223,6 +221,7 @@ model = UNet(
     norm=Norm.INSTANCE,
     dropout=dropout_ratio,
     bias=True,
+    is_WDO=isWDO,
     ).to(device)
 
 # loss_function = DiceCELoss(to_onehot_y=True, softmax=True)
