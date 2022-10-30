@@ -1,17 +1,17 @@
 import os
 import torch
 # from model import UNet_Theseus as UNet
-from monai.networks.nets.unet import UNet
+from model import UNet_channelDO as UNet
 from monai.networks.layers.factories import Act, Norm
 
 # from model import UNETR_bdo as UNETR
 
 model_hub = [
-    ["Seg532_Unet_MC_D25_R100", 0.25, 1, [5]],
-    ["Seg532_Unet_MC_D50_R100", 0.50, 1, [5]],
-    ["Seg532_Unet_MC_D75_R100", 0.75, 1, [5]],
+    ["Seg532_Unet_MC_D25_R100", 0.25, 1, [0]],
+    ["Seg532_Unet_MC_D50_R100", 0.50, 1, [0]],
+    ["Seg532_Unet_MC_D75_R100", 0.75, 1, [4]],
     ["Seg532_Unet_MC_D50_R010", 0.75, 1, [5]],
-    ["Seg532_Unet_MC_D50_R001", 0.75, 1, [7]],
+    ["Seg532_Unet_MC_D50_R001", 0.75, 1, [5]],
 ]
 
 print("Model index: ", end="")
