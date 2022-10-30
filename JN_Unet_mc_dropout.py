@@ -1,7 +1,7 @@
 import os
 import torch
 # from model import UNet_Theseus as UNet
-from monai.networks.nets.unet import UNet
+# from monai.networks.nets.unet import UNet
 from monai.networks.layers.factories import Act, Norm
 
 # from model import UNETR_bdo as UNETR
@@ -263,7 +263,6 @@ def validation(epoch_iterator_val):
             )
         mean_dice_val = dice_metric.aggregate().item()
         dice_metric.reset()
-        exit()
     return mean_dice_val
 
 

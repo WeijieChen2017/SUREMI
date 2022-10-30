@@ -262,7 +262,6 @@ def validation(epoch_iterator_val):
             )
         mean_dice_val = dice_metric.aggregate().item()
         dice_metric.reset()
-        exit()
     return mean_dice_val
 
 
