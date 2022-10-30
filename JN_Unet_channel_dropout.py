@@ -221,7 +221,7 @@ model = UNet(
     norm=Norm.INSTANCE,
     dropout=dropout_ratio,
     bias=True,
-    is_WDO=isWDO,
+    is_WDO=is_WDO,
     ).to(device)
 
 # loss_function = DiceCELoss(to_onehot_y=True, softmax=True)
