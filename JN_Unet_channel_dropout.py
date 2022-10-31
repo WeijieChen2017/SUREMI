@@ -7,8 +7,8 @@ from monai.networks.layers.factories import Act, Norm
 # from model import UNETR_bdo as UNETR
 
 model_hub = [
-    ["Seg532_Unet_channnel_r100" , 0.50, 1, [0], False],
-    ["Seg532_Unet_channnel_r100w", 0.50, 1, [0], True],
+    ["Seg532_Unet_channnel_r100" , 0.50, 1, [6], False],
+    ["Seg532_Unet_channnel_r100w", 0.50, 1, [6], True],
 ]
 
 print("Model index: ", end="")
