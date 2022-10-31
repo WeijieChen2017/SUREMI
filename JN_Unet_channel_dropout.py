@@ -8,7 +8,7 @@ from monai.networks.layers.factories import Act, Norm
 
 model_hub = [
     ["Seg532_Unet_channnel_r100" , 0.50, 1, [6], False],
-    ["Seg532_Unet_channnel_r100w", 0.50, 1, [6], True],
+    ["Seg532_Unet_channnel_r100w", 0.50, 1, [7], True],
 ]
 
 print("Model index: ", end="")
