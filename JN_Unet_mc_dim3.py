@@ -3,6 +3,7 @@ import torch
 # from model import UNet_Theseus as UNet
 # from monai.networks.nets.unet import UNet
 from monai.networks.layers.factories import Act, Norm
+from model import unet_monai_dropout_dim3 as UNet
 
 # from model import UNETR_bdo as UNETR
 
@@ -10,8 +11,8 @@ model_hub = [
     ["Seg532_Unet_MC_D25_R100", 0.25, 1, [5]], #13.5GB
     ["Seg532_Unet_MC_D50_R100", 0.50, 1, [5]], #13.5GB
     ["Seg532_Unet_MC_D75_R100", 0.75, 1, [4]], #13.5GB
-    ["Seg532_Unet_MC_D50_R010", 0.50, 0.1, [5]], #13.5GB
-    ["Seg532_Unet_MC_D50_R001", 0.50, 0.01, [5]], #13.5GB
+    ["Seg532_Unet_MC_D50_R010", 0.50, 1, [0]], #13.5GB
+    ["Seg532_Unet_MC_D50_R001", 0.50, 1, [7]], #13.5GB
 ]
 
 print("Model index: ", end="")
@@ -58,7 +59,7 @@ from monai.transforms import (
 
 from monai.config import print_config
 from monai.metrics import DiceMetric
-from monai.networks.nets.unet import UNet
+# from monai.networks.nets.unet import UNet
 
 from monai.data import (
     DataLoader,
