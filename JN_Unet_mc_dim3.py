@@ -8,11 +8,11 @@ from model import unet_monai_dropout_dim3 as UNet
 # from model import UNETR_bdo as UNETR
 
 model_hub = [
-    ["Seg532_Unet_MC_D25_R100", 0.25, 1, [5]], #13.5GB
-    ["Seg532_Unet_MC_D50_R100", 0.50, 1, [5]], #13.5GB
-    ["Seg532_Unet_MC_D75_R100", 0.75, 1, [4]], #13.5GB
-    ["Seg532_Unet_MC_D50_R010", 0.50, 1, [0]], #13.5GB
-    ["Seg532_Unet_MC_D50_R001", 0.50, 1, [7]], #13.5GB
+    ["Seg532_Unet_Dim3_D25_R100", 0.25, 1, [0]], #13.5GB screen -> 3
+    ["Seg532_Unet_Dim3_D50_R100", 0.50, 1, [4]], #13.5GB screen -> 4
+    ["Seg532_Unet_Dim3_D75_R100", 0.75, 1, [4]], #13.5GB
+    ["Seg532_Unet_Dim3_D50_R050", 0.50, 0.5, [0]], #13.5GB
+    # ["Seg532_Unet_Dim3_D50_R001", 0.50, 1, [7]], #13.5GB
 ]
 
 print("Model index: ", end="")
