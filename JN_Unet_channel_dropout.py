@@ -9,6 +9,8 @@ from monai.networks.layers.factories import Act, Norm
 model_hub = [
     ["Seg532_Unet_channnel_r100" , 0.50, 1, [6], False], # 22GB 
     ["Seg532_Unet_channnel_r100w", 0.50, 1, [7], True],  # 22GB 
+    ["Seg532_Unet_channnel_r050", 0.50, 0.5, [0], False],  # 22GB 
+    ["Seg532_Unet_channnel_r050w", 0.50, 0.5, [0], True],  # 22GB 
 ]
 
 print("Model index: ", end="")
