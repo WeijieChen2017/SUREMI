@@ -8,9 +8,9 @@ from monai.networks.layers.factories import Act, Norm
 
 model_hub = [
     ["Seg532_Unet_channnel_r100" , 0.50, 1, [6], False], # 22GB 
-    ["Seg532_Unet_channnel_r100w", 0.50, 1, [7], True],  # 22GB 
+    ["Seg532_Unet_channnel_r100w", 0.50, 1, [7], True, 21000],  # 22GB # to recover this
     ["Seg532_Unet_channnel_r050", 0.50, 0.5, [0], False],  # 22GB 
-    ["Seg532_Unet_channnel_r050w", 0.50, 0.5, [0], True],  # 22GB --> This one
+    ["Seg532_Unet_channnel_r050w", 0.50, 0.5, [0], True],  # 22GB 
 ]
 
 print("Model index: ", end="")
@@ -22,6 +22,7 @@ dropout_ratio = model_hub[model_idx][1]
 reg_coef = model_hub[model_idx][2]
 GPU_available = model_hub[model_idx][3]
 is_WDO = model_hub[model_idx][4]
+global_step = model_hub[model_idx][5]
 
 
 train_dict = {}
@@ -226,6 +227,21 @@ model = UNet(
     is_WDO=is_WDO,
     ).to(device)
 
+
+pre_state = torch.load(train_dict["root_dir"]+"UNETR_model_best_acc.pth", map_location=torch.device('cpu'))
+# pre_state = model_pre.state_dict()
+model_state_keys = model.state_dict().keys()
+new_model_state = {}
+
+for model_key in model_state_keys:
+    print(model_key)
+    new_model_state[model_key] = pre_state[model_key]
+    
+model.load_state_dict(new_model_state)
+print("./pre_train/UNETR_model_best_acc.pth has been loaded!")
+
+
+
 # loss_function = DiceCELoss(to_onehot_y=True, softmax=True)
 loss_function_rec = DiceCELoss(to_onehot_y=True, softmax=True)
 loss_function_reg = torch.nn.MSELoss()
@@ -326,7 +342,7 @@ eval_num = 500
 post_label = AsDiscrete(to_onehot=14)
 post_pred = AsDiscrete(argmax=True, to_onehot=14)
 dice_metric = DiceMetric(include_background=True, reduction="mean", get_not_nans=False)
-global_step = 0
+# global_step = 0
 dice_val_best = 0.0
 global_step_best = 0
 epoch_loss_values = []
