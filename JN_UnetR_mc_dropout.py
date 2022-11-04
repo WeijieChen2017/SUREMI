@@ -26,7 +26,7 @@ if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_532.json"
-train_dict["gpu_list"] = [6]
+train_dict["gpu_list"] = GPU_available
 
 import shutil
 import tempfile
