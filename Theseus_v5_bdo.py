@@ -28,7 +28,7 @@ from model import UNet_Theseus as UNet
 model_list = [
     ["syn_DLE_4444444", [1], [4,4,4,4,4,4,4]],
     ["syn_DLE_4444111", [1], [4,4,4,4,1,1,1]],
-    ["syn_DLE_1114444", [1], [1,1,1,4,4,4,4]],
+    ["syn_DLE_1114444", [0], [1,1,1,4,4,4,4]],
     ]
 
 print("Model index: ", end="")
