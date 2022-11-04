@@ -12,6 +12,7 @@ model_list = [
     ["./project_dir/JN_UnetR_mT_4222211111/",[4,2,2,2,2,1,1,1,1,1], 6, ""],
     ["./project_dir/JN_UnetR_mT_4111122222/",[4,1,1,1,1,2,2,2,2,2], 6, "_r0"],
     ["./project_dir/JN_UnetR_bdo/",[2,2,2,2,2,2,2,2,2,2], 7, ""],
+    
 ]
 
 print("Model index: ", end="")

@@ -1,17 +1,13 @@
 import os
-import torch
-# from model import UNet_Theseus as UNet
-# from monai.networks.nets.unet import UNet
-from monai.networks.layers.factories import Act, Norm
-
-# from model import UNETR_bdo as UNETR
+from model import UNETR_bdo as UNETR
+from monai.networks.nets import UNETR
 
 model_hub = [
-    ["Seg532_Unet_MC_D25_R100", 0.25, 1, [5]], #13.5GB
-    ["Seg532_Unet_MC_D50_R100", 0.50, 1, [5]], #13.5GB
-    ["Seg532_Unet_MC_D75_R100", 0.75, 1, [4]], #13.5GB
-    ["Seg532_Unet_MC_D50_R010", 0.50, 0.1, [5]], #13.5GB
-    ["Seg532_Unet_MC_D50_R001", 0.50, 0.01, [0]], #13.5GB
+    # ["Seg532_UnetR_MC_D25_R100", 0.25, 1, [5]],
+    ["Seg532_UnetR_MCDim3_D50_R100", 0.50, 1, [5]],
+    # ["Seg532_UnetR_MC_D75_R100", 0.75, 1, [4]],
+    # ["Seg532_UnetR_MC_D50_R010", 0.50, 0.1, [5]], 
+    # ["Seg532_UnetR_MC_D50_R001", 0.50, 0.01, [0]], 
 ]
 
 print("Model index: ", end="")
@@ -58,7 +54,6 @@ from monai.transforms import (
 
 from monai.config import print_config
 from monai.metrics import DiceMetric
-from monai.networks.nets.unet import UNet
 
 from monai.data import (
     DataLoader,
@@ -68,6 +63,7 @@ from monai.data import (
 )
 
 
+import torch
 
 print_config()
 
@@ -198,32 +194,20 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# model = UNETR(
-#     in_channels=1,
-#     out_channels=14,
-#     img_size=(96, 96, 96),
-#     feature_size=16,
-#     hidden_size=768,
-#     mlp_dim=3072,
-#     num_heads=12,
-#     pos_embed="perceptron",
-#     norm_name="instance",
-#     res_block=True,
-#     dropout_rate=0.0,
-# ).to(device)
-
-model = UNet( 
-    spatial_dims=3,
+model = UNETR(
     in_channels=1,
     out_channels=14,
-    channels=(64, 128, 256, 512),
-    strides=(2, 2, 2),
-    num_res_units=6,
-    act=Act.PRELU,
-    norm=Norm.INSTANCE,
-    dropout=dropout_ratio,
-    bias=True,
-    ).to(device)
+    img_size=(96, 96, 96),
+    feature_size=16,
+    hidden_size=768,
+    mlp_dim=3072,
+    num_heads=12,
+    pos_embed="perceptron",
+    norm_name="instance",
+    res_block=True,
+    dropout_rate=dropout_ratio,
+    dropout_dim=3,
+).to(device)
 
 # loss_function = DiceCELoss(to_onehot_y=True, softmax=True)
 loss_function_rec = DiceCELoss(to_onehot_y=True, softmax=True)
@@ -287,7 +271,7 @@ def train(global_step, train_loader, dice_val_best, global_step_best):
         epoch_iterator.set_description(
             "Training (%d / %d Steps) (loss=%2.5f)" % (global_step, max_iterations, loss)
         )
-        np.save(train_dict["root_dir"]+"step_loss_train_{:03d}.npy".format(step+1), loss.item())
+        np.save(train_dict["root_dir"]+"step_loss_train_{:03d}.npy".format(global_step+1), loss.item())
         if (
             global_step % eval_num == 0 and global_step != 0
         ) or global_step == max_iterations:
@@ -295,7 +279,7 @@ def train(global_step, train_loader, dice_val_best, global_step_best):
                 val_loader, desc="Validate (X / X Steps) (dice=X.X)", dynamic_ncols=True
             )
             dice_val = validation(epoch_iterator_val)
-            np.save(train_dict["root_dir"]+"step_loss_cal_{:03d}.npy".format(step+1), dice_val)
+            np.save(train_dict["root_dir"]+"step_loss_cal_{:03d}.npy".format(global_step+1), dice_val)
             epoch_loss /= step
             epoch_loss_values.append(epoch_loss)
             metric_values.append(dice_val)
