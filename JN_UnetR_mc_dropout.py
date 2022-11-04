@@ -68,8 +68,8 @@ import torch
 print_config()
 
 #--------------------------------------------------------------
-print("Press any key to continue:", end="")
-_ = input()
+# print("Press any key to continue:", end="")
+# _ = input()
 #--------------------------------------------------------------
 
 # directory = os.environ.get("./project_dir/JN_UnetR/")
@@ -78,8 +78,8 @@ root_dir = train_dict["root_dir"]
 print(root_dir)
 
 #--------------------------------------------------------------
-print("Press any key to continue:", end="")
-_ = input()
+# print("Press any key to continue:", end="")
+# _ = input()
 #--------------------------------------------------------------
 
 train_transforms = Compose(
@@ -156,8 +156,8 @@ val_transforms = Compose(
 )
 
 #--------------------------------------------------------------
-print("Press any key to continue:", end="")
-_ = input()
+# print("Press any key to continue:", end="")
+# _ = input()
 #--------------------------------------------------------------
 
 data_dir = train_dict["data_dir"]
@@ -184,8 +184,8 @@ val_loader = DataLoader(
 )
 
 #--------------------------------------------------------------
-print("Press any key to continue:", end="")
-_ = input()
+# print("Press any key to continue:", end="")
+# _ = input()
 #--------------------------------------------------------------
 
 gpu_list = ','.join(str(x) for x in train_dict["gpu_list"])
@@ -320,8 +320,8 @@ while global_step < max_iterations:
 model.load_state_dict(torch.load(os.path.join(root_dir, "best_metric_model.pth")))
 
 #--------------------------------------------------------------
-print("Press any key to continue:", end="")
-_ = input()
+# print("Press any key to continue:", end="")
+# _ = input()
 #--------------------------------------------------------------
 
 print(
