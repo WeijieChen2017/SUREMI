@@ -18,7 +18,7 @@ import torch
 import torchvision
 import requests
 
-from monai.networks.nets.unet import UNet
+# from monai.networks.nets.unet import UNet
 from monai.networks.layers.factories import Act, Norm
 import bnn
 
@@ -26,7 +26,9 @@ import bnn
 from model import UNet_Theseus as UNet
 
 model_list = [
-    ["BDO_syn_ab4", [3], 4],
+    ["syn_DLE_4444444", [3], [4,4,4,4,4,4,4]],
+    ["syn_DLE_4444111", [3], [4,4,4,4,1,1,1]],
+    ["syn_DLE_1114444", [3], [1,1,1,4,4,4,4]],
     ]
 
 print("Model index: ", end="")
