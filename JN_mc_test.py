@@ -109,6 +109,7 @@ model = UNet(
 
 pre_train_state = {}
 pre_train_model = torch.load(train_dict["root_dir"]+"best_metric_model.pth")
+print(pre_train_model.keys())
 
 for model_key in model.state_dict().keys():
     pre_train_state[model_key] = pre_train_model[model_key]
