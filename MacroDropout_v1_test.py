@@ -35,15 +35,15 @@ model_list = [
     # "Bayesian_unet_v13_unet_drop25",
     # "Bayesian_unet_v14_unet_drop50",
     # "Bayesian_unet_v15_unet_drop75",
-    # "RDO_v1_R00001_D50",
-    # "RDO_v1_R00010_D50",
-    # "RDO_v1_R00100_D25",
-    # "RDO_v1_R00100_D50",
-    # "RDO_v1_R00100_D75",
-    "RDO_v2_dim3_R100_D50",
-    "RDO_v2_dim3_R050_D50",
-    "RDO_v2_dim3_R100_D25",
-    "RDO_v2_dim3_R100_D75",
+    ["RDO_v1_R00001_D50", [7]],
+    ["RDO_v1_R00010_D50", [7]],
+    ["RDO_v1_R00100_D25", [7]],
+    ["RDO_v1_R00100_D50", [7]],
+    ["RDO_v1_R00100_D75", [7]],
+    ["RDO_v2_dim3_R100_D50", []],
+    ["RDO_v2_dim3_R050_D50", []],
+    ["RDO_v2_dim3_R100_D25", []],
+    ["RDO_v2_dim3_R100_D75", []],
 ]
 
 
@@ -52,7 +52,8 @@ current_model_idx = int(input()) - 1
 print(model_list[current_model_idx])
 time.sleep(1)
 
-name = model_list[current_model_idx]
+name = model_list[current_model_idx][0]
+gpu_list = model_list[current_model_idx][1]
 
 # for name in model_list:
 test_dict = {}
@@ -60,7 +61,7 @@ test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 test_dict["project_name"] = name # "Bayesian_MTGD_v2_unet_do10_MTGD15"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
-test_dict["gpu_ids"] = [5]
+test_dict["gpu_ids"] = gpu_list
 test_dict["eval_file_cnt"] = 0
 # test_dict["best_model_name"] = "model_best_193.pth"
 test_dict["eval_sample"] = 128
