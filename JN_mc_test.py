@@ -1,8 +1,9 @@
 import os
 import time
 import numpy as np
-from model import UNet_Theseus as UNet
-from model import UNETR_mT
+# from model import UNet_Theseus as UNet
+# from model import UNETR_mT
+from monai.networks.nets.unet import UNet
 from monai.networks.layers.factories import Act, Norm
 from utils import iter_all_order, iter_some_order
 from scipy.stats import mode
@@ -44,7 +45,7 @@ dropout_ratio = model_list[cmi][2]
 
 import os
 # from monai.networks.nets.unet import UNet
-from model import UNet_Theseus as UNet
+# from model import UNet_Theseus as UNet
 from monai.networks.layers.factories import Act, Norm
 from utils import iter_all_order
 from scipy.stats import mode
@@ -109,7 +110,7 @@ model = UNet(
 
 pre_train_state = {}
 pre_train_model = torch.load(train_dict["root_dir"]+"best_metric_model.pth")
-print(pre_train_model.keys())
+# print(pre_train_model.keys())
 
 for model_key in model.state_dict().keys():
     pre_train_state[model_key] = pre_train_model[model_key]
