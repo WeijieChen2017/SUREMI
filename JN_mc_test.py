@@ -117,7 +117,7 @@ for model_key in model.state_dict().keys():
      
 model.load_state_dict(pre_train_state)
 
-model.eval()
+model.train()
 order_list = iter_all_order(train_dict["alt_blk_depth"])
 # order_list = iter_all_order([2,2,2,2,2,2,2,2,2])
 order_list_cnt = len(order_list)
