@@ -87,7 +87,7 @@ data_dir = train_dict["data_dir"]
 split_JSON = train_dict["split_JSON"]
 
 datasets = data_dir + split_JSON
-val_files = load_decathlon_datalist(datasets, True, "validation")
+val_files = load_decathlon_datalist(datasets, True, "test")
 
 gpu_list = ','.join(str(x) for x in train_dict["gpu_list"])
 os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list

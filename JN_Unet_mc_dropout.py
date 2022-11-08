@@ -169,7 +169,7 @@ split_JSON = train_dict["split_JSON"]
 
 datasets = data_dir + split_JSON
 datalist = load_decathlon_datalist(datasets, True, "training")
-val_files = load_decathlon_datalist(datasets, True, "test")
+val_files = load_decathlon_datalist(datasets, True, "validation")
 train_ds = CacheDataset(
     data=datalist,
     transform=train_transforms,
