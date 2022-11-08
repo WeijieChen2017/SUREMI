@@ -97,7 +97,7 @@ model = UNet(
     num_res_units=6,
     act=Act.PRELU,
     norm=Norm.INSTANCE,
-    dropout=dropout_ratio,
+    dropout=0.5,
     bias=True,
     is_WDO=is_WDO,
     ).to(device)
