@@ -21,7 +21,7 @@ model_list = [
     ["Seg532_Unet_channnel_r050/", [1], False,], # gpu1
     ["Seg532_Unet_channnel_r050w/", [0], True,], # gpu6
     ["Seg532_Unet_channnel_r100/", [0], False,], # gpu7
-    ["Seg532_Unet_channnel_r100w/", [4], True,],
+    ["Seg532_Unet_channnel_r100w/", [0], True,], # gpu6
     
 ]
 
