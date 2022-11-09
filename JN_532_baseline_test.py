@@ -1,6 +1,6 @@
 import os
-# from monai.networks.nets.unet import UNet
-from model import UNet_Theseus as UNet
+from monai.networks.nets.unet import UNet
+# from model import UNet_Theseus as UNet
 from monai.networks.layers.factories import Act, Norm
 from utils import iter_all_order
 from scipy.stats import mode
