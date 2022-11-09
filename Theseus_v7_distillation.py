@@ -229,7 +229,7 @@ for cnt_file, file_path in enumerate(file_list):
     nib.save(test_file, test_save_name)
     print(test_save_name)
 
-    error_vote_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/error_vote_"+file_name.replace(".nii.gz", test_dict["save_tag"]+".npy"
+    error_vote_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/error_vote_"+file_name.replace(".nii.gz", test_dict["save_tag"]+".npy")
     np.save(error_vote_name, error_vote)
     print(error_vote_name)
 
