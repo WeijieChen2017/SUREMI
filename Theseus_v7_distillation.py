@@ -165,7 +165,7 @@ for cnt_file, file_path in enumerate(file_list):
             y_hat = sliding_window_inference(
                     inputs = input_data, 
                     roi_size = test_dict["input_size"], 
-                    sw_batch_size = 16, 
+                    sw_batch_size = 64, 
                     predictor = model,
                     overlap=1/8, 
                     mode="gaussian", 
@@ -177,7 +177,7 @@ for cnt_file, file_path in enumerate(file_list):
                     order=order_list[idx_es],
                     )
             curr_pred = np.squeeze(y_hat.cpu().detach().numpy())
-            mae_error = np.mean(np.absolute(curr_pred-y_data))*4000 - 1000
+            mae_error = np.mean(np.absolute(curr_pred-y_data))*4000
             for alt_num in range(len(alt_block_num)):
                 error_vote[alt_num][order_list[idx_es][alt_num]].append(mae_error)
             output_array[idx_es, :, :, :] = np.squeeze(y_hat.cpu().detach().numpy())
