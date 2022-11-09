@@ -60,7 +60,7 @@ test_dict["eval_file_cnt"] = 0
 test_dict["eval_save_folder"] = "full_DLE"
 test_dict["special_cases"] = []
 
-test_dict["save_tag"] = "_srd4reflect"
+test_dict["save_tag"] = ""
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
 
@@ -125,16 +125,22 @@ cnt_each_cube = 1
 model.eval()
 model = model.to(device)
 
+order_list, _ = iter_all_order(test_dict["alt_blk_depth"])
+if len(order_list) > 1024:
+    order_list, _ = iter_some_order(test_dict["alt_blk_depth"], order_need=1024)
+# order_list = iter_all_order([2,2,2,2,2,2,2,2,2])
+order_list_cnt = len(order_list)
 
-error_vote = []
-for alt_num in alt_block_num:
-    curr_alt = []
-    for idx in range(alt_num):
-        curr_alt.append([])
-    error_vote.append(curr_alt)
 
 for cnt_file, file_path in enumerate(file_list):
     
+    error_vote = []
+    for alt_num in alt_block_num:
+        curr_alt = []
+        for idx in range(alt_num):
+            curr_alt.append([])
+        error_vote.append(curr_alt)
+
     x_path = file_path
     y_path = file_path.replace("x", "y")
     file_name = os.path.basename(file_path)
@@ -151,11 +157,6 @@ for cnt_file, file_path in enumerate(file_list):
     # input_data = np.pad(x_data, ((96,96),(96,96),(96,96)), 'constant')
     input_data = np.expand_dims(input_data, (0,1))
     input_data = torch.from_numpy(input_data).float().to(device)
-
-    # order_list, _ = iter_all_order(test_dict["alt_blk_depth"])
-    order_list, _ = iter_some_order(test_dict["alt_blk_depth"], order_need=1024)
-    # order_list = iter_all_order([2,2,2,2,2,2,2,2,2])
-    order_list_cnt = len(order_list)
     output_array = np.zeros((order_list_cnt, ax, ay, az))
 
     for idx_es in range(order_list_cnt):
@@ -177,7 +178,7 @@ for cnt_file, file_path in enumerate(file_list):
                     )
             curr_pred = np.squeeze(y_hat.cpu().detach().numpy())
             mae_error = np.mean(np.absolute(curr_pred-y_data))*4000 - 1000
-            for alt_num in alt_block_num:
+            for alt_num in range(len(alt_block_num)):
                 error_vote[alt_num][order_list[idx_es][alt_num]].append(mae_error)
             output_array[idx_es, :, :, :] = np.squeeze(y_hat.cpu().detach().numpy())
 
@@ -228,8 +229,9 @@ for cnt_file, file_path in enumerate(file_list):
     nib.save(test_file, test_save_name)
     print(test_save_name)
 
-    np.save(train_dict["save_folder"]+test_dict["eval_save_folder"]+"/error_vote.npy", error_vote)
-    print(train_dict["save_folder"]+test_dict["eval_save_folder"]+"/error_vote.npy")
+    error_vote_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/error_vote_"+file_name.replace(".nii.gz", test_dict["save_tag"]+".npy"
+    np.save(error_vote_name, error_vote)
+    print(error_vote_name)
 
     # test_file = nib.Nifti1Image(np.squeeze(output_mean), x_file.affine, x_file.header)
     # test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", "_mean.nii.gz")
