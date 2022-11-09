@@ -25,7 +25,7 @@ from scipy.stats import zscore
 # import bnn
 
 from model import UNet_MDO as UNet
-from utils import iter_all_order
+from utils import iter_all_order, iter_some_order
 
 
 model_list = [
@@ -152,7 +152,8 @@ for cnt_file, file_path in enumerate(file_list):
     input_data = np.expand_dims(input_data, (0,1))
     input_data = torch.from_numpy(input_data).float().to(device)
 
-    order_list, _ = iter_all_order(test_dict["alt_blk_depth"])
+    # order_list, _ = iter_all_order(test_dict["alt_blk_depth"])
+    order_list, _ = iter_some_order(test_dict["alt_blk_depth"], order_need=1024)
     # order_list = iter_all_order([2,2,2,2,2,2,2,2,2])
     order_list_cnt = len(order_list)
     output_array = np.zeros((order_list_cnt, ax, ay, az))
