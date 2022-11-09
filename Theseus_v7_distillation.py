@@ -165,7 +165,7 @@ for cnt_file, file_path in enumerate(file_list):
                     roi_size = test_dict["input_size"], 
                     sw_batch_size = 64, 
                     predictor = model,
-                    overlap=1/test_dict["stride_division"], 
+                    overlap=1/8, 
                     mode="gaussian", 
                     sigma_scale=0.125, 
                     padding_mode="constant", 
