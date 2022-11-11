@@ -31,7 +31,7 @@ from utils import iter_all_order, iter_some_order
 model_list = [
     ["syn_DLE_4444111", [4], [4,4,4,4,1,1,1]],
     ["syn_DLE_1114444", [4], [1,1,1,4,4,4,4]],
-    ["syn_DLE_4444444", [2], [4,4,4,4,4,4,4]],
+    ["syn_DLE_4444444", [3], [4,4,4,4,4,4,4]],
 ]
 
 
