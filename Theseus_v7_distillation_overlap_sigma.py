@@ -29,14 +29,14 @@ from utils import iter_all_order, iter_some_order
 
 
 model_list = [
-    ["syn_DLE_4444444", [2], [4,4,4,4,4,4,4], "gaussian",  1/8, 0.0625],
-    ["syn_DLE_4444444", [2], [4,4,4,4,4,4,4], "gaussian",  1/8, 0.125],
-    ["syn_DLE_4444444", [2], [4,4,4,4,4,4,4], "gaussian",  1/8, 0.25],
-    ["syn_DLE_4444444", [2], [4,4,4,4,4,4,4], "gaussian",  1/8, 0.5],
-    ["syn_DLE_4444444", [3], [4,4,4,4,4,4,4], "gaussian",  1/12, 0.125], # 96/12=8
-    ["syn_DLE_4444444", [3], [4,4,4,4,4,4,4], "gaussian",  1/24, 0.125], # 96/12=4
-    ["syn_DLE_4444444", [3], [4,4,4,4,4,4,4], "gaussian",  1/48, 0.125], # 96/12=2
-    ["syn_DLE_4444444", [3], [4,4,4,4,4,4,4], "constant",  1/48, 0.125],
+    ["syn_DLE_4444444", [2], [4,4,4,4,4,4,4], "gaussian",  1/8, 0.0625, "08-625"],
+    ["syn_DLE_4444444", [2], [4,4,4,4,4,4,4], "gaussian",  1/8, 0.125 , "08-125"],
+    ["syn_DLE_4444444", [2], [4,4,4,4,4,4,4], "gaussian",  1/8, 0.25  , "08-025"],
+    ["syn_DLE_4444444", [2], [4,4,4,4,4,4,4], "gaussian",  1/8, 0.5   , "08-050"],
+    ["syn_DLE_4444444", [3], [4,4,4,4,4,4,4], "gaussian",  1/12, 0.125, "12-125"], # 96/12=8
+    ["syn_DLE_4444444", [3], [4,4,4,4,4,4,4], "gaussian",  1/24, 0.125, "24-125"], # 96/12=4
+    ["syn_DLE_4444444", [3], [4,4,4,4,4,4,4], "gaussian",  1/48, 0.125, "48-125"], # 96/12=2
+    ["syn_DLE_4444444", [3], [4,4,4,4,4,4,4], "constant",  1/48, 0.125, "constn"],
 ]
 
 
@@ -50,6 +50,10 @@ time.sleep(1)
 name = model_list[current_model_idx][0]
 gpu_list = model_list[current_model_idx][1]
 alt_block_num = model_list[current_model_idx][2]
+weight_mode = model_list[current_model_idx][3]
+overlap = model_list[current_model_idx][4]
+sigma_level = model_list[current_model_idx][5]
+save_tag = model_list[current_model_idx][6]
 
 
 # for name in model_list:
@@ -62,7 +66,7 @@ test_dict["gpu_ids"] = gpu_list
 test_dict["eval_file_cnt"] = 5
 # test_dict["best_model_name"] = "model_best_193.pth"
 # test_dict["eval_sample"] = 100
-test_dict["eval_save_folder"] = "full_DLE"
+test_dict["eval_save_folder"] = save_tag
 test_dict["special_cases"] = []
 
 test_dict["save_tag"] = ""
@@ -172,9 +176,9 @@ for cnt_file, file_path in enumerate(file_list):
                     roi_size = test_dict["input_size"], 
                     sw_batch_size = 64, 
                     predictor = model,
-                    overlap=1/8, 
-                    mode="gaussian", 
-                    sigma_scale=0.125, 
+                    overlap=overlap, 
+                    mode=weight_mode, 
+                    sigma_scale=sigma_level, 
                     padding_mode="constant", 
                     cval=0.0, 
                     sw_device=device, 

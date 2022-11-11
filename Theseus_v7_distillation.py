@@ -31,7 +31,7 @@ from utils import iter_all_order, iter_some_order
 model_list = [
     ["syn_DLE_4444111", [4], [4,4,4,4,1,1,1]],
     ["syn_DLE_1114444", [4], [1,1,1,4,4,4,4]],
-    ["syn_DLE_4444444", [4], [4,4,4,4,4,4,4]],
+    ["syn_DLE_4444444", [2], [4,4,4,4,4,4,4]],
 ]
 
 
@@ -54,7 +54,7 @@ test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 test_dict["project_name"] = name # "Bayesian_MTGD_v2_unet_do10_MTGD15"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = gpu_list
-test_dict["eval_file_cnt"] = 0
+test_dict["eval_file_cnt"] = 5
 # test_dict["best_model_name"] = "model_best_193.pth"
 # test_dict["eval_sample"] = 100
 test_dict["eval_save_folder"] = "full_DLE"
@@ -126,7 +126,7 @@ model.eval()
 model = model.to(device)
 
 order_list, _ = iter_all_order(test_dict["alt_blk_depth"])
-if len(order_list) > 1024:
+if len(order_list) > 128:
     order_list, _ = iter_some_order(test_dict["alt_blk_depth"], order_need=1024)
 # order_list = iter_all_order([2,2,2,2,2,2,2,2,2])
 order_list_cnt = len(order_list)
