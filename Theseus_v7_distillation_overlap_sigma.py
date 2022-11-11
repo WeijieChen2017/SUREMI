@@ -59,7 +59,7 @@ test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 test_dict["project_name"] = name # "Bayesian_MTGD_v2_unet_do10_MTGD15"
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = gpu_list
-test_dict["eval_file_cnt"] = 0
+test_dict["eval_file_cnt"] = 5
 # test_dict["best_model_name"] = "model_best_193.pth"
 # test_dict["eval_sample"] = 100
 test_dict["eval_save_folder"] = "full_DLE"
@@ -170,7 +170,7 @@ for cnt_file, file_path in enumerate(file_list):
             y_hat = sliding_window_inference(
                     inputs = input_data, 
                     roi_size = test_dict["input_size"], 
-                    sw_batch_size = 32, 
+                    sw_batch_size = 64, 
                     predictor = model,
                     overlap=1/8, 
                     mode="gaussian", 
