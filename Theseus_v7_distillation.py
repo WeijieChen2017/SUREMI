@@ -25,7 +25,7 @@ from scipy.stats import zscore
 # import bnn
 
 from model import UNet_MDO as UNet
-from utils import iter_all_order, iter_some_order
+from utils import iter_all_order, iter_some_order, iter_all_order_but
 
 
 model_list = [
