@@ -134,6 +134,7 @@ if block_kickout == []:
 else:
     order_list = iter_all_order_but(test_dict["alt_blk_depth"], remove_blocks=block_kickout)
     print("Bad blocks have been kicked out!")
+    print(order_list)
 
 order_list_cnt = len(order_list)
 
