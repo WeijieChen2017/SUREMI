@@ -25,10 +25,10 @@ model_list = [
     # "Seg532_Unet_MC_D50_R100",
     # "Seg532_Unet_MC_D75_R100",
 
-    ["Seg532_Unet_Dim3_D25_R100/", [4], 0.25,],
+    ["Seg532_Unet_Dim3_D25_R100/", [0], 0.25,],
     ["Seg532_Unet_Dim3_D50_R050/", [5], 0.5,],
-    ["Seg532_Unet_Dim3_D50_R100/", [5], 0.5,],
-    ["Seg532_Unet_Dim3_D75_R100/", [5], 0.75,],
+    ["Seg532_Unet_Dim3_D50_R100/", [6], 0.5,],
+    ["Seg532_Unet_Dim3_D75_R100/", [7], 0.75,],
     
 ]
 
