@@ -23,6 +23,30 @@ def iter_all_order(alter_block_depth):
     # print(time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime()))
     return set_1, time_frame
 
+def iter_all_order_but(alter_block_depth, remove_blocks=[]):
+    a = alter_block_depth
+    elem_a = []
+    for num_a in a:
+        elem_a.append([p for p in range(num_a)])
+
+    set_1 = elem_a[0]
+    for i_a in range(len(a)-1):
+        set_2 = elem_a[i_a+1]
+        set_1 = Cartesian_product(set_1, set_2)
+
+    qualified_set = []
+    for each_order in set_1:
+        is_qualified = True
+        for idx, each_block in enumerate(each_order):
+            if each_block in remove_blocks[idx]:
+                is_qualified = False
+        if is_qualified:
+            qualified_set.append(each_order)
+
+    time_frame = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
+    # print(time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime()))
+    return qualified_set, time_frame
+
 def iter_some_order(alter_block, order_need=128, remove_blocks=[]):
     # alter_block = [4,2,2,2,2,1,1,1,1,1]
     # alter_block = [2,2,2,2,2,2]

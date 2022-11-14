@@ -132,7 +132,7 @@ if block_kickout == []:
         order_list, _ = iter_some_order(test_dict["alt_blk_depth"], order_need=1024)
     # order_list = iter_all_order([2,2,2,2,2,2,2,2,2])
 else:
-    order_list = iter_some_order(test_dict["alt_blk_depth"], order_need=128, remove_blocks=block_kickout)
+    order_list = iter_all_order_but(test_dict["alt_blk_depth"], remove_blocks=block_kickout)
     print("Bad blocks have been kicked out!")
 
 order_list_cnt = len(order_list)
