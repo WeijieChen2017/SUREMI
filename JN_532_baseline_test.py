@@ -130,7 +130,7 @@ order_list_cnt = len(order_list)
 
 for case_num in range(6):
     # case_num = 4
-    model.eval()
+    # model.eval()
     with torch.no_grad():
         img_name = os.path.split(val_ds[case_num]["image_meta_dict"]["filename_or_obj"])[1]
         img = val_ds[case_num]["image"]
@@ -143,6 +143,7 @@ for case_num in range(6):
         output_array = np.zeros((ax, ay, az, order_list_cnt))
         for idx_bdo in range(order_list_cnt):
             print(idx_bdo)
+            print(device)
             val_outputs = sliding_window_inference(
                 val_inputs, [96, 96, 96], 8, model, overlap=1/8, device=device,
                 mode="gaussian", sigma_scale=0.125, padding_mode="constant", # , order=order_list[idx_bdo],
