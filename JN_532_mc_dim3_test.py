@@ -44,6 +44,23 @@ gpu_list = model_list[cmi][1]
 dropout_ratio = model_list[cmi][2]
 
 import os
+# from monai.networks.nets.unet import UNet
+# from model import UNet_Theseus as UNet
+from monai.networks.layers.factories import Act, Norm
+from utils import iter_all_order
+from scipy.stats import mode
+
+n_cls = 14
+train_dict = {}
+train_dict["root_dir"] = "./project_dir/"+root_dir+"/"
+if not os.path.exists(train_dict["root_dir"]):
+    os.mkdir(train_dict["root_dir"])
+train_dict["data_dir"] = "./data_dir/JN_BTCV/"
+train_dict["split_JSON"] = "dataset_532.json"
+train_dict["gpu_list"] = gpu_list
+train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] 
+
+import os
 import shutil
 import tempfile
 
