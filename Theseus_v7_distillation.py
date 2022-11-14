@@ -29,9 +29,9 @@ from utils import iter_all_order, iter_some_order
 
 
 model_list = [
-    ["syn_DLE_4444111", [4], [4,4,4,4,1,1,1]],
-    ["syn_DLE_1114444", [4], [1,1,1,4,4,4,4]],
-    ["syn_DLE_4444444", [3], [4,4,4,4,4,4,4]],
+    ["syn_DLE_4444111", [4], [4,4,4,4,1,1,1], [[1, 0], [1, 2], [0, 2], [3, 1], [], [], []]],
+    ["syn_DLE_1114444", [4], [1,1,1,4,4,4,4], [[], [], [], [2, 1], [1, 0], [3, 1], [2, 0]]],
+    ["syn_DLE_4444444", [3], [4,4,4,4,4,4,4], [[1, 2], [1, 3], [3, 0], [3, 0], [1, 3], [3, 0], [2, 3]]],
 ]
 
 
@@ -45,6 +45,7 @@ time.sleep(1)
 name = model_list[current_model_idx][0]
 gpu_list = model_list[current_model_idx][1]
 alt_block_num = model_list[current_model_idx][2]
+block_kickout = model_list[current_model_idx][4]
 
 
 # for name in model_list:
@@ -57,7 +58,7 @@ test_dict["gpu_ids"] = gpu_list
 test_dict["eval_file_cnt"] = 5
 # test_dict["best_model_name"] = "model_best_193.pth"
 # test_dict["eval_sample"] = 100
-test_dict["eval_save_folder"] = "full_DLE"
+test_dict["eval_save_folder"] = "part_DLE"
 test_dict["special_cases"] = []
 
 test_dict["save_tag"] = ""
@@ -125,10 +126,15 @@ cnt_each_cube = 1
 model.eval()
 model = model.to(device)
 
-order_list, _ = iter_all_order(test_dict["alt_blk_depth"])
-if len(order_list) > 128:
-    order_list, _ = iter_some_order(test_dict["alt_blk_depth"], order_need=1024)
-# order_list = iter_all_order([2,2,2,2,2,2,2,2,2])
+if block_kickout == []:
+    order_list, _ = iter_all_order(test_dict["alt_blk_depth"])
+    if len(order_list) > 128:
+        order_list, _ = iter_some_order(test_dict["alt_blk_depth"], order_need=1024)
+    # order_list = iter_all_order([2,2,2,2,2,2,2,2,2])
+else:
+    order_list = iter_some_order(test_dict["alt_blk_depth"], order_need=128, remove_blocks=block_kickout)
+    print("Bad blocks have been kicked out!")
+
 order_list_cnt = len(order_list)
 
 
