@@ -179,10 +179,19 @@ hub_metric = ["rmse", "mae", "ssim", "psnr", "acutance",
 # [25,26,27,28]
 # ]
 
+# hub_compute = [
+# [0,1,2],
+# [3,4,5],
+# [6,7,8],
+# ]
+
 hub_compute = [
-[0,1,2],
-[3,4,5],
-[6,7,8],
+[0],
+[1],
+[2],
+[3],
+[4],
+[5],
 ]
 
 print("Compute group index: ", end="")
