@@ -193,7 +193,7 @@ for cnt_file, file_path in enumerate(file_list):
             mae_error = np.mean(np.absolute(curr_pred-y_data))*4000
             for alt_num in range(len(alt_block_num)):
                 error_vote[alt_num][order_list[idx_es][alt_num]].append(mae_error)
-            output_array[idx_es, :, :, :] = np.squeeze(y_hat.cpu().detach().numpy())
+            output_array[idx_es, :, :, :] = curr_pred
 
     output_data = np.median(output_array, axis=0)
     output_std = np.std(output_array, axis=0)
