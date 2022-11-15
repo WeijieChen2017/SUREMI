@@ -29,17 +29,18 @@ from utils import iter_all_order, iter_some_order
 
 
 model_list = [
-    ["syn_DLE_4444444", [7], [4,4,4,4,4,4,4], "gaussian",  1/96, 0.25 , "96-025"], # 96/96=1
-    ["syn_DLE_4444444", [7], [4,4,4,4,4,4,4], "gaussian",  1/96, 0.5  , "96-050"], # 96/96=1
-    ["syn_DLE_4444444", [2], [4,4,4,4,4,4,4], "gaussian",  1/8, 0.0625, "08-625"],
-    ["syn_DLE_4444444", [2], [4,4,4,4,4,4,4], "gaussian",  1/8, 0.125 , "08-125"],
-    ["syn_DLE_4444444", [2], [4,4,4,4,4,4,4], "gaussian",  1/8, 0.25  , "08-025"],
-    ["syn_DLE_4444444", [2], [4,4,4,4,4,4,4], "gaussian",  1/8, 0.5   , "08-050"],
-    ["syn_DLE_4444444", [2], [4,4,4,4,4,4,4], "gaussian",  1/12, 0.125, "12-125"], # 96/12=8
-    ["syn_DLE_4444444", [2], [4,4,4,4,4,4,4], "gaussian",  1/24, 0.125, "24-125"], # 96/24=4
-    ["syn_DLE_4444444", [2], [4,4,4,4,4,4,4], "gaussian",  1/48, 0.125, "48-125"], # 96/48=2
-    ["syn_DLE_4444444", [2], [4,4,4,4,4,4,4], "gaussian",  1/96, 0.125, "96-125"], # 96/96=1
-    ["syn_DLE_4444444", [2], [4,4,4,4,4,4,4], "constant",  1/48, 0.125, "constn"],
+    ["syn_DLE_4444444", [7], [4,4,4,4,4,4,4], "gaussian",  1/96, 0.25 , "sym_96-025"], # 96/96=1
+    ["syn_DLE_4444444", [7], [4,4,4,4,4,4,4], "gaussian",  1/96, 0.5  , "sym_96-050"], # 96/96=1
+    ["syn_DLE_4444444", [7], [4,4,4,4,4,4,4], "gaussian",  1/96, 0.001, "sym_96-001"], # 96/96=1
+    ["syn_DLE_4444444", [7], [4,4,4,4,4,4,4], "gaussian",  1/8, 0.0625, "sym_08-625"],
+    ["syn_DLE_4444444", [7], [4,4,4,4,4,4,4], "gaussian",  1/8, 0.125 , "sym_08-125"],
+    ["syn_DLE_4444444", [7], [4,4,4,4,4,4,4], "gaussian",  1/8, 0.25  , "sym_08-025"],
+    ["syn_DLE_4444444", [7], [4,4,4,4,4,4,4], "gaussian",  1/8, 0.5   , "sym_08-050"],
+    ["syn_DLE_4444444", [7], [4,4,4,4,4,4,4], "gaussian",  1/12, 0.125, "sym_12-125"], # 96/12=8
+    ["syn_DLE_4444444", [7], [4,4,4,4,4,4,4], "gaussian",  1/24, 0.125, "sym_24-125"], # 96/24=4
+    ["syn_DLE_4444444", [7], [4,4,4,4,4,4,4], "gaussian",  1/48, 0.125, "sym_48-125"], # 96/48=2
+    ["syn_DLE_4444444", [7], [4,4,4,4,4,4,4], "gaussian",  1/96, 0.125, "sym_96-125"], # 96/96=1
+    ["syn_DLE_4444444", [7], [4,4,4,4,4,4,4], "constant",  1/48, 0.125, "sym_constn"],
 ]
 
 
@@ -138,8 +139,8 @@ model.eval()
 model = model.to(device)
 
 order_list, _ = iter_all_order(test_dict["alt_blk_depth"])
-if len(order_list) > 128:
-    order_list, _ = iter_some_order(test_dict["alt_blk_depth"], order_need=32)
+if len(order_list) > 64:
+    order_list, _ = iter_some_order(test_dict["alt_blk_depth"], order_need=64)
 # order_list = iter_all_order([2,2,2,2,2,2,2,2,2])
 order_list_cnt = len(order_list)
 
@@ -165,8 +166,8 @@ for cnt_file, file_path in enumerate(file_list):
     ax, ay, az = x_data.shape
     case_loss = 0
 
-    input_data = x_data
-    # input_data = np.pad(x_data, ((96,96),(96,96),(96,96)), 'constant')
+    # input_data = x_data
+    input_data = np.pad(x_data, ((96,96),(96,96),(96,96)), 'symmetric')
     input_data = np.expand_dims(input_data, (0,1))
     input_data = torch.from_numpy(input_data).float().to(device)
     output_array = np.zeros((order_list_cnt, ax, ay, az))
@@ -192,7 +193,7 @@ for cnt_file, file_path in enumerate(file_list):
             mae_error = np.mean(np.absolute(curr_pred-y_data))*4000
             for alt_num in range(len(alt_block_num)):
                 error_vote[alt_num][order_list[idx_es][alt_num]].append(mae_error)
-            output_array[idx_es, :, :, :] = np.squeeze(y_hat.cpu().detach().numpy())
+            output_array[idx_es, :, :, :] = np.squeeze(y_hat.cpu().detach().numpy())[96:-96, 96:-96, 96:-96, ]
 
     output_data = np.median(output_array, axis=0)
     output_std = np.std(output_array, axis=0)
@@ -259,3 +260,4 @@ for cnt_file, file_path in enumerate(file_list):
     # test_save_name = train_dict["save_folder"]+test_dict["eval_save_folder"]+"/"+file_name.replace(".nii.gz", test_dict["save_tag"]+"_z_std.nii.gz")
     # nib.save(test_file, test_save_name)
     # print(test_save_name)
+ 
