@@ -50,7 +50,8 @@ for idx_folder in range(N_folder):
 		list_src = sorted(glob.glob(path_src))
 		for single_src in list_src:
 			filename = os.path.basename(single_src)
-			print(single_src, filename)
+			# print(single_src, filename)
 			path_dst = new_folder+target_folder[idx_folder]+"_"+filename
 			cmd = "mv "+ path_src + " " + path_dst
-			# os.system(cmd)
+			print(cmd)
+			os.system(cmd)
