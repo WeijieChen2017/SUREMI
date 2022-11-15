@@ -95,11 +95,11 @@ hub_CT_name = [
     # "e50_rdp_060",
     # "e50_rdp_080",
     # "e50_rdp_100",
-    "R001_D50",
-    "R010_D50",
-    "R100_D25",
-    "R100_D50",
-    "R100_D75",
+    # "R001_D50",
+    # "R010_D50",
+    # "R100_D25",
+    # "R100_D50",
+    # "R100_D75",
     # "cDO_r050",
     # "cDO_r100",
     # "cDO_w050f",
@@ -108,10 +108,16 @@ hub_CT_name = [
     # "shuffle_rdp100",
     # "shuffle_wrdp050",
     # "shuffle_wrdp100",
-    "RDOdim3_R100D50",
-    "RDOdim3_R050D50",
-    "RDOdim3_R100D25",
-    "RDOdim3_R100D75",
+    # "RDOdim3_R100D50",
+    # "RDOdim3_R050D50",
+    # "RDOdim3_R100D25",
+    # "RDOdim3_R100D75",
+    "syn_DLE_144_full",
+    "syn_DLE_441_full",
+    "syn_DLE_444_full",
+    "syn_DLE_144_part",
+    "syn_DLE_441_part",
+    "syn_DLE_444_part",
     ]
 hub_CT_folder = [
     # "./project_dir/SwinUNETR_Iman_v4_mse/pred_monai/",
@@ -131,11 +137,11 @@ hub_CT_folder = [
     # "Theseus_v2_47_57_rdp060",
     # "Theseus_v2_47_57_rdp080",
     # "Theseus_v2_47_57_rdp100",
-    "RDO_v1_R00001_D50",
-    "RDO_v1_R00010_D50",
-    "RDO_v1_R00100_D25",
-    "RDO_v1_R00100_D50",
-    "RDO_v1_R00100_D75",
+    # "RDO_v1_R00001_D50",
+    # "RDO_v1_R00010_D50",
+    # "RDO_v1_R00100_D25",
+    # "RDO_v1_R00100_D50",
+    # "RDO_v1_R00100_D75",
     # "Theseus_v3_channelDO_rdp050",
     # "Theseus_v3_channelDO_rdp100",
     # "Theseus_v3_channelDOw_rdp050",
@@ -146,10 +152,16 @@ hub_CT_folder = [
     # "Theseus_v4_shuffle_rdp100",
     # "Theseus_v4_shuffleW_rdp050",
     # "Theseus_v4_shuffleW_rdp100",
-    "RDO_v2_dim3_R100_D50",
-    "RDO_v2_dim3_R050_D50",
-    "RDO_v2_dim3_R100_D25",
-    "RDO_v2_dim3_R100_D75",
+    # "RDO_v2_dim3_R100_D50",
+    # "RDO_v2_dim3_R050_D50",
+    # "RDO_v2_dim3_R100_D25",
+    # "RDO_v2_dim3_R100_D75",
+    "syn_DLE_1114444/full_DLE/",
+    "syn_DLE_4444111/full_DLE/",
+    "syn_DLE_4444444/full_DLE/",
+    "syn_DLE_1114444/part_DLE/",
+    "syn_DLE_4444111/part_DLE/",
+    "syn_DLE_4444444/part_DLE/",
 ]
 
 # "rmse", "nrmse", 
@@ -186,8 +198,8 @@ for idx_model in hub_compute[compute_group_idx]:
     print(hub_CT_folder[current_model_idx])
 
     cnt_CT_folder = current_model_idx
-    CT_folder = "./project_dir/"+hub_CT_folder[cnt_CT_folder]+"/pred_monai/"
-
+    # CT_folder = "./project_dir/"+hub_CT_folder[cnt_CT_folder]+"/pred_monai/"
+    CT_folder = "./project_dir/"+hub_CT_folder[cnt_CT_folder]
     # for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
     list_pred_folder = sorted(glob.glob(CT_folder+"*_xte.nii.gz"))
     cnt_file_CT = len(list_pred_folder)
