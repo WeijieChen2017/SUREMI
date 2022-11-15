@@ -52,6 +52,6 @@ for idx_folder in range(N_folder):
 			filename = os.path.basename(single_src)
 			# print(single_src, filename)
 			path_dst = new_folder+target_folder[idx_folder]+"_"+filename
-			cmd = "mv "+ single_src + " " + path_dst
+			cmd = "cp "+ single_src + " " + path_dst
 			print(cmd)
 			os.system(cmd)

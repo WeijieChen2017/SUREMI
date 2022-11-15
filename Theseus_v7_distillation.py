@@ -45,7 +45,8 @@ time.sleep(1)
 name = model_list[current_model_idx][0]
 gpu_list = model_list[current_model_idx][1]
 alt_block_num = model_list[current_model_idx][2]
-block_kickout = model_list[current_model_idx][3]
+# block_kickout = model_list[current_model_idx][3]
+block_kickout = []
 
 
 # for name in model_list:
@@ -58,7 +59,7 @@ test_dict["gpu_ids"] = gpu_list
 test_dict["eval_file_cnt"] = 0
 # test_dict["best_model_name"] = "model_best_193.pth"
 # test_dict["eval_sample"] = 100
-test_dict["eval_save_folder"] = "part_DLE"
+test_dict["eval_save_folder"] = "full_val"
 test_dict["special_cases"] = []
 
 test_dict["save_tag"] = ""
@@ -104,7 +105,8 @@ print("--->", target_model, " is loaded.")
 # ==================== data division ====================
 
 data_div = np.load(os.path.join(test_dict["save_folder"], "data_division.npy"), allow_pickle=True)[()]
-X_list = data_div['test_list_X']
+# X_list = data_div['test_list_X']
+X_list = data_div['val_list_X']
 if test_dict["eval_file_cnt"] > 0:
     X_list = X_list[:test_dict["eval_file_cnt"]]
 X_list.sort()
@@ -129,7 +131,7 @@ model = model.to(device)
 if block_kickout == []:
     order_list, _ = iter_all_order(test_dict["alt_blk_depth"])
     if len(order_list) > 128:
-        order_list, _ = iter_some_order(test_dict["alt_blk_depth"], order_need=1024)
+        order_list, _ = iter_some_order(test_dict["alt_blk_depth"], order_need=256)
     # order_list = iter_all_order([2,2,2,2,2,2,2,2,2])
 else:
     order_list, _ = iter_all_order_but(test_dict["alt_blk_depth"], remove_blocks=block_kickout)
