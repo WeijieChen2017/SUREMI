@@ -131,7 +131,7 @@ model = model.to(device)
 if block_kickout == []:
     order_list, _ = iter_all_order(test_dict["alt_blk_depth"])
     if len(order_list) > 128:
-        order_list, _ = iter_some_order(test_dict["alt_blk_depth"], order_need=256)
+        order_list, _ = iter_some_order(test_dict["alt_blk_depth"], order_need=128)
     # order_list = iter_all_order([2,2,2,2,2,2,2,2,2])
 else:
     order_list, _ = iter_all_order_but(test_dict["alt_blk_depth"], remove_blocks=block_kickout)
