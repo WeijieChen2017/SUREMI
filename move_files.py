@@ -47,7 +47,7 @@ if not os.path.exists(new_folder):
 for idx_folder in range(N_folder):
 	for idx_file in range(N_file):
 		path_src = "./project_dir/"+target_folder[idx_folder]+"/"+target_file[idx_file]
-		list_src = sorted(path_src)
+		list_src = sorted(glob.glob(path_src))
 		for single_src in list_src:
 			filename = os.path.basename(single_src)
 			print(single_src, filename)
