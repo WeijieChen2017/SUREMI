@@ -45,7 +45,7 @@ if not os.path.exists(new_folder):
     os.mkdir(new_folder)
 
 for idx_folder in range(N_folder):
-	for idx_file in range(target_file):
+	for idx_file in range(N_file):
 		path_src = "./project_dir/"+target_folder[idx_folder]+"/"+target_file[idx_file]
 		list_src = sorted(path_src)
 		for single_src in list_src:
