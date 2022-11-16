@@ -47,6 +47,7 @@ model_list = [
 # current_model_idx = int(input()) - 1
 # print(model_list[current_model_idx])
 # time.sleep(1)
+test_dict = {}
 for current_model_idx in range(len(model_list)):
     name = model_list[current_model_idx][0]
     gpu_list = model_list[current_model_idx][1]
@@ -58,7 +59,7 @@ for current_model_idx in range(len(model_list)):
 
 
     # for name in model_list:
-    # test_dict = {}
+    # 
     test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
     test_dict["project_name"] = name # "Bayesian_MTGD_v2_unet_do10_MTGD15"
     test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
