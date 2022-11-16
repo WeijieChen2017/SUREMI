@@ -26,7 +26,7 @@ train_dict["seed"] = 426
 train_dict["input_size"] = [96, 96, 96]
 train_dict["gpu_ids"] = [7]
 train_dict["epochs"] = 200
-train_dict["batch"] = 32
+train_dict["batch"] = 48
 train_dict["dropout"] = 0
 train_dict["model_term"] = "Monai_Unet3d"
 
@@ -130,8 +130,8 @@ for idx_epoch_new in range(train_dict["epochs"]):
             model.eval()
 
         random.shuffle(file_list)
-        
-        case_loss = np.zeros((len(file_list)))
+        N_file = len(file_list)
+        case_loss = np.zeros((N_file))
 
         # N, C, D, H, W
         # x_data = nib.load(file_list[0]).get_fdata()
@@ -142,7 +142,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             x_path = file_path
             y_path = file_path.replace("MR", "CT")
             file_name = os.path.basename(file_path)
-            print(iter_tag + " ===> Epoch[{:03d}]: --->".format(idx_epoch+1), x_path, "<---", end="")
+            print(iter_tag + " ===> Epoch<{:03d}>:[{:03d}/{:03d}] --->".format(idx_epoch+1, cnt_file+1, N_file), x_path, "<---", end="")
             x_file = nib.load(x_path)
             y_file = nib.load(y_path)
             x_data = x_file.get_fdata()
@@ -184,7 +184,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             case_loss[cnt_file] = loss.item()
             print("Loss: ", case_loss[cnt_file])
 
-        print(iter_tag + " ===>===> Epoch[{:03d}]:[{:03d}/{:03d}]: ".format(idx_epoch+1, cnt_file+1, len(file_list)), end='')
+        print(iter_tag + " ===>===> Epoch[{:03d}]".format(idx_epoch+1), end='')
         print("  Loss: ", np.mean(case_loss))
         np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), case_loss)
 
