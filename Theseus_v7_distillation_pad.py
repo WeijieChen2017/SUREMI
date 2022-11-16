@@ -47,7 +47,7 @@ model_list = [
 # current_model_idx = int(input()) - 1
 # print(model_list[current_model_idx])
 # time.sleep(1)
-test_dict = {}
+
 for current_model_idx in range(len(model_list)):
     name = model_list[current_model_idx][0]
     gpu_list = model_list[current_model_idx][1]
@@ -56,15 +56,16 @@ for current_model_idx in range(len(model_list)):
     overlap = model_list[current_model_idx][4]
     sigma_level = model_list[current_model_idx][5]
     save_tag = model_list[current_model_idx][6]
+    print(name, gpu_list, alt_block_num, weight_mode, overlap, sigma_level, save_tag)
 
 
     # for name in model_list:
-    # 
+    test_dict = {}
     test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
     test_dict["project_name"] = name # "Bayesian_MTGD_v2_unet_do10_MTGD15"
     test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
     test_dict["gpu_ids"] = gpu_list
-    test_dict["eval_file_cnt"] = 5
+    test_dict["eval_file_cnt"] = 1
     # test_dict["best_model_name"] = "model_best_193.pth"
     # test_dict["eval_sample"] = 100
     test_dict["eval_save_folder"] = save_tag
