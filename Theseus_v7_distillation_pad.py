@@ -48,15 +48,24 @@ model_list = [
 # print(model_list[current_model_idx])
 # time.sleep(1)
 
-for current_model_idx in range(len(model_list)):
-    name = model_list[current_model_idx][0]
-    gpu_list = model_list[current_model_idx][1]
-    alt_block_num = model_list[current_model_idx][2]
-    weight_mode = model_list[current_model_idx][3]
-    overlap = model_list[current_model_idx][4]
-    sigma_level = model_list[current_model_idx][5]
-    save_tag = model_list[current_model_idx][6]
+for model_setting in model_list:
+    name = model_setting[0]
+    gpu_list = model_setting[1]
+    alt_block_num = model_setting[2]
+    weight_mode = model_setting[3]
+    overlap = model_setting[4]
+    sigma_level = model_setting[5]
+    save_tag = model_setting[6]
     print(name, gpu_list, alt_block_num, weight_mode, overlap, sigma_level, save_tag)
+
+    # name = model_list[current_model_idx][0]
+    # gpu_list = model_list[current_model_idx][1]
+    # alt_block_num = model_list[current_model_idx][2]
+    # weight_mode = model_list[current_model_idx][3]
+    # overlap = model_list[current_model_idx][4]
+    # sigma_level = model_list[current_model_idx][5]
+    # save_tag = model_list[current_model_idx][6]
+    # print(name, gpu_list, alt_block_num, weight_mode, overlap, sigma_level, save_tag)
 
 
     # for name in model_list:
