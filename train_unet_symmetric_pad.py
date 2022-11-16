@@ -184,7 +184,7 @@ for idx_epoch_new in range(train_dict["epochs"]):
             case_loss[cnt_file] = loss.item()
             print("Loss: ", case_loss[cnt_file])
 
-        print(iter_tag + " ===>===> Epoch[{:03d}]: ".format(idx_epoch+1), end='')
+        print(iter_tag + " ===>===> Epoch[{:03d}]:[{:03d}/{:03d}]: ".format(idx_epoch+1, cnt_file+1, len(file_list)), end='')
         print("  Loss: ", np.mean(case_loss))
         np.save(train_dict["save_folder"]+"loss/epoch_loss_"+iter_tag+"_{:03d}.npy".format(idx_epoch+1), case_loss)
 
