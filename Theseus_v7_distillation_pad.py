@@ -58,8 +58,7 @@ for current_model_idx in range(len(model_list)):
 
 
     # for name in model_list:
-    test_dict = {}
-    test_dict = {}
+    # test_dict = {}
     test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
     test_dict["project_name"] = name # "Bayesian_MTGD_v2_unet_do10_MTGD15"
     test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
