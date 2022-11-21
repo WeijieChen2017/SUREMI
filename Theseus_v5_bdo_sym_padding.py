@@ -217,6 +217,10 @@ for idx_epoch_new in range(train_dict["epochs"]):
             x_data = x_file.get_fdata()
             y_data = y_file.get_fdata()
 
+            dim_x, dim_y, dim_z = train_dict["input_size"]
+            x_data = np.pad(x_data, ((dim_x,dim_x),(dim_y,dim_y),(dim_z, dim_z)), 'symmetric')
+            y_data = np.pad(y_data, ((dim_x,dim_x),(dim_y,dim_y),(dim_z, dim_z)), 'symmetric')
+
             batch_x = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
             batch_y = np.zeros((train_dict["batch"], 1, train_dict["input_size"][0], train_dict["input_size"][1], train_dict["input_size"][2]))
 
