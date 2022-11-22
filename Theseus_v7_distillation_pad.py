@@ -41,7 +41,8 @@ model_list = [
     # ["syn_DLE_4444444", [7], [4,4,4,4,4,4,4], "gaussian",  1/48, 0.125, "sym_48-125"], # 96/48=2
     # ["syn_DLE_4444444", [7], [4,4,4,4,4,4,4], "gaussian",  1/96, 0.125, "sym_96-125"], # 96/96=1
     # ["syn_DLE_4444444", [7], [4,4,4,4,4,4,4], "constant",  1/48, 0.125, "sym_constn"],
-    ["Theseus_5_BDO_symmetric_paddind", [7], [2,2,2,2,2,2,2], "gaussian",  1/96, 0.125 , "sym_96-125"]
+    ["Theseus_5_BDO_symmetric_paddind", [7], [2,2,2,2,2,2,2], "gaussian",  1/8, 0.125 , "sym_08-125"],
+    ["Theseus_5_BDO_symmetric_paddind", [7], [2,2,2,2,2,2,2], "gaussian",  1/96, 0.125 , "sym_96-125"],
 ]
 
 # print("Model index: ", end="")
