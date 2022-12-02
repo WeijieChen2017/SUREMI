@@ -23,6 +23,7 @@ target_folder = [
 "Seg532_Unet_MC_D50_R100",
 "Seg532_Unet_MC_D75_R100",
 "Seg532_Unet_ab1114444",
+"Seg532_Unet"
 "Seg532_Unet_ab2",
 "Seg532_Unet_ab4",
 "Seg532_Unet_ab4444111",
@@ -41,7 +42,7 @@ case_list = [
 "img0031",
 ]
 
-tag = "_RAS_1.5_1.5_2.0"
+tag = "_RAS_1.5_1.5_2.0_vote"
 n_label = 14
 
 workbook = xlsxwriter.Workbook('dice.xlsx')
