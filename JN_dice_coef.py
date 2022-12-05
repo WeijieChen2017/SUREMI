@@ -45,17 +45,15 @@ case_list = [
 tag = "_RAS_1.5_1.5_2.0"
 n_label = 14
 
-# first row
-for idx in range(n_label):
-    worksheet.write(0, idx+1, "region_"+str(idx), bold)
-
 for idx_model, model_name in enumerate(target_folder):
 
     workbook = xlsxwriter.Workbook("./excel/"+model_name+"+dice.xlsx")
     # workbook = xlsxwriter.Workbook('synthesis_wilcoxon.xlsx')
     bold = workbook.add_format({'bold': True})
     set_yellow = workbook.add_format({'bg_color': 'yellow'})
-    worksheet = workbook.add_worksheet()
+    worksheet = workbook.add_worksheet()# first row
+    for idx in range(n_label):
+        worksheet.write(0, idx+1, "region_"+str(idx), bold)
 
     print(model_name)
     worksheet.write(idx_model+1, 0, model_name, bold)
