@@ -13,24 +13,24 @@ target_folder = [
 # Seg532_UnetR_ab2444444444
 # Seg532_UnetR_ab41111111111
 
-"Seg532_Unet_Dim3_D25_R100",
-"Seg532_Unet_Dim3_D50_R050",
-"Seg532_Unet_Dim3_D50_R100",
-"Seg532_Unet_Dim3_D75_R100",
-"Seg532_Unet_MC_D25_R100",
-"Seg532_Unet_MC_D50_R001",
-"Seg532_Unet_MC_D50_R010",
-"Seg532_Unet_MC_D50_R100",
-"Seg532_Unet_MC_D75_R100",
-# "Seg532_Unet_ab1114444", "pre"
+# "Seg532_Unet_Dim3_D25_R100", #vote
+# "Seg532_Unet_Dim3_D50_R050", #vote
+# "Seg532_Unet_Dim3_D50_R100", #vote
+# "Seg532_Unet_Dim3_D75_R100", #vote
+# "Seg532_Unet_MC_D25_R100", #vote
+# "Seg532_Unet_MC_D50_R001", #vote
+# "Seg532_Unet_MC_D50_R010", #vote
+# "Seg532_Unet_MC_D50_R100", #vote
+# "Seg532_Unet_MC_D75_R100", #vote
+"Seg532_Unet_ab1114444" #"pre" #vote
 # "Seg532_Unet" 
 # "Seg532_Unet_ab2", ""
-# "Seg532_Unet_ab4", " pre"
-# "Seg532_Unet_ab4444111", "pre"
-"Seg532_Unet_channnel_r050",
-"Seg532_Unet_channnel_r050w",
-"Seg532_Unet_channnel_r100",
-"Seg532_Unet_channnel_r100w",
+"Seg532_Unet_ab4" #" pre"
+"Seg532_Unet_ab4444111" #"pre"
+# "Seg532_Unet_channnel_r050", #vote
+# "Seg532_Unet_channnel_r050w", #vote
+# "Seg532_Unet_channnel_r100", #vote
+# "Seg532_Unet_channnel_r100w", #vote
 ]
 
 case_list = [
@@ -42,7 +42,7 @@ case_list = [
 "img0031",
 ]
 
-tag = "_RAS_1.5_1.5_2.0_vote"
+tag = "_RAS_1.5_1.5_2.0_pre"
 n_label = 14
 
 for idx_model, model_name in enumerate(target_folder):
