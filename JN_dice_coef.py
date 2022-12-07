@@ -42,7 +42,7 @@ case_list = [
 "img0031",
 ]
 
-tag = "_RAS_1.5_1.5_2.0_pre"
+tag = "_RAS_1.5_1.5_2.0pre"
 n_label = 14
 
 for idx_model, model_name in enumerate(target_folder):
