@@ -55,7 +55,7 @@ for idx_model, model_name in enumerate(target_folder):
     # for idx in range(n_label):
     #     worksheet.write(0, idx+1, "region_"+str(idx), bold)
 
-    # print(model_name)
+    print(model_name)
     # worksheet.write(idx_model+1, 0, model_name, bold)
     # IoU = np.zeros((len(case_list), n_label))
     for idx_case, case_name in enumerate(case_list):
