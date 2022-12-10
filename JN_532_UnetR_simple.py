@@ -19,23 +19,42 @@ train_dict["alt_blk_depth"] = [1,1,1,1,1,1,1,1,1,1] # [2,2,2,2,2,2,2] for unet
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
 
 import os
-import gc
-import copy
-import glob
-import time
-import random
+import shutil
+import tempfile
 
+import matplotlib.pyplot as plt
 import numpy as np
-import nibabel as nib
-import torch.nn as nn
+from tqdm import tqdm
 
+from monai.losses import DiceCELoss
 from monai.inferers import sliding_window_inference
+from monai.transforms import (
+    AsDiscrete,
+    EnsureChannelFirstd,
+    Compose,
+    CropForegroundd,
+    LoadImaged,
+    Orientationd,
+    RandFlipd,
+    RandCropByPosNegLabeld,
+    RandShiftIntensityd,
+    ScaleIntensityRanged,
+    Spacingd,
+    RandRotate90d,
+)
 
-import torch
+from monai.config import print_config
+from monai.metrics import DiceMetric
+from monai.networks.nets import UNETR
+
 from monai.data import (
+    DataLoader,
+    CacheDataset,
     load_decathlon_datalist,
     decollate_batch,
 )
+
+import torch
 
 root_dir = train_dict["root_dir"]
 print(root_dir)
