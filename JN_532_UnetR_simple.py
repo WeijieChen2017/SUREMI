@@ -3,19 +3,19 @@ import os
 # from model import UNet_Theseus as UNet
 from model import UNETR_bdo as UNETR
 from monai.networks.layers.factories import Act, Norm
-from utils import iter_all_order
+from utils import iter_all_order, iter_some_order
 from scipy.stats import mode
 
 n_cls = 14
 train_dict = {}
-train_dict["root_dir"] = "./project_dir/Seg532_UnetR_MC_D50_R100/"
+train_dict["root_dir"] = "./project_dir/Seg532_UnetR/"
 if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_532.json"
 train_dict["gpu_list"] = [6]
-train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2,2]
-# train_dict["alt_blk_depth"] = [1,1,1,1,1,1,1,1,1,1] # [2,2,2,2,2,2,2] for unet
+# train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2,2]
+train_dict["alt_blk_depth"] = [1,1,1,1,1,1,1,1,1,1] # [2,2,2,2,2,2,2] for unet
 # Seg532_UnetR_ab2444444444
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
 
@@ -124,9 +124,11 @@ for model_key in model.state_dict().keys():
      
 model.load_state_dict(pre_train_state)
 
-order_list = iter_some_order(train_dict["alt_blk_depth"], 128)
+order_list = iter_all_order(train_dict["alt_blk_depth"])
+# order_list = iter_some_order(train_dict["alt_blk_depth"], 128)
 order_list_cnt = len(order_list)
-model.train()
+# model.train()
+model.eval()
 
 for case_num in range(6):
     # case_num = 4
