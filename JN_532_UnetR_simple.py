@@ -8,14 +8,15 @@ from scipy.stats import mode
 
 n_cls = 14
 train_dict = {}
-train_dict["root_dir"] = "./project_dir/Seg532_UnetR/"
+# train_dict["root_dir"] = "./project_dir/Seg532_UnetR/"
+train_dict["root_dir"] = "./project_dir/Seg532_UnetR_MC_D50_R100/"
 if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_532.json"
 train_dict["gpu_list"] = [6]
-# train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2,2]
-train_dict["alt_blk_depth"] = [1,1,1,1,1,1,1,1,1,1] # [2,2,2,2,2,2,2] for unet
+train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2,2]
+# train_dict["alt_blk_depth"] = [1,1,1,1,1,1,1,1,1,1] # [2,2,2,2,2,2,2] for unet
 # Seg532_UnetR_ab2444444444
 # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
 
@@ -63,9 +64,6 @@ print(root_dir)
 data_dir = train_dict["data_dir"]
 split_JSON = train_dict["split_JSON"]
 
-datasets = data_dir + split_JSON
-val_files = load_decathlon_datalist(datasets, True, "test")
-
 gpu_list = ','.join(str(x) for x in train_dict["gpu_list"])
 os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
@@ -91,8 +89,7 @@ val_transforms = Compose(
 )
 
 datasets = data_dir + split_JSON
-datalist = load_decathlon_datalist(datasets, True, "training")
-val_files = load_decathlon_datalist(datasets, True, "validation")
+val_files = load_decathlon_datalist(datasets, True, "test")
 
 val_ds = CacheDataset(
     data=val_files, transform=val_transforms, cache_num=6, cache_rate=1.0, num_workers=4
@@ -113,7 +110,7 @@ model = UNETR(
     pos_embed="perceptron",
     norm_name="instance",
     res_block=True,
-    dropout_rate=0.0,
+    dropout_rate=0.5,
 ).to(device)
 
 pre_train_state = {}
@@ -124,11 +121,11 @@ for model_key in model.state_dict().keys():
      
 model.load_state_dict(pre_train_state)
 
-order_list = iter_all_order(train_dict["alt_blk_depth"])
-# order_list = iter_some_order(train_dict["alt_blk_depth"], 128)
+# order_list = iter_all_order(train_dict["alt_blk_depth"])
+order_list = iter_some_order(train_dict["alt_blk_depth"], 128)
 order_list_cnt = len(order_list)
-# model.train()
-model.eval()
+model.train()
+# model.eval()
 
 for case_num in range(6):
     # case_num = 4
