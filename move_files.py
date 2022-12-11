@@ -4,11 +4,11 @@ import os
 
 target_folder = [
 # "Seg532_Unet",
-"Seg532_UnetR",
-"Seg532_UnetR_MC_D50_R100",
-# Seg532_UnetR_ab2
-# Seg532_UnetR_ab2444444444
-# Seg532_UnetR_ab41111111111
+# "Seg532_UnetR",
+# "Seg532_UnetR_MC_D50_R100",
+"Seg532_UnetR_ab2",
+"Seg532_UnetR_ab2444444444",
+"Seg532_UnetR_ab41111111111",
 # "Seg532_Unet_Dim3_D25_R100",
 # "Seg532_Unet_Dim3_D50_R050",
 # "Seg532_Unet_Dim3_D50_R100",
