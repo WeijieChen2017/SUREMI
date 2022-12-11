@@ -33,9 +33,9 @@ target_folder = [
 # "Seg532_Unet_channnel_r100w", #vote
 # "Seg532_UnetR",
 # "Seg532_UnetR_MC_D50_R100",
-"Seg532_UnetR_ab2",
-"Seg532_UnetR_ab2444444444",
-"Seg532_UnetR_ab41111111111",
+# "Seg532_UnetR_ab2",
+"Seg532_UnetR_ab2444444444", #"pre"
+"Seg532_UnetR_ab41111111111", #"pre"
 ]
 
 case_list = [
@@ -47,7 +47,7 @@ case_list = [
 "img0031",
 ]
 
-tag = "_RAS_1.5_1.5_2.0_vote"
+tag = "_RAS_1.5_1.5_2.0pre"
 n_label = 14
 
 for idx_model, model_name in enumerate(target_folder):
