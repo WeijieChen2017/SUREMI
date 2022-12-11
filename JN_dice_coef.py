@@ -23,7 +23,7 @@ target_folder = [
 # "Seg532_Unet_MC_D50_R100", #vote
 # "Seg532_Unet_MC_D75_R100", #vote
 # "Seg532_Unet_ab1114444", #"pre" #vote
-"Seg532_Unet", #vote
+# "Seg532_Unet", #vote
 # "Seg532_Unet_ab2", ""
 # "Seg532_Unet_ab4", #" pre"
 # "Seg532_Unet_ab4444111", #"pre"
@@ -31,6 +31,8 @@ target_folder = [
 # "Seg532_Unet_channnel_r050w", #vote
 # "Seg532_Unet_channnel_r100", #vote
 # "Seg532_Unet_channnel_r100w", #vote
+"Seg532_UnetR",
+"Seg532_UnetR_MC_D50_R100",
 ]
 
 case_list = [
