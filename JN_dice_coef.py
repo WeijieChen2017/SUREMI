@@ -31,8 +31,11 @@ target_folder = [
 # "Seg532_Unet_channnel_r050w", #vote
 # "Seg532_Unet_channnel_r100", #vote
 # "Seg532_Unet_channnel_r100w", #vote
-"Seg532_UnetR",
-"Seg532_UnetR_MC_D50_R100",
+# "Seg532_UnetR",
+# "Seg532_UnetR_MC_D50_R100",
+"Seg532_UnetR_ab2",
+"Seg532_UnetR_ab2444444444",
+"Seg532_UnetR_ab41111111111",
 ]
 
 case_list = [
