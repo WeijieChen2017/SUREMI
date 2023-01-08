@@ -140,6 +140,8 @@ from monai.data import (
     Dataset,
     DataLoader,
     load_decathlon_datalist,
+    PatchIterd,
+    GridPatchDataset,
 )
 
 print_config()
