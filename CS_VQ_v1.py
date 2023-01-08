@@ -28,7 +28,7 @@ import bnn
 from model import VQ2d_v1
 
 model_list = [
-    ["CSVQ_v1_0102", [1]],
+    ["CSVQ_v1_0102", [0]],
     ]
 
 print("Model index: ", end="")
