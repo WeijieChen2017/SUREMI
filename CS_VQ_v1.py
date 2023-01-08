@@ -281,12 +281,12 @@ for global_step_curr in range(train_dict["epochs"]):
             vq_loss, mr_recon, perplexity = model(mr_hq)
             loss_recon = loss_func(mr_hq, mr_recon) / train_dict["data_variance"]
 
-        val_loss[train_step, 0] = vq_loss.item()
-        val_loss[train_step, 1] = loss_recon.item()
-        val_loss[train_step, 2] = perplexity
-        print(" VQ_loss: ", val_loss[train_step, 0], 
-              " Recon: ", val_loss[train_step, 1],
-              " Perplexity: ", val_loss[train_step, 2])
+        val_loss[val_step, 0] = vq_loss.item()
+        val_loss[val_step, 1] = loss_recon.item()
+        val_loss[val_step, 2] = perplexity
+        print(" VQ_loss: ", val_loss[val_step, 0], 
+              " Recon: ", val_loss[val_step, 1],
+              " Perplexity: ", val_loss[val_step, 2])
 
     print(" ^Val^ ===>===> Epoch[{:03d}]: ".format(global_step+1), end='')
     print(" ^VQ : ", np.mean(val_loss[:, 0]), end="")
