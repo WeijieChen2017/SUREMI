@@ -225,7 +225,7 @@ train_loader = DataLoader(
 )
 
 val_loader = DataLoader(
-    path_val_ds, batch_size=train_dict["batch"], # shuffle=False, 
+    patch_val_ds, batch_size=train_dict["batch"], # shuffle=False, 
     num_workers=4, pin_memory=True,
 )
 
