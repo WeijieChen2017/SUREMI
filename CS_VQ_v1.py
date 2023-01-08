@@ -273,7 +273,7 @@ for global_step_curr in range(train_dict["epochs"]):
     # 2d validation
     model.eval()
     val_loss = np.zeros((total_val_batch, 3))
-    for val_step, batch in enumerate(train_loader):
+    for val_step, batch in enumerate(val_loader):
         print(" ^Val^ ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: -->".format(
                 global_step+1, val_step+1, total_val_batch, "<--", end=""))
         mr_hq = batch["image"].cuda()
