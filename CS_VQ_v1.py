@@ -135,6 +135,7 @@ from monai.transforms import (
     RandShiftIntensityd,
     RandRotate90d,
     EnsureChannelFirstd,
+    SqueezeDimd,
 )
 from monai.data import (
     Dataset,
