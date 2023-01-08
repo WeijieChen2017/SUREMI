@@ -50,11 +50,11 @@ train_dict["alpha_dropout_consistency"] = 1
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["split_JSON"] = "./data_dir/CS_VQ_v1.json"
 train_dict["seed"] = 426
-train_dict["input_size"] = [96, 96, 96]
+train_dict["input_size"] = [256, 256]
 train_dict["epochs"] = 100
-train_dict["batch"] = 4
+train_dict["batch"] = 32
 
-train_dict["model_term"] = "2d-vq"
+train_dict["model_term"] = "VQ2d_v1"
 train_dict["dataset_ratio"] = 1
 train_dict["continue_training_epoch"] = 0
 train_dict["flip"] = False
@@ -201,8 +201,8 @@ root_dir = train_dict["save_folder"]
 split_JSON = train_dict["split_JSON"]
 print("root_dir: ", root_dir)
 print("split_JSON: ", split_JSON)
-train_list = load_decathlon_datalist(split_JSON, False, "training")
-val_list = load_decathlon_datalist(split_JSON, False, "val")
+train_list = load_decathlon_datalist(split_JSON, False, "training", base_dir = "./")
+val_list = load_decathlon_datalist(split_JSON, False, "val", base_dir = "./")
 
 train_ds = Dataset(
     data = train_list,
