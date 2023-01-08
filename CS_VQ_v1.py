@@ -64,11 +64,11 @@ train_dict["data_variance"] = 1
 model_dict = {}
 
 model_dict["img_channels"] = 1
-model_dict["num_hiddens"] = 128
-model_dict["num_residual_layers"] = 2
-model_dict["num_residual_hiddens"] = 32
+model_dict["num_hiddens"] = 256
+model_dict["num_residual_layers"] = 4
+model_dict["num_residual_hiddens"] = 128
 model_dict["num_embeddings"] = 512
-model_dict["embedding_dim"] = 64
+model_dict["embedding_dim"] = 128
 model_dict["commitment_cost"] = 0.25
 model_dict["decay"] = 0.99
 train_dict["model_para"] = model_dict
