@@ -51,7 +51,7 @@ train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["split_JSON"] = "./data_dir/CS_VQ_v1.json"
 train_dict["seed"] = 426
 train_dict["input_size"] = [256, 256]
-train_dict["epochs"] = 100
+train_dict["epochs"] = 5000
 train_dict["batch"] = 32
 
 train_dict["model_term"] = "VQ2d_v1"
