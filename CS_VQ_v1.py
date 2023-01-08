@@ -220,13 +220,13 @@ patch_val_ds = GridPatchDataset(
     data=val_ds, patch_iter=patch_func, transform=patch_transform, with_coordinates=False)
 
 train_loader = DataLoader(
-    patch_train_ds, batch_size=train_dict["batch"], 
-    shuffle=True, num_workers=8, pin_memory=True
+    patch_train_ds, batch_size=train_dict["batch"], # shuffle=True, 
+    num_workers=8, pin_memory=True,
 )
 
 val_loader = DataLoader(
-    path_val_ds, batch_size=train_dict["batch"],
-    shuffle=False, num_workers=4, pin_memory=True
+    path_val_ds, batch_size=train_dict["batch"], # shuffle=False, 
+    num_workers=4, pin_memory=True,
 )
 
 # ==================== training ====================
