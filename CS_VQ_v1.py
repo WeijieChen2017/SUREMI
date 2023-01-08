@@ -187,7 +187,7 @@ split_JSON = train_dict["split_JSON"]
 print("root_dir: ", root_dir)
 print("split_JSON: ", split_JSON)
 train_list = load_decathlon_datalist(split_JSON, False, "training")
-val_list = load_decathlon_datalist(split_JSON, False, "validation")
+val_list = load_decathlon_datalist(split_JSON, False, "val")
 
 train_ds = Dataset(
     data = train_list,
