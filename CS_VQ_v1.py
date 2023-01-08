@@ -118,7 +118,7 @@ model = VQ2d_v1(
     num_embeddings = model_dict["num_embeddings"], 
     embedding_dim = model_dict["embedding_dim"], 
     commitment_cost = model_dict["commitment_cost"], 
-    decay = model_dict["decay"]):
+    decay = model_dict["decay"])
 
 model.train()
 model = model.to(device)
