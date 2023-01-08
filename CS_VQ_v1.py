@@ -19,7 +19,6 @@ import torchvision
 import requests
 
 # from monai.networks.nets.unet import UNet
-from monai.networks.layers.factories import Act, Norm
 from monai.inferers import sliding_window_inference
 import bnn
 
@@ -62,18 +61,7 @@ train_dict["flip"] = False
 train_dict["data_variance"] = 1
 
 
-unet_dict = {}
-unet_dict["spatial_dims"] = 3
-unet_dict["in_channels"] = 1
-unet_dict["out_channels"] = 1
-unet_dict["channels"] = (32, 64, 128, 256)
-unet_dict["strides"] = (2, 2, 2)
-unet_dict["num_res_units"] = 4
-unet_dict["act"] = Act.PRELU
-unet_dict["normunet"] = Norm.INSTANCE
-unet_dict["dropout"] = train_dict["dropout"]
-unet_dict["bias"] = True
-train_dict["model_para"] = model_dict
+model_dict = {}
 
 model_dict["img_channels"] = 1
 model_dict["num_hiddens"] = 128
@@ -83,6 +71,7 @@ model_dict["num_embeddings"] = 512
 model_dict["embedding_dim"] = 64
 model_dict["commitment_cost"] = 0.25
 model_dict["decay"] = 0.99
+train_dict["model_para"] = model_dict
 
 
 train_dict["val_ratio"] = 0.3
