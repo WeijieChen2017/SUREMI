@@ -153,9 +153,12 @@ train_transforms = Compose(
         EnsureChannelFirstd(keys="image"),
         RandSpatialCropd(
             keys="image",
-            roi_size=(96, 96, 96),
+            roi_size=(256, 256, 1),
             random_size=False,
             ),
+        SqueezeDimd(
+            keys="image", dim=-1
+        ),  # squeeze the last dim
         RandFlipd(
             keys="image",
             spatial_axis=[0],
@@ -166,15 +169,15 @@ train_transforms = Compose(
             spatial_axis=[1],
             prob=0.25,
         ),
-        RandFlipd(
-            keys="image",
-            spatial_axis=[2],
-            prob=0.25,
-        ),
+        # RandFlipd(
+        #     keys="image",
+        #     spatial_axis=[2],
+        #     prob=0.25,
+        # ),
         RandRotate90d(
             keys="image",
             prob=0.25,
-            max_k=3,
+            max_k=2,
         ),
     ]
 )
@@ -182,6 +185,15 @@ train_transforms = Compose(
 val_transforms = Compose(
     [
         LoadImaged(keys="image"),
+        EnsureChannelFirstd(keys="image"),
+        RandSpatialCropd(
+            keys="image",
+            roi_size=(256, 256, 1),
+            random_size=False,
+            ),
+        SqueezeDimd(
+            keys="image", dim=-1
+        ),  # squeeze the last dim
     ]
 )
 
@@ -202,30 +214,13 @@ val_ds = Dataset(
     transform = val_transforms,
 )
 
-patch_func = PatchIterd(
-    keys=["image"],
-    patch_size=(None, None, 1),  # dynamic first two dimensions
-    start_pos=(0, 0, 0)
-)
-patch_transform = Compose(
-    [
-        SqueezeDimd(keys=["image"], dim=-1),  # squeeze the last dim
-    ]
-)
-
-patch_train_ds = GridPatchDataset(
-    data=train_ds, patch_iter=patch_func, transform=patch_transform, with_coordinates=False)
-
-patch_val_ds = GridPatchDataset(
-    data=val_ds, patch_iter=patch_func, transform=patch_transform, with_coordinates=False)
-
 train_loader = DataLoader(
-    patch_train_ds, batch_size=train_dict["batch"], # shuffle=True, 
+    train_ds, batch_size=train_dict["batch"], shuffle=True, 
     num_workers=8, pin_memory=True,
 )
 
 val_loader = DataLoader(
-    patch_val_ds, batch_size=train_dict["batch"], # shuffle=False, 
+    val_ds, batch_size=train_dict["batch"], shuffle=True, 
     num_workers=4, pin_memory=True,
 )
 
