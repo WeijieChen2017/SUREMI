@@ -112,7 +112,7 @@ model = VQ2d_v1(
 model.train()
 model = model.to(device)
 
-loss = torch.nn.SmoothL1Loss()
+loss_func = torch.nn.SmoothL1Loss()
 # loss_doc = torch.nn.SmoothL1Loss()
 
 optim = torch.optim.AdamW(
@@ -252,7 +252,7 @@ for global_step_curr in range(train_dict["epochs"]):
         mr_hq = batch["image"].cuda()
         optim.zero_grad()
         vq_loss, mr_recon, perplexity = model(mr_hq)
-        loss_recon = loss(mr_hq, mr_recon) # / train_dict["data_variance"]
+        loss_recon = loss_func(mr_hq, mr_recon) / train_dict["data_variance"]
         loss = loss_recon + vq_loss
         loss.backward()
         optim.step()
@@ -279,7 +279,7 @@ for global_step_curr in range(train_dict["epochs"]):
         mr_hq = batch["image"].cuda()
         with torch.no_grad():
             vq_loss, mr_recon, perplexity = model(mr_hq)
-            loss_recon = loss(mr_hq, mr_recon) # / train_dict["data_variance"]
+            loss_recon = loss_func(mr_hq, mr_recon) / train_dict["data_variance"]
 
         val_loss[train_step, 0] = vq_loss.item()
         val_loss[train_step, 1] = loss_recon.item()
