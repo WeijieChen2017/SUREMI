@@ -25,6 +25,7 @@ import bnn
 
 # from utils import add_noise, weighted_L1Loss
 # from model import UNet_Theseus as UNet
+from model import VQ2d_v1
 
 model_list = [
     ["CSVQ_v1_0102", [1]],
@@ -72,7 +73,16 @@ unet_dict["act"] = Act.PRELU
 unet_dict["normunet"] = Norm.INSTANCE
 unet_dict["dropout"] = train_dict["dropout"]
 unet_dict["bias"] = True
-train_dict["model_para"] = unet_dict
+train_dict["model_para"] = model_dict
+
+model_dict["img_channels"] = 1
+model_dict["num_hiddens"] = 128
+model_dict["num_residual_layers"] = 2
+model_dict["num_residual_hiddens"] = 32
+model_dict["num_embeddings"] = 512
+model_dict["embedding_dim"] = 64
+model_dict["commitment_cost"] = 0.25
+model_dict["decay"] = 0.99
 
 
 train_dict["val_ratio"] = 0.3
@@ -99,18 +109,16 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-model = UNet( 
-    spatial_dims=unet_dict["spatial_dims"],
-    in_channels=unet_dict["in_channels"],
-    out_channels=unet_dict["out_channels"],
-    channels=unet_dict["channels"],
-    strides=unet_dict["strides"],
-    num_res_units=unet_dict["num_res_units"],
-    act=unet_dict["act"],
-    norm=unet_dict["normunet"],
-    dropout=unet_dict["dropout"],
-    bias=unet_dict["bias"],
-    )
+
+model = VQ2d_v1(
+    img_channels = model_dict["img_channels"], 
+    num_hiddens = model_dict["num_hiddens"], 
+    num_residual_layers = model_dict["num_residual_layers"], 
+    num_residual_hiddens = model_dict["num_residual_hiddens"], 
+    num_embeddings = model_dict["num_embeddings"], 
+    embedding_dim = model_dict["embedding_dim"], 
+    commitment_cost = model_dict["commitment_cost"], 
+    decay = model_dict["decay"]):
 
 model.train()
 model = model.to(device)
