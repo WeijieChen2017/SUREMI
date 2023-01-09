@@ -212,7 +212,7 @@ class Decoder(nn.Module):
 class VQ3d_v1(nn.Module):
     def __init__(self, img_channels, num_hiddens, num_residual_layers, num_residual_hiddens, 
                  num_embeddings, embedding_dim, commitment_cost, decay=0):
-        super(VQ2d_v1, self).__init__()
+        super(VQ3d_v1, self).__init__()
         
         self._encoder = Encoder(img_channels, num_hiddens,
                                 num_residual_layers, 
