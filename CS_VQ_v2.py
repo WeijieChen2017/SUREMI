@@ -24,7 +24,7 @@ import bnn
 
 # from utils import add_noise, weighted_L1Loss
 # from model import UNet_Theseus as UNet
-from model import VQ3d_v2
+from model import VQ3d_v1
 from utils.swi_vq3d import sliding_window_inference_vq3d
 
 model_list = [
@@ -100,7 +100,7 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
-model = VQ2d_v2(
+model = VQ3d_v1(
     img_channels = model_dict["img_channels"], 
     num_hiddens = model_dict["num_hiddens"], 
     num_residual_layers = model_dict["num_residual_layers"], 
