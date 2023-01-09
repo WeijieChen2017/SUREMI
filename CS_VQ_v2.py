@@ -318,9 +318,9 @@ for global_step_curr in range(train_dict["epochs"]):
             vqloss_list, mr_val, perplexity_list = sliding_window_inference_vq3d(
                 mr_hq, (96, 96, 96), 8, model, overlap=0.25,
             )
-        val_loss[val_step, 0] = np.mean(np.asarray(vqloss_list))
-        val_loss[val_step, 1] = loss_func(mr_hq, mr_val).item()
-        val_loss[val_step, 2] = np.mean(np.asarray(perplexity_list))
+        val_loss[val_step, 0] = np.mean(np.asarray(vqloss_list.cpu()))
+        val_loss[val_step, 1] = loss_func(mr_hq, mr_val.cpu()).item()
+        val_loss[val_step, 2] = np.mean(np.asarray(perplexity_list.cpu()))
         print("Recon: ", val_loss[val_step, 1])
 
     mean_val_loss = np.mean(val_loss[:, 1])
