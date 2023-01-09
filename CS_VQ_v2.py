@@ -319,7 +319,7 @@ for global_step_curr in range(train_dict["epochs"]):
                 mr_hq, (96, 96, 96), 8, model, overlap=0.25,
             )
         val_loss[val_step, 0] = np.mean(np.asarray(vqloss_list.cpu()))
-        val_loss[val_step, 1] = loss_func(mr_hq, mr_val.cpu()).item()
+        val_loss[val_step, 1] = loss_func(mr_hq, mr_val).item()
         val_loss[val_step, 2] = np.mean(np.asarray(perplexity_list.cpu()))
         print("Recon: ", val_loss[val_step, 1])
 
