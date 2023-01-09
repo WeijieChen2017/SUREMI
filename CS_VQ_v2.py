@@ -320,7 +320,10 @@ for global_step_curr in range(train_dict["epochs"]):
             )
         val_loss[val_step, 0] = np.mean(np.asarray(vqloss_list))
         val_loss[val_step, 1] = loss_func(mr_hq, mr_val).item()
-        val_loss[val_step, 2] = np.mean(np.asarray(perplexity_list).cpu())
+        local_preplexity_list = []
+        for per_item in perplexity_list:
+            local_preplexity_list.append(per_item.cpu())
+        val_loss[val_step, 2] = np.mean(np.asarray(local_preplexity_list))
         print("Recon: ", val_loss[val_step, 1])
 
     mean_val_loss = np.mean(val_loss[:, 1])
