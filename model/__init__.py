@@ -33,3 +33,4 @@ from .unetR_monai_bdo import UNETR_bdo
 from .unetR_monai_mT import UNETR_mT
 
 from .vq2d_v1 import VQ2d_v1
+from .vq3d_v1 import VQ3d_v1
