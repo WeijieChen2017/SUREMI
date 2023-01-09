@@ -52,8 +52,8 @@ train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["split_JSON"] = "./data_dir/CS_VQ_v1.json"
 train_dict["seed"] = 426
 train_dict["input_size"] = [96, 96, 96]
-train_dict["epochs"] = 5000
-train_dict["batch"] = 32
+train_dict["epochs"] = 1000
+train_dict["batch"] = 16
 
 train_dict["model_term"] = "VQ2d_v1"
 train_dict["dataset_ratio"] = 1
@@ -309,7 +309,7 @@ for global_step_curr in range(train_dict["epochs"]):
 
     # 3d validation
     model.eval()
-    val_loss = np.zeros((val_train_batch, 3))
+    val_loss = np.zeros((total_val_batch, 3))
     for val_step, batch in enumerate(train_loader):
         print(" ^Val^ ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: -->".format(
                 global_step+1, val_step+1, total_val_batch, "<--", end=""))
