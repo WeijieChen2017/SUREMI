@@ -60,6 +60,7 @@ train_dict["dataset_ratio"] = 1
 train_dict["continue_training_epoch"] = 0
 train_dict["flip"] = False
 train_dict["data_variance"] = 1
+train_dict["num_val_cases"] = 32
 
 
 model_dict = {}
@@ -232,7 +233,8 @@ best_epoch = 0
 
 global_step_curr = 0
 total_train_batch = len(train_loader)
-total_val_batch = len(val_loader)
+# total_val_batch = len(val_loader)
+total_val_batch = train_dict["num_val_cases"]
 # epoch_loss = np.zeros((train_dict["epochs"], 2))
 
 package_train = [train_list, True, False, "train"]
@@ -311,20 +313,22 @@ for global_step_curr in range(train_dict["epochs"]):
     model.eval()
     val_loss = np.zeros((total_val_batch, 3))
     for val_step, batch in enumerate(val_loader):
-        print(" ^Val^ ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: -->".format(
-                global_step+1, val_step+1, total_val_batch, "<--", end=""))
-        mr_hq = batch["image"].cuda()
-        with torch.no_grad():
-            vqloss_list, mr_val, perplexity_list = sliding_window_inference_vq3d(
-                mr_hq, (96, 96, 96), 1, model, overlap=0.25,
-            )
-        val_loss[val_step, 0] = np.mean(np.asarray(vqloss_list))
-        val_loss[val_step, 1] = loss_func(mr_hq, mr_val).item()
-        local_preplexity_list = []
-        for per_item in perplexity_list:
-            local_preplexity_list.append(per_item.cpu())
-        val_loss[val_step, 2] = np.mean(np.asarray(local_preplexity_list))
-        print("Recon: ", val_loss[val_step, 1])
+
+        if val_step < total_val_batch:
+            print(" ^Val^ ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: -->".format(
+                    global_step+1, val_step+1, total_val_batch, "<--", end=""))
+            mr_hq = batch["image"].cuda()
+            with torch.no_grad():
+                vqloss_list, mr_val, perplexity_list = sliding_window_inference_vq3d(
+                    mr_hq, (96, 96, 96), 1, model, overlap=0.25,
+                )
+            val_loss[val_step, 0] = np.mean(np.asarray(vqloss_list))
+            val_loss[val_step, 1] = loss_func(mr_hq, mr_val).item()
+            local_preplexity_list = []
+            for per_item in perplexity_list:
+                local_preplexity_list.append(per_item.cpu())
+            val_loss[val_step, 2] = np.mean(np.asarray(local_preplexity_list))
+            print("Recon: ", val_loss[val_step, 1])
 
     mean_val_loss = np.mean(val_loss[:, 1])
     print(" ^Val^ ===>===> Epoch[{:03d}]: ".format(global_step+1), end='')
