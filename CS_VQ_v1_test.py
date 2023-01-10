@@ -1,243 +1,306 @@
-import torch
+
+# Generative Confidential Network
+
+import os
+import gc
+import copy
+import glob
+import time
+# import wandb
+import random
+
+import numpy as np
+import nibabel as nib
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.optim as optim
 
-class VectorQuantizer(nn.Module):
-    def __init__(self, num_embeddings, embedding_dim, commitment_cost):
-        super(VectorQuantizer, self).__init__()
-        
-        self._embedding_dim = embedding_dim
-        self._num_embeddings = num_embeddings
-        
-        self._embedding = nn.Embedding(self._num_embeddings, self._embedding_dim)
-        self._embedding.weight.data.uniform_(-1/self._num_embeddings, 1/self._num_embeddings)
-        self._commitment_cost = commitment_cost
+import torch
+import torchvision
+import requests
 
-    def forward(self, inputs):
-        # convert inputs from BCHW -> BHWC
-        inputs = inputs.permute(0, 2, 3, 1).contiguous()
-        input_shape = inputs.shape
-        
-        # Flatten input
-        flat_input = inputs.view(-1, self._embedding_dim)
-        
-        # Calculate distances
-        distances = (torch.sum(flat_input**2, dim=1, keepdim=True) 
-                    + torch.sum(self._embedding.weight**2, dim=1)
-                    - 2 * torch.matmul(flat_input, self._embedding.weight.t()))
-            
-        # Encoding
-        encoding_indices = torch.argmin(distances, dim=1).unsqueeze(1)
-        encodings = torch.zeros(encoding_indices.shape[0], self._num_embeddings, device=inputs.device)
-        encodings.scatter_(1, encoding_indices, 1)
-        
-        # Quantize and unflatten
-        quantized = torch.matmul(encodings, self._embedding.weight).view(input_shape)
-        
-        # Loss
-        e_latent_loss = F.mse_loss(quantized.detach(), inputs)
-        q_latent_loss = F.mse_loss(quantized, inputs.detach())
-        loss = q_latent_loss + self._commitment_cost * e_latent_loss
-        
-        quantized = inputs + (quantized - inputs).detach()
-        avg_probs = torch.mean(encodings, dim=0)
-        perplexity = torch.exp(-torch.sum(avg_probs * torch.log(avg_probs + 1e-10)))
-        
-        # convert quantized from BHWC -> BCHW
-        return loss, quantized.permute(0, 3, 1, 2).contiguous(), perplexity, encodings
+# from monai.networks.nets.unet import UNet
+from monai.inferers import sliding_window_inference
+import bnn
 
-class VectorQuantizerEMA(nn.Module):
-    def __init__(self, num_embeddings, embedding_dim, commitment_cost, decay, epsilon=1e-5):
-        super(VectorQuantizerEMA, self).__init__()
-        
-        self._embedding_dim = embedding_dim
-        self._num_embeddings = num_embeddings
-        
-        self._embedding = nn.Embedding(self._num_embeddings, self._embedding_dim)
-        self._embedding.weight.data.normal_()
-        self._commitment_cost = commitment_cost
-        
-        self.register_buffer('_ema_cluster_size', torch.zeros(num_embeddings))
-        self._ema_w = nn.Parameter(torch.Tensor(num_embeddings, self._embedding_dim))
-        self._ema_w.data.normal_()
-        
-        self._decay = decay
-        self._epsilon = epsilon
+# from utils import add_noise, weighted_L1Loss
+# from model import UNet_Theseus as UNet
+from model import VQ2d_v1
 
-    def forward(self, inputs):
-        # convert inputs from BCHW -> BHWC
-        inputs = inputs.permute(0, 2, 3, 1).contiguous()
-        input_shape = inputs.shape
-        
-        # Flatten input
-        flat_input = inputs.view(-1, self._embedding_dim)
-        
-        # Calculate distances
-        distances = (torch.sum(flat_input**2, dim=1, keepdim=True) 
-                    + torch.sum(self._embedding.weight**2, dim=1)
-                    - 2 * torch.matmul(flat_input, self._embedding.weight.t()))
-            
-        # Encoding
-        encoding_indices = torch.argmin(distances, dim=1).unsqueeze(1)
-        encodings = torch.zeros(encoding_indices.shape[0], self._num_embeddings, device=inputs.device)
-        encodings.scatter_(1, encoding_indices, 1)
-        
-        # Quantize and unflatten
-        quantized = torch.matmul(encodings, self._embedding.weight).view(input_shape)
-        
-        # Use EMA to update the embedding vectors
-        if self.training:
-            self._ema_cluster_size = self._ema_cluster_size * self._decay + \
-                                     (1 - self._decay) * torch.sum(encodings, 0)
-            
-            # Laplace smoothing of the cluster size
-            n = torch.sum(self._ema_cluster_size.data)
-            self._ema_cluster_size = (
-                (self._ema_cluster_size + self._epsilon)
-                / (n + self._num_embeddings * self._epsilon) * n)
-            
-            dw = torch.matmul(encodings.t(), flat_input)
-            self._ema_w = nn.Parameter(self._ema_w * self._decay + (1 - self._decay) * dw)
-            
-            self._embedding.weight = nn.Parameter(self._ema_w / self._ema_cluster_size.unsqueeze(1))
-        
-        # Loss
-        e_latent_loss = F.mse_loss(quantized.detach(), inputs)
-        loss = self._commitment_cost * e_latent_loss
-        
-        # Straight Through Estimator
-        quantized = inputs + (quantized - inputs).detach()
-        avg_probs = torch.mean(encodings, dim=0)
-        perplexity = torch.exp(-torch.sum(avg_probs * torch.log(avg_probs + 1e-10)))
-        
-        # convert quantized from BHWC -> BCHW
-        return loss, quantized.permute(0, 3, 1, 2).contiguous(), perplexity, encodings
+model_list = [
+    ["CSVQ_v1_0102", [0]],
+    ]
 
-class Residual(nn.Module):
-    def __init__(self, in_channels, num_hiddens, num_residual_hiddens):
-        super(Residual, self).__init__()
-        self._block = nn.Sequential(
-            nn.ReLU(True),
-            nn.Conv2d(in_channels=in_channels,
-                      out_channels=num_residual_hiddens,
-                      kernel_size=3, stride=1, padding=1, bias=False),
-            nn.ReLU(True),
-            nn.Conv2d(in_channels=num_residual_hiddens,
-                      out_channels=num_hiddens,
-                      kernel_size=1, stride=1, bias=False)
-        )
+print("Model index: ", end="")
+current_model_idx = int(input()) - 1
+print(model_list[current_model_idx])
+time.sleep(1)
+# current_model_idx = 0
+# ==================== dict and config ====================
+
+train_dict = {}
+train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
+train_dict["project_name"] = model_list[current_model_idx][0]
+train_dict["gpu_ids"] = model_list[current_model_idx][1]
+
+train_dict["dropout"] = 0.
+train_dict["loss_term"] = "SmoothL1Loss"
+train_dict["optimizer"] = "AdamW"
+train_dict["alpha_dropout_consistency"] = 1
+
+train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
+train_dict["split_JSON"] = "./data_dir/CS_VQ_v1.json"
+train_dict["seed"] = 426
+train_dict["input_size"] = [256, 256]
+train_dict["epochs"] = 5000
+train_dict["batch"] = 32
+
+train_dict["model_term"] = "VQ2d_v1"
+train_dict["dataset_ratio"] = 1
+train_dict["continue_training_epoch"] = 0
+train_dict["flip"] = False
+train_dict["data_variance"] = 1
+
+
+model_dict = {}
+
+model_dict["img_channels"] = 1
+model_dict["num_hiddens"] = 256
+model_dict["num_residual_layers"] = 4
+model_dict["num_residual_hiddens"] = 128
+model_dict["num_embeddings"] = 512
+model_dict["embedding_dim"] = 128
+model_dict["commitment_cost"] = 0.25
+model_dict["decay"] = 0.99
+train_dict["model_para"] = model_dict
+
+
+train_dict["val_ratio"] = 0.3
+train_dict["test_ratio"] = 0.2
+
+train_dict["opt_lr"] = 1e-3 # default
+train_dict["opt_betas"] = (0.9, 0.999) # default
+train_dict["opt_eps"] = 1e-8 # default
+train_dict["opt_weight_decay"] = 0.01 # default
+train_dict["amsgrad"] = False # default
+
+for path in [train_dict["save_folder"], train_dict["save_folder"]+"npy/", train_dict["save_folder"]+"loss/"]:
+    if not os.path.exists(path):
+        os.mkdir(path)
+
+np.save(train_dict["save_folder"]+"dict.npy", train_dict)
+
+
+# ==================== basic settings ====================
+
+np.random.seed(train_dict["seed"])
+gpu_list = ','.join(str(x) for x in train_dict["gpu_ids"])
+os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
+print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+
+model = VQ2d_v1(
+    img_channels = model_dict["img_channels"], 
+    num_hiddens = model_dict["num_hiddens"], 
+    num_residual_layers = model_dict["num_residual_layers"], 
+    num_residual_hiddens = model_dict["num_residual_hiddens"], 
+    num_embeddings = model_dict["num_embeddings"], 
+    embedding_dim = model_dict["embedding_dim"], 
+    commitment_cost = model_dict["commitment_cost"], 
+    decay = model_dict["decay"])
+
+model.train()
+model = model.to(device)
+
+loss_func = torch.nn.SmoothL1Loss()
+# loss_doc = torch.nn.SmoothL1Loss()
+
+optim = torch.optim.AdamW(
+    model.parameters(),
+    lr = train_dict["opt_lr"],
+    betas = train_dict["opt_betas"],
+    eps = train_dict["opt_eps"],
+    weight_decay = train_dict["opt_weight_decay"],
+    amsgrad = train_dict["amsgrad"]
+    )
+
+# ==================== data division ====================
+
+from monai.config import print_config
+from monai.transforms import (
+    Compose,
+    LoadImaged,
+    RandSpatialCropd,
+    RandFlipd,
+    RandShiftIntensityd,
+    RandRotate90d,
+    EnsureChannelFirstd,
+    SqueezeDimd,
+)
+from monai.data import (
+    Dataset,
+    DataLoader,
+    load_decathlon_datalist,
+    PatchIterd,
+    GridPatchDataset,
+)
+
+print_config()
+
+train_transforms = Compose(
+    [
+        LoadImaged(keys="image"),
+        EnsureChannelFirstd(keys="image"),
+        RandSpatialCropd(
+            keys="image",
+            roi_size=(256, 256, 1),
+            random_size=False,
+            ),
+        SqueezeDimd(
+            keys="image", dim=-1
+        ),  # squeeze the last dim
+        RandFlipd(
+            keys="image",
+            spatial_axis=[0],
+            prob=0.25,
+        ),
+        RandFlipd(
+            keys="image",
+            spatial_axis=[1],
+            prob=0.25,
+        ),
+        # RandFlipd(
+        #     keys="image",
+        #     spatial_axis=[2],
+        #     prob=0.25,
+        # ),
+        RandRotate90d(
+            keys="image",
+            prob=0.25,
+            max_k=2,
+        ),
+    ]
+)
+
+val_transforms = Compose(
+    [
+        LoadImaged(keys="image"),
+        EnsureChannelFirstd(keys="image"),
+        RandSpatialCropd(
+            keys="image",
+            roi_size=(256, 256, 1),
+            random_size=False,
+            ),
+        SqueezeDimd(
+            keys="image", dim=-1
+        ),  # squeeze the last dim
+    ]
+)
+
+root_dir = train_dict["save_folder"]
+split_JSON = train_dict["split_JSON"]
+print("root_dir: ", root_dir)
+print("split_JSON: ", split_JSON)
+train_list = load_decathlon_datalist(split_JSON, False, "training", base_dir = "./")
+val_list = load_decathlon_datalist(split_JSON, False, "val", base_dir = "./")
+
+train_ds = Dataset(
+    data = train_list,
+    transform = train_transforms,
+)
+
+val_ds = Dataset(
+    data = val_list,
+    transform = val_transforms,
+)
+
+train_loader = DataLoader(
+    train_ds, batch_size=train_dict["batch"], shuffle=True, 
+    num_workers=8, pin_memory=True,
+)
+
+val_loader = DataLoader(
+    val_ds, batch_size=train_dict["batch"], shuffle=True, 
+    num_workers=4, pin_memory=True,
+)
+
+# ==================== training ====================
+
+best_val_loss = 1e3
+best_epoch = 0
+
+global_step_curr = 0
+total_train_batch = len(train_loader)
+total_val_batch = len(val_loader)
+# epoch_loss = np.zeros((train_dict["epochs"], 2))
+
+package_train = [train_list, True, False, "train"]
+package_val = [val_list, False, True, "val"]
+# package_test = [test_list, False, False, "test"]
+
+for global_step_curr in range(train_dict["epochs"]):
+    global_step = global_step_curr + train_dict["continue_training_epoch"]
+    print("~~~~~~Epoch[{:03d}]~~~~~~".format(global_step+1))
+
+    # train
+    model.train()
+    train_loss = np.zeros((total_train_batch, 3))
+    for train_step, batch in enumerate(train_loader):
+        print(" ^Train^ ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: -->".format(
+                global_step+1, train_step+1, total_train_batch, "<--", end=""))
+        
+        mr_hq = batch["image"].cuda()
+        optim.zero_grad()
+        vq_loss, mr_recon, perplexity = model(mr_hq)
+        loss_recon = loss_func(mr_hq, mr_recon) / train_dict["data_variance"]
+        loss = loss_recon + vq_loss
+        loss.backward()
+        optim.step()
+        train_loss[train_step, 0] = vq_loss.item()
+        train_loss[train_step, 1] = loss_recon.item()
+        train_loss[train_step, 2] = perplexity
+        print(" VQ_loss: ", train_loss[train_step, 0], 
+              " Recon: ", train_loss[train_step, 1],
+              " Perplexity: ", train_loss[train_step, 2])
+
+    print(" ^Train^ ===>===> Epoch[{:03d}]: ".format(global_step+1), end='')
+    print(" ^VQ : ", np.mean(train_loss[:, 0]), end="")
+    print(" ^Recon: ", np.mean(train_loss[:, 1]), end="")
+    print(" ^Plex: ", np.mean(train_loss[:, 2]))
+    np.save(train_dict["save_folder"]+"loss/epoch_loss_train_{:03d}.npy".format(global_step+1), train_loss)
+
+
+    # 2d validation
+    model.eval()
+    val_loss = np.zeros((total_val_batch, 3))
+    for val_step, batch in enumerate(val_loader):
+        print(" ^Val^ ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: -->".format(
+                global_step+1, val_step+1, total_val_batch, "<--", end=""))
+        mr_hq = batch["image"].cuda()
+        with torch.no_grad():
+            vq_loss, mr_recon, perplexity = model(mr_hq)
+            loss_recon = loss_func(mr_hq, mr_recon) / train_dict["data_variance"]
+
+        val_loss[val_step, 0] = vq_loss.item()
+        val_loss[val_step, 1] = loss_recon.item()
+        val_loss[val_step, 2] = perplexity
+        print(" VQ_loss: ", val_loss[val_step, 0], 
+              " Recon: ", val_loss[val_step, 1],
+              " Perplexity: ", val_loss[val_step, 2])
+
+    print(" ^Val^ ===>===> Epoch[{:03d}]: ".format(global_step+1), end='')
+    print(" ^VQ : ", np.mean(val_loss[:, 0]), end="")
+    print(" ^Recon: ", np.mean(val_loss[:, 1]), end="")
+    print(" ^Plex: ", np.mean(val_loss[:, 2]))
+    np.save(train_dict["save_folder"]+"loss/epoch_loss_val_{:03d}.npy".format(global_step+1), val_loss)
     
-    def forward(self, x):
-        return x + self._block(x)
-
-
-class ResidualStack(nn.Module):
-    def __init__(self, in_channels, num_hiddens, num_residual_layers, num_residual_hiddens):
-        super(ResidualStack, self).__init__()
-        self._num_residual_layers = num_residual_layers
-        self._layers = nn.ModuleList([Residual(in_channels, num_hiddens, num_residual_hiddens)
-                             for _ in range(self._num_residual_layers)])
-
-    def forward(self, x):
-        for i in range(self._num_residual_layers):
-            x = self._layers[i](x)
-        return F.relu(x)
-
-class Encoder(nn.Module):
-    def __init__(self, in_channels, num_hiddens, num_residual_layers, num_residual_hiddens):
-        super(Encoder, self).__init__()
-
-        self._conv_1 = nn.Conv2d(in_channels=in_channels,
-                                 out_channels=num_hiddens//2,
-                                 kernel_size=4,
-                                 stride=2, padding=1)
-        self._conv_2 = nn.Conv2d(in_channels=num_hiddens//2,
-                                 out_channels=num_hiddens,
-                                 kernel_size=4,
-                                 stride=2, padding=1)
-        self._conv_3 = nn.Conv2d(in_channels=num_hiddens,
-                                 out_channels=num_hiddens,
-                                 kernel_size=3,
-                                 stride=1, padding=1)
-        self._residual_stack = ResidualStack(in_channels=num_hiddens,
-                                             num_hiddens=num_hiddens,
-                                             num_residual_layers=num_residual_layers,
-                                             num_residual_hiddens=num_residual_hiddens)
-
-    def forward(self, inputs):
-        x = self._conv_1(inputs)
-        x = F.relu(x)
-        
-        x = self._conv_2(x)
-        x = F.relu(x)
-        
-        x = self._conv_3(x)
-        return self._residual_stack(x)
-
-class Decoder(nn.Module):
-    def __init__(self, in_channels, img_channels, num_hiddens, num_residual_layers, num_residual_hiddens):
-        super(Decoder, self).__init__()
-        
-        self._conv_1 = nn.Conv2d(in_channels=in_channels,
-                                 out_channels=num_hiddens,
-                                 kernel_size=3, 
-                                 stride=1, padding=1)
-        
-        self._residual_stack = ResidualStack(in_channels=num_hiddens,
-                                             num_hiddens=num_hiddens,
-                                             num_residual_layers=num_residual_layers,
-                                             num_residual_hiddens=num_residual_hiddens)
-        
-        self._conv_trans_1 = nn.ConvTranspose2d(in_channels=num_hiddens, 
-                                                out_channels=num_hiddens//2,
-                                                kernel_size=4, 
-                                                stride=2, padding=1)
-        
-        self._conv_trans_2 = nn.ConvTranspose2d(in_channels=num_hiddens//2, 
-                                                out_channels=img_channels,
-                                                kernel_size=4, 
-                                                stride=2, padding=1)
-
-    def forward(self, inputs):
-        x = self._conv_1(inputs)
-        
-        x = self._residual_stack(x)
-        
-        x = self._conv_trans_1(x)
-        x = F.relu(x)
-        
-        return self._conv_trans_2(x)
-
-class VQ2d_v1(nn.Module):
-    def __init__(self, img_channels, num_hiddens, num_residual_layers, num_residual_hiddens, 
-                 num_embeddings, embedding_dim, commitment_cost, decay=0):
-        super(VQ2d_v1, self).__init__()
-        
-        self._encoder = Encoder(img_channels, num_hiddens,
-                                num_residual_layers, 
-                                num_residual_hiddens)
-        self._pre_vq_conv = nn.Conv2d(in_channels=num_hiddens, 
-                                      out_channels=embedding_dim,
-                                      kernel_size=1, 
-                                      stride=1)
-        if decay > 0.0:
-            self._vq_vae = VectorQuantizerEMA(num_embeddings, embedding_dim, 
-                                              commitment_cost, decay)
-        else:
-            self._vq_vae = VectorQuantizer(num_embeddings, embedding_dim,
-                                           commitment_cost)
-        self._decoder = Decoder(embedding_dim,
-                                img_channels,
-                                num_hiddens, 
-                                num_residual_layers, 
-                                num_residual_hiddens)
-
-    def forward(self, x):
-        z = self._encoder(x)
-        z = self._pre_vq_conv(z)
-        loss, quantized, perplexity, _ = self._vq_vae(z)
-        x_recon = self._decoder(quantized)
-
-        return loss, x_recon, perplexity
-
+    torch.save(model, train_dict["save_folder"]+"model_latest.pth")
+    if np.mean(val_loss[:, 1]) < best_val_loss:
+        # save the best model
+        torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(global_step + 1))
+        torch.save(optim, train_dict["save_folder"]+"optim_{:03d}.pth".format(global_step + 1))
+        print("Checkpoint saved at Epoch {:03d}".format(global_step + 1))
+        best_val_loss = np.mean(val_loss[:, 1])
+        # del batch_x, batch_y
+        # gc.collect()
+        # torch.cuda.empty_cache()

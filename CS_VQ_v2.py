@@ -186,7 +186,7 @@ train_transforms = Compose(
 val_transforms = Compose(
     [
         LoadImaged(keys="image"),
-        # EnsureChannelFirstd(keys="image"),
+        EnsureChannelFirstd(keys="image"),
         # RandSpatialCropd(
         #     keys="image",
         #     roi_size=(96, 96, 96),
@@ -316,7 +316,7 @@ for global_step_curr in range(train_dict["epochs"]):
         mr_hq = batch["image"].cuda()
         with torch.no_grad():
             vqloss_list, mr_val, perplexity_list = sliding_window_inference_vq3d(
-                mr_hq, (96, 96, 96), 8, model, overlap=0.25,
+                mr_hq, (96, 96, 96), 1, model, overlap=0.25,
             )
         val_loss[val_step, 0] = np.mean(np.asarray(vqloss_list))
         val_loss[val_step, 1] = loss_func(mr_hq, mr_val).item()
