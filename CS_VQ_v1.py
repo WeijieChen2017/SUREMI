@@ -67,7 +67,7 @@ model_dict["img_channels"] = 1
 model_dict["num_hiddens"] = 256
 model_dict["num_residual_layers"] = 4
 model_dict["num_residual_hiddens"] = 128
-model_dict["num_embeddings"] = 512
+model_dict["num_embeddings"] = 128
 model_dict["embedding_dim"] = 128
 model_dict["commitment_cost"] = 0.25
 model_dict["decay"] = 0.99
@@ -247,7 +247,7 @@ for global_step_curr in range(train_dict["epochs"]):
     train_loss = np.zeros((total_train_batch, 3))
     for train_step, batch in enumerate(train_loader):
         print(" ^Train^ ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: -->".format(
-                global_step+1, train_step+1, total_train_batch, "<--", end=""))
+                global_step+1, train_step+1, total_train_batch), "<--", end="")
         
         mr_hq = batch["image"].cuda()
         optim.zero_grad()
@@ -275,7 +275,7 @@ for global_step_curr in range(train_dict["epochs"]):
     val_loss = np.zeros((total_val_batch, 3))
     for val_step, batch in enumerate(val_loader):
         print(" ^Val^ ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: -->".format(
-                global_step+1, val_step+1, total_val_batch, "<--", end=""))
+                global_step+1, val_step+1, total_val_batch), "<--", end="")
         mr_hq = batch["image"].cuda()
         with torch.no_grad():
             vq_loss, mr_recon, perplexity = model(mr_hq)
