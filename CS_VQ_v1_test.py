@@ -168,9 +168,9 @@ for test_idx, test_path_dict in enumerate(test_list):
     print(" ^Recon: ", np.mean(test_loss[:, 1]), end="")
     print(" ^Plex: ", np.mean(test_loss[:, 2]))
     np.save(train_dict["save_folder"]+"pred/case_loss_test_{}.npy".format(
-        os.path.basename[:-7]), test_loss)
+        os.path.basename(test_path)[:-7]), test_loss)
 
     output_file = nib.Nifti1Image(np.squeeze(output_data), input_file.affine, input_file.header)
-    output_savename = train_dict["save_folder"]+"pred/"+os.path.basename
+    output_savename = train_dict["save_folder"]+"pred/"+os.path.basename(test_path)
     nib.save(output_file, output_savename)
     print(output_savename)
