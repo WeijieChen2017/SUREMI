@@ -160,9 +160,9 @@ for test_idx, test_path_dict in enumerate(test_list):
             loss_recon = loss_func(input_tensor, mr_recon) / train_dict["data_variance"]
 
         output_data[:, :, idx_z] = mr_recon.cpu().detach().numpy()
-        test_loss[val_step, 0] = vq_loss.item()
-        test_loss[val_step, 1] = loss_recon.item()
-        test_loss[val_step, 2] = perplexity.cpu().detach().numpy()
+        test_loss[idx_z, 0] = vq_loss.item()
+        test_loss[idx_z, 1] = loss_recon.item()
+        test_loss[idx_z, 2] = perplexity.cpu().detach().numpy()
 
     print(" ^VQ : ", np.mean(test_loss[:, 0]), end="")
     print(" ^Recon: ", np.mean(test_loss[:, 1]), end="")
