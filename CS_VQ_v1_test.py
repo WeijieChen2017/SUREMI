@@ -76,7 +76,7 @@ train_dict["batch"] = 32
 
 train_dict["model_term"] = "VQ2d_v1"
 train_dict["dataset_ratio"] = 1
-train_dict["test_case_num"] = 10
+train_dict["test_case_num"] = 5
 train_dict["continue_training_epoch"] = 0
 train_dict["flip"] = False
 train_dict["data_variance"] = 1
