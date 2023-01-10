@@ -171,6 +171,11 @@ for test_idx, test_path_dict in enumerate(test_list):
     np.save(train_dict["save_folder"]+"pred/case_loss_test_{}.npy".format(
         os.path.basename(test_path)[:-7]), test_loss)
 
+    output_file = nib.Nifti1Image(np.squeeze(input_data), input_file.affine, input_file.header)
+    output_savename = train_dict["save_folder"]+train_dict["pred_folder"]+os.path.basename(test_path).replace(".nii.gz", "_noise.nii.gz")
+    nib.save(output_file, output_savename)
+    print(output_savename)
+
     output_file = nib.Nifti1Image(np.squeeze(output_data), input_file.affine, input_file.header)
     output_savename = train_dict["save_folder"]+train_dict["pred_folder"]+os.path.basename(test_path)
     nib.save(output_file, output_savename)
