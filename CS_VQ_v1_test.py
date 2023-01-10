@@ -156,8 +156,8 @@ for test_idx, test_path_dict in enumerate(test_list):
         input_tensor = np.expand_dims(np.squeeze(input_data[:, :, idx_z]), (0,1))
         input_tensor = torch.from_numpy(input_data).float().to(device)
         with torch.no_grad():
-            vq_loss, mr_recon, perplexity = model(mr_hq)
-            loss_recon = loss_func(mr_hq, mr_recon) / train_dict["data_variance"]
+            vq_loss, mr_recon, perplexity = model(input_tensor)
+            loss_recon = loss_func(input_tensor, mr_recon) / train_dict["data_variance"]
 
         output_data[:, :, idx_z] = mr_recon
         test_loss[val_step, 0] = vq_loss.item()
