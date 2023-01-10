@@ -25,21 +25,39 @@ import bnn
 # from utils import add_noise, weighted_L1Loss
 # from model import UNet_Theseus as UNet
 from model import VQ2d_v1
+from utils import add_noise
 
 model_list = [
-    ["CSVQ_v1_0102", [0]],
+    ["v1_Gau050", "Gaussian", (0, 0.5)],
+    ["v2_Gau025", "Gaussian", (0, 0.25)],
+    ["v3_Poi100", "Poisson", (1,)],
+    ["v4_Poi025", "Poisson", (0.25,)],
+    ["v5_S&P025", "Salt&Pepper", (0.975, 0.025)],
+    ["v6_S&P050", "Salt&Pepper", (0.95, 0.05)],
+    ["v7_SPK025", "Speckle", (0, 0.25)],
+    ["v8_SPK050", "Speckle", (0, 0.5)],
+    ["v9_RIC005", "Racian", (5,)],
+    ["v10_RIC010", "Racian", (10,)],
+    ["v11_RAY005", "Rayleigh", (5, )],
+    ["v12_RAY010", "Rayleigh", (10, )],
     ]
+
 
 print("Model index: ", end="")
 current_model_idx = int(input()) - 1
 print(model_list[current_model_idx])
 time.sleep(1)
+
+train_dict["pred_noise_folder"] = model_list[current_model_idx][0]
+train_dict["noise_type"] = model_list[current_model_idx][1]
+train_dict["noise_params"] = model_list[current_model_idx][2]
+
 # current_model_idx = 0
 # ==================== dict and config ====================
 
 train_dict = {}
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = model_list[current_model_idx][0]
+train_dict["project_name"] = "CSVQ_v1_0102"
 train_dict["gpu_ids"] = model_list[current_model_idx][1]
 
 train_dict["dropout"] = 0.
@@ -49,6 +67,7 @@ train_dict["alpha_dropout_consistency"] = 1
 
 train_dict["save_folder"] = "./project_dir/"+train_dict["project_name"]+"/"
 train_dict["split_JSON"] = "./data_dir/CS_VQ_v1.json"
+train_dict["pred_folder"] = train_dict["pred_noise_folder"]+"/"
 train_dict["seed"] = 426
 train_dict["input_size"] = [256, 256]
 train_dict["epochs"] = 5000
@@ -56,39 +75,14 @@ train_dict["batch"] = 32
 
 train_dict["model_term"] = "VQ2d_v1"
 train_dict["dataset_ratio"] = 1
+train_dict["test_case_num"] = 10
 train_dict["continue_training_epoch"] = 0
 train_dict["flip"] = False
 train_dict["data_variance"] = 1
 
-
-model_dict = {}
-
-model_dict["img_channels"] = 1
-model_dict["num_hiddens"] = 256
-model_dict["num_residual_layers"] = 4
-model_dict["num_residual_hiddens"] = 128
-model_dict["num_embeddings"] = 512
-model_dict["embedding_dim"] = 128
-model_dict["commitment_cost"] = 0.25
-model_dict["decay"] = 0.99
-train_dict["model_para"] = model_dict
-
-
-train_dict["val_ratio"] = 0.3
-train_dict["test_ratio"] = 0.2
-
-train_dict["opt_lr"] = 1e-3 # default
-train_dict["opt_betas"] = (0.9, 0.999) # default
-train_dict["opt_eps"] = 1e-8 # default
-train_dict["opt_weight_decay"] = 0.01 # default
-train_dict["amsgrad"] = False # default
-
-for path in [train_dict["save_folder"], train_dict["save_folder"]+"pred/"]:
+for path in [train_dict["save_folder"], train_dict["save_folder"]+train_dict["pred_folder"]]:
     if not os.path.exists(path):
         os.mkdir(path)
-
-np.save(train_dict["save_folder"]+"dict.npy", train_dict)
-
 
 # ==================== basic settings ====================
 
@@ -132,7 +126,8 @@ split_JSON = train_dict["split_JSON"]
 print("root_dir: ", root_dir)
 print("split_JSON: ", split_JSON)
 test_list = load_decathlon_datalist(split_JSON, False, "test", base_dir = "./")
-
+if train_dict["test_case_num"] > 0:
+    test_list = test_list[:train_dict["test_case_num"]]
 # ==================== training ====================
 
 total_test_batch = len(test_list)
@@ -147,6 +142,11 @@ for test_idx, test_path_dict in enumerate(test_list):
 
     input_file = nib.load(test_path)
     input_data = input_file.get_fdata()
+    input_data = add_noise(
+        x = input_data, 
+        noise_type = train_dict["noise_type"],
+        noise_params = train_dict["noise_params"],
+        )
     output_data = np.zeros(input_data.shape)
 
     cnt_zslice = input_data.shape[2]
@@ -171,6 +171,6 @@ for test_idx, test_path_dict in enumerate(test_list):
         os.path.basename(test_path)[:-7]), test_loss)
 
     output_file = nib.Nifti1Image(np.squeeze(output_data), input_file.affine, input_file.header)
-    output_savename = train_dict["save_folder"]+"pred/"+os.path.basename(test_path)
+    output_savename = train_dict["save_folder"]+train_dict["pred_folder"]+os.path.basename(test_path)
     nib.save(output_file, output_savename)
     print(output_savename)
