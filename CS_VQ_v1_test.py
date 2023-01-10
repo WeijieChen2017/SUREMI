@@ -83,7 +83,7 @@ train_dict["opt_eps"] = 1e-8 # default
 train_dict["opt_weight_decay"] = 0.01 # default
 train_dict["amsgrad"] = False # default
 
-for path in [train_dict["save_folder"], train_dict["save_folder"]+"npy/", train_dict["save_folder"]+"loss/"]:
+for path in [train_dict["save_folder"], train_dict["save_folder"]+"pred/"]:
     if not os.path.exists(path):
         os.mkdir(path)
 
@@ -99,208 +99,77 @@ print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
-model = VQ2d_v1(
-    img_channels = model_dict["img_channels"], 
-    num_hiddens = model_dict["num_hiddens"], 
-    num_residual_layers = model_dict["num_residual_layers"], 
-    num_residual_hiddens = model_dict["num_residual_hiddens"], 
-    num_embeddings = model_dict["num_embeddings"], 
-    embedding_dim = model_dict["embedding_dim"], 
-    commitment_cost = model_dict["commitment_cost"], 
-    decay = model_dict["decay"])
+# model = VQ2d_v1(
+#     img_channels = model_dict["img_channels"], 
+#     num_hiddens = model_dict["num_hiddens"], 
+#     num_residual_layers = model_dict["num_residual_layers"], 
+#     num_residual_hiddens = model_dict["num_residual_hiddens"], 
+#     num_embeddings = model_dict["num_embeddings"], 
+#     embedding_dim = model_dict["embedding_dim"], 
+#     commitment_cost = model_dict["commitment_cost"], 
+#     decay = model_dict["decay"])
 
-model.train()
+model_list = sorted(glob.glob(os.path.join(train_dict["save_folder"], "model_best_*.pth")))
+if "latest" in model_list[-1]:
+    print("Remove model_best_latest")
+    model_list.pop()
+target_model = model_list[-1]
+# target_model = test_dict["save_folder"]+test_dict["best_model_name"]
+model = torch.load(target_model, map_location=torch.device('cpu'))
+print("--->", target_model, " is loaded.")
 model = model.to(device)
 
 loss_func = torch.nn.SmoothL1Loss()
-# loss_doc = torch.nn.SmoothL1Loss()
-
-optim = torch.optim.AdamW(
-    model.parameters(),
-    lr = train_dict["opt_lr"],
-    betas = train_dict["opt_betas"],
-    eps = train_dict["opt_eps"],
-    weight_decay = train_dict["opt_weight_decay"],
-    amsgrad = train_dict["amsgrad"]
-    )
 
 # ==================== data division ====================
 
-from monai.config import print_config
-from monai.transforms import (
-    Compose,
-    LoadImaged,
-    RandSpatialCropd,
-    RandFlipd,
-    RandShiftIntensityd,
-    RandRotate90d,
-    EnsureChannelFirstd,
-    SqueezeDimd,
-)
 from monai.data import (
-    Dataset,
-    DataLoader,
     load_decathlon_datalist,
-    PatchIterd,
-    GridPatchDataset,
-)
-
-print_config()
-
-train_transforms = Compose(
-    [
-        LoadImaged(keys="image"),
-        EnsureChannelFirstd(keys="image"),
-        RandSpatialCropd(
-            keys="image",
-            roi_size=(256, 256, 1),
-            random_size=False,
-            ),
-        SqueezeDimd(
-            keys="image", dim=-1
-        ),  # squeeze the last dim
-        RandFlipd(
-            keys="image",
-            spatial_axis=[0],
-            prob=0.25,
-        ),
-        RandFlipd(
-            keys="image",
-            spatial_axis=[1],
-            prob=0.25,
-        ),
-        # RandFlipd(
-        #     keys="image",
-        #     spatial_axis=[2],
-        #     prob=0.25,
-        # ),
-        RandRotate90d(
-            keys="image",
-            prob=0.25,
-            max_k=2,
-        ),
-    ]
-)
-
-val_transforms = Compose(
-    [
-        LoadImaged(keys="image"),
-        EnsureChannelFirstd(keys="image"),
-        RandSpatialCropd(
-            keys="image",
-            roi_size=(256, 256, 1),
-            random_size=False,
-            ),
-        SqueezeDimd(
-            keys="image", dim=-1
-        ),  # squeeze the last dim
-    ]
 )
 
 root_dir = train_dict["save_folder"]
 split_JSON = train_dict["split_JSON"]
 print("root_dir: ", root_dir)
 print("split_JSON: ", split_JSON)
-train_list = load_decathlon_datalist(split_JSON, False, "training", base_dir = "./")
-val_list = load_decathlon_datalist(split_JSON, False, "val", base_dir = "./")
-
-train_ds = Dataset(
-    data = train_list,
-    transform = train_transforms,
-)
-
-val_ds = Dataset(
-    data = val_list,
-    transform = val_transforms,
-)
-
-train_loader = DataLoader(
-    train_ds, batch_size=train_dict["batch"], shuffle=True, 
-    num_workers=8, pin_memory=True,
-)
-
-val_loader = DataLoader(
-    val_ds, batch_size=train_dict["batch"], shuffle=True, 
-    num_workers=4, pin_memory=True,
-)
+test_list = load_decathlon_datalist(split_JSON, False, "test", base_dir = "./")
 
 # ==================== training ====================
 
-best_val_loss = 1e3
-best_epoch = 0
+total_test_batch = len(test_list)
 
-global_step_curr = 0
-total_train_batch = len(train_loader)
-total_val_batch = len(val_loader)
-# epoch_loss = np.zeros((train_dict["epochs"], 2))
+# test
+model.eval()
+test_loss = np.zeros((total_test_batch, 3))
+for test_idx, test_path in enumerate(test_list):
+    print(" ^Test^ ===> Case[{:03d}]/[{:03d}]: -->".format(
+        test_idx+1, total_test_batch), "<--", end="")
 
-package_train = [train_list, True, False, "train"]
-package_val = [val_list, False, True, "val"]
-# package_test = [test_list, False, False, "test"]
+    input_file = nib.load(test_path)
+    input_data = input_file.get_fdata()
+    output_data = np.zeros(input_data.shape)
 
-for global_step_curr in range(train_dict["epochs"]):
-    global_step = global_step_curr + train_dict["continue_training_epoch"]
-    print("~~~~~~Epoch[{:03d}]~~~~~~".format(global_step+1))
+    cnt_zslice = input_data.shape[2]
+    test_loss = np.zeros((cnt_zslice, 3))
 
-    # train
-    model.train()
-    train_loss = np.zeros((total_train_batch, 3))
-    for train_step, batch in enumerate(train_loader):
-        print(" ^Train^ ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: -->".format(
-                global_step+1, train_step+1, total_train_batch, "<--", end=""))
-        
-        mr_hq = batch["image"].cuda()
-        optim.zero_grad()
-        vq_loss, mr_recon, perplexity = model(mr_hq)
-        loss_recon = loss_func(mr_hq, mr_recon) / train_dict["data_variance"]
-        loss = loss_recon + vq_loss
-        loss.backward()
-        optim.step()
-        train_loss[train_step, 0] = vq_loss.item()
-        train_loss[train_step, 1] = loss_recon.item()
-        train_loss[train_step, 2] = perplexity
-        print(" VQ_loss: ", train_loss[train_step, 0], 
-              " Recon: ", train_loss[train_step, 1],
-              " Perplexity: ", train_loss[train_step, 2])
-
-    print(" ^Train^ ===>===> Epoch[{:03d}]: ".format(global_step+1), end='')
-    print(" ^VQ : ", np.mean(train_loss[:, 0]), end="")
-    print(" ^Recon: ", np.mean(train_loss[:, 1]), end="")
-    print(" ^Plex: ", np.mean(train_loss[:, 2]))
-    np.save(train_dict["save_folder"]+"loss/epoch_loss_train_{:03d}.npy".format(global_step+1), train_loss)
-
-
-    # 2d validation
-    model.eval()
-    val_loss = np.zeros((total_val_batch, 3))
-    for val_step, batch in enumerate(val_loader):
-        print(" ^Val^ ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: -->".format(
-                global_step+1, val_step+1, total_val_batch, "<--", end=""))
-        mr_hq = batch["image"].cuda()
+    for idx_z in range(cnt_zslice):
+        input_tensor = np.expand_dims(np.squeeze(input_data[:, :, idx_z]), (0,1))
+        input_tensor = torch.from_numpy(input_data).float().to(device)
         with torch.no_grad():
             vq_loss, mr_recon, perplexity = model(mr_hq)
             loss_recon = loss_func(mr_hq, mr_recon) / train_dict["data_variance"]
 
-        val_loss[val_step, 0] = vq_loss.item()
-        val_loss[val_step, 1] = loss_recon.item()
-        val_loss[val_step, 2] = perplexity
-        print(" VQ_loss: ", val_loss[val_step, 0], 
-              " Recon: ", val_loss[val_step, 1],
-              " Perplexity: ", val_loss[val_step, 2])
+        output_data[:, :, idx_z] = mr_recon
+        test_loss[val_step, 0] = vq_loss.item()
+        test_loss[val_step, 1] = loss_recon.item()
+        test_loss[val_step, 2] = perplexity
 
-    print(" ^Val^ ===>===> Epoch[{:03d}]: ".format(global_step+1), end='')
-    print(" ^VQ : ", np.mean(val_loss[:, 0]), end="")
-    print(" ^Recon: ", np.mean(val_loss[:, 1]), end="")
-    print(" ^Plex: ", np.mean(val_loss[:, 2]))
-    np.save(train_dict["save_folder"]+"loss/epoch_loss_val_{:03d}.npy".format(global_step+1), val_loss)
-    
-    torch.save(model, train_dict["save_folder"]+"model_latest.pth")
-    if np.mean(val_loss[:, 1]) < best_val_loss:
-        # save the best model
-        torch.save(model, train_dict["save_folder"]+"model_best_{:03d}.pth".format(global_step + 1))
-        torch.save(optim, train_dict["save_folder"]+"optim_{:03d}.pth".format(global_step + 1))
-        print("Checkpoint saved at Epoch {:03d}".format(global_step + 1))
-        best_val_loss = np.mean(val_loss[:, 1])
-        # del batch_x, batch_y
-        # gc.collect()
-        # torch.cuda.empty_cache()
+    print(" ^VQ : ", np.mean(test_loss[:, 0]), end="")
+    print(" ^Recon: ", np.mean(test_loss[:, 1]), end="")
+    print(" ^Plex: ", np.mean(test_loss[:, 2]))
+    np.save(train_dict["save_folder"]+"pred/case_loss_test_{}.npy".format(
+        os.path.basename[:-7]), test_loss)
+
+    output_file = nib.Nifti1Image(np.squeeze(output_data), input_file.affine, input_file.header)
+    output_savename = train_dict["save_folder"]+"pred/"+os.path.basename
+    nib.save(output_file, output_savename)
+    print(output_savename)
