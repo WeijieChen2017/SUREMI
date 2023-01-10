@@ -59,7 +59,7 @@ train_dict["noise_params"] = model_list[current_model_idx][2]
 
 train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 train_dict["project_name"] = "CSVQ_v1_0102"
-train_dict["gpu_ids"] = model_list[current_model_idx][1]
+train_dict["gpu_ids"] = [0,]
 
 train_dict["dropout"] = 0.
 train_dict["loss_term"] = "SmoothL1Loss"
