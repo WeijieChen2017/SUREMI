@@ -42,6 +42,8 @@ model_list = [
     ["v12_RAY010", "Rayleigh", (10, )],
     ["v13_RIC015", "Racian", (15,)],
     ["v14_RAY015", "Rayleigh", (15, )],
+    ["v15_RIC020", "Racian", (20,)],
+    ["v116_RAY020", "Rayleigh", (20, )],
     ]
 
 
