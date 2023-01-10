@@ -140,7 +140,8 @@ total_test_batch = len(test_list)
 # test
 model.eval()
 test_loss = np.zeros((total_test_batch, 3))
-for test_idx, test_path in enumerate(test_list):
+for test_idx, test_path_dict in enumerate(test_list):
+    test_path = test_path_dict["image"]
     print(" ^Test^ ===> Case[{:03d}]/[{:03d}]: -->".format(
         test_idx+1, total_test_batch), "<--", end="")
 
