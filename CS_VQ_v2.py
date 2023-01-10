@@ -186,7 +186,7 @@ train_transforms = Compose(
 val_transforms = Compose(
     [
         LoadImaged(keys="image"),
-        EnsureChannelFirstd(keys="image"),
+        # EnsureChannelFirstd(keys="image"),
         # RandSpatialCropd(
         #     keys="image",
         #     roi_size=(96, 96, 96),
@@ -221,7 +221,7 @@ train_loader = DataLoader(
 )
 
 val_loader = DataLoader(
-    val_ds, batch_size=train_dict["batch"], shuffle=True, 
+    val_ds, batch_size=1, shuffle=True, 
     num_workers=4, pin_memory=True,
 )
 
