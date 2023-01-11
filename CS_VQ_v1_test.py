@@ -44,8 +44,8 @@ model_list = [
     ["v14_RAY015", "Rayleigh", (15, )],
     ["v15_RIC020", "Racian", (20,)],
     ["v16_RAY020", "Rayleigh", (20, )],
-    ["v17_RIC025", "Racian", (25,)],
-    ["v18_RAY025", "Rayleigh", (25, )],
+    ["v17_RIC025", "Racian", (25,)], # PSNR = 25
+    ["v18_RAY025", "Rayleigh", (25, )], # PSNR = 25
     ]
 
 
@@ -174,7 +174,7 @@ for test_idx, test_path_dict in enumerate(test_list):
     print(" ^VQ : ", np.mean(test_loss[:, 0]), end="")
     print(" ^Recon: ", np.mean(test_loss[:, 1]), end="")
     print(" ^Plex: ", np.mean(test_loss[:, 2]))
-    np.save(train_dict["save_folder"]+"pred/case_loss_test_{}.npy".format(
+    np.save(train_dict["save_folder"]+train_dict["pred_folder"]+"case_loss_test_{}.npy".format(
         os.path.basename(test_path)[:-7]), test_loss)
 
     output_file = nib.Nifti1Image(np.squeeze(input_data), input_file.affine, input_file.header)
