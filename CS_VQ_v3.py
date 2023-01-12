@@ -255,8 +255,9 @@ for global_step_curr in range(train_dict["epochs"]):
             x = mr_hq, 
             noise_type = "Racian",
             noise_params = (20,),
-            ).to(device)
+            )
         # mr_hq = batch["image"].cuda()
+        mr_hq = torch.from_numpy(mr_hq).float().to(device)
         optim.zero_grad()
         vq_loss, mr_recon, perplexity = model(mr_hq)
         loss_recon = loss_func(mr_hq, mr_recon) / train_dict["data_variance"]
