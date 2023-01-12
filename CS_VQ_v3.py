@@ -255,7 +255,7 @@ for global_step_curr in range(train_dict["epochs"]):
             x = mr_hq, 
             noise_type = "Rician",
             noise_params = (20,),
-            ).cuda()
+            ).to(device)
         # mr_hq = batch["image"].cuda()
         optim.zero_grad()
         vq_loss, mr_recon, perplexity = model(mr_hq)
