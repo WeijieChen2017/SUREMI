@@ -253,7 +253,7 @@ for global_step_curr in range(train_dict["epochs"]):
         mr_hq = batch["image"]
         mr_hq = add_noise(
             x = mr_hq, 
-            noise_type = "Rician",
+            noise_type = "Racian",
             noise_params = (20,),
             ).to(device)
         # mr_hq = batch["image"].cuda()
