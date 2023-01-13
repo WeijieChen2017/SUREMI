@@ -285,6 +285,13 @@ for global_step_curr in range(train_dict["epochs"]):
         print(" ^Val^ ===> Epoch[{:03d}]-[{:03d}]/[{:03d}]: -->".format(
                 global_step+1, val_step+1, total_val_batch), "<--", end="")
         mr_hq = batch["image"].cuda()
+        mr_hq = add_noise(
+            x = mr_hq, 
+            noise_type = "Racian",
+            noise_params = (20,),
+            )
+        # mr_hq = batch["image"].cuda()
+        mr_hq = torch.from_numpy(mr_hq).float().to(device)
         with torch.no_grad():
             vq_loss, mr_recon, perplexity = model(mr_hq)
             loss_recon = loss_func(mr_hq, mr_recon) / train_dict["data_variance"]
