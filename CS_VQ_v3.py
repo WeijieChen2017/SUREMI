@@ -28,7 +28,7 @@ from model import VQ2d_v1
 from utils import add_noise
 
 model_list = [
-    ["CSVQ_v3_2d_embd128", [0]],
+    ["CSVQ_v4_racian20", [0]],
     ]
 
 print("Model index: ", end="")
