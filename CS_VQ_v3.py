@@ -28,7 +28,7 @@ from model import VQ2d_v1
 from utils import add_noise
 
 model_list = [
-    ["CSVQ_v4_racian20", [0]],
+    ["CSVQ_v3_racian20", [0]],
     ]
 
 print("Model index: ", end="")
@@ -67,9 +67,9 @@ model_dict = {}
 model_dict["img_channels"] = 1
 model_dict["num_hiddens"] = 256
 model_dict["num_residual_layers"] = 4
-model_dict["num_residual_hiddens"] = 128
-model_dict["num_embeddings"] = 128
-model_dict["embedding_dim"] = 128
+model_dict["num_residual_hiddens"] = 256
+model_dict["num_embeddings"] = 1024
+model_dict["embedding_dim"] = 256
 model_dict["commitment_cost"] = 0.25
 model_dict["decay"] = 0.99
 train_dict["model_para"] = model_dict
