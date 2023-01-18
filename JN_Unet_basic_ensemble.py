@@ -9,10 +9,14 @@ model_list = [
     [1003, [2],],
     [1004, [2],],
     [1005, [2],],
-    [1006, [3],],
-    [1007, [3],],
+    [1006, [2],],
+    [1007, [2],],
     [1008, [3],],
     [1009, [3],],
+    [1010, [3],],
+    [1011, [3],],
+    [1012, [3],],
+    [1013, [3],],
 ]
 
 print("Model index: ", end="")
@@ -244,7 +248,7 @@ def validation(epoch_iterator_val):
     model.eval()
     with torch.no_grad():
         for step, batch in enumerate(epoch_iterator_val):
-            val_inputs, val_labels = (batch["image"].cuda(), batch["label"].cuda())
+            val_inputs, val_labels = (batch["image"].to(device), batch["label"].to(device))
             val_outputs = sliding_window_inference(val_inputs, (96, 96, 96), 4, model)
             val_labels_list = decollate_batch(val_labels)
             val_labels_convert = [
@@ -272,7 +276,7 @@ def train(global_step, train_loader, dice_val_best, global_step_best):
     )
     for step, batch in enumerate(epoch_iterator):
         step += 1
-        x, y = (batch["image"].cuda(), batch["label"].cuda())
+        x, y = (batch["image"].to(device), batch["label"].to(device))
         logit_map = model(x)
         loss = loss_function(logit_map, y)
         loss.backward()
