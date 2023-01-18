@@ -1,19 +1,21 @@
 import os
+import numpy as np
 # from model import UNETR_bdo as UNETR
 
 train_dict = {}
-train_dict["root_dir"] = "./project_dir/Seg532_Unet/"
+train_dict["root_dir"] = "./project_dir/Seg532_Unet_seed1001/"
 if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_532.json"
 train_dict["gpu_list"] = [5]
+train_dict["seed"] = 1001
+np.random.seed(train_dict["seed"])
 
 import shutil
 import tempfile
 
 import matplotlib.pyplot as plt
-import numpy as np
 from tqdm import tqdm
 
 from monai.losses import DiceCELoss
