@@ -40,6 +40,8 @@ from monai.config import print_config
 from monai.metrics import DiceMetric
 from monai.networks.nets.unet import UNet
 
+from monai.networks.layers.factories import Act, Norm
+
 from monai.data import (
     DataLoader,
     CacheDataset,
