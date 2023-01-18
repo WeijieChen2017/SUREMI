@@ -4,14 +4,36 @@ import torch
 import time
 # from model import UNETR_bdo as UNETR
 
+model_list = [
+[1002, [2],],
+[1003, [2],],
+[1004, [2],],
+[1005, [2],],
+[1006, [3],],
+[1007, [3],],
+[1008, [3],],
+[1009, [3],],
+]
+
+print("Model index: ", end="")
+current_model_idx = int(input()) - 1
+print(model_list[current_model_idx])
+time.sleep(1)
+
+cmi = current_model_idx
+
+seed = model_list[cmi][0]
+folder_name = str(seed)
+gpu = model_list[cmi][1]
+
 train_dict = {}
-train_dict["root_dir"] = "./project_dir/Seg532_Unet_seed1001/"
+train_dict["root_dir"] = "./project_dir/Seg532_Unet_seed"+folder_name+"/"
 if not os.path.exists(train_dict["root_dir"]):
     os.mkdir(train_dict["root_dir"])
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_532.json"
-train_dict["gpu_list"] = [5]
-train_dict["seed"] = 1001
+train_dict["gpu_list"] = gpu
+train_dict["seed"] = seed
 np.random.seed(train_dict["seed"])
 
 import shutil
@@ -55,8 +77,8 @@ from monai.data import (
 print_config()
 
 #--------------------------------------------------------------
-print("Press any key to continue:", end="")
-_ = input()
+# print("Press any key to continue:", end="")
+# _ = input()
 #--------------------------------------------------------------
 
 # directory = os.environ.get("./project_dir/JN_UnetR/")
@@ -65,8 +87,8 @@ root_dir = train_dict["root_dir"]
 print(root_dir)
 
 #--------------------------------------------------------------
-print("Press any key to continue:", end="")
-_ = input()
+# print("Press any key to continue:", end="")
+# _ = input()
 #--------------------------------------------------------------
 
 train_transforms = Compose(
@@ -143,8 +165,8 @@ val_transforms = Compose(
 )
 
 #--------------------------------------------------------------
-print("Press any key to continue:", end="")
-_ = input()
+# print("Press any key to continue:", end="")
+# _ = input()
 #--------------------------------------------------------------
 
 data_dir = train_dict["data_dir"]
@@ -171,8 +193,8 @@ val_loader = DataLoader(
 )
 
 #--------------------------------------------------------------
-print("Press any key to continue:", end="")
-_ = input()
+# print("Press any key to continue:", end="")
+# _ = input()
 #--------------------------------------------------------------
 
 gpu_list = ','.join(str(x) for x in train_dict["gpu_list"])
@@ -213,8 +235,8 @@ torch.backends.cudnn.benchmark = True
 optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4, weight_decay=1e-5)
 
 #--------------------------------------------------------------
-print("Press any key to continue:", end="")
-_ = input()
+# print("Press any key to continue:", end="")
+# _ = input()
 #--------------------------------------------------------------
 
 def validation(epoch_iterator_val):
@@ -309,8 +331,8 @@ while global_step < max_iterations:
 model.load_state_dict(torch.load(os.path.join(root_dir, "best_metric_model.pth")))
 
 #--------------------------------------------------------------
-print("Press any key to continue:", end="")
-_ = input()
+# print("Press any key to continue:", end="")
+# _ = input()
 #--------------------------------------------------------------
 
 print(
