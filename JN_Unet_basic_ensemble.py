@@ -5,14 +5,14 @@ import time
 # from model import UNETR_bdo as UNETR
 
 model_list = [
-[1002, [2],],
-[1003, [2],],
-[1004, [2],],
-[1005, [2],],
-[1006, [3],],
-[1007, [3],],
-[1008, [3],],
-[1009, [3],],
+    [1002, [2],],
+    [1003, [2],],
+    [1004, [2],],
+    [1005, [2],],
+    [1006, [3],],
+    [1007, [3],],
+    [1008, [3],],
+    [1009, [3],],
 ]
 
 print("Model index: ", end="")
@@ -202,6 +202,7 @@ os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(device)
 
 # model = UNETR(
 #     in_channels=1,
