@@ -46,7 +46,7 @@ img_group = [
     ["img0031_z_RAS_1.5_1.5_2.0_vote.npy", (256, 197, 139)],
 ]
 
-n_models = len(model_group)
+n_model = len(model_group)
 n_img = len(img_group)
 
 for idx_i in range(n_img):
@@ -58,7 +58,7 @@ for idx_i in range(n_img):
             img_group[idx_i][1][2]
         )
     )
-    for idx_m in range(n_models):
+    for idx_m in range(n_model):
         file_name = "./project_dir/Seg532_Unet_seed"+str(model_group[idx_m][0])+"/"+img_group[idx_i][0]
         print(file_name)
         file_data = np.load(file_name)
