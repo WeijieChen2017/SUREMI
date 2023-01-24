@@ -192,8 +192,8 @@ for idx_sub_group in range(8):
             img_name = os.path.split(val_ds[case_num]["image_meta_dict"]["filename_or_obj"])[1]
             img = val_ds[case_num]["image"]
             label = val_ds[case_num]["label"]
-            val_inputs = torch.from_numpy(np.expand_dims(img, 1)).float().cuda()
-            val_labels = torch.from_numpy(np.expand_dims(label, 1)).float().cuda()
+            val_inputs = torch.from_numpy(np.expand_dims(img, 1)).float().to(device)
+            val_labels = torch.from_numpy(np.expand_dims(label, 1)).float().to(device)
 
             _, _, ax, ay, az = val_labels.size()
             total_pixel = ax * ay * az
