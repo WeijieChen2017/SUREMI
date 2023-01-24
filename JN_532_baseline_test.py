@@ -88,14 +88,14 @@ model_group = [
     [1023, [3],],
 ],
 [
-    [1024, [3],],
-    [1025, [3],],
-    [1026, [3],],
-    [1027, [3],],
-    [1028, [3],],
-    [1029, [3],],
-    [1030, [3],],
-    [1031, [3],],
+    # [1024, [3],],
+    # [1025, [3],],
+    # [1026, [3],],
+    # [1027, [3],],
+    # [1028, [3],],
+    # [1029, [3],],
+    # [1030, [3],],
+    # [1031, [3],],
     [1032, [3],],
 ]
 ]
@@ -145,7 +145,7 @@ val_loader = DataLoader(
     val_ds, batch_size=1, shuffle=False, num_workers=4, pin_memory=True
 )
 
-for idx_sub_group in range(8):
+for idx_sub_group in range(len(model_list[idx_sub_group])):
     seed = model_list[idx_sub_group][0]
     folder_name = str(seed)
     # gpu = model_list[idx_sub_group][1]
