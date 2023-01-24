@@ -1,4 +1,13 @@
 import os
+import torch
+
+gpu_list = ','.join(str(x) for x in [2])
+os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
+print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+# import os
 from monai.networks.nets.unet import UNet
 # from model import UNet_Theseus as UNet
 from monai.networks.layers.factories import Act, Norm
@@ -6,7 +15,7 @@ from utils import iter_all_order
 from scipy.stats import mode
 
 
-import os
+# import os
 import shutil
 import tempfile
 
@@ -42,7 +51,7 @@ from monai.data import (
     decollate_batch,
 )
 
-import torch
+# import torch
 import time
 
 n_cls = 14
@@ -98,13 +107,7 @@ time.sleep(1)
 
 model_list = model_group[current_model_group_idx]
 
-train_dict["gpu_list"] = model_list[0][1]
-gpu_list = ','.join(str(x) for x in train_dict["gpu_list"])
-os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
-print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
-os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-device = torch.cuda.device(2)
+
 
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_532.json"
