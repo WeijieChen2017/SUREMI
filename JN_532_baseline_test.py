@@ -145,7 +145,7 @@ val_loader = DataLoader(
 for idx_sub_group in range(8):
     seed = model_list[idx_sub_group][0]
     folder_name = str(seed)
-    gpu = model_list[idx_sub_group][1]
+    # gpu = model_list[idx_sub_group][1]
     # Seg532_Unet_seed1016
     train_dict["root_dir"] = "./project_dir/Seg532_Unet_seed"+folder_name+"/"
     # if not os.path.exists(train_dict["root_dir"]):
@@ -153,7 +153,7 @@ for idx_sub_group in range(8):
     root_dir = train_dict["root_dir"]
     print(root_dir)
 
-    train_dict["gpu_list"] = gpu
+    # train_dict["gpu_list"] = gpu
     train_dict["alt_blk_depth"] = [1]
     # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # [2,2,2,2,2,2,2] for unet
     # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
@@ -169,7 +169,7 @@ for idx_sub_group in range(8):
         norm=Norm.INSTANCE,
         dropout=0.,
         bias=True,
-        ).to(device)#.to(device).load_state_dict(torch.load(os.path.join(root_dir, "best_metric_model.pth")))
+        )#.to(device).load_state_dict(torch.load(os.path.join(root_dir, "best_metric_model.pth")))
 
     pre_train_state = {}
     pre_train_model = torch.load(train_dict["root_dir"]+"best_metric_model.pth")
@@ -180,6 +180,7 @@ for idx_sub_group in range(8):
     model.load_state_dict(pre_train_state)
 
     model.eval()
+    model.to(device)
     # model.train()
     order_list = iter_all_order(train_dict["alt_blk_depth"])
     # order_list = iter_all_order([2,2,2,2,2,2,2,2,2])
