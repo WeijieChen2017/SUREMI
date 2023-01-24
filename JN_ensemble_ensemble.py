@@ -34,7 +34,7 @@ model_group = [
     [1029, [3],],
     [1030, [3],],
     [1031, [3],],
-    # [1032, [3],],
+    [1032, [3],],
 ]
 
 img_group = [
@@ -52,7 +52,7 @@ n_img = len(img_group)
 for idx_i in range(n_img):
     img_collection = np.zeros(
         (
-            n_models, 
+            n_model, 
             img_group[idx_i][1][0],
             img_group[idx_i][1][1],
             img_group[idx_i][1][2]
