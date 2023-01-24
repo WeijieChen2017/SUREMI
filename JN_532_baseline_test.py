@@ -98,6 +98,14 @@ time.sleep(1)
 
 model_list = model_group[current_model_group_idx]
 
+train_dict["gpu_list"] = model_list[0][1]
+gpu_list = ','.join(str(x) for x in train_dict["gpu_list"])
+os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
+print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_532.json"
 
@@ -149,12 +157,6 @@ for idx_sub_group in range(8):
     train_dict["alt_blk_depth"] = [1]
     # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # [2,2,2,2,2,2,2] for unet
     # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
-
-    gpu_list = ','.join(str(x) for x in train_dict["gpu_list"])
-    os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
-    print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
-    os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     model = UNet( 
         spatial_dims=3,
