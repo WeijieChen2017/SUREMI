@@ -61,7 +61,7 @@ for idx_i in range(n_img):
     for idx_m in range(n_models):
         file_name = "./project_dir/Seg532_Unet_seed"+str(model_group[idx_m][0])+"/"+img_group[idx_i][0]
         print(file_name)
-        file_data = np.load(filename)
+        file_data = np.load(file_name)
         img_collection[idx_m, :, :, :] = file_data
 
     img_mode = mode(img_collection, axis=0).mode
