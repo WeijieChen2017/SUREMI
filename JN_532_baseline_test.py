@@ -100,8 +100,6 @@ model_list = model_group[current_model_group_idx]
 
 train_dict["data_dir"] = "./data_dir/JN_BTCV/"
 train_dict["split_JSON"] = "dataset_532.json"
-root_dir = train_dict["root_dir"]
-print(root_dir)
 
 data_dir = train_dict["data_dir"]
 split_JSON = train_dict["split_JSON"]
@@ -144,6 +142,8 @@ for idx_sub_group in range(8):
     train_dict["root_dir"] = "./project_dir/Seg532_Unet_seed"+folder_name+"/"
     # if not os.path.exists(train_dict["root_dir"]):
     #     os.mkdir(train_dict["root_dir"])
+    root_dir = train_dict["root_dir"]
+    print(root_dir)
 
     train_dict["gpu_list"] = gpu
     train_dict["alt_blk_depth"] = [1]
