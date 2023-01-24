@@ -64,9 +64,9 @@ for idx_i in range(n_img):
         file_data = np.load(file_name)
         img_collection[idx_m, :, :, :] = file_data
 
-    img_mode = mode(img_collection, axis=0).mode
+    img_mode = np.squeeze(mode(img_collection, axis=0).mode)
     for idx_diff in range(n_model):
-        img_collection[idx_diff, :, :, :] -= img_mode
+        img_collection[idx_diff, :, :, :] = np.squeeze(img_collection[idx_diff, :, :, :] - img_mode)
     img_collection = np.abs(img_collection)
     img_collection[img_collection>0] = 1
 
