@@ -145,7 +145,7 @@ val_loader = DataLoader(
     val_ds, batch_size=1, shuffle=False, num_workers=4, pin_memory=True
 )
 
-for idx_sub_group in range(len(model_list[idx_sub_group])):
+for idx_sub_group in range(len(model_group[current_model_group_idx])):
     seed = model_list[idx_sub_group][0]
     folder_name = str(seed)
     # gpu = model_list[idx_sub_group][1]
