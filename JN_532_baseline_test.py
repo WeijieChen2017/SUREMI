@@ -97,6 +97,44 @@ time.sleep(1)
 
 model_list = model_group[current_model_group_idx]
 
+train_dict["data_dir"] = "./data_dir/JN_BTCV/"
+train_dict["split_JSON"] = "dataset_532.json"
+root_dir = train_dict["root_dir"]
+print(root_dir)
+
+data_dir = train_dict["data_dir"]
+split_JSON = train_dict["split_JSON"]
+
+datasets = data_dir + split_JSON
+val_files = load_decathlon_datalist(datasets, True, "test")
+val_transforms = Compose(
+    [
+        LoadImaged(keys=["image", "label"]),
+        EnsureChannelFirstd(keys=["image", "label"]),
+        Orientationd(keys=["image", "label"], axcodes="RAS"),
+        Spacingd(
+            keys=["image", "label"],
+            pixdim=(1.5, 1.5, 2.0),
+            mode=("bilinear", "nearest"),
+        ),
+        ScaleIntensityRanged(
+            keys=["image"], a_min=-175, a_max=250, b_min=0.0, b_max=1.0, clip=True
+        ),
+        CropForegroundd(keys=["image", "label"], source_key="image"),
+    ]
+)
+
+datasets = data_dir + split_JSON
+datalist = load_decathlon_datalist(datasets, True, "training")
+val_files = load_decathlon_datalist(datasets, True, "test")
+
+val_ds = CacheDataset(
+    data=val_files, transform=val_transforms, cache_num=6, cache_rate=1.0, num_workers=4
+)
+val_loader = DataLoader(
+    val_ds, batch_size=1, shuffle=False, num_workers=4, pin_memory=True
+)
+
 for idx_sub_group in range(8):
     seed = model_list[idx_sub_group][0]
     folder_name = str(seed)
@@ -105,56 +143,17 @@ for idx_sub_group in range(8):
     train_dict["root_dir"] = "./project_dir/Seg532_Unet_seed"+folder_name+"/"
     # if not os.path.exists(train_dict["root_dir"]):
     #     os.mkdir(train_dict["root_dir"])
-    train_dict["data_dir"] = "./data_dir/JN_BTCV/"
-    train_dict["split_JSON"] = "dataset_532.json"
+
     train_dict["gpu_list"] = gpu
     train_dict["alt_blk_depth"] = [1]
     # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2] # [2,2,2,2,2,2,2] for unet
     # train_dict["alt_blk_depth"] = [2,2,2,2,2,2,2,2,2] # [2,2,2,2,2,2,2,2,2] for unet
-
-    root_dir = train_dict["root_dir"]
-    print(root_dir)
-
-    data_dir = train_dict["data_dir"]
-    split_JSON = train_dict["split_JSON"]
-
-    datasets = data_dir + split_JSON
-    val_files = load_decathlon_datalist(datasets, True, "test")
 
     gpu_list = ','.join(str(x) for x in train_dict["gpu_list"])
     os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
     print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-
-    val_transforms = Compose(
-        [
-            LoadImaged(keys=["image", "label"]),
-            EnsureChannelFirstd(keys=["image", "label"]),
-            Orientationd(keys=["image", "label"], axcodes="RAS"),
-            Spacingd(
-                keys=["image", "label"],
-                pixdim=(1.5, 1.5, 2.0),
-                mode=("bilinear", "nearest"),
-            ),
-            ScaleIntensityRanged(
-                keys=["image"], a_min=-175, a_max=250, b_min=0.0, b_max=1.0, clip=True
-            ),
-            CropForegroundd(keys=["image", "label"], source_key="image"),
-        ]
-    )
-
-    datasets = data_dir + split_JSON
-    datalist = load_decathlon_datalist(datasets, True, "training")
-    val_files = load_decathlon_datalist(datasets, True, "test")
-
-    val_ds = CacheDataset(
-        data=val_files, transform=val_transforms, cache_num=6, cache_rate=1.0, num_workers=4
-    )
-    val_loader = DataLoader(
-        val_ds, batch_size=1, shuffle=False, num_workers=4, pin_memory=True
-    )
 
     model = UNet( 
         spatial_dims=3,
@@ -182,7 +181,6 @@ for idx_sub_group in range(8):
     order_list = iter_all_order(train_dict["alt_blk_depth"])
     # order_list = iter_all_order([2,2,2,2,2,2,2,2,2])
     order_list_cnt = len(order_list)
-
 
     for case_num in range(6):
         # case_num = 4
