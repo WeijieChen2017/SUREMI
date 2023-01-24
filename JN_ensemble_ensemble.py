@@ -66,9 +66,9 @@ for idx_i in range(n_img):
 
     img_mode = mode(img_collection, axis=0).mode
     for idx_diff in range(n_model):
-            img_collection[idx_diff, :, :, :] -= img_mode
-        img_collection = np.abs(img_collection)
-        img_collection[img_collection>0] = 1
+        img_collection[idx_diff, :, :, :] -= img_mode
+    img_collection = np.abs(img_collection)
+    img_collection[img_collection>0] = 1
 
     img_pct = np.sum(img_collection, axis=0)/n_model
 
