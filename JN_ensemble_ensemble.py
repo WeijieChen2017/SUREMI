@@ -73,13 +73,13 @@ for idx_i in range(n_img):
     img_pct = np.sum(img_collection, axis=0)/n_model
 
     np.save(
-        "./project_dir/Seg532_Unet_seed"+str(model_group[idx_m][0])+"/_e_RAS_1.5_1.5_2.0_vote.npy",
+        "./project_dir/Seg532_Unet_seed"+str(model_group[idx_m][0])+"/"+img_group[idx_i][0].replace("z", "e"),
         img_mode,
     )
-    print("./project_dir/Seg532_Unet_seed"+str(model_group[idx_m][0])+"/_e_RAS_1.5_1.5_2.0_vote.npy")
+    print("./project_dir/Seg532_Unet_seed"+str(model_group[idx_m][0])+"/"+img_group[idx_i][0].replace("z", "e")
 
     np.save(
-        "./project_dir/Seg532_Unet_seed"+str(model_group[idx_m][0])+"/_p_RAS_1.5_1.5_2.0_vote.npy",
+        "./project_dir/Seg532_Unet_seed"+str(model_group[idx_m][0])+"/"+img_group[idx_i][0].replace("z", "p"),
         img_pct,
     )
-    print("./project_dir/Seg532_Unet_seed"+str(model_group[idx_m][0])+"/_p_RAS_1.5_1.5_2.0_vote.npy")
+    print("./project_dir/Seg532_Unet_seed"+str(model_group[idx_m][0])+"/"+img_group[idx_i][0].replace("z", "p")
