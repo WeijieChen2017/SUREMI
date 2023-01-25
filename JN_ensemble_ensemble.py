@@ -76,10 +76,10 @@ for idx_i in range(n_img):
         "./project_dir/Seg532_Unet_seed"+str(model_group[idx_m][0])+"/"+img_group[idx_i][0].replace("z", "e"),
         img_mode,
     )
-    print("./project_dir/Seg532_Unet_seed"+str(model_group[idx_m][0])+"/"+img_group[idx_i][0].replace("z", "e")
+    print("./project_dir/Seg532_Unet_seed"+str(model_group[idx_m][0])+"/"+img_group[idx_i][0].replace("z", "e"))
 
     np.save(
         "./project_dir/Seg532_Unet_seed"+str(model_group[idx_m][0])+"/"+img_group[idx_i][0].replace("z", "p"),
         img_pct,
     )
-    print("./project_dir/Seg532_Unet_seed"+str(model_group[idx_m][0])+"/"+img_group[idx_i][0].replace("z", "p")
+    print("./project_dir/Seg532_Unet_seed"+str(model_group[idx_m][0])+"/"+img_group[idx_i][0].replace("z", "p"))
