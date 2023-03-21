@@ -175,5 +175,5 @@ for cnt_file, file_path in enumerate(file_list):
             key_name = ''.join(str(order_list[idx_es]))
             output_metric[key_name] = metric_list
 
-    save_path = os.path.join(test_dict["save_folder"], test_dict["eval_save_folder"], file_name)
+    save_path = os.path.join(test_dict["save_folder"], test_dict["eval_save_folder"], file_name.replace(".nii.gz", ".npy"))
     np.save(save_path, output_metric)

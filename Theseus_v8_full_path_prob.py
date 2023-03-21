@@ -27,7 +27,7 @@ from scipy.stats import zscore
 # import bnn
 
 from model import UNet_MDO as UNet
-from utils import iter_all_order, iter_some_order, iter_all_order_but
+from utils import iter_all_order, iter_some_order, iter_all_order_but, iter_some_order_prob
 from utils import denorm_CT, cal_rmse_mae_ssim_psnr_acut_dice, cal_mae
 
 
@@ -119,7 +119,7 @@ model = model.to(device)
 
 for cnt_file, file_path in enumerate(file_list):
     
-    order_list, _ = iter_some_order(test_dict["alt_blk_depth"])
+    order_list, _ = iter_some_order_prob(test_dict["alt_blk_depth"])
     order_list_cnt = len(order_list)
 
     x_path = file_path
@@ -166,5 +166,5 @@ for cnt_file, file_path in enumerate(file_list):
             key_name = ''.join(str(order_list[idx_es]))
             output_metric[key_name] = metric_list
 
-    save_path = os.path.join(test_dict["save_folder"], test_dict["eval_save_folder"], file_name)
+    save_path = os.path.join(test_dict["save_folder"], test_dict["eval_save_folder"], file_name.replace(".nii.gz", ".npy"))
     np.save(save_path, output_metric)

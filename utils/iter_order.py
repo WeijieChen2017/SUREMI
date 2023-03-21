@@ -47,6 +47,13 @@ def iter_all_order_but(alter_block_depth, remove_blocks=[]):
     # print(time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime()))
     return qualified_set, time_frame
 
+def iter_some_order_prob(alter_block, order_need=128):
+
+    order_list = iter_all_order(alter_block)[0]
+    order_list = random.shuffle(order_list)
+    order_list = order_list[:order_need]
+    return order_list
+
 def iter_some_order(alter_block, order_need=128, remove_blocks=[]):
     # alter_block = [4,2,2,2,2,1,1,1,1,1]
     # alter_block = [2,2,2,2,2,2]
