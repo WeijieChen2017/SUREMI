@@ -50,7 +50,7 @@ def iter_all_order_but(alter_block_depth, remove_blocks=[]):
 def iter_some_order_prob(alter_block, order_need=128):
 
     order_list = iter_all_order(alter_block)[0]
-    order_list = random.shuffle(order_list)
+    random.shuffle(order_list)
     order_list = order_list[:order_need]
     return order_list
 
