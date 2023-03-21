@@ -28,7 +28,7 @@ from scipy.stats import zscore
 
 from model import UNet_MDO as UNet
 from utils import iter_all_order, iter_some_order, iter_all_order_but
-from utils import denorm_CT, cal_rmse_mae_ssim_psnr_acut_dice
+from utils import denorm_CT, cal_rmse_mae_ssim_psnr_acut_dice, cal_mae
 
 
 model_list = [
@@ -170,8 +170,9 @@ for cnt_file, file_path in enumerate(file_list):
                     )
             curr_pred = np.squeeze(y_hat.cpu().detach().numpy())
             curr_pred_denorm = denorm_CT(curr_pred)
-            metric_list = cal_rmse_mae_ssim_psnr_acut_dice(curr_pred_denorm, y_data_denorm)
-            key_name = ''.join(order_list[idx_es])
+            # metric_list = cal_rmse_mae_ssim_psnr_acut_dice(curr_pred_denorm, y_data_denorm)
+            metric_list = cal_mae(curr_pred_denorm, y_data_denorm)
+            key_name = ''.join(str(order_list[idx_es]))
             output_metric[key_name] = metric_list
 
     save_path = os.path.join(test_dict["save_folder"], test_dict["eval_save_folder"], file_name)

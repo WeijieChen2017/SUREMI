@@ -60,3 +60,12 @@ def cal_rmse_mae_ssim_psnr_acut_dice(data_x, data_y):
     metirc_dice_soft = dice_coe(data_x, data_y, tissue="soft")
     metirc_dice_bone = dice_coe(data_x, data_y, tissue="bone")
     return [metirc_rmse, metirc_mae, metirc_ssim, metirc_psnr, metirc_acutance, metirc_dice_air, metirc_dice_soft, metirc_dice_bone]
+
+def cal_mae(data_x, data_y):
+    """
+    Calculate the MAE of two CT images.
+    :param data_x: The first CT image.
+    :param data_y: The second CT image.
+    :return: The MAE of two CT images.
+    """
+    return np.mean(np.absolute(data_x-data_y))
