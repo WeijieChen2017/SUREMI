@@ -23,9 +23,7 @@ from monai.networks.layers.factories import Act, Norm
 from monai.inferers import sliding_window_inference
 from scipy.stats import zscore
 
-from scipy.ndimage import sobel
-from skimage.metrics import structural_similarity as ssim
-from skimage.metrics import peak_signal_noise_ratio as psnr
+
 # import bnn
 
 from model import UNet_MDO as UNet

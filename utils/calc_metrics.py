@@ -51,12 +51,12 @@ def cal_rmse_mae_ssim_psnr_acut_dice(data_x, data_y):
     :return: The RMSE, MAE, SSIM, PSNR, Acutance, and Dice coefficient of two CT images.
     """
 
-    rmse = np.sqrt(np.mean(np.square(data_x-data_y)))
-    mae = np.mean(np.absolute(data_x-data_y))
-    ssim = ssim(data_x, data_y, data_range=4000)
-    psnr = psnr(data_x, data_y, data_range=4000)
-    acutance = np.mean(np.absolute(sobel(data_x)))
-    dice_air = dice_coe(data_x, data_y, tissue="air")
-    dice_soft = dice_coe(data_x, data_y, tissue="soft")
-    dice_bone = dice_coe(data_x, data_y, tissue="bone")
-    return [rmse, mae, ssim, psnr, acutance, dice_air, dice_soft, dice_bone]
+    metirc_rmse = np.sqrt(np.mean(np.square(data_x-data_y)))
+    metirc_mae = np.mean(np.absolute(data_x-data_y))
+    metirc_ssim = ssim(data_x, data_y, data_range=4000)
+    metirc_psnr = psnr(data_x, data_y, data_range=4000)
+    metirc_acutance = np.mean(np.absolute(sobel(data_x)))
+    metirc_dice_air = dice_coe(data_x, data_y, tissue="air")
+    metirc_dice_soft = dice_coe(data_x, data_y, tissue="soft")
+    metirc_dice_bone = dice_coe(data_x, data_y, tissue="bone")
+    return [metirc_rmse, metirc_mae, metirc_ssim, metirc_psnr, metirc_acutance, metirc_dice_air, metirc_dice_soft, metirc_dice_bone]
