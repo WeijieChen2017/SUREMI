@@ -1,36 +1,4 @@
 
-# Generative Confidential Network
-
-import os
-import gc
-import copy
-import glob
-import time
-# import wandb
-import random
-
-import numpy as np
-import nibabel as nib
-import torch.nn as nn
-import torch.nn.functional as F
-
-import torch
-import torchvision
-import requests
-
-# from monai.networks.nets.unet import UNet
-from monai.networks.layers.factories import Act, Norm
-from monai.inferers import sliding_window_inference
-from scipy.stats import zscore
-
-
-# import bnn
-
-from model import UNet_MDO as UNet
-from utils import iter_all_order, iter_some_order, iter_all_order_but
-from utils import denorm_CT, cal_rmse_mae_ssim_psnr_acut_dice, cal_mae
-
-
 model_list = [
     ["syn_DLE_4444111", [5], [4,4,4,4,1,1,1], ],
     ["syn_DLE_1114444", [5], [1,1,1,4,4,4,4], ],
@@ -46,18 +14,55 @@ name = model_list[current_model_idx][0]
 gpu_list = model_list[current_model_idx][1]
 alt_block_num = model_list[current_model_idx][2]
 
-# for name in model_list:
-test_dict = {}
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 test_dict["project_name"] = name
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
 test_dict["gpu_ids"] = gpu_list
+gpu_list = ','.join(str(x) for x in test_dict["gpu_ids"])
+import os
+os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
+print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
+import torch
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+
+# Generative Confidential Network
+
+import os
+# import gc
+# import copy
+import glob
+import time
+# import wandb
+# import random
+
+import numpy as np
+import nibabel as nib
+import torch.nn as nn
+import torch.nn.functional as F
+
+import torch
+# import torchvision
+# import requests
+
+# from monai.networks.nets.unet import UNet
+from monai.networks.layers.factories import Act, Norm
+from monai.inferers import sliding_window_inference
+from scipy.stats import zscore
+
+
+# import bnn
+
+from model import UNet_MDO as UNet
+from utils import iter_all_order, iter_some_order, iter_all_order_but
+from utils import denorm_CT, cal_rmse_mae_ssim_psnr_acut_dice, cal_mae
+
+# for name in model_list:
 test_dict["eval_file_cnt"] = 0
 test_dict["eval_save_folder"] = "best_path"
 test_dict["special_cases"] = []
 test_dict["best_path"] = "best_128_paths.npy"
-
 test_dict["save_tag"] = ""
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
@@ -79,10 +84,6 @@ np.save(test_dict["save_folder"]+"test_dict.npy", test_dict)
 # ==================== basic settings ====================
 
 np.random.seed(test_dict["seed"])
-gpu_list = ','.join(str(x) for x in test_dict["gpu_ids"])
-os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
-print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 model_list = sorted(glob.glob(os.path.join(test_dict["save_folder"], "model_best_*.pth")))
 if "curr" in model_list[-1]:
