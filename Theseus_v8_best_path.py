@@ -64,6 +64,8 @@ test_dict["eval_save_folder"] = "best_path"
 test_dict["special_cases"] = []
 test_dict["best_path"] = "best_128_paths.npy"
 test_dict["save_tag"] = ""
+test_dict["eval_path_folder"] = "full_metric_prob"
+test_dict["cnt_best_path"] = 128
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
 
@@ -78,10 +80,8 @@ for path in [test_dict["save_folder"], test_dict["save_folder"]+test_dict["eval_
     if not os.path.exists(path):
         os.mkdir(path)
 
-np.save(test_dict["save_folder"]+"test_dict.npy", test_dict)
 
-
-# ==================== basic settings ====================
+# ==================== load model ====================
 
 np.random.seed(test_dict["seed"])
 
@@ -92,6 +92,8 @@ if "curr" in model_list[-1]:
 target_model = model_list[-1]
 model = torch.load(target_model, map_location=torch.device('cpu'))
 print("--->", target_model, " is loaded.")
+model.eval()
+model = model.to(device)
 
 # ==================== data division ====================
 
@@ -102,8 +104,6 @@ if test_dict["eval_file_cnt"] > 0:
     X_list = X_list[:test_dict["eval_file_cnt"]]
 X_list.sort()
 
-
-# ==================== training ====================
 file_list = []
 if len(test_dict["special_cases"]) > 0:
     for case_name in X_list:
@@ -116,14 +116,41 @@ else:
 iter_tag = "test"
 cnt_total_file = len(file_list)
 cnt_each_cube = 1
-model.eval()
-model = model.to(device)
 
+# ==================== load best path ====================
 
-# order_list, _ = iter_all_order(test_dict["alt_blk_depth"])
-order_list = np.load(test_dict["save_folder"]+test_dict["best_path"], allow_pickle=True)[()]
+path_collection = dict()
+folder_name = test_dict["eval_path_folder"]
+file_list = sorted(glob.glob(folder_name+"/*.npy"))
+for file_path in file_list:
+    file = np.load(file_path, allow_pickle=True)[()]
+    for key in file.keys():
+        if not key in path_collection:
+            path_collection[key] = [file[key]]
+        else:
+            path_collection[key].append(file[key])
+
+path_score = dict()
+for key in path_collection.keys():
+    path_score[key] = np.mean(path_collection[key])
+
+path_score_sorted = dict(sorted(path_score.items(), key=lambda item: item[1]))
+path_selected = []
+mean_score = np.zeros(test_dict["cnt_best_path"])
+for i in range(test_dict["cnt_best_path"]):
+    key = list(path_score_sorted.keys())[i]
+    path_selected.append(eval(key))
+    mean_score[i] = path_score_sorted[key]
+print("Mean score of selected path: ", np.mean(mean_score))
+
+test_dict["mean_score_selected_path"] = mean_score
+np.save(test_dict["save_folder"]+"_"+test_dict["eval_save_folder"]+"test_dict.npy", test_dict)
+
+order_list = path_selected
 print(order_list)
 order_list_cnt = len(order_list)
+
+# ==================== training ====================
 
 
 for cnt_file, file_path in enumerate(file_list):
