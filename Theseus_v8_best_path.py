@@ -210,7 +210,7 @@ for cnt_file, file_path in enumerate(file_list):
             metric_list = cal_rmse_mae_ssim_psnr_acut_dice(curr_pred_denorm, y_data_denorm)
             save_path = os.path.join(test_dict["save_folder"], test_dict["eval_save_folder"], file_name.replace(".nii.gz", "_metrics_32.npy"))
             np.save(save_path, metric_list)
-            print(save_path)
+            print(save_path, metric_list[1])
         
         if idx_es == 64:
             output_data = np.median(output_array[:64, :, :, :], axis=0)
@@ -218,7 +218,7 @@ for cnt_file, file_path in enumerate(file_list):
             metric_list = cal_rmse_mae_ssim_psnr_acut_dice(curr_pred_denorm, y_data_denorm)
             save_path = os.path.join(test_dict["save_folder"], test_dict["eval_save_folder"], file_name.replace(".nii.gz", "_metrics_64.npy"))
             np.save(save_path, metric_list)
-            print(save_path)
+            print(save_path, metric_list[1])
         
         if idx_es == 96:
             output_data = np.median(output_array[:96, :, :, :], axis=0)
@@ -226,14 +226,14 @@ for cnt_file, file_path in enumerate(file_list):
             metric_list = cal_rmse_mae_ssim_psnr_acut_dice(curr_pred_denorm, y_data_denorm)
             save_path = os.path.join(test_dict["save_folder"], test_dict["eval_save_folder"], file_name.replace(".nii.gz", "_metrics_96.npy"))
             np.save(save_path, metric_list)
-            print(save_path)
+            print(save_path, metric_list[1])
     
     output_data = np.median(output_array, axis=0)
     curr_pred_denorm = np.squeeze(denorm_CT(curr_pred))
     metric_list = cal_rmse_mae_ssim_psnr_acut_dice(curr_pred_denorm, y_data_denorm)
     save_path = os.path.join(test_dict["save_folder"], test_dict["eval_save_folder"], file_name.replace(".nii.gz", "_metrics_128.npy"))
     np.save(save_path, metric_list)
-    print(save_path)
+    print(save_path, metric_list[1])
         
 
 
