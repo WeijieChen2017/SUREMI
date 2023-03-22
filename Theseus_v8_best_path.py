@@ -161,7 +161,7 @@ for cnt_file, file_path in enumerate(file_list):
             y_hat = sliding_window_inference(
                     inputs = input_data, 
                     roi_size = test_dict["input_size"], 
-                    sw_batch_size = 64, 
+                    sw_batch_size = 80, 
                     predictor = model,
                     overlap=1/8, 
                     mode="gaussian", 
