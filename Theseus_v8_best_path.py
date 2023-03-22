@@ -123,10 +123,10 @@ cnt_each_cube = 1
 
 path_collection = dict()
 folder_name = test_dict["eval_path_folder"]
-file_list = sorted(glob.glob("./"+folder_name+"/*.npy"))
+file_list = sorted(glob.glob("./"+test_dict["save_folder"]+"/"+folder_name+"/*.npy"))
 for file_path in file_list:
     file = np.load(file_path, allow_pickle=True)[()]
-    print(file)
+    # print(file)
     for key in file.keys():
         if not key in path_collection:
             path_collection[key] = [file[key]]
