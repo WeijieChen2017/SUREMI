@@ -1,4 +1,4 @@
-
+import time
 model_list = [
     ["syn_DLE_4444111", [5], [4,4,4,4,1,1,1], ],
     ["syn_DLE_1114444", [5], [1,1,1,4,4,4,4], ],
@@ -8,7 +8,7 @@ model_list = [
 print("Model index: ", end="")
 current_model_idx = int(input()) - 1
 print(model_list[current_model_idx])
-# time.sleep(1)
+time.sleep(1)
 
 name = model_list[current_model_idx][0]
 gpu_list = model_list[current_model_idx][1]
