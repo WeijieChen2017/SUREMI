@@ -38,9 +38,9 @@ for model_name in model_list:
         eror_flatten = eror.flatten()
         stad_flatten = stad.flatten()
 
-        N_stad, N_eror = 100, 100
-        eror_bins = np.linspace(0, 40, N_eror+1)
-        stad_bins = np.linspace(0, 20, N_stad+1)
+        N_stad, N_eror = 1000, 100
+        eror_bins = np.linspace(0, 1000, N_eror+1)
+        stad_bins = np.linspace(0, 100, N_stad+1)
 
         heatmap, _, _ = np.histogram2d(eror_flatten, stad_flatten, bins=[eror_bins, stad_bins])
         save_path = "./project_dir/"+test_dict["project_name"]+"/pred_monai/stat_std_eror_"+filename+".npy"
