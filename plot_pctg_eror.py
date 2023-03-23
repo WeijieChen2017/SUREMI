@@ -71,12 +71,14 @@ for model_name in model_name_list:
                 pctg_eror_stat[keyname].append([curr_pctg_eror[1, i], curr_pctg_eror[2, i]])
             else:
                 pctg_eror_stat[keyname] = [[curr_pctg_eror[1, i], curr_pctg_eror[2, i]]]
-    pctg_eror_plot = np.zeros((2, len(pctg_eror_stat.keys())))
+    pctg_eror_plot = np.zeros((3, len(pctg_eror_stat.keys())))
     for idx, key in enumerate(pctg_eror_stat.keys()):
         pctg_eror_plot[0, idx] = key
         pctg_total = np.sum(np.array(pctg_eror_stat[key]), axis=0)
+        pctg_eror_plot[1, idx] = pctg_total[0]
+        pctg_eror_plot[2, idx] = pctg_total[1]
         # print(len(pctg_eror_stat[key]), pctg_total)
-        pctg_eror_plot[1, idx] = pctg_total[1] / np.sum(pctg_total)
+        # pctg_eror_plot[1, idx] = pctg_total[1] / np.sum(pctg_total)
     save_name = "./" + folder_name + "/stat_" + model_name + "_pctg_eror.npy"
     np.save(save_name, pctg_eror_plot)
     print("Saved to " + save_name)
