@@ -7,6 +7,9 @@ model_list = [
     # ["syn_DLE_1114444"],
     # ["syn_DLE_4444444"],
     "Theseus_v2_181_200_rdp1",
+    "syn_DLE_4444111",
+    "syn_DLE_1114444",
+    "syn_DLE_4444444",
 ]
 
 for model_name in model_list:
@@ -41,3 +44,4 @@ for model_name in model_list:
 
         heatmap, _, _ = np.histogram2d(eror_flatten, stad_flatten, bins=[eror_bins, stad_bins])
         save_path = "./project_dir/"+test_dict["project_name"]+"/pred_monai/stat_std_eror_"+filename+".npy"
+        np.save(save_path, heatmap)
