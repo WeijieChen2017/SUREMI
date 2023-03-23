@@ -27,14 +27,14 @@ def create_pctg_eror_stat(ptcg_flatten, eror_flatten):
     return pctg_eror_stat
 
 model_name_list = [
-    # "Seg532_basic_ensemble",
-    "Seg532_Unet_ab2",
-    "Seg532_Unet_ab4",
-    "Seg532_Unet_ab1114444",
-    "Seg532_Unet_ab4444111",
-    "Seg532_UnetR_ab2",
-    "Seg532_UnetR_ab2444444444",
-    "Seg532_UnetR_ab41111111111",
+    "Seg532_basic_ensemble",
+    # "Seg532_Unet_ab2",
+    # "Seg532_Unet_ab4",
+    # "Seg532_Unet_ab1114444",
+    # "Seg532_Unet_ab4444111",
+    # "Seg532_UnetR_ab2",
+    # "Seg532_UnetR_ab2444444444",
+    # "Seg532_UnetR_ab41111111111",
 ]
 
 case_name_list = [
