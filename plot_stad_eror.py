@@ -6,7 +6,7 @@ model_list = [
     # ["syn_DLE_4444111"],
     # ["syn_DLE_1114444"],
     # ["syn_DLE_4444444"],
-    "Theseus_v2_181_200_rdp1",
+    # "Theseus_v2_181_200_rdp1",
     "syn_DLE_4444111",
     "syn_DLE_1114444",
     "syn_DLE_4444444",
