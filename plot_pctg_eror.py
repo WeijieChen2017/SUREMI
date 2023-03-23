@@ -34,7 +34,7 @@ def create_pctg_eror_stat(ptcg_flatten, eror_flatten):
     return pctg_eror_stat
 
 model_name_list = [
-    "Seg532_basic_ensemble",
+    # "Seg532_basic_ensemble",
     "Seg532_Unet_ab2",
     "Seg532_Unet_ab4",
     "Seg532_Unet_ab1114444",
@@ -83,7 +83,7 @@ for model_name in model_name_list:
     pctg_eror_plot = np.zeros((2, len(pctg_eror_stat.keys())))
     for idx, key in enumerate(pctg_eror_stat.keys()):
         pctg_eror_plot[0, idx] = key
-        pctg_total = np.sum(np.asanyarray(pctg_eror_stat[key]), axis=0)
+        pctg_total = np.sum(np.array(pctg_eror_stat[key]), axis=0)
         pctg_eror_plot[1, idx] = pctg_total[1] / np.sum(pctg_total)
 
     save_name = "./" + folder_name + "/stat_" + model_name + "_pctg_eror.npy"
