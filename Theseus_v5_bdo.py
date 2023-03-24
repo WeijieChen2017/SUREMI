@@ -1,3 +1,10 @@
+import os
+import torch
+
+gpu_list = ','.join(str(x) for x in [7])
+os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
+print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Generative Confidential Network
 
