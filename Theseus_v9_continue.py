@@ -177,7 +177,7 @@ loss_doc = torch.nn.SmoothL1Loss()
 #     )
 
 optim = torch.load(train_dict["target_optim"])
-optim.param_groups ['capturable'] = True
+optim.param_groups[0]['capturable'] = True
 
 # ==================== data division ====================
 
