@@ -22,6 +22,7 @@ train_dict["alter_block"] = model_list[current_model_idx][2]
 gpu_list = ','.join(str(x) for x in train_dict["gpu_ids"])
 os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
+import torch
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Generative Confidential Network
