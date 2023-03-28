@@ -106,12 +106,6 @@ np.save(train_dict["save_folder"]+"dict.npy", train_dict)
 
 # ==================== basic settings ====================
 
-np.random.seed(train_dict["seed"])
-gpu_list = ','.join(str(x) for x in train_dict["gpu_ids"])
-os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
-print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
 model = UNet( 
     spatial_dims=unet_dict["spatial_dims"],
     in_channels=unet_dict["in_channels"],
