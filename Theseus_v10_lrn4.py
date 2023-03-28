@@ -1,4 +1,5 @@
 import os
+import time
 
 model_list = [
     ["syn_DLE_4444444_e400_lrn4", [2], [4,4,4,4,4,4,4]],
