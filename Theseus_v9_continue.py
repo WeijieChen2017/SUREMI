@@ -64,7 +64,7 @@ train_dict["input_size"] = [96, 96, 96]
 train_dict["epochs"] = 200
 train_dict["batch"] = 16
 train_dict["target_model"] = train_dict["save_folder"]+"model_best_{}.pth".format(train_dict["continue_training_epoch"])
-train_dict["target_opt"] = train_dict["save_folder"]+"opt_{}.pth".format(train_dict["continue_training_epoch"])
+train_dict["target_optim"] = train_dict["save_folder"]+"opt_{}.pth".format(train_dict["continue_training_epoch"])
 train_dict["dataset_division"] = train_dict["save_folder"]+"data_division.npy"
 
 train_dict["model_term"] = "Monai_Unet_MacroDropout"
