@@ -51,24 +51,7 @@ import bnn
 # from utils import add_noise, weighted_L1Loss
 from model import UNet_Theseus as UNet
 
-model_list = [
-    ["syn_DLE_4444444_e400_lrn4", [2], [4,4,4,4,4,4,4]],
-    ["syn_DLE_4444111_e400_lrn4", [2], [4,4,4,4,1,1,1]],
-    ["syn_DLE_1114444_e400_lrn4", [2], [1,1,1,4,4,4,4]],
-    ]
-
-print("Model index: ", end="")
-current_model_idx = int(input()) - 1
-print(model_list[current_model_idx])
-time.sleep(1)
-# current_model_idx = 0
 # ==================== dict and config ====================
-
-train_dict = {}
-train_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-train_dict["project_name"] = model_list[current_model_idx][0]
-train_dict["gpu_ids"] = model_list[current_model_idx][1]
-train_dict["alter_block"] = model_list[current_model_idx][2]
 
 train_dict["dropout"] = 0.
 train_dict["loss_term"] = "SmoothL1Loss"
