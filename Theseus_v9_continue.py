@@ -129,6 +129,10 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 #     )
 
 model = torch.load(train_dict["target_model"])
+## ========== IMPORTANT ========== ##
+model.eval()
+## ========== IMPORTANT ========== ##
+
 
 # # state weights mapping
 # swm = {}
