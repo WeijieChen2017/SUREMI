@@ -171,18 +171,18 @@ model = model.to(device)
 loss_fnc = torch.nn.SmoothL1Loss()
 loss_doc = torch.nn.SmoothL1Loss()
 
-# optim = torch.optim.AdamW(
-#     model.parameters(),
-#     lr = train_dict["opt_lr"],
-#     betas = train_dict["opt_betas"],
-#     eps = train_dict["opt_eps"],
-#     weight_decay = train_dict["opt_weight_decay"],
-#     amsgrad = train_dict["amsgrad"]
-#     )
+optim = torch.optim.AdamW(
+    model.parameters(),
+    lr = train_dict["opt_lr"],
+    betas = train_dict["opt_betas"],
+    eps = train_dict["opt_eps"],
+    weight_decay = train_dict["opt_weight_decay"],
+    amsgrad = train_dict["amsgrad"]
+    )
 
-optim = torch.load(train_dict["target_optim"])
-if "capturable" not in optim.defaults:
-    optim.defaults["capturable"] = True
+# optim = torch.load(train_dict["target_optim"])
+# if "capturable" not in optim.defaults:
+#     optim.defaults["capturable"] = True
 
 # ==================== data division ====================
 
