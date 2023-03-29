@@ -164,7 +164,7 @@ model.eval()
     
 # model.load_state_dict(new_model_state)
 
-model.train()
+# model.train()
 model = model.to(device)
 
 # optim = torch.optim.RMSprop(model.parameters(), lr=train_dict["opt_lr"])
