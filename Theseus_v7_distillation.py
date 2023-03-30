@@ -15,10 +15,10 @@ model_list = [
     # ["syn_DLE_4444111", [7], [4,4,4,4,1,1,1], [[1, 0], [1, 2], [0, 2], [3, 1], [], [], []]],
     # ["syn_DLE_1114444", [7], [1,1,1,4,4,4,4], [[], [], [], [2, 1], [1, 0], [3, 1], [2, 0]]],
     # ["syn_DLE_4444444", [7], [4,4,4,4,4,4,4], [[1, 2], [1, 3], [3, 0], [3, 0], [1, 3], [3, 0], [2, 3]]],
-    ["syn_DLE_2222222_e400_lrn4", [5], [2,2,2,2,2,2,2], [[], [], [], [], [], [], []]],
-    ["syn_DLE_1114444_e400_lrn4", [5], [1,1,1,4,4,4,4], [[], [], [], [], [], [], []]],
-    ["syn_DLE_4444111_e400_lrn4", [5], [4,4,4,4,1,1,1], [[], [], [], [], [], [], []]],
-    ["syn_DLE_4444444_e400_lrn4", [5], [4,4,4,4,4,4,4], [[], [], [], [], [], [], []]],
+    ["syn_DLE_2222222_e400_lrn4", [5], [2,2,2,2,2,2,2], [[], [], [], [], [], [], []], 0],
+    ["syn_DLE_1114444_e400_lrn4", [5], [1,1,1,4,4,4,4], [[], [], [], [], [], [], []], 0],
+    ["syn_DLE_4444111_e400_lrn4", [5], [4,4,4,4,1,1,1], [[], [], [], [], [], [], []], 178],
+    ["syn_DLE_4444444_e400_lrn4", [5], [4,4,4,4,4,4,4], [[], [], [], [], [], [], []], 0],
 ]
 
 
@@ -34,6 +34,7 @@ gpu_list = model_list[current_model_idx][1]
 alt_block_num = model_list[current_model_idx][2]
 # block_kickout = model_list[current_model_idx][3]
 block_kickout = []
+eval_start = model_list[current_model_idx][4]
 
 
 # for name in model_list:
@@ -48,6 +49,7 @@ test_dict["eval_file_cnt"] = 0
 # test_dict["eval_sample"] = 100
 test_dict["eval_save_folder"] = "full_val"
 test_dict["special_cases"] = []
+test_dict["eval_start"] = eval_start
 
 test_dict["save_tag"] = ""
 
@@ -131,6 +133,9 @@ if len(test_dict["special_cases"]) > 0:
                 file_list.append(case_name)
 else:
     file_list = X_list
+
+if test_dict["eval_start"] > 0:
+    file_list = file_list[test_dict["eval_start"]:]
 
 iter_tag = "test"
 cnt_total_file = len(file_list)
