@@ -8,24 +8,7 @@ import glob
 import time
 # import wandb
 import random
-
 import numpy as np
-import nibabel as nib
-import torch.nn as nn
-import torch.nn.functional as F
-
-import torch
-import torchvision
-import requests
-
-# from monai.networks.nets.unet import UNet
-from monai.networks.layers.factories import Act, Norm
-from monai.inferers import sliding_window_inference
-from scipy.stats import zscore
-# import bnn
-
-from model import UNet_MDO as UNet
-from utils import iter_all_order, iter_some_order, iter_all_order_but
 
 
 model_list = [
@@ -87,13 +70,36 @@ for path in [test_dict["save_folder"], test_dict["save_folder"]+test_dict["eval_
 np.save(test_dict["save_folder"]+"test_dict.npy", test_dict)
 
 
-# ==================== basic settings ====================
-
 np.random.seed(test_dict["seed"])
 gpu_list = ','.join(str(x) for x in test_dict["gpu_ids"])
 os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
 print('export CUDA_VISIBLE_DEVICES=' + gpu_list)
+import torch
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+
+
+import nibabel as nib
+import torch.nn as nn
+import torch.nn.functional as F
+
+# import torch
+import torchvision
+import requests
+
+# from monai.networks.nets.unet import UNet
+from monai.networks.layers.factories import Act, Norm
+from monai.inferers import sliding_window_inference
+from scipy.stats import zscore
+# import bnn
+
+from model import UNet_MDO as UNet
+from utils import iter_all_order, iter_some_order, iter_all_order_but
+
+
+
+
+# ==================== basic settings ====================
 
 model_list = sorted(glob.glob(os.path.join(test_dict["save_folder"], "model_best_*.pth")))
 if "curr" in model_list[-1]:
