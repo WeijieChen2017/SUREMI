@@ -80,7 +80,7 @@ hub_metric = ["rmse", "nrmse", "mae", "ssim", "psnr", "acutance",
               "std_air", "std_soft", "std_bone"]
 
 for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
-    list_CT_folder = sorted(glob.glob(CT_folder+"*.nii.gz"))
+    list_CT_folder = sorted(glob.glob(CT_folder+"*_xva.nii.gz"))
     cnt_file_CT = len(list_CT_folder)
     cnt_metric = len(hub_metric)
     
