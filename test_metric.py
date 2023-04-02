@@ -88,7 +88,7 @@ for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
     
     for cnt_CT, path_CT in enumerate(list_CT_folder):
         print(hub_CT_name[cnt_CT_folder]+" ===> [{:03d}]/[{:03d}]: --->".format(cnt_CT+1, cnt_file_CT), path_CT, "<---")
-        filename = os.path.basename(path_CT)[:6]
+        filename = os.path.basename(path_CT)[:5]+".nii.gz"
         path_CT_GT = folder_CT_GT+filename
         file_CT = nib.load(path_CT)
         file_CT_GT = nib.load(path_CT_GT)
