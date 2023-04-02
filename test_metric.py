@@ -62,10 +62,17 @@ def filter_data(data, range_min, range_max):
 
 folder_CT_GT = "./data_dir/Iman_CT/norm/"
 hub_CT_name = [
-    "SUnetR_L2"
+    "lrn4_444",
+    "lrn4_441",
+    "lrn4_144",
+    "lrn4_222",
     ]
 hub_CT_folder = [
-    "./project_dir/SwinUNETR_Iman_v4_mse/pred_monai/"
+    # "./project_dir/SwinUNETR_Iman_v4_mse/pred_monai/",
+    "./syn_DLE_4444444_e400_lrn4",
+    "./syn_DLE_4444111_e400_lrn4",
+    "./syn_DLE_1114444_e400_lrn4",
+    "./syn_DLE_2222222_e400_lrn4",
 ]
 
 hub_metric = ["rmse", "nrmse", "mae", "ssim", "psnr", "acutance", 
