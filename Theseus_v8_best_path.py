@@ -67,7 +67,7 @@ test_dict["eval_save_folder"] = "best_path"
 test_dict["special_cases"] = []
 # test_dict["best_path"] = "best_128_paths.npy"
 test_dict["save_tag"] = ""
-test_dict["eval_path_folder"] = "full_metric_prob"
+test_dict["eval_path_folder"] = "full_metric"
 
 
 train_dict = np.load(test_dict["save_folder"]+"dict.npy", allow_pickle=True)[()]
