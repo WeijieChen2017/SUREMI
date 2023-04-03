@@ -67,9 +67,9 @@ hub_CT_name = [
     # "lrn4_144",
     # "lrn4_222",
     "lrn4_444p",
-    "lrn4_441p",
-    "lrn4_144p",
-    "lrn4_222p",
+    # "lrn4_441p",
+    # "lrn4_144p",
+    # "lrn4_222p",
     ]
 hub_CT_folder = [
     # "./project_dir/SwinUNETR_Iman_v4_mse/pred_monai/",
@@ -78,9 +78,9 @@ hub_CT_folder = [
     # "./project_dir/syn_DLE_1114444_e400_lrn4/full_val/",
     # "./project_dir/syn_DLE_2222222_e400_lrn4/full_val/",
     "./project_dir/syn_DLE_4444444_e400_lrn4/part_val/",
-    "./project_dir/syn_DLE_4444111_e400_lrn4/part_val/",
-    "./project_dir/syn_DLE_1114444_e400_lrn4/part_val/",
-    "./project_dir/syn_DLE_2222222_e400_lrn4/part_val/",
+    # "./project_dir/syn_DLE_4444111_e400_lrn4/part_val/",
+    # "./project_dir/syn_DLE_1114444_e400_lrn4/part_val/",
+    # "./project_dir/syn_DLE_2222222_e400_lrn4/part_val/",
 ]
 
 hub_metric = ["rmse", "nrmse", "mae", "ssim", "psnr", "acutance", 
