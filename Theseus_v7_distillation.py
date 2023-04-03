@@ -36,8 +36,8 @@ time.sleep(1)
 name = model_list[current_model_idx][0]
 gpu_list = model_list[current_model_idx][1]
 alt_block_num = model_list[current_model_idx][2]
-# block_kickout = model_list[current_model_idx][3]
-block_kickout = []
+block_kickout = model_list[current_model_idx][3]
+# block_kickout = []
 eval_start = model_list[current_model_idx][4]
 
 
