@@ -62,17 +62,25 @@ def filter_data(data, range_min, range_max):
 
 folder_CT_GT = "./data_dir/Iman_CT/norm/"
 hub_CT_name = [
-    "lrn4_444",
-    "lrn4_441",
-    "lrn4_144",
-    "lrn4_222",
+    # "lrn4_444",
+    # "lrn4_441",
+    # "lrn4_144",
+    # "lrn4_222",
+    "lrn4_444p",
+    "lrn4_441p",
+    "lrn4_144p",
+    "lrn4_222p",
     ]
 hub_CT_folder = [
     # "./project_dir/SwinUNETR_Iman_v4_mse/pred_monai/",
-    "./project_dir/syn_DLE_4444444_e400_lrn4/full_val/",
-    "./project_dir/syn_DLE_4444111_e400_lrn4/full_val/",
-    "./project_dir/syn_DLE_1114444_e400_lrn4/full_val/",
-    "./project_dir/syn_DLE_2222222_e400_lrn4/full_val/",
+    # "./project_dir/syn_DLE_4444444_e400_lrn4/full_val/",
+    # "./project_dir/syn_DLE_4444111_e400_lrn4/full_val/",
+    # "./project_dir/syn_DLE_1114444_e400_lrn4/full_val/",
+    # "./project_dir/syn_DLE_2222222_e400_lrn4/full_val/",
+    "./project_dir/syn_DLE_4444444_e400_lrn4/part_val/",
+    "./project_dir/syn_DLE_4444111_e400_lrn4/part_val/",
+    "./project_dir/syn_DLE_1114444_e400_lrn4/part_val/",
+    "./project_dir/syn_DLE_2222222_e400_lrn4/part_val/",
 ]
 
 hub_metric = ["rmse", "nrmse", "mae", "ssim", "psnr", "acutance", 
@@ -98,7 +106,7 @@ for cnt_CT_folder, CT_folder in enumerate(hub_CT_folder):
         data_x = denorm_CT(data_CT)
         data_y = denorm_CT(data_CT_GT)
         
-        table_metric[cnt_CT, 0] = mean_squared_error(data_x, data_y)
+        # table_metric[cnt_CT, 0] = mean_squared_error(data_x, data_y)
         table_metric[cnt_CT, 1] = np.sqrt(mean_squared_error(data_x, data_y))
         table_metric[cnt_CT, 2] = mae(data_x, data_y)
         table_metric[cnt_CT, 3] = ssim(data_x, data_y, data_range=4000)
