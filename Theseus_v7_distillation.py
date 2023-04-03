@@ -15,10 +15,14 @@ model_list = [
     # ["syn_DLE_4444111", [7], [4,4,4,4,1,1,1], [[1, 0], [1, 2], [0, 2], [3, 1], [], [], []]],
     # ["syn_DLE_1114444", [7], [1,1,1,4,4,4,4], [[], [], [], [2, 1], [1, 0], [3, 1], [2, 0]]],
     # ["syn_DLE_4444444", [7], [4,4,4,4,4,4,4], [[1, 2], [1, 3], [3, 0], [3, 0], [1, 3], [3, 0], [2, 3]]],
+    # ["syn_DLE_2222222_e400_lrn4", [5], [2,2,2,2,2,2,2], [[], [], [], [], [], [], []], 0],
+    # ["syn_DLE_1114444_e400_lrn4", [5], [1,1,1,4,4,4,4], [[], [], [], [], [], [], []], 0],
+    # ["syn_DLE_4444111_e400_lrn4", [5], [4,4,4,4,1,1,1], [[], [], [], [], [], [], []], 178],
+    # ["syn_DLE_4444444_e400_lrn4", [5], [4,4,4,4,4,4,4], [[], [], [], [], [], [], []], 0],
     ["syn_DLE_2222222_e400_lrn4", [5], [2,2,2,2,2,2,2], [[], [], [], [], [], [], []], 0],
-    ["syn_DLE_1114444_e400_lrn4", [5], [1,1,1,4,4,4,4], [[], [], [], [], [], [], []], 0],
-    ["syn_DLE_4444111_e400_lrn4", [5], [4,4,4,4,1,1,1], [[], [], [], [], [], [], []], 178],
-    ["syn_DLE_4444444_e400_lrn4", [5], [4,4,4,4,4,4,4], [[], [], [], [], [], [], []], 0],
+    ["syn_DLE_1114444_e400_lrn4", [5], [1,1,1,4,4,4,4], [[], [], [], [2, 3], [3, 0], [2, 3], [1, 3]], 0],
+    ["syn_DLE_4444111_e400_lrn4", [5], [4,4,4,4,1,1,1], [[1, 2], [1, 0], [3, 2], [3, 1], [], [], []], 0],
+    ["syn_DLE_4444444_e400_lrn4", [5], [4,4,4,4,4,4,4], [[0, 3], [0, 1], [1, 0], [3, 0], [1, 0], [0, 2], [0, 1]], 0],
 ]
 
 
@@ -47,7 +51,7 @@ test_dict["gpu_ids"] = gpu_list
 test_dict["eval_file_cnt"] = 0
 # test_dict["best_model_name"] = "model_best_193.pth"
 # test_dict["eval_sample"] = 100
-test_dict["eval_save_folder"] = "full_val"
+test_dict["eval_save_folder"] = "part_val"
 test_dict["special_cases"] = []
 test_dict["eval_start"] = eval_start
 
@@ -117,8 +121,8 @@ print("--->", target_model, " is loaded.")
 # ==================== data division ====================
 
 data_div = np.load(os.path.join(test_dict["save_folder"], "data_division.npy"), allow_pickle=True)[()]
-# X_list = data_div['test_list_X']
-X_list = data_div['val_list_X']
+X_list = data_div['test_list_X']
+# X_list = data_div['val_list_X']
 if test_dict["eval_file_cnt"] > 0:
     X_list = X_list[:test_dict["eval_file_cnt"]]
 X_list.sort()

@@ -167,7 +167,7 @@ optim = torch.optim.AdamW(
     betas = train_dict["opt_betas"],
     eps = train_dict["opt_eps"],
     weight_decay = train_dict["opt_weight_decay"],
-    amsgrad = train_dict["amsgrad"]
+    amsgrad = train_dict["amsgrad"],
     )
 
 # ==================== data division ====================
