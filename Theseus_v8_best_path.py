@@ -16,6 +16,7 @@ name = model_list[current_model_idx][0]
 gpu_list = model_list[current_model_idx][1]
 alt_block_num = model_list[current_model_idx][2]
 cnt_best_path = model_list[current_model_idx][3]
+start_file_idx = model_list[current_model_idx][4]
 
 test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
@@ -63,6 +64,7 @@ from utils import denorm_CT, cal_rmse_mae_ssim_psnr_acut_dice, cal_mae
 
 # for name in model_list:
 test_dict["eval_file_cnt"] = 0
+test_dict["start_file_idx"] = start_file_idx
 test_dict["cnt_best_path"] = cnt_best_path
 test_dict["path_ckpt"] = [1, 2, 4, 8, 16, 32, 64, 96]
 test_dict["eval_save_folder"] = "best_path"
@@ -108,6 +110,7 @@ X_list = data_div['test_list_X']
 if test_dict["eval_file_cnt"] > 0:
     X_list = X_list[:test_dict["eval_file_cnt"]]
 X_list.sort()
+X_list = X_list[test_dict["start_file_idx"]:]
 
 file_list = []
 if len(test_dict["special_cases"]) > 0:
