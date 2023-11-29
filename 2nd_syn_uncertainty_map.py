@@ -22,13 +22,16 @@ for project_name in project_list:
     std_files.sort()
     # print("std files: ", std_files)
 
-    # load all std files
+    # load all std files and round std into integer
+    # count the number of each std value from 0 to 3000 and accumulate
     std_list = []
+    std_count = np.zeros(3001)
     for std_file in std_files:
-        std = nib.load(std_file).get_fdata()
-        std_list.append(std)
-    std_list = np.array(std_list)
-    print("std_list shape: ", std_list.shape)
+        std_img = nib.load(std_file)
+        std_data = std_img.get_fdata()
+        std_data = np.round(std_data)
+        std_list.extend(std_data.flatten())
+        std_count += np.bincount(std_data.flatten().astype(int), minlength=3001)
 
     # calculate the mean, std, quantiles
     mean = np.mean(std_list)
