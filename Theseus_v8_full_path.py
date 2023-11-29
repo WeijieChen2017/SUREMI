@@ -52,7 +52,6 @@ alt_block_num = model_list[current_model_idx][2]
 
 # for name in model_list:
 test_dict = {}
-test_dict = {}
 test_dict["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
 test_dict["project_name"] = name
 test_dict["save_folder"] = "./project_dir/"+test_dict["project_name"]+"/"
