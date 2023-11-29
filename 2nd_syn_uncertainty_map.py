@@ -25,7 +25,7 @@ for project_name in project_list:
     # load all std files
     std_list = []
     for std_file in std_files:
-        std = nib.load(std_file).get_data()
+        std = nib.load(std_file).get_fdata()
         std_list.append(std)
     std_list = np.array(std_list)
     print("std_list shape: ", std_list.shape)
