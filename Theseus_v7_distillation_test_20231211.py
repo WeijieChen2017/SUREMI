@@ -116,6 +116,7 @@ if "curr" in model_list[-1]:
     print("Remove model_best_curr")
     model_list.pop()
 target_model = model_list[-1]
+print(target_model)
 # target_model = test_dict["save_folder"]+test_dict["best_model_name"]
 model = torch.load(target_model, map_location=torch.device('cpu'))
 print("--->", target_model, " is loaded.")
