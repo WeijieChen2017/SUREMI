@@ -45,7 +45,7 @@ for project_name in project_list:
     #     print("quantile: ", quantile_divide[i], "value: ", quantiles[i])
 
     # given the level of uncertainty, create a segmentation map for each interval like 0, 1, 2, 3, ...
-    uncertainty_level_HU = np.asanyarray([50, 100, 150])
+    uncertainty_level_HU = np.asanyarray([5, 55, 105])
     uncertainty_level = uncertainty_level_HU / 4024
 
     for idx in range(n_process_case):
