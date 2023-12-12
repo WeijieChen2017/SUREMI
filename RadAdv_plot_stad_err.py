@@ -10,7 +10,10 @@ model_list = [
     "syn_DLE_4444111_e400_lrn4",
     "syn_DLE_1114444_e400_lrn4",
     "syn_DLE_4444444_e400_lrn4",
+    "syn_DLE_2222222_e400_lrn4",
 ]
+
+folder_name = "part_val"
 
 for model_name in model_list:
 
@@ -24,24 +27,44 @@ for model_name in model_list:
 
     for cnt_file, file_path in enumerate(file_list):
         filename = os.path.basename(file_path)[:5]
-        grth_path = "./project_dir/Unet_Monai_Iman_v2/pred_monai/"+filename+"_yte.nii.gz"
-        pred_path = "./project_dir/"+test_dict["project_name"]+"/pred_monai/"+filename+"_xte.nii.gz"
-        stad_path = "./project_dir/"+test_dict["project_name"]+"/pred_monai/"+filename+"_xte_std.nii.gz"
+        grth_path = "./project_dir/Unet_Monai_Iman_v2/"+folder_name+"/"+filename+"_yte.nii.gz"
+        pred_path = "./project_dir/"+test_dict["project_name"]+"/"+folder_name+"/"+filename+"_xte.nii.gz"
+        stad_path = "./project_dir/"+test_dict["project_name"]+"/"+folder_name+"/"+filename+"_xte_std.nii.gz"
 
         print(" ===> Case[{:03d}/{:03d}]: ".format(cnt_file+1, cnt_total_file), pred_path, "<---")
 
         grth = nib.load(grth_path).get_fdata()
         pred = nib.load(pred_path).get_fdata()
-        stad = nib.load(stad_path).get_fdata()*4000
+        stad = nib.load(stad_path).get_fdata()
         eror = np.abs(pred-grth)*4000
 
-        eror_flatten = eror.flatten()
-        stad_flatten = stad.flatten()
+        
+        th_list = np.asarray([50, 100, 150]) / 4000
+        n_th = len(th_list)
+        mean_seg = np.zeros(n_th+1)
+        std_seg = np.zeros(n_th+1)
+        counts_seg = np.zeros((n_th+1, 3000))
+        seg_map = np.zeros_like(stad)
+        for i in range(len(th_list)):
+            seg_map[stad > th_list[i]] = i+1
 
-        N_stad, N_eror = 1000, 100
-        eror_bins = np.linspace(0, 1000, N_eror+1)
-        stad_bins = np.linspace(0, 100, N_stad+1)
+        for i in range(n_th+1):
+            mean_seg[i] = np.mean(eror[seg_map == i])
+            std_seg[i] = np.std(eror[seg_map == i])
 
-        heatmap, _, _ = np.histogram2d(eror_flatten, stad_flatten, bins=[eror_bins, stad_bins])
-        save_path = "./project_dir/"+test_dict["project_name"]+"/pred_monai/stat_std_eror_"+filename+".npy"
-        np.save(save_path, heatmap)
+            counts_seg[i, :], bin_edges = np.histogram(
+                eror[seg_map == i].flatten(),
+                bins=3000, 
+                range=(0, 3000)
+            )
+        
+        save_dict = {
+            "mean_seg": mean_seg,
+            "std_seg": std_seg,
+            "counts_seg": counts_seg,
+            "bin_edges": bin_edges,
+            "dim": stad.shape,
+        }
+
+        save_path = "./project_dir/"+test_dict["project_name"]+"/"+folder_name+"/std_HU_eror_"+filename+".npy"
+        np.save(save_path, save_dict)
