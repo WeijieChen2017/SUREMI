@@ -27,7 +27,7 @@ for model_name in model_list:
 
     for cnt_file, file_path in enumerate(file_list):
         filename = os.path.basename(file_path)[:5]
-        grth_path = "./project_dir/Unet_Monai_Iman_v2/"+folder_name+"/"+filename+"_yte.nii.gz"
+        grth_path = "./project_dir/Unet_Monai_Iman_v2/pred_monai/"+filename+"_yte.nii.gz"
         pred_path = "./project_dir/"+test_dict["project_name"]+"/"+folder_name+"/"+filename+"_xte.nii.gz"
         stad_path = "./project_dir/"+test_dict["project_name"]+"/"+folder_name+"/"+filename+"_xte_std.nii.gz"
 
