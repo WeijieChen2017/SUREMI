@@ -13,7 +13,7 @@ model_list = [
     "syn_DLE_2222222_e400_lrn4",
 ]
 
-folder_name = "part_val"
+folder_name = "full_val_xte"
 
 for model_name in model_list:
 
