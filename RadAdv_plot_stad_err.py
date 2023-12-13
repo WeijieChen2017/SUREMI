@@ -6,14 +6,14 @@ model_list = [
     # ["syn_DLE_4444111"],
     # ["syn_DLE_1114444"],
     # ["syn_DLE_4444444"],
-    "Theseus_v2_181_200_rdp1",
-    # "syn_DLE_4444111_e400_lrn4",
-    # "syn_DLE_1114444_e400_lrn4",
-    # "syn_DLE_4444444_e400_lrn4",
-    # "syn_DLE_2222222_e400_lrn4",
+    # "Theseus_v2_181_200_rdp1",
+    "syn_DLE_4444111_e400_lrn4",
+    "syn_DLE_1114444_e400_lrn4",
+    "syn_DLE_4444444_e400_lrn4",
+    "syn_DLE_2222222_e400_lrn4",
 ]
 
-folder_name = "pred_monai"
+folder_name = "full_val_xte"
 
 for model_name in model_list:
 
