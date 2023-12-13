@@ -3,20 +3,18 @@ import numpy as np
 import nibabel as nib
 
 model_list = [
-    # ["syn_DLE_4444111"],
-    # ["syn_DLE_1114444"],
-    # ["syn_DLE_4444444"],
-    ["Theseus_v2_181_200_rdp1", "pred_monai"],
-    ["syn_DLE_4444111_e400_lrn4", "full_val_xte"],
-    ["syn_DLE_1114444_e400_lrn4", "full_val_xte"],
-    ["syn_DLE_4444444_e400_lrn4", "full_val_xte"],
-    ["syn_DLE_2222222_e400_lrn4", "full_val_xte"],
 
-    # ["Theseus_v2_47_57_rdp100", "pred_monai"],
-    # ["syn_DLE_4444111_e400_lrn4", "part_val"],
-    # ["syn_DLE_1114444_e400_lrn4", "part_val"],
-    # ["syn_DLE_4444444_e400_lrn4", "part_val"],
-    # ["syn_DLE_2222222_e400_lrn4", "part_val"],
+    # ["Theseus_v2_181_200_rdp1", "pred_monai"],
+    # ["syn_DLE_4444111_e400_lrn4", "full_val_xte"],
+    # ["syn_DLE_1114444_e400_lrn4", "full_val_xte"],
+    # ["syn_DLE_4444444_e400_lrn4", "full_val_xte"],
+    # ["syn_DLE_2222222_e400_lrn4", "full_val_xte"],
+
+    ["Theseus_v2_47_57_rdp100", "pred_monai"],
+    ["syn_DLE_4444111_e400_lrn4", "part_val"],
+    ["syn_DLE_1114444_e400_lrn4", "part_val"],
+    ["syn_DLE_4444444_e400_lrn4", "part_val"],
+    ["syn_DLE_2222222_e400_lrn4", "part_val"],
 ]
 
 for model_pair in model_list:
