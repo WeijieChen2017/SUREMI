@@ -45,13 +45,12 @@ for model_pair in model_list:
         std_data = nib.load(stad_path).get_fdata()
         error_data = np.abs(z_data - y_data)
 
-        
         # for each standard deviation, count how many voxels are within that range and compute mean and std in that region
 
         n_bins = 100
         std_nums = np.histogram(std_data.flatten(), bins=n_bins, range=(0, 200/4000))[0]
         std_bins = np.linspace(0, 200/4000, n_bins+1)
-        print(std_bins)
+        # print(std_bins)
 
         std_means = np.zeros(n_bins+1)
         std_stds = np.zeros(n_bins+1)
@@ -62,8 +61,6 @@ for model_pair in model_list:
             std_means[i] = np.mean(target_data)
             std_stds[i] = np.std(target_data)
             std_ci[i] = 1.96 * std_stds[i] / np.sqrt(len(target_data))
-
-        print("Done")
         
         save_dict = {
             "std_nums": std_nums,
