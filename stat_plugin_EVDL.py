@@ -63,6 +63,7 @@ def process_data(file_list, model, device, config):
     - config: Dictionary containing configuration and parameters for processing.
     """
     for file_path in file_list:
+        print(f"Processing: {file_path}")
         x_path = file_path
         file_name = os.path.basename(file_path)
 
@@ -145,6 +146,7 @@ def main():
     config.update(train_dict)  # Update config with training dictionary parameters
 
     device = setup_environment(config)
+    print("Device:", device)
     model = load_model(config, device)
     
     # Data division
