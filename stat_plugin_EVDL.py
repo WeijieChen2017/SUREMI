@@ -30,8 +30,9 @@ default_config = {
     "eval_save_folder": "analysis",
     "save_tag": "_EVDL",
     "stride_division": 8,
-    "alt_blk_depth": [2, 2, 2, 2, 2, 2, 2],
-    "pad_size": 96,
+    "alt_blk_depth": [2, 2, 2, 2, 1, 1, 1],
+    # "alt_blk_depth": [2, 2, 2, 2, 2, 2, 2],
+    "pad_size": 32,
 
 }
 
@@ -101,6 +102,8 @@ def process_data(file_list, model, device, config):
 
             # Post-process and analyze results (this part will depend on your specific needs, like calculating statistics or specific transformations)
 
+            # save the output_array
+            np.save(os.path.join(config["save_folder"], config["eval_save_folder"], file_name.replace(".nii.gz", f"_output_array_{idx_es}.npy")), output_array[:, :, :, :])
             # Example: Save the median of the outputs
             output_median = np.median(output_array, axis=0)
             save_processed_data(output_median, x_file, file_name, config, tag="_median")
