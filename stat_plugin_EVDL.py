@@ -74,7 +74,8 @@ def process_data(file_list, model, device, config):
 
         # Prepare data
         ax, ay, az = x_data.shape
-        input_data = np.pad(x_data, ((config["pad_size"], config["pad_size"]), (config["pad_size"], config["pad_size"]), (config["pad_size"], config["pad_size"])), 'constant')
+        if config["pad_size"] > 0:
+            input_data = np.pad(x_data, ((config["pad_size"], config["pad_size"]), (config["pad_size"], config["pad_size"]), (config["pad_size"], config["pad_size"])), 'constant')
         input_data = np.expand_dims(input_data, (0, 1))
         input_data = torch.from_numpy(input_data).float().to(device)
 
@@ -98,7 +99,10 @@ def process_data(file_list, model, device, config):
                     device=device,
                     order=order_list[idx_es],
                 )
-                output_array[idx_es, :, :, :] = y_hat.cpu().detach().numpy()[:, :, config["pad_size"]:-config["pad_size"], config["pad_size"]:-config["pad_size"], config["pad_size"]:-config["pad_size"]]
+                if config["pad_size"] > 0:
+                    output_array[idx_es, :, :, :] = y_hat.cpu().detach().numpy()[:, :, config["pad_size"]:-config["pad_size"], config["pad_size"]:-config["pad_size"], config["pad_size"]:-config["pad_size"]]
+                else:
+                    output_array[idx_es, :, :, :] = y_hat.cpu().detach().numpy()[:, :, :, :, :]
 
         # Post-process and analyze results (this part will depend on your specific needs, like calculating statistics or specific transformations)
         print("Output array shape:", output_array.shape)
