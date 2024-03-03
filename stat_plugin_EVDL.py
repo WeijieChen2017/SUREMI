@@ -76,6 +76,8 @@ def process_data(file_list, model, device, config):
         ax, ay, az = x_data.shape
         if config["pad_size"] > 0:
             input_data = np.pad(x_data, ((config["pad_size"], config["pad_size"]), (config["pad_size"], config["pad_size"]), (config["pad_size"], config["pad_size"])), 'constant')
+        else:
+            input_data = x_data
         input_data = np.expand_dims(input_data, (0, 1))
         input_data = torch.from_numpy(input_data).float().to(device)
 
