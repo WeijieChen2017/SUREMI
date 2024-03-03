@@ -1,20 +1,12 @@
 # Imports
 import os
-import gc
-import copy
 import glob
 import time
-import random
 import numpy as np
 import nibabel as nib
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torchvision
-import requests
-from monai.networks.layers.factories import Act, Norm
+
 from monai.inferers import sliding_window_inference
-from scipy.stats import zscore
 from model import UNet_MDO as UNet
 from utils import iter_all_order
 
@@ -24,7 +16,6 @@ import nibabel as nib
 import torch
 from monai.inferers import sliding_window_inference
 from utils import iter_all_order
-import copy
 
 
 # Configuration dictionary
@@ -33,6 +24,7 @@ config = {
         "Theseus_v2_181_200_rdp1",
     ],
     "project_name": "Theseus_v2_181_200_rdp1",
+    "special_cases": [],
     "gpu_ids": [0],
     "eval_file_cnt": 0,
     "eval_save_folder": "analysis",
@@ -155,8 +147,22 @@ def main():
     device = setup_environment(config)
     model = load_model(config, device)
     
-    # Additional logic to process data
-    file_list = []  # Populate this list as per your logic
+    # Data division
+    data_div = np.load(os.path.join(config["save_folder"], "data_division.npy"), allow_pickle=True).item()
+    X_list = data_div['test_list_X']
+    if config["eval_file_cnt"] > 0:
+        X_list = X_list[:config["eval_file_cnt"]]
+    X_list.sort()
+
+    # Populate the file_list based on special cases or use all files
+    file_list = []
+    if len(config["special_cases"]) > 0:
+        for case_name in X_list:
+            for spc_case_name in config["special_cases"]:
+                if spc_case_name in os.path.basename(case_name):
+                    file_list.append(case_name)
+    else:
+        file_list = X_list
     process_data(file_list, model, device, config)
 
 if __name__ == "__main__":
