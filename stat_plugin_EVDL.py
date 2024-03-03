@@ -140,6 +140,8 @@ def process_data(file_list, model, device, config):
         save_processed_data(output_isLow, x_file, file_name, config, tag="_isLow_EVDL")
         save_processed_data(output_massHigh, x_file, file_name, config, tag="_massHigh_EVDL")
         save_processed_data(output_massLow, x_file, file_name, config, tag="_massLow_EVDL")
+        save_processed_data(output_std, x_file, file_name, config, tag="_std_EVDL")
+        save_processed_data(output_mean, x_file, file_name, config, tag="_mean_EVDL")
         print(f"Processed: {file_name}")
 
 def save_processed_data(data, x_file, file_name, config, tag):
