@@ -19,7 +19,7 @@ from utils import iter_all_order
 
 
 # Configuration dictionary
-config = {
+default_config = {
     "model_list": [
         "Theseus_v2_181_200_rdp1",
     ],
@@ -140,10 +140,12 @@ def save_processed_data(data, x_file, file_name, config, tag):
     print(f"Saved: {test_save_name}")
 
 def main():
+    train_dict = np.load(default_config["save_folder"]+"dict.npy", allow_pickle=True)[()]
+    config = {}
+    config.update(train_dict)  # Update config with training dictionary parameters
     config["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
     config["save_folder"] = "./project_dir/"+config["project_name"]+"/"
-    train_dict = np.load(config["save_folder"]+"dict.npy", allow_pickle=True)[()]
-    config.update(train_dict)  # Update config with training dictionary parameters
+    config.update(default_config)
 
     device = setup_environment(config)
     print("Device:", device)
