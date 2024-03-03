@@ -32,7 +32,7 @@ default_config = {
     "stride_division": 8,
     "alt_blk_depth": [2, 2, 2, 2, 1, 1, 1],
     # "alt_blk_depth": [2, 2, 2, 2, 2, 2, 2],
-    "pad_size": 32,
+    "pad_size": 0,
 
 }
 
