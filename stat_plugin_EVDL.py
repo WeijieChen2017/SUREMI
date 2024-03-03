@@ -103,7 +103,7 @@ def process_data(file_list, model, device, config):
         # Post-process and analyze results (this part will depend on your specific needs, like calculating statistics or specific transformations)
         print("Output array shape:", output_array.shape)
         # save the output_array
-        np.save(os.path.join(config["save_folder"], config["eval_save_folder"], file_name.replace(".nii.gz", f"_output_array.npy")), output_array[:, :, :, :])
+        # np.save(os.path.join(config["save_folder"], config["eval_save_folder"], file_name.replace(".nii.gz", f"_output_array.npy")), output_array[:, :, :, :])
         # Example: Save the median of the outputs
         output_median = np.median(output_array, axis=0)
         print("Output median shape:", output_median.shape)
@@ -130,6 +130,10 @@ def process_data(file_list, model, device, config):
         print("Output unc shape:", output_unc.shape)
         # save the uncertainty
         save_processed_data(output_unc, x_file, file_name, config, tag="_unc_EVDL")
+        save_processed_data(output_isHigh, x_file, file_name, config, tag="_isHigh_EVDL")
+        save_processed_data(output_isLow, x_file, file_name, config, tag="_isLow_EVDL")
+        save_processed_data(output_massHigh, x_file, file_name, config, tag="_massHigh_EVDL")
+        save_processed_data(output_massLow, x_file, file_name, config, tag="_massLow_EVDL")
         print(f"Processed: {file_name}")
 
 def save_processed_data(data, x_file, file_name, config, tag):
