@@ -140,11 +140,11 @@ def save_processed_data(data, x_file, file_name, config, tag):
     print(f"Saved: {test_save_name}")
 
 def main():
-    train_dict = np.load(default_config["save_folder"]+"dict.npy", allow_pickle=True)[()]
+    train_dict = np.load("./project_dir/"+default_config["project_name"]+"/"+"dict.npy", allow_pickle=True)[()]
     config = {}
     config.update(train_dict)  # Update config with training dictionary parameters
     config["time_stamp"] = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
-    config["save_folder"] = "./project_dir/"+config["project_name"]+"/"
+    config["save_folder"] = "./project_dir/"+default_config["project_name"]+"/"
     config.update(default_config)
 
     device = setup_environment(config)
