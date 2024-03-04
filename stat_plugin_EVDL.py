@@ -39,6 +39,13 @@ default_config = {
     "CT_prior_path": "./project_dir/Theseus_v2_181_200_rdp1/prior/prior_CT.npy",
 }
 
+# Function to calculate weighted mean and std for a segment of the histogram
+def calculate_statistics(counts, midpoints):
+    mean = np.sum(midpoints * counts) / np.sum(counts)
+    variance = np.sum(counts * (midpoints - mean) ** 2) / np.sum(counts)
+    std = np.sqrt(variance)
+    return mean, std
+
 def setup_environment(config):
     np.random.seed(config["seed"])
     gpu_list = ','.join(str(x) for x in config["gpu_ids"])
@@ -73,33 +80,32 @@ def process_data(file_list, model, device, config):
     eps_like_prior_x = np.ones_like(prior_x)*1e-10
     prior_x = prior_x + eps_like_prior_x
     prior_x = prior_x / np.sum(prior_x)
-    prior_x_class = CT_prior["prior_x_class"]   # 4000
-    prior_x_class = prior_x_class + eps_like_prior_x
-    prior_x_class = prior_x_class / np.sum(prior_x_class)
+
     prior_class = CT_prior["prior_class"] # 3*256*256*200
+    prior_x_class = CT_prior["prior_x_class"]   # 4000
     mesh_x = np.arange(-1000, 3000, 1)
-    
-    # Use Gaussian to sample P_x_class
-    prior_x_class_air_mean = np.mean(prior_x_class[:500] * mesh_x[:500])
-    prior_x_class_air_std = np.std(prior_x_class[:500] * mesh_x[:500])
-    prior_x_class_air = norm.pdf(mesh_x, prior_x_class_air_mean, prior_x_class_air_std)
-    prior_x_class_air = np.clip(prior_x_class_air, 0, 1)
-    prior_x_class_air = prior_x_class_air / np.sum(prior_x_class_air)
-    print("-> Air <- mean:", prior_x_class_air_mean, "std:", prior_x_class_air_std, "sum:", np.sum(prior_x_class_air))
+    # Calculate bin midpoints from mesh_x (bin edges)
+    bin_midpoints = (mesh_x[:-1] + mesh_x[1:]) / 2
 
-    prior_x_class_soft_mean = np.mean(prior_x_class[500:1250]*mesh_x[500:1250])
-    prior_x_class_soft_std = np.std(prior_x_class[500:1250]*mesh_x[500:1250])
-    prior_x_class_soft = norm.pdf(mesh_x, prior_x_class_soft_mean, prior_x_class_soft_std)
-    prior_x_class_soft = np.clip(prior_x_class_soft, 0, 1)
-    prior_x_class_soft = prior_x_class_soft / np.sum(prior_x_class_soft)
-    print("-> Soft <- mean:", prior_x_class_soft_mean, "std:", prior_x_class_soft_std, "sum:", np.sum(prior_x_class_soft))
+    # Calculate mean and std for different segments
+    air_mean, air_std = calculate_statistics(prior_x_class[:500], bin_midpoints[:500])
+    soft_mean, soft_std = calculate_statistics(prior_x_class[500:1250], bin_midpoints[500:1250])
+    bone_mean, bone_std = calculate_statistics(prior_x_class[1250:], bin_midpoints[1250:])
 
-    prior_x_class_bone_mean = np.mean(prior_x_class[1250:] * mesh_x[1250:])
-    prior_x_class_bone_std = np.std(prior_x_class[1250:] * mesh_x[1250:])
-    prior_x_class_bone = norm.pdf(mesh_x, prior_x_class_bone_mean, prior_x_class_bone_std)
-    prior_x_class_bone = np.clip(prior_x_class_bone, 0, 1)
-    prior_x_class_bone = prior_x_class_bone / np.sum(prior_x_class_bone)
-    print("-> Bone <- mean:", prior_x_class_bone_mean, "std:", prior_x_class_bone_std, "sum:", np.sum(prior_x_class_bone))
+    # Use Gaussian to sample P_x_class for each segment
+    prior_x_class_air = norm.pdf(mesh_x, air_mean, air_std)
+    prior_x_class_soft = norm.pdf(mesh_x, soft_mean, soft_std)
+    prior_x_class_bone = norm.pdf(mesh_x, bone_mean, bone_std)
+
+    # Normalize each PDF to sum to 1
+    prior_x_class_air /= np.sum(prior_x_class_air)
+    prior_x_class_soft /= np.sum(prior_x_class_soft)
+    prior_x_class_bone /= np.sum(prior_x_class_bone)
+
+    # Print results
+    print("-> Air <- mean:", air_mean, "std:", air_std, "sum:", np.sum(prior_x_class_air))
+    print("-> Soft <- mean:", soft_mean, "std:", soft_std, "sum:", np.sum(prior_x_class_soft))
+    print("-> Bone <- mean:", bone_mean, "std:", bone_std, "sum:", np.sum(prior_x_class_bone))
 
     n_file = len(file_list)
 
