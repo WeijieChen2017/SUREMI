@@ -75,6 +75,24 @@ def process_data(file_list, model, device, config):
     prior_x_class = prior_x_class / np.sum(prior_x_class)
     prior_class = CT_prior["prior_class"] # 3*256*256*200
     
+    # Use Gaussian to sample P_x_class
+    P_x_class_air_mean = np.mean(prior_x_class[:500])
+    P_x_class_air_std = np.std(prior_x_class[:500])
+    P_x_class_air = np.random.normal(P_x_class_air_mean, P_x_class_air_std, 4000)
+    P_x_class_air = np.clip(P_x_class_air, 0, 1)
+    P_x_class_air = P_x_class_air / np.sum(P_x_class_air)
+
+    P_x_class_soft_mean = np.mean(prior_x_class[500:1250])
+    P_x_class_soft_std = np.std(prior_x_class[500:1250])
+    P_x_class_soft = np.random.normal(P_x_class_soft_mean, P_x_class_soft_std, 4000)
+    P_x_class_soft = np.clip(P_x_class_soft, 0, 1)
+    P_x_class_soft = P_x_class_soft / np.sum(P_x_class_soft)
+
+    P_x_class_bone_mean = np.mean(prior_x_class[1250:])
+    P_x_class_bone_std = np.std(prior_x_class[1250:])
+    P_x_class_bone = np.random.normal(P_x_class_bone_mean, P_x_class_bone_std, 4000)
+    P_x_class_bone = np.clip(P_x_class_bone, 0, 1)
+    P_x_class_bone = P_x_class_bone / np.sum(P_x_class_bone)
 
     n_file = len(file_list)
 
@@ -134,10 +152,11 @@ def process_data(file_list, model, device, config):
         output_median_int = (output_median).astype(int)
         output_median_int = np.clip(output_median_int, -1000, 3000)
         # P_x_class
-        P_x_class = prior_x_class[output_median_int]
+        P_x_class = prior_x_class[output_median_int + 1000]
+        
         save_processed_data(P_x_class, x_file, file_name, config, tag="_P_x_class_Bayesian")
         # P_x
-        P_x = prior_x[output_median_int]
+        P_x = prior_x[output_median_int + 1000]
         save_processed_data(P_x, x_file, file_name, config, tag="_P_x_Bayesian")
 
         # -1000, air, -500, soft tissue, 250, bone, 3000, normalized by 4000, shifted by 1000
