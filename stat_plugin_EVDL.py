@@ -147,9 +147,6 @@ def process_data(file_list, model, device, config):
     plt.savefig(config["save_folder"]+"/prior.png")
     plt.close()
 
-
-
-
     for idx, file_path in enumerate(file_list):
         print(f"[{idx+1}]/[{n_file}]: Processing: {file_path}")
         x_path = file_path
@@ -262,9 +259,9 @@ def process_data(file_list, model, device, config):
         save_processed_data(P_class_x_sum, x_file, file_name, config, tag="_P_class_x_sum_norm_Bayesian")
 
         # coef = sqrt(1-posterior)
-        coef_air = np.sqrt(2 - P_class_x_air)
-        coef_soft = np.sqrt(2 - P_class_x_soft)
-        coef_bone = np.sqrt(2 - P_class_x_bone)
+        coef_air = np.sqrt(1 - P_class_x_air)
+        coef_soft = np.sqrt(1 - P_class_x_soft)
+        coef_bone = np.sqrt(1 - P_class_x_bone)
         coef = coef_air * mask_air + coef_soft * mask_soft + coef_bone * mask_bone
         save_processed_data(coef, x_file, file_name, config, tag="_coef_Bayesian")
 
