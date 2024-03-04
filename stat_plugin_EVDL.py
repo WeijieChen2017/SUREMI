@@ -33,7 +33,7 @@ default_config = {
     "alt_blk_depth": [2, 2, 2, 2, 2, 2, 2],
     # "alt_blk_depth": [2, 2, 2, 2, 2, 2, 2],
     "pad_size": 0,
-
+    "CT_prior_path": "./project_dir/Theseus_v2_181_200_rdp1/CT_prior.npy",
 }
 
 def setup_environment(config):
@@ -64,6 +64,7 @@ def process_data(file_list, model, device, config):
     - config: Dictionary containing configuration and parameters for processing.
     """
     n_file = len(file_list)
+
     for idx, file_path in enumerate(file_list):
         print(f"[{idx+1}]/[{n_file}]: Processing: {file_path}")
         x_path = file_path
@@ -110,45 +111,51 @@ def process_data(file_list, model, device, config):
         # Post-process and analyze results (this part will depend on your specific needs, like calculating statistics or specific transformations)
 
         # evidence learning
-        print("------>Evidential learning:")
-        output_median = np.median(output_array, axis=0)
-        # Now given the output_data, we perform the evidential learning to determine the uncertainty of the model
-        output_mean = np.mean(output_array, axis=0)
-        output_std = np.std(output_array, axis=0)
-        output_th = output_mean + output_std # this is the threshold for the model to ne high or low range
-        output_isHigh = output_median > output_th
-        output_isLow = 1 - output_isHigh
-        # in each pixel, count how many events are high and low
-        output_massHigh = output_array > output_th.reshape((1, output_th.shape[0], output_th.shape[1], output_th.shape[2]))
-        output_massHigh = np.sum(output_massHigh, axis=0) / order_list_cnt
-        output_massLow = 1 - output_massHigh
-        # for each pixel, if it is high, unc = std * sqrt(massHigh), if it is low, unc = std * sqrt(massLow)
-        output_unc = output_std * np.sqrt(output_massHigh) * output_isHigh + output_std * np.sqrt(output_massLow) * output_isLow
-        # save the uncertainty
-        save_processed_data(output_median, x_file, file_name, config, tag="_median")
-        save_processed_data(output_unc, x_file, file_name, config, tag="_unc_EVDL")
-        # save_processed_data(output_isHigh, x_file, file_name, config, tag="_isHigh_EVDL")
-        # save_processed_data(output_isLow, x_file, file_name, config, tag="_isLow_EVDL")
-        # save_processed_data(output_massHigh, x_file, file_name, config, tag="_massHigh_EVDL")
-        # save_processed_data(output_massLow, x_file, file_name, config, tag="_massLow_EVDL")
-        save_processed_data(output_std, x_file, file_name, config, tag="_std_EVDL")
-        save_processed_data(output_mean, x_file, file_name, config, tag="_mean_EVDL")
+        plugin_EVDL(output_array, x_file, file_name, config, order_list_cnt)
 
         # Bayesian learning
-        # print("------>Bayesian learning:")
-        # # -1000, air, -500, soft tissue, 250, bone, 3000, normalized by 4000, shifted by 1000
-        # bone_mask = output_median > (250+1000)/4000
-        # air_mask = output_median < (-500+1000)/4000
-        # soft_tissue_mask = 1 - bone_mask - air_mask
-        # # compute the mean and std for each tissue
-        # bone_mean = np.mean(output_median[bone_mask])
-        # bone_std = np.std(output_median[bone_mask])
-        # air_mean = np.mean(output_median[air_mask])
-        # air_std = np.std(output_median[air_mask])
-        # soft_tissue_mean = np.mean(output_median[soft_tissue_mask])
-        # soft_tissue_std = np.std(output_median[soft_tissue_mask])
+        print("------>Bayesian learning:")
+        output_median = np.median(output_array, axis=0)
+        output_median = output_median * 4000 - 1000
+
+        # -1000, air, -500, soft tissue, 250, bone, 3000, normalized by 4000, shifted by 1000
+        bone_mask = output_median > (250+1000)/4000
+        air_mask = output_median < (-500+1000)/4000
+        soft_tissue_mask = 1 - bone_mask - air_mask
+        # compute the mean and std for each tissue
+        bone_mean = np.mean(output_median[bone_mask])
+        bone_std = np.std(output_median[bone_mask])
+        air_mean = np.mean(output_median[air_mask])
+        air_std = np.std(output_median[air_mask])
+        soft_tissue_mean = np.mean(output_median[soft_tissue_mask])
+        soft_tissue_std = np.std(output_median[soft_tissue_mask])
 
         print(f"[{idx+1}]/[{n_file}]: Processed: {file_name}")
+
+def plugin_EVDL(output_array, x_file, file_name, config, order_list_cnt):
+    print("------>Evidential learning:")
+    output_median = np.median(output_array, axis=0)
+    # Now given the output_data, we perform the evidential learning to determine the uncertainty of the model
+    output_mean = np.mean(output_array, axis=0)
+    output_std = np.std(output_array, axis=0)
+    output_th = output_mean + output_std # this is the threshold for the model to ne high or low range
+    output_isHigh = output_median > output_th
+    output_isLow = 1 - output_isHigh
+    # in each pixel, count how many events are high and low
+    output_massHigh = output_array > output_th.reshape((1, output_th.shape[0], output_th.shape[1], output_th.shape[2]))
+    output_massHigh = np.sum(output_massHigh, axis=0) / order_list_cnt
+    output_massLow = 1 - output_massHigh
+    # for each pixel, if it is high, unc = std * sqrt(massHigh), if it is low, unc = std * sqrt(massLow)
+    output_unc = output_std * np.sqrt(output_massHigh) * output_isHigh + output_std * np.sqrt(output_massLow) * output_isLow
+    # save the uncertainty
+    save_processed_data(output_median, x_file, file_name, config, tag="_median")
+    save_processed_data(output_unc, x_file, file_name, config, tag="_unc_EVDL")
+    # save_processed_data(output_isHigh, x_file, file_name, config, tag="_isHigh_EVDL")
+    # save_processed_data(output_isLow, x_file, file_name, config, tag="_isLow_EVDL")
+    # save_processed_data(output_massHigh, x_file, file_name, config, tag="_massHigh_EVDL")
+    # save_processed_data(output_massLow, x_file, file_name, config, tag="_massLow_EVDL")
+    save_processed_data(output_std, x_file, file_name, config, tag="_std_EVDL")
+    save_processed_data(output_mean, x_file, file_name, config, tag="_mean_EVDL")
 
 def save_processed_data(data, x_file, file_name, config, tag):
     """

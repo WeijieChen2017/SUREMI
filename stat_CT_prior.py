@@ -39,10 +39,11 @@ def process_data(file_list, config):
     # P_x
     prior_x = np.zeros(4000)
 
-    # P_x_class
-    prior_x_class_air = np.zeros(4000)
-    prior_x_class_soft = np.zeros(4000)
-    prior_x_class_bone = np.zeros(4000)
+    # P_x_class, prob is strictly related to x, so we don't need to do it respectively
+    prior_x_class = np.zeros(4000)
+    # prior_x_class_air = np.zeros(4000)
+    # prior_x_class_soft = np.zeros(4000)
+    # prior_x_class_bone = np.zeros(4000)
 
     for idx, file_path in enumerate(file_list):
 
@@ -62,24 +63,32 @@ def process_data(file_list, config):
         prior_x += hist
         # prior_x += np.bincount((ct_data_flatten*4000).astype(int), minlength=4000)
         
+        # P_x_class, by normalizng three ranges
+        # normalize from -1000 to -500, with index from 0 to 499
+        prior_x_class[0:500]  =  prior_x_class[0:500] + hist[0:500] / np.sum(hist[0:500])
+        # normalize from -500 to 250, with index from 500 to 1250
+        prior_x_class[500:1250]  =  prior_x_class[500:1250] + hist[500:1250] / np.sum(hist[500:1250])
+        # normalize from 250 to 3000, with index from 1250 to 4000
+        prior_x_class[1250:4000]  =  prior_x_class[1250:4000] + hist[1250:4000] / np.sum(hist[1250:4000])
+
         # segmentation
         mask_air = shifted_ct < -500
         mask_bone = shifted_ct > 250
         mask_soft = np.logical_and(shifted_ct >= -500, shifted_ct <= 250)
 
         # P_x_class
-        mask_air_flatten = mask_air.flatten()
-        mask_soft_flatten = mask_soft.flatten()
-        mask_bone_flatten = mask_bone.flatten()
-        hist_air, _ = np.histogram(shifted_flat[mask_air_flatten], bins=4000)
-        hist_soft, _ = np.histogram(shifted_flat[mask_soft_flatten], bins=4000)
-        hist_bone, _ = np.histogram(shifted_flat[mask_bone_flatten], bins=4000)
-        hist_air = hist_air / np.sum(mask_air)
-        hist_soft = hist_soft / np.sum(mask_soft)
-        hist_bone = hist_bone / np.sum(mask_bone)
-        prior_x_class_air += hist_air
-        prior_x_class_soft += hist_soft
-        prior_x_class_bone += hist_bone
+        # mask_air_flatten = mask_air.flatten()
+        # mask_soft_flatten = mask_soft.flatten()
+        # mask_bone_flatten = mask_bone.flatten()
+        # hist_air, _ = np.histogram(shifted_flat[mask_air_flatten], bins=4000)
+        # hist_soft, _ = np.histogram(shifted_flat[mask_soft_flatten], bins=4000)
+        # hist_bone, _ = np.histogram(shifted_flat[mask_bone_flatten], bins=4000)
+        # hist_air = hist_air / np.sum(mask_air)
+        # hist_soft = hist_soft / np.sum(mask_soft)
+        # hist_bone = hist_bone / np.sum(mask_bone)
+        # prior_x_class_air += hist_air
+        # prior_x_class_soft += hist_soft
+        # prior_x_class_bone += hist_bone
 
         # Pad the data
         pad_size = 200 - ct_data.shape[2]
@@ -102,15 +111,15 @@ def process_data(file_list, config):
     prior_class_bone /= n_file
 
     prior_x /= n_file # take each case as one distribution
-
-    prior_x_class_air /= n_file
-    prior_x_class_soft /= n_file
-    prior_x_class_bone /= n_file
+    prior_x_class /= n_file
 
     # check whether the prior is sum to 1
     print("P_class:", np.sum(prior_class_air), np.sum(prior_class_soft), np.sum(prior_class_bone))
+    print("P_class shape:", prior_class_air.shape, prior_class_soft.shape, prior_class_bone.shape)
     print("P_x:", np.sum(prior_x))
-    print("P_x_class:", np.sum(prior_x_class_air), np.sum(prior_x_class_soft), np.sum(prior_x_class_bone))
+    print("P_x shape:", prior_x.shape)
+    print("P_x_class:", np.sum(prior_x_class))
+    print("P_x_class shape:", prior_x_class.shape)
 
     # save the prior
 
@@ -123,11 +132,7 @@ def process_data(file_list, config):
             "bone": prior_class_bone
         },
         "prior_x": prior_x,
-        "prior_x_class":{
-            "air": prior_x_class_air,
-            "soft": prior_x_class_soft,
-            "bone": prior_x_class_bone
-        },
+        "prior_x_class": prior_x_class,
         "n_file": n_file,
     }
     np.save(save_folder+save_name, prior_CT)
