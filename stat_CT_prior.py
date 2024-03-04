@@ -54,7 +54,9 @@ def process_data(file_list, config):
         if pad_size < 0:
             print("The z dimension of the data is larger than 256.")
             continue
+        print("--> The shape is padded from", ct_data.shape, "to", (ct_data.shape[0], ct_data.shape[1], 256))
         ct_data = np.pad(ct_data, ((0, 0), (0, 0), (pad_size//2, pad_size-pad_size//2)))
+        
 
         # segmentation
         shifted_ct = ct_data + 1000
