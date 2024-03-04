@@ -76,9 +76,10 @@ def process_data(file_list, config):
         hist_soft, _ = np.histogram(shifted_flat[mask_soft_flatten], bins=4000)
         hist_bone, _ = np.histogram(shifted_flat[mask_bone_flatten], bins=4000)
         print(hist_air.shape, hist_soft.shape, hist_bone.shape)
-        hist_air /= np.sum(mask_air).astype(float)
-        hist_soft /= np.sum(mask_soft).astype(float)
-        hist_bone /= np.sum(mask_bone).astype(float)
+        print(np.sum(mask_air).shape, np.sum(mask_soft).shape, np.sum(mask_bone).shape)
+        hist_air = hist_air / np.sum(mask_air)
+        hist_soft = hist_soft / np.sum(mask_soft)
+        hist_bone = hist_bone / np.sum(mask_bone)
         prior_x_class_air += hist_air
         prior_x_class_soft += hist_soft
         prior_x_class_bone += hist_bone
