@@ -63,8 +63,9 @@ def process_data(file_list, model, device, config):
     - device: The device (CPU or GPU) to run the inference on.
     - config: Dictionary containing configuration and parameters for processing.
     """
-    for file_path in file_list:
-        print(f"Processing: {file_path}")
+    n_file = len(file_list)
+    for idx, file_path in enumerate(file_list):
+        print(f"[{idx+1}]/[{n_file}]: Processing: {file_path}")
         x_path = file_path
         file_name = os.path.basename(file_path)
 
@@ -107,34 +108,24 @@ def process_data(file_list, model, device, config):
                     output_array[idx_es, :, :, :] = y_hat.cpu().detach().numpy()[:, :, :, :, :]
 
         # Post-process and analyze results (this part will depend on your specific needs, like calculating statistics or specific transformations)
-        print("Output array shape:", output_array.shape)
-        # save the output_array
-        # np.save(os.path.join(config["save_folder"], config["eval_save_folder"], file_name.replace(".nii.gz", f"_output_array.npy")), output_array[:, :, :, :])
-        # Example: Save the median of the outputs
+
+        # evidence learning
+        print("------>Evidential learning:")
         output_median = np.median(output_array, axis=0)
-        print("Output median shape:", output_median.shape)
-        save_processed_data(output_median, x_file, file_name, config, tag="_median")
         # Now given the output_data, we perform the evidential learning to determine the uncertainty of the model
         output_mean = np.mean(output_array, axis=0)
-        print("Output mean shape:", output_mean.shape)
         output_std = np.std(output_array, axis=0)
-        print("Output std shape:", output_std.shape)
         output_th = output_mean + output_std # this is the threshold for the model to ne high or low range
-        print("Output th shape:", output_th.shape)
         output_isHigh = output_median > output_th
-        print("Output isHigh shape:", output_isHigh.shape)
         output_isLow = 1 - output_isHigh
-        print("Output isLow shape:", output_isLow.shape)
         # in each pixel, count how many events are high and low
         output_massHigh = output_array > output_th.reshape((1, output_th.shape[0], output_th.shape[1], output_th.shape[2]))
         output_massHigh = np.sum(output_massHigh, axis=0) / order_list_cnt
-        print("Output massHigh shape:", output_massHigh.shape)
         output_massLow = 1 - output_massHigh
-        print("Output massLow shape:", output_massLow.shape)
         # for each pixel, if it is high, unc = std * sqrt(massHigh), if it is low, unc = std * sqrt(massLow)
         output_unc = output_std * np.sqrt(output_massHigh) * output_isHigh + output_std * np.sqrt(output_massLow) * output_isLow
-        print("Output unc shape:", output_unc.shape)
         # save the uncertainty
+        save_processed_data(output_median, x_file, file_name, config, tag="_median")
         save_processed_data(output_unc, x_file, file_name, config, tag="_unc_EVDL")
         save_processed_data(output_isHigh, x_file, file_name, config, tag="_isHigh_EVDL")
         save_processed_data(output_isLow, x_file, file_name, config, tag="_isLow_EVDL")
@@ -142,7 +133,22 @@ def process_data(file_list, model, device, config):
         save_processed_data(output_massLow, x_file, file_name, config, tag="_massLow_EVDL")
         save_processed_data(output_std, x_file, file_name, config, tag="_std_EVDL")
         save_processed_data(output_mean, x_file, file_name, config, tag="_mean_EVDL")
-        print(f"Processed: {file_name}")
+
+        # Bayesian learning
+        # print("------>Bayesian learning:")
+        # # -1000, air, -500, soft tissue, 250, bone, 3000, normalized by 4000, shifted by 1000
+        # bone_mask = output_median > (250+1000)/4000
+        # air_mask = output_median < (-500+1000)/4000
+        # soft_tissue_mask = 1 - bone_mask - air_mask
+        # # compute the mean and std for each tissue
+        # bone_mean = np.mean(output_median[bone_mask])
+        # bone_std = np.std(output_median[bone_mask])
+        # air_mean = np.mean(output_median[air_mask])
+        # air_std = np.std(output_median[air_mask])
+        # soft_tissue_mean = np.mean(output_median[soft_tissue_mask])
+        # soft_tissue_std = np.std(output_median[soft_tissue_mask])
+
+        print(f"[{idx+1}]/[{n_file}]: Processed: {file_name}")
 
 def save_processed_data(data, x_file, file_name, config, tag):
     """
