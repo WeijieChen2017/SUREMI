@@ -1,22 +1,8 @@
 # Imports
 import os
-import glob
 import time
 import numpy as np
 import nibabel as nib
-import torch
-
-from monai.inferers import sliding_window_inference
-from model import UNet_MDO as UNet
-from utils import iter_all_order
-
-import os
-import numpy as np
-import nibabel as nib
-import torch
-from monai.inferers import sliding_window_inference
-from utils import iter_all_order
-
 
 # Configuration dictionary
 config = {
@@ -85,12 +71,14 @@ def process_data(file_list, config):
         mask_air_flatten = mask_air.flatten()
         mask_soft_flatten = mask_soft.flatten()
         mask_bone_flatten = mask_bone.flatten()
+        print(mask_air_flatten.shape, mask_soft_flatten.shape, mask_bone_flatten.shape)
         hist_air, _ = np.histogram(shifted_flat[mask_air_flatten], bins=4000)
         hist_soft, _ = np.histogram(shifted_flat[mask_soft_flatten], bins=4000)
         hist_bone, _ = np.histogram(shifted_flat[mask_bone_flatten], bins=4000)
-        hist_air /= np.sum(mask_air)
-        hist_soft /= np.sum(mask_soft)
-        hist_bone /= np.sum(mask_bone)
+        print(hist_air.shape, hist_soft.shape, hist_bone.shape)
+        hist_air /= np.sum(mask_air).astype(float)
+        hist_soft /= np.sum(mask_soft).astype(float)
+        hist_bone /= np.sum(mask_bone).astype(float)
         prior_x_class_air += hist_air
         prior_x_class_soft += hist_soft
         prior_x_class_bone += hist_bone
