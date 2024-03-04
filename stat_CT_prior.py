@@ -65,9 +65,9 @@ def process_data(file_list, config):
         mask_soft = 1 - mask_air - mask_bone
 
         # count the segmentation
-        cnt_air += int(mask_air)
-        cnt_soft += int(mask_soft)
-        cnt_bone += int(mask_bone)
+        cnt_air += mask_air
+        cnt_soft += mask_soft
+        cnt_bone += mask_bone
 
     # save the results
     save_folder = config["prior_folder"]
