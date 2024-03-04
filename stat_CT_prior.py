@@ -64,17 +64,28 @@ def process_data(file_list, config):
         # prior_x += np.bincount((ct_data_flatten*4000).astype(int), minlength=4000)
         
         # P_x_class, by normalizng three ranges
-        # normalize from -1000 to -500, with index from 0 to 499
-        prior_x_class[0:500]  =  prior_x_class[0:500] + hist[0:500] / np.sum(hist[0:500])
-        # normalize from -500 to 250, with index from 500 to 1250
-        prior_x_class[500:1250]  =  prior_x_class[500:1250] + hist[500:1250] / np.sum(hist[500:1250])
-        # normalize from 250 to 3000, with index from 1250 to 4000
-        prior_x_class[1250:4000]  =  prior_x_class[1250:4000] + hist[1250:4000] / np.sum(hist[1250:4000])
+        # # normalize from -1000 to -500, with index from 0 to 499
+        # prior_x_class[0:500]  =  prior_x_class[0:500] + hist[0:500] / np.sum(hist[0:500])
+        # # normalize from -500 to 250, with index from 500 to 1250
+        # prior_x_class[500:1250]  =  prior_x_class[500:1250] + hist[500:1250] / np.sum(hist[500:1250])
+        # # normalize from 250 to 3000, with index from 1250 to 4000
+        # prior_x_class[1250:4000]  =  prior_x_class[1250:4000] + hist[1250:4000] / np.sum(hist[1250:4000])
+
+        # normalize from -1000 to -300, with index from 0 to 700
+        prior_x_class[0:700]  =  prior_x_class[0:700] + hist[0:700] / np.sum(hist[0:700])
+        # normalize from -300 to 500, with index from 700 to 1500
+        prior_x_class[700:1500]  =  prior_x_class[700:1500] + hist[700:1500] / np.sum(hist[700:1500])
+        # normalize from 500 to 3000, with index from 1500 to 4000
+        prior_x_class[1500:4000]  =  prior_x_class[1500:4000] + hist[1500:4000] / np.sum(hist[1500:4000])
 
         # segmentation
-        mask_air = shifted_ct < -500
-        mask_bone = shifted_ct > 250
-        mask_soft = np.logical_and(shifted_ct >= -500, shifted_ct <= 250)
+        # mask_air = shifted_ct < -500
+        # mask_bone = shifted_ct > 250
+        # mask_soft = np.logical_and(shifted_ct >= -500, shifted_ct <= 250)
+
+        mask_air = shifted_ct < -300
+        mask_bone = shifted_ct > 500
+        mask_soft = np.logical_and(shifted_ct >= -300, shifted_ct <= 500)
 
         # P_x_class
         # mask_air_flatten = mask_air.flatten()
@@ -129,7 +140,8 @@ def process_data(file_list, config):
     # save the prior
 
     save_folder = config["prior_folder"]
-    save_name = "prior_CT.npy"
+    # save_name = "prior_CT.npy"
+    save_name = "prior_CT_n300p500.npy"
     prior_CT = {
         "prior_class":{
             "air": prior_class_air,
