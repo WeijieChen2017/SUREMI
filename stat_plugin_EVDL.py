@@ -156,6 +156,9 @@ def process_data(file_list, model, device, config):
         P_class_x_soft = P_x_class * mask_soft * P_class_soft / P_x
         P_class_x_bone = P_x_class * mask_bone * P_class_bone / P_x
         P_class_x_sum = P_class_x_air + P_class_x_soft + P_class_x_bone
+        P_class_x_air = P_class_x_air / P_class_sum
+        P_class_x_soft = P_class_x_soft / P_class_sum
+        P_class_x_bone = P_class_x_bone / P_class_sum
         save_processed_data(P_class_x_air, x_file, file_name, config, tag="_P_class_x_air_Bayesian")
         save_processed_data(P_class_x_soft, x_file, file_name, config, tag="_P_class_x_soft_Bayesian")
         save_processed_data(P_class_x_bone, x_file, file_name, config, tag="_P_class_x_bone_Bayesian")
