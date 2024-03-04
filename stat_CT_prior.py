@@ -71,12 +71,9 @@ def process_data(file_list, config):
         mask_air_flatten = mask_air.flatten()
         mask_soft_flatten = mask_soft.flatten()
         mask_bone_flatten = mask_bone.flatten()
-        print(mask_air_flatten.shape, mask_soft_flatten.shape, mask_bone_flatten.shape)
         hist_air, _ = np.histogram(shifted_flat[mask_air_flatten], bins=4000)
         hist_soft, _ = np.histogram(shifted_flat[mask_soft_flatten], bins=4000)
         hist_bone, _ = np.histogram(shifted_flat[mask_bone_flatten], bins=4000)
-        print(hist_air.shape, hist_soft.shape, hist_bone.shape)
-        print(np.sum(mask_air), np.sum(mask_soft), np.sum(mask_bone))
         hist_air = hist_air / np.sum(mask_air)
         hist_soft = hist_soft / np.sum(mask_soft)
         hist_bone = hist_bone / np.sum(mask_bone)
@@ -109,6 +106,11 @@ def process_data(file_list, config):
     prior_x_class_air /= n_file
     prior_x_class_soft /= n_file
     prior_x_class_bone /= n_file
+
+    # check whether the prior is sum to 1
+    print("P_class:", np.sum(prior_class_air), np.sum(prior_class_soft), np.sum(prior_class_bone))
+    print("P_x:", np.sum(prior_x))
+    print("P_x_class:", np.sum(prior_x_class_air), np.sum(prior_x_class_soft), np.sum(prior_x_class_bone))
 
     # save the prior
 
