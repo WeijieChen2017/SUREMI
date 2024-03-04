@@ -18,6 +18,7 @@ from monai.inferers import sliding_window_inference
 from utils import iter_all_order
 
 from matplotlib import pyplot as plt
+from scipy.stats import norm
 
 
 # Configuration dictionary
@@ -76,23 +77,24 @@ def process_data(file_list, model, device, config):
     prior_x_class = prior_x_class + eps_like_prior_x
     prior_x_class = prior_x_class / np.sum(prior_x_class)
     prior_class = CT_prior["prior_class"] # 3*256*256*200
+    mesh_x = np.arange(-1000, 3000, 1)
     
     # Use Gaussian to sample P_x_class
     prior_x_class_air_mean = np.mean(prior_x_class[:500])
     prior_x_class_air_std = np.std(prior_x_class[:500])
-    prior_x_class_air = np.random.normal(prior_x_class_air_mean, prior_x_class_air_std, 4000)
+    prior_x_class_air = norm.pdf(mesh_x, prior_x_class_air_mean, prior_x_class_air_std)
     prior_x_class_air = np.clip(prior_x_class_air, 0, 1)
     prior_x_class_air = prior_x_class_air / np.sum(prior_x_class_air)
 
     prior_x_class_soft_mean = np.mean(prior_x_class[500:1250])
     prior_x_class_soft_std = np.std(prior_x_class[500:1250])
-    prior_x_class_soft = np.random.normal(prior_x_class_soft_mean, prior_x_class_soft_std, 4000)
+    prior_x_class_soft = norm.pdf(mesh_x, prior_x_class_soft_mean, prior_x_class_soft_std)
     prior_x_class_soft = np.clip(prior_x_class_soft, 0, 1)
     prior_x_class_soft = prior_x_class_soft / np.sum(prior_x_class_soft)
 
     prior_x_class_bone_mean = np.mean(prior_x_class[1250:])
     prior_x_class_bone_std = np.std(prior_x_class[1250:])
-    prior_x_class_bone = np.random.normal(prior_x_class_bone_mean, prior_x_class_bone_std, 4000)
+    prior_x_class_bone = norm.pdf(mesh_x, prior_x_class_bone_mean, prior_x_class_bone_std)
     prior_x_class_bone = np.clip(prior_x_class_bone, 0, 1)
     prior_x_class_bone = prior_x_class_bone / np.sum(prior_x_class_bone)
 
