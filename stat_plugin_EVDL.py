@@ -125,6 +125,7 @@ def process_data(file_list, model, device, config):
         output_std = np.std(output_array, axis=0)
         output_median = output_median * 4000 - 1000
         output_median_int = (output_median).astype(int)
+        output_median_int = np.clip(output_median_int, -1000, 3000)
         # P_x_class
         P_x_class = prior_x_class[output_median_int]
         save_processed_data(P_x_class, x_file, file_name, config, tag="_P_x_class_Bayesian")
