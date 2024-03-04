@@ -66,7 +66,7 @@ def process_data(file_list, model, device, config):
     CT_prior = np.load(config["CT_prior_path"], allow_pickle=True)[()]
     prior_x = CT_prior["prior_x"]
     prior_x = prior_x / np.sum(prior_x) # 4000
-    prior_x_class = CT_prior["prior_x_class"]   # 3*4000
+    prior_x_class = CT_prior["prior_x_class"]   # 4000
     prior_class = CT_prior["prior_class"] # 3*256*256*200
 
     n_file = len(file_list)
@@ -122,8 +122,14 @@ def process_data(file_list, model, device, config):
         # Bayesian learning
         print("------>Bayesian learning:")
         output_median = np.median(output_array, axis=0)
+        output_std = np.std(output_array, axis=0)
         output_median = output_median * 4000 - 1000
         output_median_int = (output_median).astype(int)
+        # P_x_class
+        P_x_class = prior_x_class[output_median_int]
+        # P_x
+        P_x = prior_x[output_median_int]
+
         # -1000, air, -500, soft tissue, 250, bone, 3000, normalized by 4000, shifted by 1000
         mask_bone = output_median > 250
         mask_air = output_median < -500
@@ -132,11 +138,26 @@ def process_data(file_list, model, device, config):
         cut_off_prior_class_air = prior_class["air"][:, :, (200-az)//2:-(200-az)//2]
         cut_off_prior_class_soft = prior_class["soft"][:, :, (200-az)//2:-(200-az)//2]
         cut_off_prior_class_bone = prior_class["bone"][:, :, (200-az)//2:-(200-az)//2]
-
+        # P_class
+        P_class_air = np.multiply(cut_off_prior_class_air, mask_air)
+        P_class_soft = np.multiply(cut_off_prior_class_soft, mask_soft)
+        P_class_bone = np.multiply(cut_off_prior_class_bone, mask_bone)
+    
         # P_class_x = P_x_class * P_class / P_x
-        P_x_class = prior_x_class["air"][air_mask]
+        P_class_x_air = P_x_class * mask_air * P_class_air / P_x
+        P_class_x_soft = P_x_class * mask_soft * P_class_soft / P_x
+        P_class_x_bone = P_x_class * mask_bone * P_class_bone / P_x
 
+        # coef = sqrt(1-posterior)
+        coef_air = np.sqrt(1 - P_class_x_air)
+        coef_soft = np.sqrt(1 - P_class_x_soft)
+        coef_bone = np.sqrt(1 - P_class_x_bone)
+        coef = coef_air * mask_air + coef_soft * mask_soft + coef_bone * mask_bone
 
+        # unc = std * coef
+        unc = output_std * coef
+        save_processed_data(unc, x_file, file_name, config, tag="_unc_Bayesian")
+        save_processed_data(output_median, x_file, file_name, config, tag="_median_Bayesian")
         print(f"[{idx+1}]/[{n_file}]: Processed: {file_name}")
 
 def plugin_EVDL(output_array, x_file, file_name, config, order_list_cnt):
