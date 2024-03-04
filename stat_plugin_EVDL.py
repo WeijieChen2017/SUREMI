@@ -124,7 +124,7 @@ def process_data(file_list, model, device, config):
     prior_x_class_bone_freq = prior_x_class_bone_freq / np.sum(prior_x_class_bone_freq)
 
     # plot the prior_x and prior_x_class
-    plt.figure(figsize=(15, 5), dpi=100)
+    plt.figure(figsize=(10, 15), dpi=100)
     plt.subplot(3, 1, 1)
     mesh_x = np.arange(-1000, 3000, 1)
     plt.plot(mesh_x, prior_x, label="P_x")
@@ -142,6 +142,7 @@ def process_data(file_list, model, device, config):
     plt.plot(mesh_x, prior_x_class_air_freq, label="P_x_class_air_freq", color="r")
     plt.plot(mesh_x, prior_x_class_soft_freq, label="P_x_class_soft_freq", color="g")
     plt.plot(mesh_x, prior_x_class_bone_freq, label="P_x_class_bone_freq", color="b")
+    plt.yscale("log")
     plt.title("Frequency based P_x_class")
 
     plt.savefig(config["save_folder"]+"/prior.png")
