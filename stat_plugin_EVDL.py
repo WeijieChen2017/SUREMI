@@ -85,7 +85,7 @@ def process_data(file_list, model, device, config):
     prior_x_class = CT_prior["prior_x_class"]   # 4000
     mesh_x = np.arange(-1000, 3000, 1)
     # Calculate bin midpoints from mesh_x (bin edges)
-    bin_midpoints = (mesh_x[:-1] + mesh_x[1:]) / 2
+    bin_midpoints = np.arange(-1000, 3000, 1)
 
     # Calculate mean and std for different segments
     air_mean, air_std = calculate_statistics(prior_x_class[:500], bin_midpoints[:500])
