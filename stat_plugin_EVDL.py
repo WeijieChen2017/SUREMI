@@ -63,6 +63,12 @@ def process_data(file_list, model, device, config):
     - device: The device (CPU or GPU) to run the inference on.
     - config: Dictionary containing configuration and parameters for processing.
     """
+    CT_prior = np.load(config["CT_prior_path"], allow_pickle=True)[()]
+    prior_x = CT_prior["prior_x"]
+    prior_x = prior_x / np.sum(prior_x) # 4000
+    prior_x_class = CT_prior["prior_x_class"]   # 3*4000
+    prior_class = CT_prior["prior_class"] # 3*256*256*200
+
     n_file = len(file_list)
 
     for idx, file_path in enumerate(file_list):
@@ -117,18 +123,19 @@ def process_data(file_list, model, device, config):
         print("------>Bayesian learning:")
         output_median = np.median(output_array, axis=0)
         output_median = output_median * 4000 - 1000
-
+        output_median_int = (output_median).astype(int)
         # -1000, air, -500, soft tissue, 250, bone, 3000, normalized by 4000, shifted by 1000
-        bone_mask = output_median > (250+1000)/4000
-        air_mask = output_median < (-500+1000)/4000
-        soft_tissue_mask = 1 - bone_mask - air_mask
-        # compute the mean and std for each tissue
-        bone_mean = np.mean(output_median[bone_mask])
-        bone_std = np.std(output_median[bone_mask])
-        air_mean = np.mean(output_median[air_mask])
-        air_std = np.std(output_median[air_mask])
-        soft_tissue_mean = np.mean(output_median[soft_tissue_mask])
-        soft_tissue_std = np.std(output_median[soft_tissue_mask])
+        mask_bone = output_median > 250
+        mask_air = output_median < -500
+        mask_soft = np.logical_and(output_median >= -500, output_median <= 250)
+        # cut off in z axis from 200 to az in both ends
+        cut_off_prior_class_air = prior_class["air"][:, :, (200-az)//2:-(200-az)//2]
+        cut_off_prior_class_soft = prior_class["soft"][:, :, (200-az)//2:-(200-az)//2]
+        cut_off_prior_class_bone = prior_class["bone"][:, :, (200-az)//2:-(200-az)//2]
+
+        # P_class_x = P_x_class * P_class / P_x
+        P_x_class = prior_x_class["air"][air_mask]
+
 
         print(f"[{idx+1}]/[{n_file}]: Processed: {file_name}")
 

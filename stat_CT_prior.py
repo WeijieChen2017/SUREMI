@@ -96,7 +96,7 @@ def process_data(file_list, config):
             print("The z dimension of the data is larger than 200.")
             continue
         print("--> The shape is padded from", ct_data.shape, "to", (ct_data.shape[0], ct_data.shape[1], 200))
-        mask_air = np.pad(mask_air, ((0, 0), (0, 0), (pad_size//2, pad_size//2)), 'constant', constant_values=0)
+        mask_air = np.pad(mask_air, ((0, 0), (0, 0), (pad_size//2, pad_size//2)), 'constant', constant_values=1)
         mask_soft = np.pad(mask_soft, ((0, 0), (0, 0), (pad_size//2, pad_size//2)), 'constant', constant_values=0)
         mask_bone = np.pad(mask_bone, ((0, 0), (0, 0), (pad_size//2, pad_size//2)), 'constant', constant_values=0)
 
