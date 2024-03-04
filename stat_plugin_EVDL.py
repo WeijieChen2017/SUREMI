@@ -141,9 +141,9 @@ def process_data(file_list, model, device, config):
         save_processed_data(P_x, x_file, file_name, config, tag="_P_x_Bayesian")
 
         # -1000, air, -500, soft tissue, 250, bone, 3000, normalized by 4000, shifted by 1000
-        mask_bone = output_median > 250
-        mask_air = output_median < -500
-        mask_soft = np.logical_and(output_median >= -500, output_median <= 250)
+        mask_bone = output_median_int > 250
+        mask_air = output_median_int < -500
+        mask_soft = np.logical_and(output_median_int >= -500, output_median_int <= 250)
         # cut off in z axis from 200 to az in both ends
         cut_off_prior_class_air = prior_class["air"][:, :, (200-az)//2:-(200-az)//2]
         cut_off_prior_class_soft = prior_class["soft"][:, :, (200-az)//2:-(200-az)//2]
@@ -183,6 +183,8 @@ def process_data(file_list, model, device, config):
         coef_soft = np.sqrt(1 - P_class_x_soft)
         coef_bone = np.sqrt(1 - P_class_x_bone)
         coef = coef_air * mask_air + coef_soft * mask_soft + coef_bone * mask_bone
+        save_processed_data(coef, x_file, file_name, config, tag="_coef_Bayesian")
+
 
         # unc = std * coef
         unc = output_std * coef
