@@ -85,18 +85,21 @@ def process_data(file_list, model, device, config):
     prior_x_class_air = norm.pdf(mesh_x, prior_x_class_air_mean, prior_x_class_air_std)
     prior_x_class_air = np.clip(prior_x_class_air, 0, 1)
     prior_x_class_air = prior_x_class_air / np.sum(prior_x_class_air)
+    print("-> Air <- mean:", prior_x_class_air_mean, "std:", prior_x_class_air_std, "sum:", np.sum(prior_x_class_air))
 
     prior_x_class_soft_mean = np.mean(prior_x_class[500:1250])
     prior_x_class_soft_std = np.std(prior_x_class[500:1250])
     prior_x_class_soft = norm.pdf(mesh_x, prior_x_class_soft_mean, prior_x_class_soft_std)
     prior_x_class_soft = np.clip(prior_x_class_soft, 0, 1)
     prior_x_class_soft = prior_x_class_soft / np.sum(prior_x_class_soft)
+    print("-> Soft <- mean:", prior_x_class_soft_mean, "std:", prior_x_class_soft_std, "sum:", np.sum(prior_x_class_soft))
 
     prior_x_class_bone_mean = np.mean(prior_x_class[1250:])
     prior_x_class_bone_std = np.std(prior_x_class[1250:])
     prior_x_class_bone = norm.pdf(mesh_x, prior_x_class_bone_mean, prior_x_class_bone_std)
     prior_x_class_bone = np.clip(prior_x_class_bone, 0, 1)
     prior_x_class_bone = prior_x_class_bone / np.sum(prior_x_class_bone)
+    print("-> Bone <- mean:", prior_x_class_bone_mean, "std:", prior_x_class_bone_std, "sum:", np.sum(prior_x_class_bone))
 
     n_file = len(file_list)
 
