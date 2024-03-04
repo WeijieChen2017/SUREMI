@@ -127,10 +127,10 @@ def process_data(file_list, model, device, config):
         # save the uncertainty
         save_processed_data(output_median, x_file, file_name, config, tag="_median")
         save_processed_data(output_unc, x_file, file_name, config, tag="_unc_EVDL")
-        save_processed_data(output_isHigh, x_file, file_name, config, tag="_isHigh_EVDL")
-        save_processed_data(output_isLow, x_file, file_name, config, tag="_isLow_EVDL")
-        save_processed_data(output_massHigh, x_file, file_name, config, tag="_massHigh_EVDL")
-        save_processed_data(output_massLow, x_file, file_name, config, tag="_massLow_EVDL")
+        # save_processed_data(output_isHigh, x_file, file_name, config, tag="_isHigh_EVDL")
+        # save_processed_data(output_isLow, x_file, file_name, config, tag="_isLow_EVDL")
+        # save_processed_data(output_massHigh, x_file, file_name, config, tag="_massHigh_EVDL")
+        # save_processed_data(output_massLow, x_file, file_name, config, tag="_massLow_EVDL")
         save_processed_data(output_std, x_file, file_name, config, tag="_std_EVDL")
         save_processed_data(output_mean, x_file, file_name, config, tag="_mean_EVDL")
 
