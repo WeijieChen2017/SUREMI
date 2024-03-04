@@ -73,6 +73,7 @@ def process_data(file_list, model, device, config):
     - device: The device (CPU or GPU) to run the inference on.
     - config: Dictionary containing configuration and parameters for processing.
     """
+    n_file = len(file_list)
     CT_prior = np.load(config["CT_prior_path"], allow_pickle=True)[()]
     prior_x = CT_prior["prior_x"]
 
@@ -107,21 +108,41 @@ def process_data(file_list, model, device, config):
     print("-> Soft <- mean:", soft_mean, "std:", soft_std, "sum:", np.sum(prior_x_class_soft))
     print("-> Bone <- mean:", bone_mean, "std:", bone_std, "sum:", np.sum(prior_x_class_bone))
 
-    n_file = len(file_list)
+    # Frequence based pdf
+    # create the air mask by the range of -1000 to -500
+    prior_air_mask = np.zeros((4000))
+    prior_air_mask[:500] = 1
+    prior_soft_mask = np.zeros((4000))
+    prior_soft_mask[500:1250] = 1
+    prior_bone_mask = np.zeros((4000))
+    prior_bone_mask[1250:] = 1
+    prior_x_class_air_freq = prior_x_class * prior_air_mask
+    prior_x_class_soft_freq = prior_x_class * prior_soft_mask
+    prior_x_class_bone_freq = prior_x_class * prior_bone_mask
+    prior_x_class_air_freq = prior_x_class_air_freq / np.sum(prior_x_class_air_freq)
+    prior_x_class_soft_freq = prior_x_class_soft_freq / np.sum(prior_x_class_soft_freq)
+    prior_x_class_bone_freq = prior_x_class_bone_freq / np.sum(prior_x_class_bone_freq)
 
     # plot the prior_x and prior_x_class
-    plt.figure(figsize=(10, 5), dpi=100)
-    plt.subplot(2, 1, 1)
+    plt.figure(figsize=(15, 5), dpi=100)
+    plt.subplot(3, 1, 1)
     mesh_x = np.arange(-1000, 3000, 1)
     plt.plot(mesh_x, prior_x, label="P_x")
     plt.yscale("log")
     plt.legend()
 
-    plt.subplot(2, 1, 2)
+    plt.subplot(3, 1, 2)
     plt.plot(mesh_x, prior_x_class_air, label="P_x_class_air", color="r")
     plt.plot(mesh_x, prior_x_class_soft, label="P_x_class_soft", color="g")
     plt.plot(mesh_x, prior_x_class_bone, label="P_x_class_bone", color="b")
+    plt.title("Gaussian simulated P_x_class")
     plt.legend()
+
+    plt.subplot(3, 1, 3)
+    plt.plot(mesh_x, prior_x_class_air_freq, label="P_x_class_air_freq", color="r")
+    plt.plot(mesh_x, prior_x_class_soft_freq, label="P_x_class_soft_freq", color="g")
+    plt.plot(mesh_x, prior_x_class_bone_freq, label="P_x_class_bone_freq", color="b")
+    plt.title("Frequency based P_x_class")
 
     plt.savefig(config["save_folder"]+"/prior.png")
     plt.close()
