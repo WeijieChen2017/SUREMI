@@ -117,7 +117,7 @@ def process_data(file_list, model, device, config):
         # Post-process and analyze results (this part will depend on your specific needs, like calculating statistics or specific transformations)
 
         # evidence learning
-        plugin_EVDL(output_array, x_file, file_name, config, order_list_cnt)
+        # plugin_EVDL(output_array, x_file, file_name, config, order_list_cnt)
 
         # Bayesian learning
         print("------>Bayesian learning:")
@@ -147,6 +147,8 @@ def process_data(file_list, model, device, config):
         P_class_x_air = P_x_class * mask_air * P_class_air / P_x
         P_class_x_soft = P_x_class * mask_soft * P_class_soft / P_x
         P_class_x_bone = P_x_class * mask_bone * P_class_bone / P_x
+        P_class_x_sum = P_class_x_air + P_class_x_soft + P_class_x_bone
+        save_processed_data(P_class_x_sum, x_file, file_name, config, tag="_P_class_x_Bayesian")
 
         # coef = sqrt(1-posterior)
         coef_air = np.sqrt(1 - P_class_x_air)
