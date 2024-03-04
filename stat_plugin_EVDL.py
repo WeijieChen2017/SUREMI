@@ -65,7 +65,14 @@ def process_data(file_list, model, device, config):
     """
     CT_prior = np.load(config["CT_prior_path"], allow_pickle=True)[()]
     prior_x = CT_prior["prior_x"]
+
+    # pseduo count for prior_x and prior_x_class
+    eps_like_prior_x = np.ones_like(prior_x)*1e-10
+    prior_x = prior_x + eps_like_prior_x
+    prior_x = prior_x / np.sum(prior_x)
     prior_x_class = CT_prior["prior_x_class"]   # 4000
+    prior_x_class = prior_x_class + eps_like_prior_x
+    prior_x_class = prior_x_class / np.sum(prior_x_class)
     prior_class = CT_prior["prior_class"] # 3*256*256*200
     
 
