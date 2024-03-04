@@ -65,9 +65,9 @@ def process_data(file_list, config):
         mask_soft = 1 - mask_air - mask_bone
 
         # count the segmentation
-        cnt_air += np.array(mask_air, dtype=np.int)
-        cnt_soft += np.array(mask_soft, dtype=np.int)
-        cnt_bone += np.array(mask_bone, dtype=np.int)
+        cnt_air += int(mask_air)
+        cnt_soft += int(mask_soft)
+        cnt_bone += int(mask_bone)
 
     # save the results
     save_folder = config["prior_folder"]
