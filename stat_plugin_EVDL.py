@@ -33,7 +33,7 @@ default_config = {
     "alt_blk_depth": [2, 2, 2, 2, 2, 2, 2],
     # "alt_blk_depth": [2, 2, 2, 2, 2, 2, 2],
     "pad_size": 0,
-    "CT_prior_path": "./project_dir/Theseus_v2_181_200_rdp1/prior/CT_prior.npy",
+    "CT_prior_path": "./project_dir/Theseus_v2_181_200_rdp1/prior/prior_CT.npy",
 }
 
 def setup_environment(config):
