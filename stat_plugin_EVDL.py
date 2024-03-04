@@ -127,8 +127,10 @@ def process_data(file_list, model, device, config):
         output_median_int = (output_median).astype(int)
         # P_x_class
         P_x_class = prior_x_class[output_median_int]
+        save_processed_data(P_x_class, x_file, file_name, config, tag="_P_x_class_Bayesian")
         # P_x
         P_x = prior_x[output_median_int]
+        save_processed_data(P_x, x_file, file_name, config, tag="_P_x_Bayesian")
 
         # -1000, air, -500, soft tissue, 250, bone, 3000, normalized by 4000, shifted by 1000
         mask_bone = output_median > 250
@@ -142,12 +144,18 @@ def process_data(file_list, model, device, config):
         P_class_air = np.multiply(cut_off_prior_class_air, mask_air)
         P_class_soft = np.multiply(cut_off_prior_class_soft, mask_soft)
         P_class_bone = np.multiply(cut_off_prior_class_bone, mask_bone)
+        save_processed_data(P_class_air, x_file, file_name, config, tag="_P_class_air_Bayesian")
+        save_processed_data(P_class_soft, x_file, file_name, config, tag="_P_class_soft_Bayesian")
+        save_processed_data(P_class_bone, x_file, file_name, config, tag="_P_class_bone_Bayesian")
     
         # P_class_x = P_x_class * P_class / P_x
         P_class_x_air = P_x_class * mask_air * P_class_air / P_x
         P_class_x_soft = P_x_class * mask_soft * P_class_soft / P_x
         P_class_x_bone = P_x_class * mask_bone * P_class_bone / P_x
         P_class_x_sum = P_class_x_air + P_class_x_soft + P_class_x_bone
+        save_processed_data(P_class_x_air, x_file, file_name, config, tag="_P_class_x_air_Bayesian")
+        save_processed_data(P_class_x_soft, x_file, file_name, config, tag="_P_class_x_soft_Bayesian")
+        save_processed_data(P_class_x_bone, x_file, file_name, config, tag="_P_class_x_bone_Bayesian")
         save_processed_data(P_class_x_sum, x_file, file_name, config, tag="_P_class_x_Bayesian")
 
         # coef = sqrt(1-posterior)
