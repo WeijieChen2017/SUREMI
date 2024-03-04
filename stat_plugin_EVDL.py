@@ -161,10 +161,10 @@ def process_data(file_list, model, device, config):
     
         # P_class_x = P_x_class * P_class / P_x
         eps_like_data = np.ones_like(P_x_class)*1e-10
-        P_class_x_air = P_x_class * mask_air * P_class_air / P_x + eps_like_data
-        P_class_x_soft = P_x_class * mask_soft * P_class_soft / P_x + eps_like_data
-        P_class_x_bone = P_x_class * mask_bone * P_class_bone / P_x + eps_like_data
-        P_class_x_sum = P_class_x_air + P_class_x_soft + P_class_x_bone
+        P_class_x_air = P_x_class * mask_air * P_class_air / P_x
+        P_class_x_soft = P_x_class * mask_soft * P_class_soft / P_x
+        P_class_x_bone = P_x_class * mask_bone * P_class_bone / P_x
+        P_class_x_sum = P_class_x_air + P_class_x_soft + P_class_x_bone + eps_like_data
         save_processed_data(P_class_x_air, x_file, file_name, config, tag="_P_class_x_air_Bayesian")
         save_processed_data(P_class_x_soft, x_file, file_name, config, tag="_P_class_x_soft_Bayesian")
         save_processed_data(P_class_x_bone, x_file, file_name, config, tag="_P_class_x_bone_Bayesian")
