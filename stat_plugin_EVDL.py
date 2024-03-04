@@ -17,6 +17,8 @@ import torch
 from monai.inferers import sliding_window_inference
 from utils import iter_all_order
 
+from matplotlib import pyplot as plt
+
 
 # Configuration dictionary
 default_config = {
@@ -24,7 +26,7 @@ default_config = {
         "Theseus_v2_181_200_rdp1",
     ],
     "project_name": "Theseus_v2_181_200_rdp1",
-    "special_cases": [],
+    "special_cases": ["00008"],
     "gpu_ids": [0],
     "eval_file_cnt": 0,
     "eval_save_folder": "analysis",
@@ -95,6 +97,27 @@ def process_data(file_list, model, device, config):
     prior_x_class_bone = prior_x_class_bone / np.sum(prior_x_class_bone)
 
     n_file = len(file_list)
+
+    # plot the prior_x and prior_x_class
+    plt.figure(figsize=(10, 5), dpi=100)
+    plt.subplot(2, 1, 1)
+    mesh_x = np.arange(-1000, 3000, 1)
+    plt.plot(mesh_x, prior_x, label="P_x")
+    plt.yscale("log")
+    plt.legend()
+
+    plt.subplot(2, 1, 2)
+    plt.plot(mesh_x, prior_x_class_air, label="P_x_class_air", color="r")
+    plt.plot(mesh_x, prior_x_class_soft, label="P_x_class_soft", color="g")
+    plt.plot(mesh_x, prior_x_class_bone, label="P_x_class_bone", color="b")
+    plt.yscale("log")
+    plt.legend()
+
+    plt.savefig(config["save_folder"]+"/prior.png")
+    plt.close()
+
+
+
 
     for idx, file_path in enumerate(file_list):
         print(f"[{idx+1}]/[{n_file}]: Processing: {file_path}")
@@ -168,6 +191,9 @@ def process_data(file_list, model, device, config):
         P_x_class_soft = prior_x_class_soft[output_median_int + 1000]
         P_x_class_bone = prior_x_class_bone[output_median_int + 1000]
         P_x_class = P_x_class_air * mask_air + P_x_class_soft * mask_soft + P_x_class_bone * mask_bone
+        save_processed_data(P_x_class_air, x_file, file_name, config, tag="_P_x_class_air_Bayesian")
+        save_processed_data(P_x_class_soft, x_file, file_name, config, tag="_P_x_class_soft_Bayesian")
+        save_processed_data(P_x_class_bone, x_file, file_name, config, tag="_P_x_class_bone_Bayesian")
         save_processed_data(P_x_class, x_file, file_name, config, tag="_P_x_class_Bayesian")
 
         # cut off in z axis from 200 to az in both ends
