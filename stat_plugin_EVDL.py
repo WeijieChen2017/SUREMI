@@ -36,8 +36,8 @@ default_config = {
     "alt_blk_depth": [2, 2, 2, 2, 2, 2, 2],
     # "alt_blk_depth": [2, 2, 2, 2, 2, 2, 2],
     "pad_size": 0,
-    "CT_prior_path": "./project_dir/Theseus_v2_181_200_rdp1/prior/prior_CT.npy",
-    "air_soft_midpoint": 700,
+    "CT_prior_path": "./project_dir/Theseus_v2_181_200_rdp1/prior/prior_CT_n500p500.npy",
+    "air_soft_midpoint": 500,
     "soft_bone_midpoint": 1500,
 }
 
@@ -215,7 +215,7 @@ def process_data(file_list, model, device, config):
         mask_bone = output_median_int > config["soft_bone_midpoint"] - 1000
         mask_air = output_median_int < config["air_soft_midpoint"] - 1000
         mask_soft = np.logical_and(output_median_int >= config["air_soft_midpoint"] - 1000, output_median_int <= config["soft_bone_midpoint"] - 1000)
-        
+
         # P_x_class
         # P_x_class = prior_x_class[output_median_int + 1000]
         P_x_class_air = prior_x_class_air[output_median_int + 1000]
