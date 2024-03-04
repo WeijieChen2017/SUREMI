@@ -67,6 +67,7 @@ def process_data(file_list, model, device, config):
     prior_x = CT_prior["prior_x"]
     prior_x_class = CT_prior["prior_x_class"]   # 4000
     prior_class = CT_prior["prior_class"] # 3*256*256*200
+    
 
     n_file = len(file_list)
 
@@ -152,9 +153,10 @@ def process_data(file_list, model, device, config):
         save_processed_data(P_class_sum, x_file, file_name, config, tag="_P_class_sum_Bayesian")
     
         # P_class_x = P_x_class * P_class / P_x
-        P_class_x_air = P_x_class * mask_air * P_class_air / P_x
-        P_class_x_soft = P_x_class * mask_soft * P_class_soft / P_x
-        P_class_x_bone = P_x_class * mask_bone * P_class_bone / P_x
+        eps_like_data = np.ones_like(P_x_class)*1e-10
+        P_class_x_air = P_x_class * mask_air * P_class_air / P_x + eps_like_data
+        P_class_x_soft = P_x_class * mask_soft * P_class_soft / P_x + eps_like_data
+        P_class_x_bone = P_x_class * mask_bone * P_class_bone / P_x + eps_like_data
         P_class_x_sum = P_class_x_air + P_class_x_soft + P_class_x_bone
         P_class_x_air = P_class_x_air / P_class_sum
         P_class_x_soft = P_class_x_soft / P_class_sum
