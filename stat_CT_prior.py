@@ -22,7 +22,7 @@ from utils import iter_all_order
 config = {
     "project_name": "Theseus_v2_181_200_rdp1",
 }
-def process_data(file_list, model, device, config):
+def process_data(file_list, config):
     """
     Process a list of data files for the CT prior, save the ratio results.
     Air: (-1000, -500) / 4000
