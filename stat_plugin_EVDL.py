@@ -65,7 +65,6 @@ def process_data(file_list, model, device, config):
     """
     CT_prior = np.load(config["CT_prior_path"], allow_pickle=True)[()]
     prior_x = CT_prior["prior_x"]
-    prior_x = prior_x / np.sum(prior_x) # 4000
     prior_x_class = CT_prior["prior_x_class"]   # 4000
     prior_class = CT_prior["prior_class"] # 3*256*256*200
 
@@ -145,9 +144,12 @@ def process_data(file_list, model, device, config):
         P_class_air = np.multiply(cut_off_prior_class_air, mask_air)
         P_class_soft = np.multiply(cut_off_prior_class_soft, mask_soft)
         P_class_bone = np.multiply(cut_off_prior_class_bone, mask_bone)
+        P_class_sum = P_class_air + P_class_soft + P_class_bone
+
         save_processed_data(P_class_air, x_file, file_name, config, tag="_P_class_air_Bayesian")
         save_processed_data(P_class_soft, x_file, file_name, config, tag="_P_class_soft_Bayesian")
         save_processed_data(P_class_bone, x_file, file_name, config, tag="_P_class_bone_Bayesian")
+        save_processed_data(P_class_sum, x_file, file_name, config, tag="_P_class_sum_Bayesian")
     
         # P_class_x = P_x_class * P_class / P_x
         P_class_x_air = P_x_class * mask_air * P_class_air / P_x
