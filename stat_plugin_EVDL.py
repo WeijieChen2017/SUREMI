@@ -37,6 +37,8 @@ default_config = {
     # "alt_blk_depth": [2, 2, 2, 2, 2, 2, 2],
     "pad_size": 0,
     "CT_prior_path": "./project_dir/Theseus_v2_181_200_rdp1/prior/prior_CT.npy",
+    "air_soft_midpoint": 700,
+    "soft_bone_midpoint": 1500,
 }
 
 # Function to calculate weighted mean and std for a segment of the histogram
@@ -89,9 +91,9 @@ def process_data(file_list, model, device, config):
     bin_midpoints = np.arange(-1000, 3000, 1)
 
     # Calculate mean and std for different segments
-    air_mean, air_std = calculate_statistics(prior_x_class[:500], bin_midpoints[:500])
-    soft_mean, soft_std = calculate_statistics(prior_x_class[500:1250], bin_midpoints[500:1250])
-    bone_mean, bone_std = calculate_statistics(prior_x_class[1250:], bin_midpoints[1250:])
+    air_mean, air_std = calculate_statistics(prior_x_class[:config["air_soft_midpoint"]], bin_midpoints[:config["air_soft_midpoint"]])
+    soft_mean, soft_std = calculate_statistics(prior_x_class[config["air_soft_midpoint"]:config["soft_bone_midpoint"]], bin_midpoints[config["air_soft_midpoint"]:config["soft_bone_midpoint"]])
+    bone_mean, bone_std = calculate_statistics(prior_x_class[config["soft_bone_midpoint"]:], bin_midpoints[config["soft_bone_midpoint"]:])
 
     # Use Gaussian to sample P_x_class for each segment
     prior_x_class_air = norm.pdf(mesh_x, air_mean, air_std)
@@ -111,11 +113,11 @@ def process_data(file_list, model, device, config):
     # Frequence based pdf
     # create the air mask by the range of -1000 to -500
     prior_air_mask = np.zeros((4000))
-    prior_air_mask[:500] = 1
+    prior_air_mask[:config["air_soft_midpoint"]] = 1
     prior_soft_mask = np.zeros((4000))
-    prior_soft_mask[500:1250] = 1
+    prior_soft_mask[config["air_soft_midpoint"]:config["soft_bone_midpoint"]] = 1
     prior_bone_mask = np.zeros((4000))
-    prior_bone_mask[1250:] = 1
+    prior_bone_mask[config["soft_bone_midpoint"]:] = 1
     prior_x_class_air_freq = prior_x_class * prior_air_mask
     prior_x_class_soft_freq = prior_x_class * prior_soft_mask
     prior_x_class_bone_freq = prior_x_class * prior_bone_mask
@@ -210,10 +212,10 @@ def process_data(file_list, model, device, config):
 
         # Segmentation by class
         # -1000, air, -500, soft tissue, 250, bone, 3000, normalized by 4000, shifted by 1000
-        mask_bone = output_median_int > 250
-        mask_air = output_median_int < -500
-        mask_soft = np.logical_and(output_median_int >= -500, output_median_int <= 250)
-
+        mask_bone = output_median_int > config["soft_bone_midpoint"] - 1000
+        mask_air = output_median_int < config["air_soft_midpoint"] - 1000
+        mask_soft = np.logical_and(output_median_int >= config["air_soft_midpoint"] - 1000, output_median_int <= config["soft_bone_midpoint"] - 1000)
+        
         # P_x_class
         # P_x_class = prior_x_class[output_median_int + 1000]
         P_x_class_air = prior_x_class_air[output_median_int + 1000]
