@@ -157,7 +157,7 @@ def process_data(file_list, model, device, config):
         save_processed_data(P_class_x_air, x_file, file_name, config, tag="_P_class_x_air_Bayesian")
         save_processed_data(P_class_x_soft, x_file, file_name, config, tag="_P_class_x_soft_Bayesian")
         save_processed_data(P_class_x_bone, x_file, file_name, config, tag="_P_class_x_bone_Bayesian")
-        save_processed_data(P_class_x_sum, x_file, file_name, config, tag="_P_class_x_Bayesian")
+        save_processed_data(P_class_x_sum, x_file, file_name, config, tag="_P_class_x_sum_Bayesian")
 
         # coef = sqrt(1-posterior)
         coef_air = np.sqrt(1 - P_class_x_air)

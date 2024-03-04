@@ -109,8 +109,13 @@ def process_data(file_list, config):
     prior_class_air /= n_file
     prior_class_soft /= n_file
     prior_class_bone /= n_file
+    prior_class_sum = prior_class_air + prior_class_soft + prior_class_bone
+    prior_class_air = prior_class_air / prior_class_sum
+    prior_class_soft = prior_class_soft / prior_class_sum
+    prior_class_bone = prior_class_bone / prior_class_sum
 
     prior_x /= n_file # take each case as one distribution
+    prior_x = prior_x / np.sum(prior_x)
     prior_x_class /= n_file
 
     # check whether the prior is sum to 1
