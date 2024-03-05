@@ -313,7 +313,7 @@ def process_data(file_list, model, device, config):
         # unc = std * coef
         unc = output_std * coef
         save_processed_data(unc, x_file, file_name, config, tag="_unc_Bayesian")
-        save_processed_data(output_median, x_file, file_name, config, tag="_median_Bayesian")
+        # save_processed_data(output_median, x_file, file_name, config, tag="_median_Bayesian")
         print(f"[{idx+1}]/[{n_file}]: Processed: {file_name}")
 
 def plugin_EVDL(output_array, x_file, file_name, config, order_list_cnt):
