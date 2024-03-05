@@ -96,9 +96,9 @@ def process_data(file_list, model, device, config):
     bone_mean, bone_std = calculate_statistics(prior_x_class[config["soft_bone_midpoint"]:], bin_midpoints[config["soft_bone_midpoint"]:])
 
     # Use Gaussian to sample P_x_class for each segment
-    prior_x_class_air = norm.pdf(mesh_x, air_mean, air_std)
-    prior_x_class_soft = norm.pdf(mesh_x, soft_mean, soft_std)
-    prior_x_class_bone = norm.pdf(mesh_x, bone_mean, bone_std)
+    prior_x_class_air = norm.pdf(mesh_x, air_mean, air_std) + eps_like_prior_x
+    prior_x_class_soft = norm.pdf(mesh_x, soft_mean, soft_std) + eps_like_prior_x
+    prior_x_class_bone = norm.pdf(mesh_x, bone_mean, bone_std) + eps_like_prior_x
 
     # Normalize each PDF to sum to 1
     prior_x_class_air /= np.sum(prior_x_class_air)
