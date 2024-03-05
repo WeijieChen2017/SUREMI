@@ -223,7 +223,7 @@ def process_data(file_list, model, device, config):
         mask_bone = output_median_int > config["soft_bone_midpoint"] - 1000
         mask_air = output_median_int < config["air_soft_midpoint"] - 1000
         mask_soft = np.logical_and(output_median_int >= config["air_soft_midpoint"] - 1000, output_median_int <= config["soft_bone_midpoint"] - 1000)
-        mask_sum = mask_air + mask_soft + mask_bone
+        # mask_sum = mask_air + mask_soft + mask_bone
         # save_processed_data(mask_sum, x_file, file_name, config, tag="_mask_sum_Bayesian")
 
         # P_x_class
