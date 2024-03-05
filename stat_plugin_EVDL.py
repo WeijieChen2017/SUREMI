@@ -104,9 +104,6 @@ def process_data(file_list, model, device, config):
     prior_x_class_air += eps_like_prior_x
     prior_x_class_soft += eps_like_prior_x
     prior_x_class_bone += eps_like_prior_x
-    prior_x_class_air = prior_x_class_air / np.sum(prior_x_class_air)
-    prior_x_class_soft = prior_x_class_soft / np.sum(prior_x_class_soft)
-    prior_x_class_bone = prior_x_class_bone / np.sum(prior_x_class_bone)
 
     # Normalize each PDF to sum to 1
     prior_x_class_air /= np.sum(prior_x_class_air)
