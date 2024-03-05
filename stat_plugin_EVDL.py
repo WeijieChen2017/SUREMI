@@ -80,7 +80,7 @@ def process_data(file_list, model, device, config):
     prior_x = CT_prior["prior_x"]
 
     # pseduo count for prior_x and prior_x_class
-    eps_like_prior_x = np.ones_like(prior_x)*1e-10
+    eps_like_prior_x = np.ones_like(prior_x)*1e-3
     prior_x = prior_x + eps_like_prior_x
     prior_x = prior_x / np.sum(prior_x)
 
@@ -99,6 +99,14 @@ def process_data(file_list, model, device, config):
     prior_x_class_air = norm.pdf(mesh_x, air_mean, air_std)
     prior_x_class_soft = norm.pdf(mesh_x, soft_mean, soft_std)
     prior_x_class_bone = norm.pdf(mesh_x, bone_mean, bone_std)
+
+    # Pseudo count for prior_x_class
+    prior_x_class_air += eps_like_prior_x
+    prior_x_class_soft += eps_like_prior_x
+    prior_x_class_bone += eps_like_prior_x
+    prior_x_class_air = prior_x_class_air / np.sum(prior_x_class_air)
+    prior_x_class_soft = prior_x_class_soft / np.sum(prior_x_class_soft)
+    prior_x_class_bone = prior_x_class_bone / np.sum(prior_x_class_bone)
 
     # Normalize each PDF to sum to 1
     prior_x_class_air /= np.sum(prior_x_class_air)
@@ -220,10 +228,13 @@ def process_data(file_list, model, device, config):
 
         # P_x_class
         # P_x_class = prior_x_class[output_median_int + 1000]
+        
+
         P_x_class_air = prior_x_class_air[output_median_int + 1000]
         P_x_class_soft = prior_x_class_soft[output_median_int + 1000]
         P_x_class_bone = prior_x_class_bone[output_median_int + 1000]
         P_x_class = P_x_class_air * mask_air + P_x_class_soft * mask_soft + P_x_class_bone * mask_bone
+        P_x_class = P_x_class / np.sum(P_x_class)
         save_processed_data(P_x_class_air, x_file, file_name, config, tag="_P_x_class_air_Bayesian")
         save_processed_data(P_x_class_soft, x_file, file_name, config, tag="_P_x_class_soft_Bayesian")
         save_processed_data(P_x_class_bone, x_file, file_name, config, tag="_P_x_class_bone_Bayesian")
