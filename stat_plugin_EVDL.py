@@ -87,6 +87,7 @@ def process_data(file_list, model, device, config):
     prior_class = CT_prior["prior_class"] # 3*256*256*200
     prior_x_class = CT_prior["prior_x_class"]   # 4000
     prior_x_class = prior_x_class + eps_like_prior_x
+    prior_x_class = prior_x_class / np.sum(prior_x_class)
     mesh_x = np.arange(-1000, 3000, 1)
     # Calculate bin midpoints from mesh_x (bin edges)
     bin_midpoints = np.arange(-1000, 3000, 1)
