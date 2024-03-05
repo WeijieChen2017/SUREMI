@@ -80,7 +80,7 @@ def process_data(file_list, model, device, config):
     prior_x = CT_prior["prior_x"]
 
     # pseduo count for prior_x and prior_x_class
-    eps_like_prior_x = np.ones_like(prior_x)*1e-6
+    eps_like_prior_x = np.ones_like(prior_x)*1e-3
     prior_x = prior_x + eps_like_prior_x
     # prior_x = prior_x / np.sum(prior_x)
 
