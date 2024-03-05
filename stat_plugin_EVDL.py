@@ -82,10 +82,11 @@ def process_data(file_list, model, device, config):
     # pseduo count for prior_x and prior_x_class
     eps_like_prior_x = np.ones_like(prior_x)*1e-6
     prior_x = prior_x + eps_like_prior_x
-    # prior_x = prior_x / np.sum(prior_x)
+    prior_x = prior_x / np.sum(prior_x)
 
     prior_class = CT_prior["prior_class"] # 3*256*256*200
     prior_x_class = CT_prior["prior_x_class"]   # 4000
+    prior_x_class = prior_x_class + eps_like_prior_x
     mesh_x = np.arange(-1000, 3000, 1)
     # Calculate bin midpoints from mesh_x (bin edges)
     bin_midpoints = np.arange(-1000, 3000, 1)
