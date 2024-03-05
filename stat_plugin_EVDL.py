@@ -27,7 +27,7 @@ default_config = {
         "Theseus_v2_181_200_rdp1",
     ],
     "project_name": "Theseus_v2_181_200_rdp1",
-    "special_cases": ["00008"],
+    "special_cases": [],
     "gpu_ids": [0],
     "eval_file_cnt": 0,
     "eval_save_folder": "analysis",
