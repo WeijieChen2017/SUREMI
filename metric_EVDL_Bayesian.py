@@ -45,13 +45,13 @@ for case_id in case_id_list:
     case_dict["bay"] = find_filename_with_identifiers(case_id, bay_files)
     case_dict["evdl"] = find_filename_with_identifiers(case_id, evdl_files)
     case_dict_list[case_id] = case_dict
-    print(f"case_id {case_id}")
-    print(f"mr {case_dict['mr']}")
-    print(f"ct {case_dict['ct']}")
-    print(f"std {case_dict['std']}")
-    print(f"bay {case_dict['bay']}")
-    print(f"evdl {case_dict['evdl']}")
-    print("")
+    # print(f"case_id {case_id}")
+    # print(f"mr {case_dict['mr']}")
+    # print(f"ct {case_dict['ct']}")
+    # print(f"std {case_dict['std']}")
+    # print(f"bay {case_dict['bay']}")
+    # print(f"evdl {case_dict['evdl']}")
+    # print("")
 
 # load the data and compute the correlation
 
@@ -75,7 +75,7 @@ error_evdl_corr = np.zeros((n_div, n_div))
 
 n_case = len(case_dict_list)
 
-for idx_case, case_dict in case_dict_list:
+for idx_case, case_dict in enumerate(ase_dict_list):
 
     print(f"Processing {idx_case+1}/{n_case} cases.")
     mr_file = nib.load(case_dict["mr"])
