@@ -69,9 +69,9 @@ bay_bins = np.linspace(0, 0.02, n_div)
 evdl_bins = np.linspace(0, 0.2, n_div)
 err_bins = np.linspace(0, 1000, n_div)
 
-error_std_corr = np.zeros((n_div, n_div))
-error_bay_corr = np.zeros((n_div, n_div))
-error_evdl_corr = np.zeros((n_div, n_div))
+error_std_corr = np.zeros((n_div+1, n_div+1))
+error_bay_corr = np.zeros((n_div+1, n_div+1))
+error_evdl_corr = np.zeros((n_div+1, n_div+1))
 
 n_case = len(case_dict_list)
 
