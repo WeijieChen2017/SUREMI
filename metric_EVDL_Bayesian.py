@@ -75,7 +75,7 @@ error_evdl_corr = np.zeros((n_div, n_div))
 
 n_case = len(case_dict_list)
 
-for idx_case, case_dict in enumerate(ase_dict_list):
+for idx_case, case_dict in enumerate(case_dict_list):
 
     print(f"Processing {idx_case+1}/{n_case} cases.")
     mr_file = nib.load(case_dict["mr"])
