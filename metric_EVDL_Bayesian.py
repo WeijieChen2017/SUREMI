@@ -73,7 +73,11 @@ error_std_corr = np.zeros((n_div, n_div))
 error_bay_corr = np.zeros((n_div, n_div))
 error_evdl_corr = np.zeros((n_div, n_div))
 
-for case_dict in case_dict_list:
+n_case = len(case_dict_list)
+
+for idx_case, case_dict in case_dict_list:
+
+    print(f"Processing {idx_case+1}/{n_case} cases.")
     mr_file = nib.load(case_dict["mr"])
     mr_data = nib.load(case_dict["mr"]).get_fdata()
     ct_data = nib.load(case_dict["ct"]).get_fdata()
@@ -126,6 +130,7 @@ for case_dict in case_dict_list:
     np.save(save_filename, data)
     print(f"Saved correlation to {save_filename}")
 
+    print("")
 
     # std_corr = np.corrcoef(diff.flatten(), std_data.flatten())[0, 1]
     # bay_corr = np.corrcoef(diff.flatten(), bay_data.flatten())[0, 1]
