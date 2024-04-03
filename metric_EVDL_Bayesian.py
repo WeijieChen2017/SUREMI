@@ -16,7 +16,7 @@ mr_folder = "project_dir/Unet_Monai_Iman_v2/pred_monai/*xte.nii.gz"
 ct_folder = "project_dir/Unet_Monai_Iman_v2/pred_monai/*yte.nii.gz"
 std_folder = "project_dir/Theseus_v2_181_200_rdp1/pred_monai/*std.nii.gz"
 bay_folder = "project_dir/Theseus_v2_181_200_rdp1/analysis/*Bayesian.nii.gz"
-evdl_folder = "project_dir/Theseus_v2_181_200_rdp1/analysis/_unc_EVDL.nii.gz"
+evdl_folder = "project_dir/Theseus_v2_181_200_rdp1/analysis/*_unc_EVDL.nii.gz"
 
 mr_files = sorted(glob.glob(mr_folder))
 ct_files = sorted(glob.glob(ct_folder))
@@ -28,7 +28,7 @@ def find_filename_with_identifiers(id, filename_list):
     for filename in filename_list:
         if id in filename:
             return filename
-    raise ValueError(f"Error finding {id} in the filename list")
+    raise ValueError(f"Error finding {id} in {filename_list}")
     return None
 
 # check the identifier: mr filename is 00008_xte.nii.gz, so we need to extract the 00008
@@ -45,6 +45,12 @@ for case_id in case_id_list:
     case_dict["bay"] = find_filename_with_identifiers(case_id, bay_files)
     case_dict["evdl"] = find_filename_with_identifiers(case_id, evdl_files)
     case_dict_list[case_id] = case_dict
-
+    print(f"case_id {case_id}")
+    print(f"mr {case_dict['mr']}")
+    print(f"ct {case_dict['ct']}")
+    print(f"std {case_dict['std']}")
+    print(f"bay {case_dict['bay']}")
+    print(f"evdl {case_dict['evdl']}")
+    print("")
 
     
