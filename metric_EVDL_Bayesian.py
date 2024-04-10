@@ -90,6 +90,19 @@ for idx_case, case_id in enumerate(case_id_list):
     bay_data = np.abs(bay_data)
     evdl_data = np.abs(evdl_data)
 
+    # save all data into a dict and save to npy
+    data = {
+        "mr": mr_data,
+        "ct": ct_data,
+        "std": std_data,
+        "bay": bay_data,
+        "evdl": evdl_data,
+    }
+    save_filename = os.path.join(save_folder, case_dict["mr"].split("/")[-1].replace("xte", "_data").replace(".nii.gz", ".npy"))
+    np.save(save_filename, data)
+    print(f"Saved data to {save_filename}")
+    exit()
+
     # 5% th for mr data to get a mask, i.e. 0.05
     mask = mr_data > np.percentile(mr_data, 0.05)
     # save the mask to the mask folder
