@@ -3,7 +3,7 @@ import glob
 import os
 
 results_folder = "results/Bayesian_EVDL"
-results_list = glob.glob(os.path.join(results_folder, "*.npy"))
+results_list = sorted(glob.glob(os.path.join(results_folder, "*.nii.gz.npy")))
 
 error_std_corr = []
 error_bay_corr = []
