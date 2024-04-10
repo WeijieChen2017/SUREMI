@@ -21,6 +21,7 @@ evdl_folder = "project_dir/Theseus_v2_181_200_rdp1/analysis/*_unc_EVDL.nii.gz"
 
 mr_files = sorted(glob.glob(mr_folder))
 ct_files = sorted(glob.glob(ct_folder))
+pred_files = sorted(glob.glob(pred_folder))
 std_files = sorted(glob.glob(std_folder))
 bay_files = sorted(glob.glob(bay_folder))
 evdl_files = sorted(glob.glob(evdl_folder))
@@ -42,7 +43,7 @@ for case_id in case_id_list:
     case_dict = {}
     case_dict["mr"] = find_filename_with_identifiers(case_id, mr_files)
     case_dict["ct"] = find_filename_with_identifiers(case_id, ct_files)
-    case_dict["pred"] = find_filename_with_identifiers(case_id, mr_files)
+    case_dict["pred"] = find_filename_with_identifiers(case_id, pred_files)
     case_dict["std"] = find_filename_with_identifiers(case_id, std_files)
     case_dict["bay"] = find_filename_with_identifiers(case_id, bay_files)
     case_dict["evdl"] = find_filename_with_identifiers(case_id, evdl_files)
@@ -102,10 +103,9 @@ for idx_case, case_id in enumerate(case_id_list):
         "bay": bay_data,
         "evdl": evdl_data,
     }
-    save_filename = os.path.join(save_folder, case_dict["mr"].split("/")[-1].replace("xte", "data").replace(".nii.gz", ".npy"))
-    np.save(save_filename, data)
-    print(f"Saved data to {save_filename}")
-    exit()
+    # save_filename = os.path.join(save_folder, case_dict["mr"].split("/")[-1].replace("xte", "data").replace(".nii.gz", ".npy"))
+    # np.save(save_filename, data)
+    # print(f"Saved data to {save_filename}")
 
     # 5% th for mr data to get a mask, i.e. 0.05
     mask = mr_data > np.percentile(mr_data, 0.05)
