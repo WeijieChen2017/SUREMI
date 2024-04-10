@@ -14,6 +14,7 @@ import numpy as np
 
 mr_folder = "project_dir/Unet_Monai_Iman_v2/pred_monai/*xte.nii.gz"
 ct_folder = "project_dir/Unet_Monai_Iman_v2/pred_monai/*yte.nii.gz"
+pred_folder = "project_dir/Theseus_v2_181_200_rdp1/analysis/*_xte_median.nii.gz"
 std_folder = "project_dir/Theseus_v2_181_200_rdp1/pred_monai/*std.nii.gz"
 bay_folder = "project_dir/Theseus_v2_181_200_rdp1/analysis/*Bayesian.nii.gz"
 evdl_folder = "project_dir/Theseus_v2_181_200_rdp1/analysis/*_unc_EVDL.nii.gz"
@@ -41,6 +42,7 @@ for case_id in case_id_list:
     case_dict = {}
     case_dict["mr"] = find_filename_with_identifiers(case_id, mr_files)
     case_dict["ct"] = find_filename_with_identifiers(case_id, ct_files)
+    case_dict["pred"] = find_filename_with_identifiers(case_id, mr_files)
     case_dict["std"] = find_filename_with_identifiers(case_id, std_files)
     case_dict["bay"] = find_filename_with_identifiers(case_id, bay_files)
     case_dict["evdl"] = find_filename_with_identifiers(case_id, evdl_files)
@@ -82,6 +84,7 @@ for idx_case, case_id in enumerate(case_id_list):
     mr_file = nib.load(case_dict["mr"])
     mr_data = nib.load(case_dict["mr"]).get_fdata()
     ct_data = nib.load(case_dict["ct"]).get_fdata()
+    pred_data = nib.load(case_dict["pred"]).get_fdata()
     std_data = nib.load(case_dict["std"]).get_fdata()
     bay_data = nib.load(case_dict["bay"]).get_fdata()
     evdl_data = nib.load(case_dict["evdl"]).get_fdata()
@@ -94,11 +97,12 @@ for idx_case, case_id in enumerate(case_id_list):
     data = {
         "mr": mr_data,
         "ct": ct_data,
+        "pred": pred_data,
         "std": std_data,
         "bay": bay_data,
         "evdl": evdl_data,
     }
-    save_filename = os.path.join(save_folder, case_dict["mr"].split("/")[-1].replace("xte", "_data").replace(".nii.gz", ".npy"))
+    save_filename = os.path.join(save_folder, case_dict["mr"].split("/")[-1].replace("xte", "data").replace(".nii.gz", ".npy"))
     np.save(save_filename, data)
     print(f"Saved data to {save_filename}")
     exit()
