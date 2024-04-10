@@ -122,7 +122,7 @@ for idx_case, case_id in enumerate(case_id_list):
         error_evdl_corr[err_idx, evdl_idx] += 1
 
     # save this case to the folder
-    save_filename = os.path.join(save_folder, case_dict["mr"].split("/")[-1].replace("xte", "corr"))
+    save_filename = os.path.join(save_folder, case_dict["mr"].split("/")[-1].replace("xte", "corr").replace(".nii.gz", ".npy"))
     data = {
         "error_std_corr": error_std_corr,
         "error_bay_corr": error_bay_corr,
