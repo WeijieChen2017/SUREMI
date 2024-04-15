@@ -120,10 +120,10 @@ for idx_case, case_id in enumerate(case_id_list):
     # print(f"Saved mask to {mask_filename}")
 
     # # apply the mask
-    diff_data = diff[mask_data]
-    std_data = std_data[mask_data]
-    bay_data = bay_data[mask_data]
-    evdl_data = evdl_data[mask_data]
+    diff_data = diff[mask_data > 0]
+    std_data = std_data[mask_data > 0]
+    bay_data = bay_data[mask_data > 0]
+    evdl_data = evdl_data[mask_data > 0]
 
     # flatten the data
     diff_data = diff.flatten()
