@@ -18,6 +18,7 @@ pred_folder = "project_dir/Theseus_v2_181_200_rdp1/analysis/*_xte_median.nii.gz"
 std_folder = "project_dir/Theseus_v2_181_200_rdp1/pred_monai/*std.nii.gz"
 bay_folder = "project_dir/Theseus_v2_181_200_rdp1/analysis/*Bayesian.nii.gz"
 evdl_folder = "project_dir/Theseus_v2_181_200_rdp1/analysis/*_unc_EVDL.nii.gz"
+mask_folder = "project_dir/Theseus_v2_181_200_rdp1/pred_monai/*mask.nii.gz"
 
 mr_files = sorted(glob.glob(mr_folder))
 ct_files = sorted(glob.glob(ct_folder))
@@ -47,6 +48,7 @@ for case_id in case_id_list:
     case_dict["std"] = find_filename_with_identifiers(case_id, std_files)
     case_dict["bay"] = find_filename_with_identifiers(case_id, bay_files)
     case_dict["evdl"] = find_filename_with_identifiers(case_id, evdl_files)
+    case_dict["mask"] = find_filename_with_identifiers(case_id, mask_files)
     case_dict_list[case_id] = case_dict
     # print(f"case_id {case_id}")
     # print(f"mr {case_dict['mr']}")
@@ -62,15 +64,14 @@ save_folder = "results/Bayesian_EVDL/"
 # create folder if not exist
 if not os.path.exists(save_folder):
     os.makedirs(save_folder)
-mask_folder = "project_dir/Theseus_v2_181_200_rdp1/pred_monai/"
 analysis_folder = "project_dir/Theseus_v2_181_200_rdp1/analysis/"
 
 # create bins
 n_div = 2000
-std_bins = np.linspace(0, 0.02, n_div)
-bay_bins = np.linspace(0, 0.02, n_div)
-evdl_bins = np.linspace(0, 0.2, n_div)
-err_bins = np.linspace(0, 1000, n_div)
+std_bins = np.linspace(0, 1000, n_div)
+bay_bins = np.linspace(0, 0.01, n_div)
+evdl_bins = np.linspace(0, 0.1, n_div)
+err_bins = np.linspace(0, 1, n_div)
 
 error_std_corr = np.zeros((n_div+1, n_div+1))
 error_bay_corr = np.zeros((n_div+1, n_div+1))
@@ -89,41 +90,42 @@ for idx_case, case_id in enumerate(case_id_list):
     std_data = nib.load(case_dict["std"]).get_fdata()
     bay_data = nib.load(case_dict["bay"]).get_fdata()
     evdl_data = nib.load(case_dict["evdl"]).get_fdata()
-    diff = np.abs(mr_data - ct_data) * 4000
-    std_data = np.abs(std_data) * 4000
+    mask_data = nib.load(case_dict["mask"]).get_fdata()
+    diff = np.abs(pred_data - ct_data)
+    std_data = np.abs(std_data)
     bay_data = np.abs(bay_data)
     evdl_data = np.abs(evdl_data)
 
-    # save all data into a dict and save to npy
-    data = {
-        "mr": mr_data,
-        "ct": ct_data,
-        "pred": pred_data,
-        "std": std_data,
-        "bay": bay_data,
-        "evdl": evdl_data,
-    }
-    save_filename = os.path.join(save_folder, case_dict["mr"].split("/")[-1].replace("xte", "data").replace(".nii.gz", ".npy"))
-    np.save(save_filename, data)
-    print(f"Saved data to {save_filename}")
-    exit()
+    # # save all data into a dict and save to npy
+    # data = {
+    #     "mr": mr_data,
+    #     "ct": ct_data,
+    #     "pred": pred_data,
+    #     "std": std_data,
+    #     "bay": bay_data,
+    #     "evdl": evdl_data,
+    # }
+    # # save_filename = os.path.join(save_folder, case_dict["mr"].split("/")[-1].replace("xte", "data").replace(".nii.gz", ".npy"))
+    # # np.save(save_filename, data)
+    # # print(f"Saved data to {save_filename}")
+    # # exit()
 
-    # 5% th for mr data to get a mask, i.e. 0.05
-    mask = mr_data > np.percentile(mr_data, 0.05)
-    # save the mask to the mask folder
-    mask_filename = os.path.join(mask_folder, case_dict["mr"].split("/")[-1].replace("xte", "mask"))
-    mask_file = nib.Nifti1Image(mask, mr_file.affine, mr_file.header)
-    nib.save(mask_file, mask_filename)
-    print(f"Saved mask to {mask_filename}")
+    # # 5% th for mr data to get a mask, i.e. 0.05
+    # mask = mr_data > np.percentile(mr_data, 0.05)
+    # # save the mask to the mask folder
+    # mask_filename = os.path.join(mask_folder, case_dict["mr"].split("/")[-1].replace("xte", "mask"))
+    # mask_file = nib.Nifti1Image(mask, mr_file.affine, mr_file.header)
+    # nib.save(mask_file, mask_filename)
+    # print(f"Saved mask to {mask_filename}")
 
-    # apply the mask
-    diff = diff[mask]
-    std_data = std_data[mask]
-    bay_data = bay_data[mask]
-    evdl_data = evdl_data[mask]
+    # # apply the mask
+    diff_data = diff[mask_data]
+    std_data = std_data[mask_data]
+    bay_data = bay_data[mask_data]
+    evdl_data = evdl_data[mask_data]
 
     # flatten the data
-    diff = diff.flatten()
+    diff_data = diff.flatten()
     std_data = std_data.flatten()
     bay_data = bay_data.flatten()
     evdl_data = evdl_data.flatten()
