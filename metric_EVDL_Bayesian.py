@@ -26,6 +26,7 @@ pred_files = sorted(glob.glob(pred_folder))
 std_files = sorted(glob.glob(std_folder))
 bay_files = sorted(glob.glob(bay_folder))
 evdl_files = sorted(glob.glob(evdl_folder))
+mask_files = sorted(glob.glob(mask_folder))
 
 def find_filename_with_identifiers(id, filename_list):
     for filename in filename_list:
