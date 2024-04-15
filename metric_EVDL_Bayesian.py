@@ -91,7 +91,7 @@ for idx_case, case_id in enumerate(case_id_list):
     std_data = nib.load(case_dict["std"]).get_fdata()
     bay_data = nib.load(case_dict["bay"]).get_fdata()
     evdl_data = nib.load(case_dict["evdl"]).get_fdata()
-    mask_data = nib.load(case_dict["mask"]).get_fdata()
+    # mask_data = nib.load(case_dict["mask"]).get_fdata()
     diff = np.abs(pred_data - ct_data)
     std_data = np.abs(std_data)
     bay_data = np.abs(bay_data)
@@ -112,7 +112,7 @@ for idx_case, case_id in enumerate(case_id_list):
     # # exit()
 
     # # 5% th for mr data to get a mask, i.e. 0.05
-    # mask = mr_data > np.percentile(mr_data, 0.05)
+    mask_data = mr_data > np.percentile(mr_data, 0.05)
     # # save the mask to the mask folder
     # mask_filename = os.path.join(mask_folder, case_dict["mr"].split("/")[-1].replace("xte", "mask"))
     # mask_file = nib.Nifti1Image(mask, mr_file.affine, mr_file.header)
@@ -120,10 +120,10 @@ for idx_case, case_id in enumerate(case_id_list):
     # print(f"Saved mask to {mask_filename}")
 
     # # apply the mask
-    diff_data = diff[mask_data > 0]
-    std_data = std_data[mask_data > 0]
-    bay_data = bay_data[mask_data > 0]
-    evdl_data = evdl_data[mask_data > 0]
+    diff_data = diff[mask_data]
+    std_data = std_data[mask_data]
+    bay_data = bay_data[mask_data]
+    evdl_data = evdl_data[mask_data]
 
     # flatten the data
     diff_data = diff.flatten()
