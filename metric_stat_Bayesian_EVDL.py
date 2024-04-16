@@ -17,21 +17,21 @@ for result_file in results_list:
     #     "error_bay_corr": error_bay_corr,
     #     "error_evdl_corr": error_evdl_corr
     # }
-    print("error_std_corr", result["error_std_corr"].shape)
-    print("error_bay_corr", result["error_bay_corr"].shape)
-    print("error_evdl_corr", result["error_evdl_corr"].shape)
+    print(f"error_std_corr {result['error_std_corr'].shape}, mean: {np.mean(result['error_std_corr'])}, std: {np.std(result['error_std_corr'])}")
+    print(f"error_bay_corr {result['error_bay_corr'].shape}, mean: {np.mean(result['error_bay_corr'])}, std: {np.std(result['error_bay_corr'])}")
+    print(f"error_evdl_corr {result['error_evdl_corr'].shape}, mean: {np.mean(result['error_evdl_corr'])}, std: {np.std(result['error_evdl_corr'])}")
     print()
     error_std_corr.append(result["error_std_corr"])
     error_bay_corr.append(result["error_bay_corr"])
     error_evdl_corr.append(result["error_evdl_corr"])
 
-error_std_corr = np.sum(np.array(error_std_corr))
-error_bay_corr = np.sum(np.array(error_bay_corr))
-error_evdl_corr = np.sum(np.array(error_evdl_corr))
+# error_std_corr = np.sum(np.array(error_std_corr))
+# error_bay_corr = np.sum(np.array(error_bay_corr))
+# error_evdl_corr = np.sum(np.array(error_evdl_corr))
 print("Loaded all results")
-print("error_std_corr", error_std_corr.shape)
-print("error_bay_corr", error_bay_corr.shape)
-print("error_evdl_corr", error_evdl_corr.shape)
+# print("error_std_corr", error_std_corr.shape)
+# print("error_bay_corr", error_bay_corr.shape)
+# print("error_evdl_corr", error_evdl_corr.shape)
 
 corr_dict = {
     "error_std_corr": error_std_corr,
