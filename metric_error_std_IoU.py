@@ -29,7 +29,7 @@ for pred_file in pred_files:
     print(case_id)
 
 # wait for input to continue
-input("Press Enter to continue...")
+# input("Press Enter to continue...")
 
 case_dict_list = {}
 for case_id in case_id_list:
@@ -49,7 +49,7 @@ case_dict_list["ladder"] = {
 }
 
 # load the data and compute the case-level std and error
-for case_id in case_dict_list.keys():
+for case_id in case_id_list:
     case_dict = case_dict_list[case_id]
     pred = nib.load(case_dict["pred"]).get_fdata()
     std = nib.load(case_dict["std"]).get_fdata()
