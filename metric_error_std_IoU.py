@@ -12,6 +12,7 @@ mr_folder = "project_dir/Unet_Monai_Iman_v2/pred_monai/*xte.nii.gz"
 pred_files = sorted(glob.glob(pred_folder))
 std_files = sorted(glob.glob(std_folder))
 ct_files = sorted(glob.glob(ct_folder))
+mr_files = sorted(glob.glob(mr_folder))
 
 def find_filename_with_identifiers(id, filename_list):
     for filename in filename_list:
