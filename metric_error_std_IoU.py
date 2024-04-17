@@ -59,7 +59,7 @@ for case_id in case_dict_list.keys():
         th_std = np.percentile(std, i)
         error_mask = error < th_error
         std_mask = std < th_std
-        print(f"The {i}th percentile of error is {th_error}, std is {th_std}, error_mask {np.sum(error_mask)}, std_mask {np.sum(std_mask)}")
+        # print(f"The {i}th percentile of error is {th_error}, std is {th_std}, error_mask {np.sum(error_mask)}, std_mask {np.sum(std_mask)}")
         intersection = np.sum(error_mask & std_mask)
         union = np.sum(error_mask | std_mask)
         iou = intersection / union
@@ -69,7 +69,7 @@ for case_id in case_dict_list.keys():
     
     case_dict["iou"] = iou_list
     case_dict["dice"] = dice_list
-    print(f"case_id {case_id}, error {case_dict['error']}, std {case_dict['std']}, iou {iou}, dice {dice}")
+    print(f"case_id {case_id}, error {case_dict['error']}, std {case_dict['std']}, iou {np.mean(iou_list)}, dice {np.mean(dice_list)}")
 
 save_folder = "results/dice_iou/"
 os.makedirs(save_folder, exist_ok=True)
