@@ -59,6 +59,7 @@ for case_id in case_dict_list.keys():
         th_std = np.percentile(std, i)
         error_mask = error > th_error
         std_mask = std > th_std
+        print(f"The {i}th percentile of error is {th_error}, std is {th_std}, error_mask {np.sum(error_mask)}, std_mask {np.sum(std_mask)}")
         intersection = np.sum(error_mask & std_mask)
         union = np.sum(error_mask | std_mask)
         iou = intersection / union
