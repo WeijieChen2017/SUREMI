@@ -54,11 +54,11 @@ for case_id in case_dict_list.keys():
     iou_list = []
     dice_list = []
     # enumerate i from 1% to 100%
-    for i in range(2, 101):
+    for i in range(1, 101):
         th_error = np.percentile(error, i)
         th_std = np.percentile(std, i)
-        error_mask = error > th_error
-        std_mask = std > th_std
+        error_mask = error < th_error
+        std_mask = std < th_std
         print(f"The {i}th percentile of error is {th_error}, std is {th_std}, error_mask {np.sum(error_mask)}, std_mask {np.sum(std_mask)}")
         intersection = np.sum(error_mask & std_mask)
         union = np.sum(error_mask | std_mask)
