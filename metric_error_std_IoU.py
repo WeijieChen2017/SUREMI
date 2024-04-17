@@ -35,6 +35,13 @@ for case_id in case_id_list:
     case_dict["mr"] = find_filename_with_identifiers(case_id, mr_files)
     case_dict_list[case_id] = case_dict
 
+std_ladder = [15, 30, 45, 60, 75, 90, 105, 120, 135, 150]
+error = [60, 120, 180, 240, 300, 360, 420, 480, 540, 600]
+n_ladder = len(std_ladder)
+case_dict_list["ladder"] = {
+    "std": std_ladder,
+    "error": error
+}
 
 # load the data and compute the case-level std and error
 for case_id in case_dict_list.keys():
@@ -51,15 +58,29 @@ for case_id in case_dict_list.keys():
     case_dict["error"] = np.mean(error) * 4000
     case_dict["std"] = np.mean(std) * 4000
 
+    # iou_list = []
+    # dice_list = []
+    # # enumerate i from 1% to 100%
+    # for i in range(1, 101):
+    #     th_error = np.percentile(error, i)
+    #     th_std = np.percentile(std, i)
+    #     error_mask = error < th_error
+    #     std_mask = std < th_std
+    #     # print(f"The {i}th percentile of error is {th_error}, std is {th_std}, error_mask {np.sum(error_mask)}, std_mask {np.sum(std_mask)}")
+    #     intersection = np.sum(error_mask & std_mask)
+    #     union = np.sum(error_mask | std_mask)
+    #     iou = intersection / union
+    #     dice = 2 * intersection / (np.sum(error_mask) + np.sum(std_mask))
+    #     iou_list.append(iou)
+    #     dice_list.append(dice)
+
     iou_list = []
     dice_list = []
-    # enumerate i from 1% to 100%
-    for i in range(1, 101):
-        th_error = np.percentile(error, i)
-        th_std = np.percentile(std, i)
+    for i in range(n_ladder):
+        th_error = error[i]
+        th_std = std_ladder[i]
         error_mask = error < th_error
         std_mask = std < th_std
-        # print(f"The {i}th percentile of error is {th_error}, std is {th_std}, error_mask {np.sum(error_mask)}, std_mask {np.sum(std_mask)}")
         intersection = np.sum(error_mask & std_mask)
         union = np.sum(error_mask | std_mask)
         iou = intersection / union
@@ -73,5 +94,5 @@ for case_id in case_dict_list.keys():
 
 save_folder = "results/dice_iou/"
 os.makedirs(save_folder, exist_ok=True)
-np.save(os.path.join(save_folder, "case_dict_list.npy"), case_dict_list)
+np.save(os.path.join(save_folder, "case_dict_list_ladders.npy"), case_dict_list)
 print("Saved to", os.path.join(save_folder, "case_dict_list.npy"))
