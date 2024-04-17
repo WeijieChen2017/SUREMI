@@ -24,7 +24,12 @@ def find_filename_with_identifiers(id, filename_list):
 # check the identifier: mr filename is 00008_xte.nii.gz, so we need to extract the 00008
 case_id_list = []
 for pred_file in pred_files:
-    case_id_list.append(pred_file.split("/")[-1].split("_")[0])
+    case_id = pred_file.split("/")[-1].split("_")[0]
+    case_id_list.append(case_id)
+    print(case_id)
+
+# wait for input to continue
+input("Press Enter to continue...")
 
 case_dict_list = {}
 for case_id in case_id_list:
