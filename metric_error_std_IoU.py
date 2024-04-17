@@ -51,10 +51,10 @@ for case_id in case_dict_list.keys():
     case_dict["error"] = np.mean(error) * 4000
     case_dict["std"] = np.mean(std) * 4000
 
-    iou = []
-    dice = []
+    iou_list = []
+    dice_list = []
     # enumerate i from 1% to 100%
-    for i in range(1, 101):
+    for i in range(2, 101):
         th_error = np.percentile(error, i)
         th_std = np.percentile(std, i)
         error_mask = error > th_error
@@ -63,11 +63,11 @@ for case_id in case_dict_list.keys():
         union = np.sum(error_mask | std_mask)
         iou = intersection / union
         dice = 2 * intersection / (np.sum(error_mask) + np.sum(std_mask))
-        iou.append(iou)
-        dice.append(dice)
+        iou_list.append(iou)
+        dice_list.append(dice)
     
-    case_dict["iou"] = iou
-    case_dict["dice"] = dice
+    case_dict["iou"] = iou_list
+    case_dict["dice"] = dice_list
     print(f"case_id {case_id}, error {case_dict['error']}, std {case_dict['std']}, iou {iou}, dice {dice}")
 
 save_folder = "results/dice_iou/"
