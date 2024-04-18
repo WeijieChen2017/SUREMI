@@ -80,6 +80,9 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
         error = np.abs(pred - ct)
 
         mask = mr > np.percentile(mr, 0.05)
+        # set 1 for the mask, 0 for the rest
+        mask = mask.astype(np.float16)
+
 
         iou_list = []
         dice_list = []
@@ -87,17 +90,16 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
             th_error = error[i]
             th_std = std_ladder[i]
             # filter the error and std using the mask and threshold
-            error_mask = error < th_error and mask
-            std_mask = std < th_std and mask
-
+            error_mask = error < th_error
+            std_mask = std < th_std
+            error_mask = error_mask.astype(np.float16)
+            std_mask = std_mask.astype(np.float16)
             print(error_mask.shape, std_mask.shape)
-
-
+            total_error = error_mask*mask
+            total_std = std_mask*mask
             # save the error mask and std mask using the mr file header and affine
-            error_mask = np.asanyarray(error_mask, dtype=np.float16).reshape(mr.shape)
-            error_mask_nii = nib.Nifti1Image(error_mask, mr_file.affine, mr_file.header)
-            std_mask = np.asanyarray(std_mask, dtype=np.float16).reshape(mr.shape)
-            std_mask_nii = nib.Nifti1Image(std_mask, mr_file.affine, mr_file.header)
+            error_mask_nii = nib.Nifti1Image(total_error, mr_file.affine, mr_file.header)
+            std_mask_nii = nib.Nifti1Image(total_std, mr_file.affine, mr_file.header)
             # create folder to save the masks with the model name after results/IoU_dice/
             save_folder = f"results/dice_iou/{save_tag}/"
             os.makedirs(save_folder, exist_ok=True)
