@@ -66,7 +66,7 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
     n_ladder = len(std_ladder)
     case_dict_list["ladder"] = {
         "std": std_ladder,
-        "error": error
+        "error": error_ladder
     }
 
     # load the data and compute the case-level std and error
