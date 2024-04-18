@@ -96,13 +96,17 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
             std_mask_bool = std < th_std
             error_mask_int = error_mask_bool.astype(np.float16)
             std_mask_int = std_mask_bool.astype(np.float16)
-            mr_error_mask_bool = mr_mask_bool and error_mask_bool
-            mr_std_mask_bool = mr_mask_bool and std_mask_bool
-            mr_error_mask_int = mr_mask_int * error_mask_int
-            mr_std_mask_int = mr_mask_int * std_mask_int
+
+            # cross_err_mr_mask = np.logical_and(err_mask_bool, mr_mask_bool)
+            # cross_std_mr_mask = np.logical_and(std_mask_bool, mr_mask_bool)
+            cross_err_mr_mask = np.logical_and(error_mask_bool, mr_mask_bool)
+            cross_std_mr_mask = np.logical_and(std_mask_bool, mr_mask_bool)
+            cross_err_mr_mask_int = cross_err_mr_mask.astype(np.float16)
+            cross_std_mr_mask_int = cross_std_mr_mask.astype(np.float16)
+
             # save the error mask and std mask using the mr file header and affine
-            error_mask_nii = nib.Nifti1Image(mr_error_mask_int, mr_file.affine, mr_file.header)
-            std_mask_nii = nib.Nifti1Image(mr_std_mask_int, mr_file.affine, mr_file.header)
+            error_mask_nii = nib.Nifti1Image(cross_err_mr_mask_int, mr_file.affine, mr_file.header)
+            std_mask_nii = nib.Nifti1Image(cross_std_mr_mask_int, mr_file.affine, mr_file.header)
             # create folder to save the masks with the model name after results/IoU_dice/
             save_folder = f"results/dice_iou/{save_tag}/"
             os.makedirs(save_folder, exist_ok=True)
@@ -110,10 +114,11 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
             nib.save(std_mask_nii, os.path.join(save_folder, f"{case_id}_std_mask_err_{th_error}_std_{th_std}.nii.gz"))
             print(f"Saved {case_id}_error_mask_err_{th_error}_std_{th_std}.nii.gz and {case_id}_std_mask_err_{th_error}_std_{th_std}.nii.gz")
 
-            intersection = np.sum(mr_error_mask_bool & mr_std_mask_bool)
-            union = np.sum(mr_error_mask_bool | mr_std_mask_bool)
+            # compute the intersection and union
+            intersection = np.sum(cross_err_mr_mask & cross_std_mr_mask)
+            union = np.sum(cross_err_mr_mask | cross_std_mr_mask)
             iou = intersection / union
-            dice = 2 * intersection / (np.sum(mr_error_mask_bool) + np.sum(mr_std_mask_bool))
+            dice = 2 * intersection / (np.sum(cross_err_mr_mask) + np.sum(cross_std_mr_mask))
             iou_list.append(iou)
             dice_list.append(dice)
         print(f"{case_id} IoU: {iou_list}")
