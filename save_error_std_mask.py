@@ -94,7 +94,6 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
             std_mask = std < th_std
             error_mask = error_mask.astype(np.float16)
             std_mask = std_mask.astype(np.float16)
-            print(error_mask.shape, std_mask.shape)
             total_error = error_mask*mask
             total_std = std_mask*mask
             # save the error mask and std mask using the mr file header and affine
@@ -103,6 +102,6 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
             # create folder to save the masks with the model name after results/IoU_dice/
             save_folder = f"results/dice_iou/{save_tag}/"
             os.makedirs(save_folder, exist_ok=True)
-            nib.save(error_mask_nii, os.path.join(save_folder, f"{case_id}_error_mask_err_{error[i]}_std_{std_ladder[i]}.nii.gz"))
-            nib.save(std_mask_nii, os.path.join(save_folder, f"{case_id}_std_mask_err_{error[i]}_std_{std_ladder[i]}.nii.gz"))
-            print(f"Saved {case_id}_error_mask_err_{error[i]}_std_{std_ladder[i]}.nii.gz and {case_id}_std_mask_err_{error[i]}_std_{std_ladder[i]}.nii.gz")
+            nib.save(error_mask_nii, os.path.join(save_folder, f"{case_id}_error_mask_err_{th_error}_std_{th_std}.nii.gz"))
+            nib.save(std_mask_nii, os.path.join(save_folder, f"{case_id}_std_mask_err_{th_error}_std_{th_std}.nii.gz"))
+    print(f"Finished {save_tag}...")
