@@ -62,12 +62,15 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
         case_dict_list[case_id] = case_dict
 
     std_ladder = [15, 30, 45, 60, 75, 90, 105, 120, 135, 150]
-    error = [60, 120, 180, 240, 300, 360, 420, 480, 540, 600]
+    error_ladder = [60, 120, 180, 240, 300, 360, 420, 480, 540, 600]
     n_ladder = len(std_ladder)
     case_dict_list["ladder"] = {
         "std": std_ladder,
-        "error": error
+        "error": error_ladder,
     }
+
+    model_iou = {}
+    model_dice = {}
 
     # load the data and compute the case-level std and error
     for case_id in case_id_list:
@@ -83,11 +86,10 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
         # set 1 for the mask, 0 for the rest
         mask = mask.astype(np.float16)
 
-
         iou_list = []
         dice_list = []
         for i in range(n_ladder):
-            th_error = error[i]
+            th_error = error_ladder[i]
             th_std = std_ladder[i]
             # filter the error and std using the mask and threshold
             error_mask = error < th_error
@@ -105,4 +107,15 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
             nib.save(error_mask_nii, os.path.join(save_folder, f"{case_id}_error_mask_err_{th_error}_std_{th_std}.nii.gz"))
             nib.save(std_mask_nii, os.path.join(save_folder, f"{case_id}_std_mask_err_{th_error}_std_{th_std}.nii.gz"))
             print(f"Saved {case_id}_error_mask_err_{th_error}_std_{th_std}.nii.gz and {case_id}_std_mask_err_{th_error}_std_{th_std}.nii.gz")
+            intersection = np.sum(total_error & total_std)
+            union = np.sum(total_error | total_std)
+            iou = intersection / union
+            dice = 2 * intersection / (np.sum(total_error) + np.sum(total_std))
+            iou_list.append(iou)
+            dice_list.append(dice)
+        print(f"{case_id} IoU: {iou_list}")
+        print(f"{case_id} Dice: {dice_list}")
+        model_iou[case_id] = iou_list
+        model_dice[case_id] = dice_list
+    np.save(f"results/dice_iou/{save_tag}_iou.npy", model_iou)
     print(f"Finished {save_tag}...")
