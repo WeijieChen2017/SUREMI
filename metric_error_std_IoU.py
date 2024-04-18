@@ -109,6 +109,10 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
             std_mask_bool = std < th_std
             error_mask_int = error_mask_bool.astype(np.float16)
             std_mask_int = std_mask_bool.astype(np.float16)
+            # show the shape of three masks pairs
+            print(f"error_mask {error_mask_bool.shape}, std_mask {std_mask_bool.shape}, mr_mask {mr_mask_bool.shape}")
+            print(f"error_mask {error_mask_int.shape}, std_mask {std_mask_int.shape}, mr_mask {mr_mask_int.shape}")
+            
 
             error_mask_bool = mr_mask_bool & error_mask_bool
             std_mask_bool = mr_mask_bool & std_mask_bool
