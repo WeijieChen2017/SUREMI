@@ -115,11 +115,13 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
             error_mask_int = mr_mask_int * error_mask_int
             std_mask_int = mr_mask_int * std_mask_int
 
+            mask_1_bool = error < th_error
+            mask_2_bool = std < th_std
 
-            intersection = np.sum(error_mask_bool & std_mask_bool)
-            union = np.sum(error_mask_bool | std_mask_bool)
+            intersection = np.sum(mask_1_bool & mask_2_bool)
+            union = np.sum(mask_1_bool | mask_2_bool)
             iou = intersection / union
-            dice = 2 * intersection / (np.sum(error_mask_bool) + np.sum(std_mask_bool))
+            dice = 2 * intersection / (np.sum(mask_1_bool) + np.sum(mask_2_bool))
             # save the error mask and std mask using the mr file header and affine
             error_mask_nii = nib.Nifti1Image(error_mask_int, mr_file.affine, mr_file.header)
             std_mask_nii = nib.Nifti1Image(std_mask_int, mr_file.affine, mr_file.header)
