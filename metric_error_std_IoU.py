@@ -62,7 +62,7 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
         case_dict_list[case_id] = case_dict
 
     std_ladder = [15, 30, 45, 60, 75, 90, 105, 120, 135, 150]
-    error = [60, 120, 180, 240, 300, 360, 420, 480, 540, 600]
+    error_ladder = [60, 120, 180, 240, 300, 360, 420, 480, 540, 600]
     n_ladder = len(std_ladder)
     case_dict_list["ladder"] = {
         "std": std_ladder,
@@ -76,6 +76,7 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
         std = nib.load(case_dict["std"]).get_fdata()
         ct = nib.load(case_dict["ct"]).get_fdata()
         mr = nib.load(case_dict["mr"]).get_fdata()
+        mr_file = nib.load(case_dict["mr"])
         error = np.abs(pred - ct)
 
         mask = mr > np.percentile(mr, 0.05)
@@ -103,7 +104,7 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
         iou_list = []
         dice_list = []
         for i in range(n_ladder):
-            th_error = error[i]
+            th_error = error_ladder[i]
             th_std = std_ladder[i]
             error_mask = error < th_error
             std_mask = std < th_std
@@ -111,6 +112,16 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
             union = np.sum(error_mask | std_mask)
             iou = intersection / union
             dice = 2 * intersection / (np.sum(error_mask) + np.sum(std_mask))
+            # save the error mask and std mask using the mr file header and affine
+            error_mask_nii = nib.Nifti1Image(error_mask.astype(np.float16), mr_file.affine, mr_file.header)
+            std_mask_nii = nib.Nifti1Image(std_mask.astype(np.float16), mr_file.affine, mr_file.header)
+            # create folder to save the masks with the model name after results/IoU_dice/
+            save_folder = f"results/dice_iou/{save_tag}/"
+            os.makedirs(save_folder, exist_ok=True)
+            nib.save(error_mask_nii, os.path.join(save_folder, f"{case_id}_error_mask_err_{error[i]}_std_{std_ladder[i]}.nii.gz"))
+            nib.save(std_mask_nii, os.path.join(save_folder, f"{case_id}_std_mask_err_{error[i]}_std_{std_ladder[i]}.nii.gz"))
+
+
             iou_list.append(iou)
             dice_list.append(dice)
         
