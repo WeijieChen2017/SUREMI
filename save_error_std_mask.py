@@ -80,19 +80,19 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
         error = np.abs(pred - ct)
 
         mask = mr > np.percentile(mr, 0.05)
-        error = error[mask]
-        std = std[mask]
-        case_dict["error"] = np.mean(error) * 4000
-        case_dict["std"] = np.mean(std) * 4000
 
         iou_list = []
         dice_list = []
         for i in range(n_ladder):
             th_error = error[i]
             th_std = std_ladder[i]
-            error_mask = error < th_error
-            std_mask = std < th_std
-            
+            # filter the error and std using the mask and threshold
+            error_mask = error < th_error and mask
+            std_mask = std < th_std and mask
+
+            print(error_mask.shape, std_mask.shape)
+
+
             # save the error mask and std mask using the mr file header and affine
             error_mask = np.asanyarray(error_mask, dtype=np.float16).reshape(mr.shape)
             error_mask_nii = nib.Nifti1Image(error_mask, mr_file.affine, mr_file.header)
