@@ -107,6 +107,9 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
             nib.save(error_mask_nii, os.path.join(save_folder, f"{case_id}_error_mask_err_{th_error}_std_{th_std}.nii.gz"))
             nib.save(std_mask_nii, os.path.join(save_folder, f"{case_id}_std_mask_err_{th_error}_std_{th_std}.nii.gz"))
             print(f"Saved {case_id}_error_mask_err_{th_error}_std_{th_std}.nii.gz and {case_id}_std_mask_err_{th_error}_std_{th_std}.nii.gz")
+
+            total_error = total_error > 0
+            total_std = total_std > 0
             intersection = np.sum(total_error & total_std)
             union = np.sum(total_error | total_std)
             iou = intersection / union
