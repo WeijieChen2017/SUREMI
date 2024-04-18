@@ -82,9 +82,9 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
         mr_file = nib.load(case_dict["mr"])
         error = np.abs(pred - ct)
 
-        mask = mr > np.percentile(mr, 0.05)
+        mr_mask_bool = mr > np.percentile(mr, 0.05)
         # set 1 for the mask, 0 for the rest
-        mask = mask.astype(np.float16)
+        mr_mask_int = mr_mask_bool.astype(np.float16)
 
         iou_list = []
         dice_list = []
@@ -92,15 +92,17 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
             th_error = error_ladder[i]
             th_std = std_ladder[i]
             # filter the error and std using the mask and threshold
-            error_mask = error < th_error
-            std_mask = std < th_std
-            error_mask = error_mask.astype(np.float16)
-            std_mask = std_mask.astype(np.float16)
-            total_error = error_mask*mask
-            total_std = std_mask*mask
+            error_mask_bool = error < th_error
+            std_mask_bool = std < th_std
+            error_mask_int = error_mask_bool.astype(np.float16)
+            std_mask_int = std_mask_bool.astype(np.float16)
+            mr_error_mask_bool = mr_mask_bool and error_mask_bool
+            mr_std_mask_bool = mr_mask_bool and std_mask_bool
+            mr_error_mask_int = mr_mask_int * error_mask_int
+            mr_std_mask_int = mr_mask_int * std_mask_int
             # save the error mask and std mask using the mr file header and affine
-            error_mask_nii = nib.Nifti1Image(total_error, mr_file.affine, mr_file.header)
-            std_mask_nii = nib.Nifti1Image(total_std, mr_file.affine, mr_file.header)
+            error_mask_nii = nib.Nifti1Image(mr_error_mask_int, mr_file.affine, mr_file.header)
+            std_mask_nii = nib.Nifti1Image(mr_std_mask_int, mr_file.affine, mr_file.header)
             # create folder to save the masks with the model name after results/IoU_dice/
             save_folder = f"results/dice_iou/{save_tag}/"
             os.makedirs(save_folder, exist_ok=True)
@@ -108,12 +110,10 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
             nib.save(std_mask_nii, os.path.join(save_folder, f"{case_id}_std_mask_err_{th_error}_std_{th_std}.nii.gz"))
             print(f"Saved {case_id}_error_mask_err_{th_error}_std_{th_std}.nii.gz and {case_id}_std_mask_err_{th_error}_std_{th_std}.nii.gz")
 
-            total_error = total_error > 0
-            total_std = total_std > 0
-            intersection = np.sum(total_error & total_std)
-            union = np.sum(total_error | total_std)
+            intersection = np.sum(mr_error_mask_bool & mr_std_mask_bool)
+            union = np.sum(mr_error_mask_bool | mr_std_mask_bool)
             iou = intersection / union
-            dice = 2 * intersection / (np.sum(total_error) + np.sum(total_std))
+            dice = 2 * intersection / (np.sum(mr_error_mask_bool) + np.sum(mr_std_mask_bool))
             iou_list.append(iou)
             dice_list.append(dice)
         print(f"{case_id} IoU: {iou_list}")
