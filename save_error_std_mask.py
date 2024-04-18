@@ -94,9 +94,9 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
             std_mask = std < th_std
             
             # save the error mask and std mask using the mr file header and affine
-            error_mask = np.asanyarray(error_mask, dtype=np.float16)
+            error_mask = np.asanyarray(error_mask, dtype=np.float16).reshape(mr.shape)
             error_mask_nii = nib.Nifti1Image(error_mask, mr_file.affine, mr_file.header)
-            std_mask = np.asanyarray(std_mask, dtype=np.float16)
+            std_mask = np.asanyarray(std_mask, dtype=np.float16).reshape(mr.shape)
             std_mask_nii = nib.Nifti1Image(std_mask, mr_file.affine, mr_file.header)
             # create folder to save the masks with the model name after results/IoU_dice/
             save_folder = f"results/dice_iou/{save_tag}/"
