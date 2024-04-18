@@ -79,9 +79,8 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
         mr_file = nib.load(case_dict["mr"])
         error = np.abs(pred - ct)
 
-        mask = mr > np.percentile(mr, 0.05)
-        error = error[mask]
-        std = std[mask]
+        mr_mask_bool = mr > np.percentile(mr, 0.05)
+        mr_mask_int = mr_mask_bool.astype(np.float16)
         case_dict["error"] = np.mean(error) * 4000
         case_dict["std"] = np.mean(std) * 4000
 
@@ -106,15 +105,24 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
         for i in range(n_ladder):
             th_error = error_ladder[i]
             th_std = std_ladder[i]
-            error_mask = error < th_error
-            std_mask = std < th_std
-            intersection = np.sum(error_mask & std_mask)
-            union = np.sum(error_mask | std_mask)
+            error_mask_bool = error < th_error
+            std_mask_bool = std < th_std
+            error_mask_int = error_mask_bool.astype(np.float16)
+            std_mask_int = std_mask_bool.astype(np.float16)
+
+            error_mask_bool = mr_mask_bool & error_mask_bool
+            std_mask_bool = mr_mask_bool & std_mask_bool
+            error_mask_int = mr_mask_int * error_mask_int
+            std_mask_int = mr_mask_int * std_mask_int
+
+
+            intersection = np.sum(error_mask_bool & std_mask_bool)
+            union = np.sum(error_mask_bool | std_mask_bool)
             iou = intersection / union
-            dice = 2 * intersection / (np.sum(error_mask) + np.sum(std_mask))
+            dice = 2 * intersection / (np.sum(error_mask_bool) + np.sum(std_mask_bool))
             # save the error mask and std mask using the mr file header and affine
-            error_mask_nii = nib.Nifti1Image(error_mask.astype(np.float16), mr_file.affine, mr_file.header)
-            std_mask_nii = nib.Nifti1Image(std_mask.astype(np.float16), mr_file.affine, mr_file.header)
+            error_mask_nii = nib.Nifti1Image(error_mask_int, mr_file.affine, mr_file.header)
+            std_mask_nii = nib.Nifti1Image(std_mask_int, mr_file.affine, mr_file.header)
             # create folder to save the masks with the model name after results/IoU_dice/
             save_folder = f"results/dice_iou/{save_tag}/"
             os.makedirs(save_folder, exist_ok=True)
