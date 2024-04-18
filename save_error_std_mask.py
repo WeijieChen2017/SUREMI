@@ -104,4 +104,5 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
             os.makedirs(save_folder, exist_ok=True)
             nib.save(error_mask_nii, os.path.join(save_folder, f"{case_id}_error_mask_err_{th_error}_std_{th_std}.nii.gz"))
             nib.save(std_mask_nii, os.path.join(save_folder, f"{case_id}_std_mask_err_{th_error}_std_{th_std}.nii.gz"))
+            print(f"Saved {case_id}_error_mask_err_{th_error}_std_{th_std}.nii.gz and {case_id}_std_mask_err_{th_error}_std_{th_std}.nii.gz")
     print(f"Finished {save_tag}...")
