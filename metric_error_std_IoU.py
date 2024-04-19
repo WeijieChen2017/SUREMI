@@ -63,8 +63,10 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
 
     # std_ladder = [15, 30, 45, 60, 75, 90, 105, 120, 135, 150]
     # error_ladder = [60, 120, 180, 240, 300, 360, 420, 480, 540, 600]
-    err_ladder_qth = [0, 33.3, 66.6, 100]
-    std_ladder_qth = [0, 33.3, 66.6, 100]
+    # err_ladder_qth = [0, 33.3, 66.6, 100]
+    # std_ladder_qth = [0, 33.3, 66.6, 100]
+    err_ladder_qth = [0, 25, 50, 75, 100]
+    std_ladder_qth = [0, 25, 50, 75, 100]
     n_ladder = len(err_ladder_qth)
     # case_dict_list["ladder"] = {
     #     "std": std_ladder,
