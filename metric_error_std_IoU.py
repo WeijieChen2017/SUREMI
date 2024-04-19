@@ -13,7 +13,7 @@ def find_filename_with_identifiers(id, filename_list):
 
 pred_folder_list = [
     # ["project_dir/Unet_Monai_Iman_v2/pred_monai/*zte.nii.gz", "singleU-Net"],
-    ["project_dir/Theseus_v2_181_200_rdp1/pred_monai/*xte.nii.gz", "project_dir/Theseus_v2_181_200_rdp1/pred_monai/*std.nii.gz", "E2B2D2"],
+    ["project_dir/Theseus_v2_181_200_rdp1/pred_monai/*xte.nii.gz", "project_dir/Theseus_v2_181_200_rdp1/pred_monai/*std.nii.gz", "E2B2D2_regular"],
     ["project_dir/Theseus_v2_47_57_rdp100/pred_monai/*xte.nii.gz", "project_dir/Theseus_v2_47_57_rdp100/pred_monai/*std.nii.gz", "E2B2D2_early"],
     ["project_dir/syn_DLE_1114444_e400_lrn4/full_val_xte/*xte.nii.gz", "project_dir/syn_DLE_1114444_e400_lrn4/full_val_xte/*xte_std.nii.gz", "E1B4D4_full"],
     ["project_dir/syn_DLE_1114444_e400_lrn4/part_val/*xte.nii.gz", "project_dir/syn_DLE_1114444_e400_lrn4/part_val/*xte_std.nii.gz", "E1B4D4_pruned"],
@@ -68,7 +68,7 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
     # err_ladder_qth = [0, 25, 50, 75, 100]
     # std_ladder_qth = [0, 25, 50, 75, 100]
     err_ladder = [0, 100, 3000]
-    std_ladder = [0, 25, 3000]
+    std_ladder = [0, 15, 3000]
     n_ladder = len(err_ladder)
     # case_dict_list["ladder"] = {
     #     "std": std_ladder,
