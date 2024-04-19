@@ -134,14 +134,14 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
             union = np.logical_or(mask_1, mask_2)
             iou = np.sum(intersection) / np.sum(union)
             dice = 2 * np.sum(intersection) / (np.sum(mask_1) + np.sum(mask_2))
-            print(f"IoU = {iou}, Dice = {dice} for std from {std_th_low:3f} to {std_th_high:3f} and error from {err_th_low:3f} to {err_th_high:3f}")
+            print(f"IoU = {iou:4f}, Dice = {dice:4f} for std from {std_th_low:3f} to {std_th_high:3f} and error from {err_th_low:3f} to {err_th_high:3f}")
 
             iou_list.append(iou)
             dice_list.append(dice)
         
         case_dict["iou"] = iou_list
         case_dict["dice"] = dice_list
-        print(f"case_id {case_id}, error {case_dict['error']}, std {case_dict['std']}, iou {np.mean(iou_list)}, dice {np.mean(dice_list)}")
+        print(f"case_id {case_id}, error {case_dict['error']:4f}, std {case_dict['std']:4f}, iou {np.mean(iou_list):4f}, dice {np.mean(dice_list):4f}")
 
     save_folder = "results/dice_iou/"
     os.makedirs(save_folder, exist_ok=True)
