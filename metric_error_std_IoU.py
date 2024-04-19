@@ -122,8 +122,8 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
             cross_std_mr_mask_int = cross_std_mr_mask.astype(np.float16)
             cross_err_mr_mask_file = nib.Nifti1Image(cross_err_mr_mask_int, mr_file.affine, mr_file.header)
             cross_std_mr_mask_file = nib.Nifti1Image(cross_std_mr_mask_int, mr_file.affine, mr_file.header)
-            cross_err_mr_mask_savename = os.path.join(f"results/dice_iou/{save_tag}/", f"{case_id}_error_mask_err_{err_th_low:3f}_{err_th_high:3f}_std_{std_th_low:3f}_{std_th_high:3f}.nii.gz")
-            cross_std_mr_mask_savename = os.path.join(f"results/dice_iou/{save_tag}/", f"{case_id}_std_mask_err_{err_th_low:3f}_{err_th_high:3f}_std_{std_th_low:3f}_{std_th_high:3f}.nii.gz")
+            cross_err_mr_mask_savename = os.path.join(f"results/dice_iou/{save_tag}/", f"{case_id}_error_mask_err_{err_th_low:2f}_{err_th_high:2f}_std_{std_th_low:2f}_{std_th_high:2f}.nii.gz")
+            cross_std_mr_mask_savename = os.path.join(f"results/dice_iou/{save_tag}/", f"{case_id}_std_mask_err_{err_th_low:2f}_{err_th_high:2f}_std_{std_th_low:2f}_{std_th_high:2f}.nii.gz")
             nib.save(cross_err_mr_mask_file, cross_err_mr_mask_savename)
             nib.save(cross_std_mr_mask_file, cross_std_mr_mask_savename)
 
@@ -134,14 +134,14 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
             union = np.logical_or(mask_1, mask_2)
             iou = np.sum(intersection) / np.sum(union)
             dice = 2 * np.sum(intersection) / (np.sum(mask_1) + np.sum(mask_2))
-            print(f"IoU = {iou:4f}, Dice = {dice:4f} for std from {std_th_low:3f} to {std_th_high:3f} and error from {err_th_low:3f} to {err_th_high:3f}")
+            print(f"IoU = {iou:2f}, Dice = {dice:2f} for std from {std_th_low:2f} to {std_th_high:2f} and error from {err_th_low:2f} to {err_th_high:2f}")
 
             iou_list.append(iou)
             dice_list.append(dice)
         
         case_dict["iou"] = iou_list
         case_dict["dice"] = dice_list
-        print(f"case_id {case_id}, error {case_dict['error']:4f}, std {case_dict['std']:4f}, iou {np.mean(iou_list):4f}, dice {np.mean(dice_list):4f}")
+        print(f"case_id {case_id}, error {case_dict['error']:2f}, std {case_dict['std']:2f}, iou {np.mean(iou_list):2f}, dice {np.mean(dice_list):2f}")
 
     save_folder = "results/dice_iou/"
     os.makedirs(save_folder, exist_ok=True)
