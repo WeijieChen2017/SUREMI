@@ -28,13 +28,13 @@ for model_id in model_id_list:
 
     for boundary in boundary_list:
         # 00008_error_mask_err_0.000_100.000_std_0.000_10.000.nii.gz
-        error_filename_low = f"{data_folder}/{model_id}/{case_id}_error_mask_err_0.000_{boundary}.000_std_0.000_{boundary}.000.nii.gz"
+        error_filename_low = f"{data_folder}/{model_id}/{case_id}_error_mask_err_0.000_100.000_std_0.000_{boundary}.000.nii.gz"
         # 00008_error_mask_err_100.000_3000.000_std_10.000_3000.000.nii.gz
-        error_filename_high = f"{data_folder}/{model_id}/{case_id}_error_mask_err_{boundary}.000_3000.000_std_{boundary}.000_3000.000.nii.gz"
+        error_filename_high = f"{data_folder}/{model_id}/{case_id}_error_mask_err_100.000_3000.000_std_{boundary}.000_3000.000.nii.gz"
         # 00008_std_mask_err_0.000_100.000_std_0.000_10.000.nii.gz
-        std_filename_low = f"{data_folder}/{model_id}/{case_id}_std_mask_err_0.000_{boundary}.000_std_0.000_{boundary}.000.nii.gz"
+        std_filename_low = f"{data_folder}/{model_id}/{case_id}_std_mask_err_0.000_100.000_std_0.000_{boundary}.000.nii.gz"
         # 00008_std_mask_err_100.000_3000.000_std_10.000_3000.000.nii.gz
-        std_filename_high = f"{data_folder}/{model_id}/{case_id}_std_mask_err_{boundary}.000_3000.000_std_{boundary}.000_3000.000.nii.gz"
+        std_filename_high = f"{data_folder}/{model_id}/{case_id}_std_mask_err_100.000_3000.000_std_{boundary}.000_3000.000.nii.gz"
 
         error_file_low = nib.load(error_filename_low).get_fdata()
         error_file_high = nib.load(error_filename_high).get_fdata()
