@@ -47,7 +47,7 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
     for pred_file in pred_files:
         case_id = pred_file.split("/")[-1].split("_")[0]
         case_id_list.append(case_id)
-        print(case_id)
+        # print(case_id)
 
     # wait for input to continue
     # input("Press Enter to continue...")
@@ -68,7 +68,7 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
     # err_ladder_qth = [0, 25, 50, 75, 100]
     # std_ladder_qth = [0, 25, 50, 75, 100]
     err_ladder = [0, 100, 3000]
-    std_ladder = [0, 20, 3000]
+    std_ladder = [0, 25, 3000]
     n_ladder = len(err_ladder)
     # case_dict_list["ladder"] = {
     #     "std": std_ladder,
