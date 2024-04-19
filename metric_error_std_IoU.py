@@ -61,13 +61,15 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
         case_dict["mr"] = find_filename_with_identifiers(case_id, mr_files)
         case_dict_list[case_id] = case_dict
 
-    std_ladder = [15, 30, 45, 60, 75, 90, 105, 120, 135, 150]
-    error_ladder = [60, 120, 180, 240, 300, 360, 420, 480, 540, 600]
-    n_ladder = len(std_ladder)
-    case_dict_list["ladder"] = {
-        "std": std_ladder,
-        "error": error_ladder
-    }
+    # std_ladder = [15, 30, 45, 60, 75, 90, 105, 120, 135, 150]
+    # error_ladder = [60, 120, 180, 240, 300, 360, 420, 480, 540, 600]
+    err_ladder_qth = [0, 33.3, 66.6, 100]
+    std_ladder_qth = [0, 33.3, 66.6, 100]
+    n_ladder = len(err_ladder_qth)
+    # case_dict_list["ladder"] = {
+    #     "std": std_ladder,
+    #     "error": error_ladder
+    # }
 
     # load the data and compute the case-level std and error
     for case_id in case_id_list:
@@ -102,39 +104,37 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
 
         iou_list = []
         dice_list = []
-        for i in range(n_ladder):
-            th_error = error_ladder[i]
-            th_std = std_ladder[i]
-            error_mask_bool = error < th_error
-            std_mask_bool = std < th_std
-            error_mask_int = error_mask_bool.astype(np.float16)
-            std_mask_int = std_mask_bool.astype(np.float16)
-            # show the shape of three masks pairs
-            print(f"error_mask {error_mask_bool.shape}, std_mask {std_mask_bool.shape}, mr_mask {mr_mask_bool.shape}")
-            print(f"error_mask {error_mask_int.shape}, std_mask {std_mask_int.shape}, mr_mask {mr_mask_int.shape}")
+        os.makedirs(os.path.join(f"results/dice_iou/{save_tag}/"), exist_ok=True)
+        for idx_th in range(n_ladder):
             
+            err_th_low = np.percentile(error[mr_mask_bool], err_ladder_qth[idx_th])
+            err_th_high = np.percentile(error[mr_mask_bool], err_ladder_qth[idx_th + 1])
+            std_th_low = np.percentile(std[mr_mask_bool], std_ladder_qth[idx_th])
+            std_th_high = np.percentile(std[mr_mask_bool], std_ladder_qth[idx_th + 1])
 
-            error_mask_bool = mr_mask_bool & error_mask_bool
-            std_mask_bool = mr_mask_bool & std_mask_bool
-            error_mask_int = mr_mask_int * error_mask_int
-            std_mask_int = mr_mask_int * std_mask_int
+            error_mask_bool = np.logical_and(error > err_th_low, error <= err_th_high)
+            std_mask_bool = np.logical_and(std > std_th_low, std <= std_th_high)
 
-            mask_1_bool = error < th_error
-            mask_2_bool = std < th_std
+            cross_err_mr_mask = np.logical_and(mr_mask_bool, error_mask_bool)
+            cross_std_mr_mask = np.logical_and(mr_mask_bool, std_mask_bool)
 
-            intersection = np.sum(mask_1_bool & mask_2_bool)
-            union = np.sum(mask_1_bool | mask_2_bool)
-            iou = intersection / union
-            dice = 2 * intersection / (np.sum(mask_1_bool) + np.sum(mask_2_bool))
-            # save the error mask and std mask using the mr file header and affine
-            error_mask_nii = nib.Nifti1Image(error_mask_int, mr_file.affine, mr_file.header)
-            std_mask_nii = nib.Nifti1Image(std_mask_int, mr_file.affine, mr_file.header)
-            # create folder to save the masks with the model name after results/IoU_dice/
-            save_folder = f"results/dice_iou/{save_tag}/"
-            os.makedirs(save_folder, exist_ok=True)
-            nib.save(error_mask_nii, os.path.join(save_folder, f"{case_id}_error_mask_err_{error_ladder[i]}_std_{std_ladder[i]}.nii.gz"))
-            nib.save(std_mask_nii, os.path.join(save_folder, f"{case_id}_std_mask_err_{error_ladder[i]}_std_{std_ladder[i]}.nii.gz"))
+            cross_err_mr_mask_int = cross_err_mr_mask.astype(np.float16)
+            cross_std_mr_mask_int = cross_std_mr_mask.astype(np.float16)
+            cross_err_mr_mask_file = nib.Nifti1Image(cross_err_mr_mask_int, mr_file.affine, mr_file.header)
+            cross_std_mr_mask_file = nib.Nifti1Image(cross_std_mr_mask_int, mr_file.affine, mr_file.header)
+            cross_err_mr_mask_savename = os.path.join(f"results/dice_iou/{save_tag}/", f"{case_id}_error_mask_err_{err_th_low}_{err_th_high}_std_{std_th_low}_{std_th_high}.nii.gz")
+            cross_std_mr_mask_savename = os.path.join(f"results/dice_iou/{save_tag}/", f"{case_id}_std_mask_err_{err_th_low}_{err_th_high}_std_{std_th_low}_{std_th_high}.nii.gz")
+            nib.save(cross_err_mr_mask_file, cross_err_mr_mask_savename)
+            nib.save(cross_std_mr_mask_file, cross_std_mr_mask_savename)
 
+            mask_1 = cross_err_mr_mask
+            mask_2 = cross_std_mr_mask
+
+            intersection = np.logical_and(mask_1, mask_2)
+            union = np.logical_or(mask_1, mask_2)
+            iou = np.sum(intersection) / np.sum(union)
+            dice = 2 * np.sum(intersection) / (np.sum(mask_1) + np.sum(mask_2))
+            print(f"IoU = {iou}, Dice = {dice} for std from {std_th_low} to {std_th_high} and error from {err_th_low} to {err_th_high}")
 
             iou_list.append(iou)
             dice_list.append(dice)
