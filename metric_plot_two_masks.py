@@ -42,7 +42,7 @@ for model_id in model_id_list:
         std_file_high = nib.load(std_filename_high).get_fdata()
 
 
-        plt.figure(figsize=(10, 2), dpi=100)
+        plt.figure(figsize=(10, 10), dpi=100)
         plt.subplot(2, 2, 1)
         img_1 = np.rot90(error_file_low[:, :, idx_z])
         plt.imshow(img_1, cmap="gray")
