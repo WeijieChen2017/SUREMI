@@ -68,7 +68,7 @@ for model_id in model_id_list:
         plt.axis("off")
 
         plt.tight_layout()
-        plt_savename = f"{data_folder}/{model_id}_{case_id}_mask_{boundary}_idz{}.png"
+        plt_savename = f"{data_folder}/{model_id}_{case_id}_mask_{boundary}_idz{idx_z}.png"
         plt.savefig(plt_savename)
         plt.close()
         print(f"--->Saved {plt_savename}")
