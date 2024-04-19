@@ -65,9 +65,11 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
     # error_ladder = [60, 120, 180, 240, 300, 360, 420, 480, 540, 600]
     # err_ladder_qth = [0, 33.3, 66.6, 100]
     # std_ladder_qth = [0, 33.3, 66.6, 100]
-    err_ladder_qth = [0, 25, 50, 75, 100]
-    std_ladder_qth = [0, 25, 50, 75, 100]
-    n_ladder = len(err_ladder_qth)
+    # err_ladder_qth = [0, 25, 50, 75, 100]
+    # std_ladder_qth = [0, 25, 50, 75, 100]
+    err_ladder = [0, 100, 3000]
+    std_ladder = [0, 20, 3000]
+    n_ladder = len(err_ladder)
     # case_dict_list["ladder"] = {
     #     "std": std_ladder,
     #     "error": error_ladder
@@ -109,10 +111,15 @@ for idx, pred_std_pair in enumerate(pred_folder_list):
         os.makedirs(os.path.join(f"results/dice_iou/{save_tag}/"), exist_ok=True)
         for idx_th in range(n_ladder - 1):
             
-            err_th_low = np.percentile(error[mr_mask_bool], err_ladder_qth[idx_th])
-            err_th_high = np.percentile(error[mr_mask_bool], err_ladder_qth[idx_th + 1])
-            std_th_low = np.percentile(std[mr_mask_bool], std_ladder_qth[idx_th])
-            std_th_high = np.percentile(std[mr_mask_bool], std_ladder_qth[idx_th + 1])
+            err_th_low = err_ladder[idx_th]
+            err_th_high = err_ladder[idx_th + 1]
+            std_th_low = std_ladder[idx_th]
+            std_th_high = std_ladder[idx_th + 1]
+
+            # err_th_low = np.percentile(error[mr_mask_bool], err_ladder_qth[idx_th])
+            # err_th_high = np.percentile(error[mr_mask_bool], err_ladder_qth[idx_th + 1])
+            # std_th_low = np.percentile(std[mr_mask_bool], std_ladder_qth[idx_th])
+            # std_th_high = np.percentile(std[mr_mask_bool], std_ladder_qth[idx_th + 1])
 
             error_mask_bool = np.logical_and(error > err_th_low, error <= err_th_high)
             std_mask_bool = np.logical_and(std > std_th_low, std <= std_th_high)
