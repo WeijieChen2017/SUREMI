@@ -46,7 +46,7 @@ for model_id in model_id_list:
         plt.subplot(2, 2, 1)
         img_1 = np.rot90(error_file_low[:, :, idx_z])
         plt.imshow(img_1, cmap="gray")
-        plt.title(f"Error < {boundary} HU", fontsize=18)
+        plt.title(f"Error < 100 HU", fontsize=18)
         plt.axis("off")
 
         plt.subplot(2, 2, 2)
@@ -58,7 +58,7 @@ for model_id in model_id_list:
         plt.subplot(2, 2, 3)
         img_3 = np.rot90(error_file_high[:, :, idx_z])
         plt.imshow(img_3, cmap="gray")
-        plt.title(f"Error >= {boundary} HU", fontsize=18)
+        plt.title(f"Error >= 100 HU", fontsize=18)
         plt.axis("off")
 
         plt.subplot(2, 2, 4)
