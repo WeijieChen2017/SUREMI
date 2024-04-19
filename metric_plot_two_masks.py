@@ -5,7 +5,7 @@ import numpy as np
 import nibabel as nib
 
 data_folder = "results/dice_iou/"
-case_list = sorted(glob.glob(f"{data_folder}/*/*.mask.nii.gz"))
+case_list = sorted(glob.glob(f"{data_folder}/*/*mask*.nii.gz"))
 model_id_list = []
 for case in case_list:
     model_id = case.split("/")[1]
