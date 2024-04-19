@@ -8,7 +8,7 @@ boundary_list = [10, 15, 20, 25]
 data_folder = "results/dice_iou/"
 case_list = sorted(glob.glob(f"{data_folder}/*/*mask*.nii.gz"))
 model_id_list = []
-case_id_list = 
+case_id_list = []
 for case in case_list:
     model_id = case.split("/")[2]
     if model_id not in model_id_list:
