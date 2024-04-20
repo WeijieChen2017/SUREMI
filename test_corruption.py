@@ -188,14 +188,16 @@ def evaluate_corruption(mr_volume, noise_level, corruption_type):
 
 def evalute_mr_output_median_std(mr_volume, model, device, config, file_name, idx, n_file, x_file, noise_level, corruption_type):
 
+    ax, ay, az = input_data.shape
     input_data = np.expand_dims(mr_volume, (0, 1))
     input_data = torch.from_numpy(mr_volume).float().to(device)
 
-    ax, ay, az = input_data.shape
     order_list, _ = iter_all_order(config["alt_blk_depth"])
     order_list_cnt = len(order_list)
     output_array = np.zeros((order_list_cnt, ax, ay, az))
 
+    print("Processing: ", corruption_type, noise_level)
+    print(input_data.shape)
     for idx_es in range(order_list_cnt):
         with torch.no_grad():
             y_hat = sliding_window_inference(
