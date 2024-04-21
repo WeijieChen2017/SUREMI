@@ -8,7 +8,7 @@ import nibabel as nib
 
 from monai.inferers import sliding_window_inference
 from model import UNet_MDO as UNet
-from utils import iter_all_order
+from utils import iter_all_order, iter_some_order
 
 import os
 import numpy as np
@@ -141,6 +141,7 @@ default_config = {
     "save_tag": "_corp",
     "stride_division": 8,
     "alt_blk_depth": [2, 2, 2, 2, 2, 2, 2],
+    "order_conunt": 64,
     # "alt_blk_depth": [2, 2, 2, 2, 2, 2, 2],
     "pad_size": 0,
 }
@@ -192,12 +193,13 @@ def evalute_mr_output_median_std(input_data, model, device, config, file_name, i
     input_data = np.expand_dims(input_data, (0, 1))
     input_data = torch.from_numpy(input_data).float().to(device)
 
-    order_list, _ = iter_all_order(config["alt_blk_depth"])
+    # order_list, _ = iter_all_order(config["alt_blk_depth"])
+    order_list = iter_some_order(config["alt_blk_depth"], config["order_conunt"])
     order_list_cnt = len(order_list)
     output_array = np.zeros((order_list_cnt, ax, ay, az))
 
     print("Processing: ", corruption_type, noise_level)
-    print(input_data.shape)
+    # print(input_data.shape)
     for idx_es in range(order_list_cnt):
         with torch.no_grad():
             y_hat = sliding_window_inference(
