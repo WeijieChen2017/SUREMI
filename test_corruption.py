@@ -198,7 +198,7 @@ def evalute_mr_output_median_std(input_data, model, device, config, file_name, i
     order_list_cnt = len(order_list)
     output_array = np.zeros((order_list_cnt, ax, ay, az))
 
-    print("Processing: ", corruption_type, noise_level)
+    # print("Processing: ", corruption_type, noise_level)
     # print(input_data.shape)
     for idx_es in range(order_list_cnt):
         with torch.no_grad():
