@@ -86,7 +86,7 @@ def radial_sample_mr_image(mr_volume, noise_level):
         mr_slice_fft = np.fft.fftn(mr_slice)
         # fftshift
         mr_slice_fft = np.fft.fftshift(mr_slice_fft)
-        k_space_radial = radial_trajectory(n_spokes, n_points, trajectory_dict)
+        k_space_radial = radial_trajectory(n_spokes, n_points)
         # sample_ratio = np.sum(k_space_radial) / k_space_radial.size
         undersampled_mr_slice_fft = mr_slice_fft * k_space_radial
         # ifftshift
@@ -130,7 +130,7 @@ def spiral_sample_mr_image(mr_volume, noise_level):
     mr_volume_fft = np.fft.fftn(mr_volume)
     # fftshift
     mr_volume_fft = np.fft.fftshift(mr_volume_fft)
-    k_space_spiral = dense_spiral_trajectory(n_turns, n_points_per_turn, trajectory_dict)
+    k_space_spiral = dense_spiral_trajectory(n_turns, n_points_per_turn)
     undersampled_mr_volume_fft = mr_volume_fft * k_space_spiral
     # sample_ratio = np.sum(k_space_spiral) / k_space_spiral.size
     # ifftshift
