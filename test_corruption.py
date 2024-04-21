@@ -186,11 +186,11 @@ def evaluate_corruption(mr_volume, noise_level, corruption_type):
     
     return noisy_mr_volume
 
-def evalute_mr_output_median_std(mr_volume, model, device, config, file_name, idx, n_file, x_file, noise_level, corruption_type):
+def evalute_mr_output_median_std(input_data, model, device, config, file_name, idx, n_file, x_file, noise_level, corruption_type):
 
     ax, ay, az = input_data.shape
-    input_data = np.expand_dims(mr_volume, (0, 1))
-    input_data = torch.from_numpy(mr_volume).float().to(device)
+    input_data = np.expand_dims(input_data, (0, 1))
+    input_data = torch.from_numpy(input_data).float().to(device)
 
     order_list, _ = iter_all_order(config["alt_blk_depth"])
     order_list_cnt = len(order_list)
@@ -249,15 +249,15 @@ def process_data(file_list, model, device, config):
         f.write("Rician_level: ")
         f.write(str(Rician_level))
         f.write("\n")
-        f.write("Rayleigh_level: ")
-        f.write(str(Rayleigh_level))
-        f.write("\n")
-        f.write("Salt_and_pepper_level: ")
-        f.write(str(Salt_and_pepper_level))
-        f.write("\n")
-        f.write("Radial_sampling_parameters: ")
-        f.write(str(Radial_sampling_parameters))
-        f.write("\n")
+        # f.write("Rayleigh_level: ")
+        # f.write(str(Rayleigh_level))
+        # f.write("\n")
+        # f.write("Salt_and_pepper_level: ")
+        # f.write(str(Salt_and_pepper_level))
+        # f.write("\n")
+        # f.write("Radial_sampling_parameters: ")
+        # f.write(str(Radial_sampling_parameters))
+        # f.write("\n")
         f.write("Spiral_sampling_parameters: ")
         f.write(str(Spiral_sampling_parameters))
         f.write("\n")
@@ -287,15 +287,15 @@ def process_data(file_list, model, device, config):
         for noise_level in Rician_level:
             noisy_mr_volume = evaluate_corruption(input_data, noise_level, "Rician")
             evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, noise_level, "Rician")
-        for noise_level in Rayleigh_level:
-            noisy_mr_volume = evaluate_corruption(input_data, noise_level, "Rayleigh")
-            evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, noise_level, "Rayleigh")
-        for noise_level in Salt_and_pepper_level:
-            noisy_mr_volume = evaluate_corruption(input_data, noise_level, "Salt_and_pepper")
-            evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, noise_level, "Salt_and_pepper")
-        for noise_level in Radial_sampling_parameters:
-            noisy_mr_volume, sample_ratio = radial_sample_mr_image(input_data, *noise_level)
-            evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, sample_ratio, "Radial")
+        # for noise_level in Rayleigh_level:
+        #     noisy_mr_volume = evaluate_corruption(input_data, noise_level, "Rayleigh")
+        #     evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, noise_level, "Rayleigh")
+        # for noise_level in Salt_and_pepper_level:
+        #     noisy_mr_volume = evaluate_corruption(input_data, noise_level, "Salt_and_pepper")
+        #     evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, noise_level, "Salt_and_pepper")
+        # for noise_level in Radial_sampling_parameters:
+        #     noisy_mr_volume, sample_ratio = radial_sample_mr_image(input_data, *noise_level)
+        #     evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, sample_ratio, "Radial")
         for noise_level in Spiral_sampling_parameters:
             noisy_mr_volume, sample_ratio = spiral_sample_mr_image(input_data, *noise_level)
             evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, sample_ratio, "Spiral")
