@@ -304,7 +304,7 @@ def process_data(file_list, model, device, config):
 
         # Add noise to the input data
         for noise_level in Radial_sampling_parameters:
-            noisy_mr_volume, sample_ratio = radial_sample_mr_image(input_data, *noise_level, trajectory_dict)
+            noisy_mr_volume, sample_ratio = radial_sample_mr_image(input_data, noise_level)
             evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, sample_ratio, "Radial")
         for noise_level in Gaussian_level:
             noisy_mr_volume = evaluate_corruption(input_data, noise_level, "Gaussian")
@@ -314,7 +314,7 @@ def process_data(file_list, model, device, config):
             evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, noise_level, "Rician")
 
         # for noise_level in Spiral_sampling_parameters:
-        #     noisy_mr_volume, sample_ratio = spiral_sample_mr_image(input_data, *noise_level, trajectory_dict)
+        #     noisy_mr_volume, sample_ratio = spiral_sample_mr_image(input_data, noise_level)
         #     evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, sample_ratio, "Spiral")
         # for noise_level in Rayleigh_level:
         #     noisy_mr_volume = evaluate_corruption(input_data, noise_level, "Rayleigh")
