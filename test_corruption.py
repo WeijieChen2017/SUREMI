@@ -19,6 +19,8 @@ from utils import iter_all_order
 from matplotlib import pyplot as plt
 from scipy.stats import norm
 
+trajectory_dict = {}
+
 def add_gaussian_noise(mr_volume, std_level):
     noise = np.random.normal(0, std_level, mr_volume.shape)
     noisy_mr_volume = mr_volume + noise
@@ -50,76 +52,93 @@ def add_salt_and_pepper_noise(mr_volume, noise_level):
     return noisy_mr_volume
 
 def radial_trajectory(n_spokes, n_points):
-    # Create an empty k-space plane
-    k_space = np.zeros((n_points, n_points), dtype=np.float16)
-    
-    # Calculate the angles for each spoke
-    angles = np.linspace(0, 2 * np.pi, n_spokes, endpoint=False)
-    
-    for angle in angles:
-        # Calculate the coordinates for this spoke
-        x = np.linspace(-n_points//2, n_points//2-1, n_points) * np.cos(angle)
-        y = np.linspace(-n_points//2, n_points//2-1, n_points) * np.sin(angle)
+    if f"radial_{n_spokes}_{n_points}" in trajectory_dict:
+        return trajectory_dict[f"radial_{n_spokes}_{n_points}"]
+    else:
+        # Create an empty k-space plane
+        k_space = np.zeros((n_points, n_points), dtype=np.float16)
         
-        # Ensure indices are within the valid range
-        x_indices = np.clip(np.round(x + n_points // 2).astype(int), 0, n_points - 1)
-        y_indices = np.clip(np.round(y + n_points // 2).astype(int), 0, n_points - 1)
+        # Calculate the angles for each spoke
+        angles = np.linspace(0, 2 * np.pi, n_spokes, endpoint=False)
         
-        # Simulate the acquisition by setting these points to 1 (or some other arbitrary value)
-        k_space[x_indices, y_indices] = 1
+        for angle in angles:
+            # Calculate the coordinates for this spoke
+            x = np.linspace(-n_points//2, n_points//2-1, n_points) * np.cos(angle)
+            y = np.linspace(-n_points//2, n_points//2-1, n_points) * np.sin(angle)
+            
+            # Ensure indices are within the valid range
+            x_indices = np.clip(np.round(x + n_points // 2).astype(int), 0, n_points - 1)
+            y_indices = np.clip(np.round(y + n_points // 2).astype(int), 0, n_points - 1)
+            
+            # Simulate the acquisition by setting these points to 1 (or some other arbitrary value)
+            k_space[x_indices, y_indices] = 1
+        
+        trajectory_dict[f"radial_{n_spokes}_{n_points}"] = k_space
 
     return k_space
 
-def radial_sample_mr_image(mr_volume, n_spokes, n_points):
-    mr_volume_fft = np.fft.fftn(mr_volume)
-    # fftshift
-    mr_volume_fft = np.fft.fftshift(mr_volume_fft)
-    k_space_radial = radial_trajectory(n_spokes, n_points)
-    sample_ratio = np.sum(k_space_radial) / k_space_radial.size
-    undersampled_mr_volume_fft = mr_volume_fft * k_space_radial
-    # ifftshift
-    undersampled_mr_volume_fft = np.fft.ifftshift(undersampled_mr_volume_fft)
-    undersampled_mr_volume = np.fft.ifftn(undersampled_mr_volume_fft)
-    undersampled_mr_volume = np.abs(undersampled_mr_volume)
-    undersampled_mr_volume = undersampled_mr_volume.astype(np.float32)
-    return undersampled_mr_volume, sample_ratio
+def radial_sample_mr_image(mr_volume, noise_level):
+    n_spokes, n_points = noise_level
+    ax, ay, az = mr_volume.shape
+    undersampled_mr_volume = np.zeros((ax, ay, az), dtype=np.float32)
+    for i in range(az):
+        mr_slice = mr_volume[:, :, i]
+        mr_slice_fft = np.fft.fftn(mr_slice)
+        # fftshift
+        mr_slice_fft = np.fft.fftshift(mr_slice_fft)
+        k_space_radial = radial_trajectory(n_spokes, n_points, trajectory_dict)
+        # sample_ratio = np.sum(k_space_radial) / k_space_radial.size
+        undersampled_mr_slice_fft = mr_slice_fft * k_space_radial
+        # ifftshift
+        undersampled_mr_slice_fft = np.fft.ifftshift(undersampled_mr_slice_fft)
+        undersampled_mr_slice = np.fft.ifftn(undersampled_mr_slice_fft)
+        undersampled_mr_slice = np.abs(undersampled_mr_slice)
+        undersampled_mr_slice = undersampled_mr_slice.astype(np.float32)
+        undersampled_mr_volume[:, :, i] = undersampled_mr_slice
+    return undersampled_mr_volume
 
 def dense_spiral_trajectory(n_turns, n_points_per_turn):
-    # Total number of points is n_turns * n_points_per_turn
-    total_points = n_turns * n_points_per_turn
-    n_pixel = 256
-    # Create an empty k-space plane
-    k_space = np.zeros((n_pixel, n_pixel), dtype=np.float16)  # Increased size for better visualization
+    if f"spiral_{n_turns}_{n_points_per_turn}" in trajectory_dict:
+        return trajectory_dict[f"spiral_{n_turns}_{n_points_per_turn}"]
+    else:
+        # Total number of points is n_turns * n_points_per_turn
+        total_points = n_turns * n_points_per_turn
+        n_pixel = 256
+        # Create an empty k-space plane
+        k_space = np.zeros((n_pixel, n_pixel), dtype=np.float16)  # Increased size for better visualization
 
-    # Define the spiral trajectory
-    theta = np.linspace(0, 2 * np.pi * n_turns, total_points)
-    r = np.linspace(0, 256, total_points)  # Adjust radius to fill the k-space more appropriately
-    x = r * np.cos(theta)
-    y = r * np.sin(theta)
-    
-    # Convert polar coordinates to Cartesian indices
-    x_indices = np.clip(np.round(x + n_pixel // 2).astype(int), 0, n_pixel-1)  # Adjust centering based on new k-space size
-    y_indices = np.clip(np.round(y + n_pixel // 2).astype(int), 0, n_pixel-1)
-    
-    # Simulate the acquisition by marking these points
-    for i in range(len(x_indices)):
-        k_space[x_indices[i], y_indices[i]] = 1
+        # Define the spiral trajectory
+        theta = np.linspace(0, 2 * np.pi * n_turns, total_points)
+        r = np.linspace(0, 256, total_points)  # Adjust radius to fill the k-space more appropriately
+        x = r * np.cos(theta)
+        y = r * np.sin(theta)
+        
+        # Convert polar coordinates to Cartesian indices
+        x_indices = np.clip(np.round(x + n_pixel // 2).astype(int), 0, n_pixel-1)  # Adjust centering based on new k-space size
+        y_indices = np.clip(np.round(y + n_pixel // 2).astype(int), 0, n_pixel-1)
+        
+        # Simulate the acquisition by marking these points
+        for i in range(len(x_indices)):
+            k_space[x_indices[i], y_indices[i]] = 1
+        
+        trajectory_dict[f"spiral_{n_turns}_{n_points_per_turn}"] = k_space
 
     return k_space
 
-def spiral_sample_mr_image(mr_volume, n_turns, n_points_per_turn):
+def spiral_sample_mr_image(mr_volume, noise_level):
+    n_turns, n_points_per_turn = noise_level
     mr_volume_fft = np.fft.fftn(mr_volume)
     # fftshift
     mr_volume_fft = np.fft.fftshift(mr_volume_fft)
-    k_space_spiral = dense_spiral_trajectory(n_turns, n_points_per_turn)
+    k_space_spiral = dense_spiral_trajectory(n_turns, n_points_per_turn, trajectory_dict)
     undersampled_mr_volume_fft = mr_volume_fft * k_space_spiral
-    sample_ratio = np.sum(k_space_spiral) / k_space_spiral.size
+    # sample_ratio = np.sum(k_space_spiral) / k_space_spiral.size
     # ifftshift
     undersampled_mr_volume_fft = np.fft.ifftshift(undersampled_mr_volume_fft)
     undersampled_mr_volume = np.fft.ifftn(undersampled_mr_volume_fft)
     undersampled_mr_volume = np.abs(undersampled_mr_volume)
     undersampled_mr_volume = undersampled_mr_volume.astype(np.float32)
-    return undersampled_mr_volume, sample_ratio
+    return undersampled_mr_volume
 
 Gaussian_level = np.asarray([10, 20, 50, 100, 200])/3000
 Rician_level = np.asarray([10, 20, 50, 100, 200])/3000
@@ -141,7 +160,6 @@ default_config = {
     "save_tag": "_corp",
     "stride_division": 8,
     "alt_blk_depth": [2, 2, 2, 2, 2, 2, 2],
-    "order_conunt": 64,
     # "alt_blk_depth": [2, 2, 2, 2, 2, 2, 2],
     "pad_size": 0,
 }
@@ -181,9 +199,9 @@ def evaluate_corruption(mr_volume, noise_level, corruption_type):
     elif corruption_type == "Salt_and_pepper":
         noisy_mr_volume = add_salt_and_pepper_noise(mr_volume, noise_level)
     elif corruption_type == "Radial":
-        noisy_mr_volume, sample_ratio = radial_sample_mr_image(mr_volume, *noise_level)
+        noisy_mr_volume = radial_sample_mr_image(mr_volume, noise_level)
     elif corruption_type == "Spiral":
-        noisy_mr_volume, sample_ratio = spiral_sample_mr_image(mr_volume, *noise_level)
+        noisy_mr_volume = spiral_sample_mr_image(mr_volume, noise_level)
     
     return noisy_mr_volume
 
@@ -193,8 +211,8 @@ def evalute_mr_output_median_std(input_data, model, device, config, file_name, i
     input_data = np.expand_dims(input_data, (0, 1))
     input_data = torch.from_numpy(input_data).float().to(device)
 
-    # order_list, _ = iter_all_order(config["alt_blk_depth"])
-    order_list = iter_some_order(config["alt_blk_depth"], config["order_conunt"])
+    order_list, _ = iter_all_order(config["alt_blk_depth"])
+    # order_list = iter_some_order(config["alt_blk_depth"], config["order_conunt"])
     order_list_cnt = len(order_list)
     output_array = np.zeros((order_list_cnt, ax, ay, az))
 
@@ -251,15 +269,15 @@ def process_data(file_list, model, device, config):
         f.write("Rician_level: ")
         f.write(str(Rician_level))
         f.write("\n")
-        # f.write("Rayleigh_level: ")
-        # f.write(str(Rayleigh_level))
-        # f.write("\n")
-        # f.write("Salt_and_pepper_level: ")
-        # f.write(str(Salt_and_pepper_level))
-        # f.write("\n")
-        # f.write("Radial_sampling_parameters: ")
-        # f.write(str(Radial_sampling_parameters))
-        # f.write("\n")
+        f.write("Rayleigh_level: ")
+        f.write(str(Rayleigh_level))
+        f.write("\n")
+        f.write("Salt_and_pepper_level: ")
+        f.write(str(Salt_and_pepper_level))
+        f.write("\n")
+        f.write("Radial_sampling_parameters: ")
+        f.write(str(Radial_sampling_parameters))
+        f.write("\n")
         f.write("Spiral_sampling_parameters: ")
         f.write(str(Spiral_sampling_parameters))
         f.write("\n")
@@ -282,25 +300,28 @@ def process_data(file_list, model, device, config):
         else:
             input_data = x_data
 
+        trajectory_dict = {}
+
         # Add noise to the input data
+        for noise_level in Radial_sampling_parameters:
+            noisy_mr_volume, sample_ratio = radial_sample_mr_image(input_data, *noise_level, trajectory_dict)
+            evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, sample_ratio, "Radial")
         for noise_level in Gaussian_level:
             noisy_mr_volume = evaluate_corruption(input_data, noise_level, "Gaussian")
             evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, noise_level, "Gaussian")
         for noise_level in Rician_level:
             noisy_mr_volume = evaluate_corruption(input_data, noise_level, "Rician")
             evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, noise_level, "Rician")
+
+        # for noise_level in Spiral_sampling_parameters:
+        #     noisy_mr_volume, sample_ratio = spiral_sample_mr_image(input_data, *noise_level, trajectory_dict)
+        #     evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, sample_ratio, "Spiral")
         # for noise_level in Rayleigh_level:
         #     noisy_mr_volume = evaluate_corruption(input_data, noise_level, "Rayleigh")
         #     evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, noise_level, "Rayleigh")
         # for noise_level in Salt_and_pepper_level:
         #     noisy_mr_volume = evaluate_corruption(input_data, noise_level, "Salt_and_pepper")
         #     evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, noise_level, "Salt_and_pepper")
-        # for noise_level in Radial_sampling_parameters:
-        #     noisy_mr_volume, sample_ratio = radial_sample_mr_image(input_data, *noise_level)
-        #     evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, sample_ratio, "Radial")
-        for noise_level in Spiral_sampling_parameters:
-            noisy_mr_volume, sample_ratio = spiral_sample_mr_image(input_data, *noise_level)
-            evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, sample_ratio, "Spiral")
 
 def save_processed_data(data, x_file, file_name, config, tag):
     """
