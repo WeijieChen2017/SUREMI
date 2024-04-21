@@ -303,25 +303,25 @@ def process_data(file_list, model, device, config):
         trajectory_dict = {}
 
         # Add noise to the input data
-        for noise_level in Radial_sampling_parameters:
-            noisy_mr_volume = radial_sample_mr_image(input_data, noise_level)
-            evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, noise_level, "Radial")
-        for noise_level in Gaussian_level:
-            noisy_mr_volume = evaluate_corruption(input_data, noise_level, "Gaussian")
-            evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, noise_level, "Gaussian")
-        for noise_level in Rician_level:
-            noisy_mr_volume = evaluate_corruption(input_data, noise_level, "Rician")
-            evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, noise_level, "Rician")
+        # for noise_level in Radial_sampling_parameters:
+        #     noisy_mr_volume = radial_sample_mr_image(input_data, noise_level)
+        #     evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, noise_level, "Radial")
+        # for noise_level in Gaussian_level:
+        #     noisy_mr_volume = evaluate_corruption(input_data, noise_level, "Gaussian")
+        #     evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, noise_level, "Gaussian")
+        # for noise_level in Rician_level:
+        #     noisy_mr_volume = evaluate_corruption(input_data, noise_level, "Rician")
+        #     evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, noise_level, "Rician")
 
-        # for noise_level in Spiral_sampling_parameters:
-        #     noisy_mr_volume = spiral_sample_mr_image(input_data, noise_level)
-        #     evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, noise_level, "Spiral")
-        # for noise_level in Rayleigh_level:
-        #     noisy_mr_volume = evaluate_corruption(input_data, noise_level, "Rayleigh")
-        #     evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, noise_level, "Rayleigh")
-        # for noise_level in Salt_and_pepper_level:
-        #     noisy_mr_volume = evaluate_corruption(input_data, noise_level, "Salt_and_pepper")
-        #     evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, noise_level, "Salt_and_pepper")
+        for noise_level in Spiral_sampling_parameters:
+            noisy_mr_volume = spiral_sample_mr_image(input_data, noise_level)
+            evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, noise_level, "Spiral")
+        for noise_level in Rayleigh_level:
+            noisy_mr_volume = evaluate_corruption(input_data, noise_level, "Rayleigh")
+            evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, noise_level, "Rayleigh")
+        for noise_level in Salt_and_pepper_level:
+            noisy_mr_volume = evaluate_corruption(input_data, noise_level, "Salt_and_pepper")
+            evalute_mr_output_median_std(noisy_mr_volume, model, device, config, file_name, idx, n_file, x_file, noise_level, "Salt_and_pepper")
 
 def save_processed_data(data, x_file, file_name, config, tag):
     """
