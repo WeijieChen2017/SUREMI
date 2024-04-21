@@ -127,17 +127,33 @@ def dense_spiral_trajectory(n_turns, n_points_per_turn):
 
 def spiral_sample_mr_image(mr_volume, noise_level):
     n_turns, n_points_per_turn = noise_level
-    mr_volume_fft = np.fft.fftn(mr_volume)
-    # fftshift
-    mr_volume_fft = np.fft.fftshift(mr_volume_fft)
-    k_space_spiral = dense_spiral_trajectory(n_turns, n_points_per_turn)
-    undersampled_mr_volume_fft = mr_volume_fft * k_space_spiral
-    # sample_ratio = np.sum(k_space_spiral) / k_space_spiral.size
-    # ifftshift
-    undersampled_mr_volume_fft = np.fft.ifftshift(undersampled_mr_volume_fft)
-    undersampled_mr_volume = np.fft.ifftn(undersampled_mr_volume_fft)
-    undersampled_mr_volume = np.abs(undersampled_mr_volume)
-    undersampled_mr_volume = undersampled_mr_volume.astype(np.float32)
+    ax, ay, az = mr_volume.shape
+    undersampled_mr_volume = np.zeros((ax, ay, az), dtype=np.float32)
+    for i in range(az):
+        mr_slice = mr_volume[:, :, i]
+        mr_slice_fft = np.fft.fftn(mr_slice)
+        # fftshift
+        mr_slice_fft = np.fft.fftshift(mr_slice_fft)
+        k_space_spiral = dense_spiral_trajectory(n_turns, n_points_per_turn)
+        # sample_ratio = np.sum(k_space_spiral) / k_space_spiral.size
+        undersampled_mr_slice_fft = mr_slice_fft * k_space_spiral
+        # ifftshift
+        undersampled_mr_slice_fft = np.fft.ifftshift(undersampled_mr_slice_fft)
+        undersampled_mr_slice = np.fft.ifftn(undersampled_mr_slice_fft)
+        undersampled_mr_slice = np.abs(undersampled_mr_slice)
+        undersampled_mr_slice = undersampled_mr_slice.astype(np.float32)
+        undersampled_mr_volume[:, :, i] = undersampled_mr_slice
+    # mr_volume_fft = np.fft.fftn(mr_volume)
+    # # fftshift
+    # mr_volume_fft = np.fft.fftshift(mr_volume_fft)
+    # k_space_spiral = dense_spiral_trajectory(n_turns, n_points_per_turn)
+    # undersampled_mr_volume_fft = mr_volume_fft * k_space_spiral
+    # # sample_ratio = np.sum(k_space_spiral) / k_space_spiral.size
+    # # ifftshift
+    # undersampled_mr_volume_fft = np.fft.ifftshift(undersampled_mr_volume_fft)
+    # undersampled_mr_volume = np.fft.ifftn(undersampled_mr_volume_fft)
+    # undersampled_mr_volume = np.abs(undersampled_mr_volume)
+    # undersampled_mr_volume = undersampled_mr_volume.astype(np.float32)
     return undersampled_mr_volume
 
 Gaussian_level = np.asarray([10, 20, 50, 100, 200])/3000
