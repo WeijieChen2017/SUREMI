@@ -131,8 +131,8 @@ for case_id in case_id_list:
             corruption_level = level
             corruption_type = method
             file_path_median, file_path_std = get_corrupted_image(case_id, corruption_type, corruption_level)
-            median_data = nib.load(file_path_median).get_fdata()
-            std_data = nib.load(file_path_std).get_fdata() * 4000
+            median_data = nib.load(pred_folder+file_path_median).get_fdata()
+            std_data = nib.load(pred_folder+file_path_std).get_fdata() * 4000
             error_data = np.abs(median_data - ct_data) * 4000
 
             # apply mr_mask_bool to the error and std then compute the mean
