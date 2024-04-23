@@ -135,7 +135,7 @@ for case_id in case_id_list:
             else:
                 display_level = f"{display_level:.4f}"
 
-            print(f"[{case_id}] Processing {method} level {display_level}")
+            # print(f"[{case_id}] Processing {method} level {display_level}")
             corruption_level = level
             corruption_type = method
             file_path_median, file_path_std = get_corrupted_image(case_id, corruption_type, corruption_level)
