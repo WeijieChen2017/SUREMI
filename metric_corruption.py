@@ -127,7 +127,7 @@ for case_id in case_id_list:
         L3_dict_method = {}
         for idx_level, level in enumerate(level_list[idx_method]):
 
-            print(f"[{case_id}] Processing {method} level {level}")
+            print(f"[{case_id}] Processing {method} level {level:.4f}")
             corruption_level = level
             corruption_type = method
             file_path_median, file_path_std = get_corrupted_image(case_id, corruption_type, corruption_level)
@@ -145,7 +145,7 @@ for case_id in case_id_list:
                 "unc_std": np.std(std_data_masked),
             }
             L3_dict_method[str(level)] = L4_dict_level
-            print(f"[{case_id}] {method} level {level} error mean {L4_dict_level['error_mean']:.4f} std {L4_dict_level['error_std']:.4f} unc mean {L4_dict_level['unc_mean']:.4f} std {L4_dict_level['unc_std']:.4f}")
+            print(f"[{case_id}] {method} level {level:.4f} error mean {L4_dict_level['error_mean']:.4f} std {L4_dict_level['error_std']:.4f} unc mean {L4_dict_level['unc_mean']:.4f} std {L4_dict_level['unc_std']:.4f}")
         L2_dict_case[str(method)] = L3_dict_method
     L1_dict[case_id] = L2_dict_case
 
