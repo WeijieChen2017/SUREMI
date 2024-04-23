@@ -127,7 +127,15 @@ for case_id in case_id_list:
         L3_dict_method = {}
         for idx_level, level in enumerate(level_list[idx_method]):
 
-            print(f"[{case_id}] Processing {method} level {level:.4f}")
+            display_level = level
+            # if display_level is a tuple, then we need to convert it to a string
+            # if display_level is a float, then we only use 4 decimal points
+            if type(display_level) == tuple:
+                display_level = f"({display_level[0]}, {display_level[1]})"
+            else:
+                display_level = f"{display_level:.4f}"
+
+            print(f"[{case_id}] Processing {method} level {display_level}")
             corruption_level = level
             corruption_type = method
             file_path_median, file_path_std = get_corrupted_image(case_id, corruption_type, corruption_level)
@@ -144,8 +152,8 @@ for case_id in case_id_list:
                 "unc_mean": np.mean(std_data_masked),
                 "unc_std": np.std(std_data_masked),
             }
-            L3_dict_method[str(level)] = L4_dict_level
-            print(f"[{case_id}] {method} level {level:.4f} error mean {L4_dict_level['error_mean']:.4f} std {L4_dict_level['error_std']:.4f} unc mean {L4_dict_level['unc_mean']:.4f} std {L4_dict_level['unc_std']:.4f}")
+            L3_dict_method[display_level] = L4_dict_level
+            print(f"[{case_id}] {method} level {display_level} error mean {L4_dict_level['error_mean']:.4f} std {L4_dict_level['error_std']:.4f} unc mean {L4_dict_level['unc_mean']:.4f} std {L4_dict_level['unc_std']:.4f}")
         L2_dict_case[str(method)] = L3_dict_method
     L1_dict[case_id] = L2_dict_case
 
