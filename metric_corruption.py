@@ -4,6 +4,56 @@ import nibabel as nib
 import glob
 import os
 
+Gaussian_level = np.asarray([10, 20, 50, 100, 200])/3000
+Rician_level = np.asarray([10, 20, 50, 100, 200])/3000
+Rayleigh_level = np.asarray([10, 20, 50, 100, 200])/3000
+Salt_and_pepper_level = np.asarray([0.01, 0.02, 0.05, 0.1, 0.2])
+Radial_sampling_parameters = [(300, 256), (240, 256), (180, 256), (120, 256), (60, 256)]
+Spiral_sampling_parameters = [(240, 300), (210, 300), (210, 240), (180, 240), (180, 180)]
+
+def get_corrupted_image(case_id, corruption_type, corruption_level):
+
+    if corruption_type == "Gaussian":
+        file_path_median = f"{case_id}_xte_corp_Gaussian_{corruption_level}_median.nii.gz"
+        file_path_std = f"{case_id}_xte_corp_Gaussian_{corruption_level}_std.nii.gz"
+    elif corruption_type == "Rician":
+        file_path_median = f"{case_id}_xte_corp_Rician_{corruption_level}_median.nii.gz"
+        file_path_std = f"{case_id}_xte_corp_Rician_{corruption_level}_std.nii.gz"
+    elif corruption_type == "Rayleigh":
+        file_path_median = f"{case_id}_xte_corp_Rayleigh_{corruption_level}_median.nii.gz"
+        file_path_std = f"{case_id}_xte_corp_Rayleigh_{corruption_level}_std.nii.gz"
+    elif corruption_type == "Salt_and_pepper":
+        file_path_median = f"{case_id}_xte_corp_Salt_and_pepper_{corruption_level}_median.nii.gz"
+        file_path_std = f"{case_id}_xte_corp_Salt_and_pepper_{corruption_level}_std.nii.gz"
+    elif corruption_type == "Radial":
+        file_path_median = f"{case_id}_xte_corp_Radial_({corruption_level[0]}, {corruption_level[1]})_median.nii.gz"
+        file_path_std = f"{case_id}_xte_corp_Radial_({corruption_level[0]}, {corruption_level[1]})_std.nii.gz"
+    elif corruption_type == "Spiral":
+        file_path_median = f"{case_id}_xte_corp_Spiral_({corruption_level[0]}, {corruption_level[1]})_median.nii.gz"
+        file_path_std = f"{case_id}_xte_corp_Spiral_({corruption_level[0]}, {corruption_level[1]})_std.nii.gz"
+    else:
+        raise ValueError("Unknown corruption type")
+    return file_path_median, file_path_std
+
+    # elif corruption_type == "Rician":
+    #     file_path_median = f"./data_corruption/00008_xte_corp_Rician_{corruption_level}_median.nii.gz"
+    #     file_path_std = f"./data_corruption/00008_xte_corp_Rician_{corruption_level}_std.nii.gz"
+    # elif corruption_type == "Rayleigh":
+    #     file_path_median = f"./data_corruption/00008_xte_corp_Rayleigh_{corruption_level}_median.nii.gz"
+    #     file_path_std = f"./data_corruption/00008_xte_corp_Rayleigh_{corruption_level}_std.nii.gz"
+    # elif corruption_type == "Salt_and_pepper":
+    #     file_path_median = f"./data_corruption/00008_xte_corp_Salt_and_pepper_{corruption_level}_median.nii.gz"
+    #     file_path_std = f"./data_corruption/00008_xte_corp_Salt_and_pepper_{corruption_level}_std.nii.gz"
+    # elif corruption_type == "Radial":
+    #     file_path_median = f"./data_corruption/00008_xte_corp_Radial_({corruption_level[0]}, {corruption_level[1]})_median.nii.gz"
+    #     file_path_std = f"./data_corruption/00008_xte_corp_Radial_({corruption_level[0]}, {corruption_level[1]})_std.nii.gz"
+    # elif corruption_type == "Spiral":
+    #     file_path_median = f"./data_corruption/00008_xte_corp_Spiral_({corruption_level[0]}, {corruption_level[1]})_median.nii.gz"
+    #     file_path_std = f"./data_corruption/00008_xte_corp_Spiral_({corruption_level[0]}, {corruption_level[1]})_std.nii.gz"
+    # else:
+    #     raise ValueError("Unknown corruption type")
+    # return file_path_median, file_path_std
+
 def find_filename_with_identifiers(id, filename_list):
         for filename in filename_list:
             if id in filename:
@@ -26,108 +76,79 @@ for pred_file in mr_files:
     # print(case_id)
     print(case_id)
 
-# case_dict_list = {}
-# for case_id in case_id_list:
-#     case_dict = {}
-#     case_dict["pred"] = find_filename_with_identifiers(case_id, pred_files)
-#     case_dict["std"] = find_filename_with_identifiers(case_id, std_files)
-#     case_dict["ct"] = find_filename_with_identifiers(case_id, ct_files)
-#     case_dict["mr"] = find_filename_with_identifiers(case_id, mr_files)
-#     case_dict_list[case_id] = case_dict
+case_dict_list = {}
+for case_id in case_id_list:
+    case_dict = {}
+    case_dict["ct"] = find_filename_with_identifiers(case_id, ct_files)
+    case_dict["mr"] = find_filename_with_identifiers(case_id, mr_files)
+    case_dict_list[case_id] = case_dict 
 
-# # std_ladder = [15, 30, 45, 60, 75, 90, 105, 120, 135, 150]
-# # error_ladder = [60, 120, 180, 240, 300, 360, 420, 480, 540, 600]
-# # err_ladder_qth = [0, 33.3, 66.6, 100]
-# # std_ladder_qth = [0, 33.3, 66.6, 100]
-# # err_ladder_qth = [0, 25, 50, 75, 100]
-# # std_ladder_qth = [0, 25, 50, 75, 100]
-# err_ladder = [0, 100, 3000]
-# std_ladder = [0, 10, 3000]
-# n_ladder = len(err_ladder)
-# # case_dict_list["ladder"] = {
-# #     "std": std_ladder,
-# #     "error": error_ladder
-# # }
+method_list = ["Gaussian", "Rician", "Rayleigh", "Salt_and_pepper", "Radial", "Spiral"]
+level_list = [
+    Gaussian_level,
+    Rician_level,
+    Rayleigh_level,
+    Salt_and_pepper_level,
+    Radial_sampling_parameters,
+    Spiral_sampling_parameters,
+]
+title_list = [
+    "Gaussian noise std:",
+    "Rician noise std:",
+    "Rayleigh noise std:",
+    "Salt&Pepper:",
+    "Radial ",
+    "Spiral ",
+]
 
-# # load the data and compute the case-level std and error
-# for case_id in case_id_list:
-#     case_dict = case_dict_list[case_id]
-#     pred = nib.load(case_dict["pred"]).get_fdata()
-#     std = nib.load(case_dict["std"]).get_fdata() * 4000
-#     ct = nib.load(case_dict["ct"]).get_fdata()
-#     mr = nib.load(case_dict["mr"]).get_fdata()
-#     mr_file = nib.load(case_dict["mr"])
-#     error = np.abs(pred - ct) * 4000
+# L1 dict is the top level dictionary
+L1_dict = {}
+# L2 dict is the second level dictionary for each case
+# L2_dict_case = {}
+# L3 dict is the third level dictionary for each method
+# L3_dict_method = {}
+# L4 dict is the fourth level dictionary for each level
+# L4_dict_level = {}
 
-#     mr_mask_bool = mr > np.percentile(mr, 0.05)
-#     mr_mask_int = mr_mask_bool.astype(np.float16)
-#     case_dict["error"] = np.mean(error)
-#     case_dict["std"] = np.mean(std)
+for case_id in case_id_list:
 
-#     # iou_list = []
-#     # dice_list = []
-#     # # enumerate i from 1% to 100%
-#     # for i in range(1, 101):
-#     #     th_error = np.percentile(error, i)
-#     #     th_std = np.percentile(std, i)
-#     #     error_mask = error < th_error
-#     #     std_mask = std < th_std
-#     #     # print(f"The {i}th percentile of error is {th_error}, std is {th_std}, error_mask {np.sum(error_mask)}, std_mask {np.sum(std_mask)}")
-#     #     intersection = np.sum(error_mask & std_mask)
-#     #     union = np.sum(error_mask | std_mask)
-#     #     iou = intersection / union
-#     #     dice = 2 * intersection / (np.sum(error_mask) + np.sum(std_mask))
-#     #     iou_list.append(iou)
-#     #     dice_list.append(dice)
+    print("Processing", case_id)
+    mr_path = case_dict_list[case_id]["mr"]
+    mr_data = nib.load(mr_path).get_fdata()
+    mr_mask_bool = mr_data > np.percentile(mr_data, 0.05)
 
-#     iou_list = []
-#     dice_list = []
-#     os.makedirs(os.path.join(f"results/dice_iou/{save_tag}/"), exist_ok=True)
-#     for idx_th in range(n_ladder - 1):
-        
-#         err_th_low = err_ladder[idx_th]
-#         err_th_high = err_ladder[idx_th + 1]
-#         std_th_low = std_ladder[idx_th]
-#         std_th_high = std_ladder[idx_th + 1]
+    ct_path = case_dict_list[case_id]["ct"]
+    ct_data = nib.load(ct_path).get_fdata()
 
-#         # err_th_low = np.percentile(error[mr_mask_bool], err_ladder_qth[idx_th])
-#         # err_th_high = np.percentile(error[mr_mask_bool], err_ladder_qth[idx_th + 1])
-#         # std_th_low = np.percentile(std[mr_mask_bool], std_ladder_qth[idx_th])
-#         # std_th_high = np.percentile(std[mr_mask_bool], std_ladder_qth[idx_th + 1])
+    L2_dict_case = {}
+    for idx_method, method in enumerate(method_list):
 
-#         error_mask_bool = np.logical_and(error > err_th_low, error <= err_th_high)
-#         std_mask_bool = np.logical_and(std > std_th_low, std <= std_th_high)
+        print(f"[{case_id}] Processing {method}")
+        L3_dict_method = {}
+        for idx_level, level in enumerate(level_list[idx_method]):
 
-#         cross_err_mr_mask = np.logical_and(mr_mask_bool, error_mask_bool)
-#         cross_std_mr_mask = np.logical_and(mr_mask_bool, std_mask_bool)
+            print(f"[{case_id}] Processing {method} level {level}")
+            corruption_level = level
+            corruption_type = method
+            file_path_median, file_path_std = get_corrupted_image(case_id, corruption_type, corruption_level)
+            median_data = nib.load(file_path_median).get_fdata()
+            std_data = nib.load(file_path_std).get_fdata() * 4000
+            error_data = np.abs(median_data - ct_data) * 4000
 
-#         cross_err_mr_mask_int = cross_err_mr_mask.astype(np.float16)
-#         cross_std_mr_mask_int = cross_std_mr_mask.astype(np.float16)
-#         cross_err_mr_mask_file = nib.Nifti1Image(cross_err_mr_mask_int, mr_file.affine, mr_file.header)
-#         cross_std_mr_mask_file = nib.Nifti1Image(cross_std_mr_mask_int, mr_file.affine, mr_file.header)
-#         # savename should be 3 decimal places
-#         cross_err_mr_mask_savename = os.path.join(f"results/dice_iou/{save_tag}/", f"{case_id}_error_mask_err_{err_th_low:.3f}_{err_th_high:.3f}_std_{std_th_low:.3f}_{std_th_high:.3f}.nii.gz")
-#         cross_std_mr_mask_savename = os.path.join(f"results/dice_iou/{save_tag}/", f"{case_id}_std_mask_err_{err_th_low:.3f}_{err_th_high:.3f}_std_{std_th_low:.3f}_{std_th_high:.3f}.nii.gz")
-#         nib.save(cross_err_mr_mask_file, cross_err_mr_mask_savename)
-#         nib.save(cross_std_mr_mask_file, cross_std_mr_mask_savename)
+            # apply mr_mask_bool to the error and std then compute the mean
+            error_data_masked = error_data[mr_mask_bool]
+            std_data_masked = std_data[mr_mask_bool]
+            L4_dict_level = {
+                "error_mean": np.mean(error_data_masked),
+                "error_std": np.std(error_data_masked),
+                "unc_mean": np.mean(std_data_masked),
+                "unc_std": np.std(std_data_masked),
+            }
+            L3_dict_method[str(level)] = L4_dict_level
+        L2_dict_case[str(method)] = L3_dict_method
+    L1_dict[case_id] = L2_dict_case
 
-#         mask_1 = cross_err_mr_mask
-#         mask_2 = cross_std_mr_mask
-
-#         intersection = np.logical_and(mask_1, mask_2)
-#         union = np.logical_or(mask_1, mask_2)
-#         iou = np.sum(intersection) / np.sum(union)
-#         dice = 2 * np.sum(intersection) / (np.sum(mask_1) + np.sum(mask_2))
-#         print(f"IoU = {iou:.3f}, Dice = {dice:.3f} for std from {std_th_low:.3f} to {std_th_high:.3f} and error from {err_th_low:.3f} to {err_th_high:.3f}")
-
-#         iou_list.append(iou)
-#         dice_list.append(dice)
-    
-#     case_dict["iou"] = iou_list
-#     case_dict["dice"] = dice_list
-#     print(f"case_id {case_id}, error {case_dict['error']:.3f}, std {case_dict['std']:.3f}, iou {np.mean(iou_list):.3f}, dice {np.mean(dice_list):.3f}")
-
-# save_folder = "results/dice_iou/"
-# os.makedirs(save_folder, exist_ok=True)
-# np.save(os.path.join(save_folder, f"case_dict_list_ladders_{save_tag}.npy"), case_dict_list)
-# print("Saved to", os.path.join(save_folder, f"case_dict_list_ladders_{save_tag}.npy"))
+result_folder = "results/metric_corruption/"
+os.makedirs(result_folder, exist_ok=True)
+np.save(os.path.join(result_folder, "corruption_metric.npy"), L1_dict)
+print("Saved corruption_metric.npy")
