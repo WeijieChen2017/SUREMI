@@ -82,8 +82,12 @@ for case_id in case_id_list:
         slice_error_mask = slice_error[slice_mr_mask_bool]
         slice_std_mask = slice_std[slice_mr_mask_bool]
 
-        mean_diff = np.mean(slice_error_mask)
-        mean_unc = np.mean(slice_std_mask)
+        try:
+            mean_diff = np.mean(slice_error_mask)
+            mean_unc = np.mean(slice_std_mask)
+        except:
+            mean_diff = np.nan
+            mean_unc = np.nan
 
         if not np.isnan(mean_diff) and not np.isnan(mean_unc):
             mean_diff_array.append(mean_diff)
