@@ -75,14 +75,14 @@ for case_id in case_id_list:
     #         print("Slice ", i, " Mean diff: ", mean_diff, " Mean unc: ", mean_unc)
 
     for i in range(n_slice):
-        slice_error = error[:, :, i]
-        slice_std = std[:, :, i]
-        slice_mr_mask = mr_mask_int[:, :, i]
-        slice_mr_mask_bool = mr_mask_bool[:, :, i]
-        slice_error_mask = slice_error[slice_mr_mask_bool]
-        slice_std_mask = slice_std[slice_mr_mask_bool]
-
         try:
+            slice_error = error[:, :, i]
+            slice_std = std[:, :, i]
+            slice_mr_mask = mr_mask_int[:, :, i]
+            slice_mr_mask_bool = mr_mask_bool[:, :, i]
+            slice_error_mask = slice_error[slice_mr_mask_bool]
+            slice_std_mask = slice_std[slice_mr_mask_bool]
+
             mean_diff = np.mean(slice_error_mask)
             mean_unc = np.mean(slice_std_mask)
         except:
@@ -92,6 +92,7 @@ for case_id in case_id_list:
         if not np.isnan(mean_diff) and not np.isnan(mean_unc):
             mean_diff_array.append(mean_diff)
             mean_unc_array.append(mean_unc)
+            print("Slice ", i, " Mean diff: ", mean_diff, " Mean unc: ", mean_unc)
 
 
     mean_diff_array = np.array(mean_diff_array)
