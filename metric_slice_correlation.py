@@ -55,18 +55,52 @@ for case_id in case_id_list:
     mr_mask_int = mr_mask_bool.astype(np.float16)
    
     n_slice = mr.shape[2]
-    case_slice_correlation = []
+    mean_diff_array = []
+    mean_unc_array = []
+
+    # plot the mean diff and uncertainty for each slice as the plot
+    # mean_diff_array = []
+    # mean_unc_array = []
+
+    # for i in range(n_slice):
+    #     masked_diff = diff_HU[:,:,i][mr_mask[:,:,i]]
+    #     masked_unc = unc_HU[:,:,i][mr_mask[:,:,i]]
+
+    #     mean_diff = np.mean(masked_diff)
+    #     mean_unc = np.mean(masked_unc)
+
+    #     if not np.isnan(mean_diff) and not np.isnan(mean_unc):
+    #         mean_diff_array.append(mean_diff)
+    #         mean_unc_array.append(mean_unc)
+    #         print("Slice ", i, " Mean diff: ", mean_diff, " Mean unc: ", mean_unc)
+
     for i in range(n_slice):
         slice_error = error[:, :, i]
         slice_std = std[:, :, i]
         slice_mr_mask = mr_mask_int[:, :, i]
-        slice_correlation = np.corrcoef(slice_error[slice_mr_mask == 1], slice_std[slice_mr_mask == 1])[0, 1]
-        case_slice_correlation.append(slice_correlation)
-    
-    slice_correlation_dict[case_id] = case_slice_correlation
-    print(f"case_id {case_id}, mean slice_correlation {np.mean(case_slice_correlation)}, std slice_correlation {np.std(case_slice_correlation)}")
+        slice_mr_mask_bool = mr_mask_bool[:, :, i]
+        slice_error_mask = slice_error[slice_mr_mask_bool]
+        slice_std_mask = slice_std[slice_mr_mask_bool]
+
+        mean_diff = np.mean(slice_error_mask)
+        mean_unc = np.mean(slice_std_mask)
+
+        if not np.isnan(mean_diff) and not np.isnan(mean_unc):
+            mean_diff_array.append(mean_diff)
+            mean_unc_array.append(mean_unc)
+
+
+    mean_diff_array = np.array(mean_diff_array)
+    mean_unc_array = np.array(mean_unc_array)
+    case_slice_correlation = np.corrcoef(mean_diff_array, mean_unc_array)
+    slice_correlation_dict[case_id] = {
+        "mean_diff_array": mean_diff_array,
+        "mean_unc_array": mean_unc_array,
+        "correlation": case_slice_correlation,
+    }
+
+    print(f"case_id {case_id}, correlation {case_slice_correlation}")
 
 results_folder = "results/slice_correlation"
 os.makedirs(results_folder, exist_ok=True)
 np.save(os.path.join(results_folder, "slice_correlation_dict.npy"), slice_correlation_dict)
-print("Slice correlation saved to", os.path.join(results_folder, "slice_correlation_dict.npy"))
