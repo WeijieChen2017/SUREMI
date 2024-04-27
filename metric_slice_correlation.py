@@ -92,7 +92,7 @@ for case_id in case_id_list:
 
     mean_diff_array = np.array(mean_diff_array)
     mean_unc_array = np.array(mean_unc_array)
-    case_slice_correlation = np.corrcoef(mean_diff_array, mean_unc_array)
+    case_slice_correlation = np.corrcoef(mean_diff_array, mean_unc_array)[0, 1]
     slice_correlation_dict[case_id] = {
         "mean_diff_array": mean_diff_array,
         "mean_unc_array": mean_unc_array,
