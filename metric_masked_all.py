@@ -9,6 +9,7 @@ from skimage.metrics import structural_similarity as ssim
 from skimage.metrics import peak_signal_noise_ratio as psnr
 from scipy.ndimage import sobel
 from sklearn.metrics import confusion_matrix
+from scipy.spatial.distance import dice as dice_coe_scipy
 
 # here we will do the following metrics:
 # 1. RMSE
@@ -83,30 +84,29 @@ def dice_coe(data_x, data_y, tissue="air"):
     if tissue == "bone":
         x_mask = filter_data(data_x, 500, 3000)
         y_mask = filter_data(data_y, 500, 3000)
-    CM = confusion_matrix(np.ravel(x_mask), np.ravel(y_mask))
-    TN, FP, FN, TP = CM.ravel()
-    dice_coef = 2*TP / (2*TP + FN + FP)
+    dice_coef = dice_coe_scipy(x_mask.flatten(), y_mask.flatten())
 
-    return dice_coef
+    return 1-dice_coef
 
 def calculate_metrics(data_x, data_y, mask, metric_list):
     # here we will calculate the metrics for the given data
 
-    mask_x = data_x[mask]
-    mask_y = data_y[mask]
-
     metrics = {}
+
+    masked_x = data_x[mask]
+    masked_y = data_y[mask]
+
     for metric in metric_list:
         if metric["function"] == "root_mean_squared_error":
-            metrics[metric["name"]] = root_mean_squared_error(mask_x, mask_y)
+            metrics[metric["name"]] = root_mean_squared_error(masked_x, masked_y)
         elif metric["function"] == "mean_absolute_error":
-            metrics[metric["name"]] = mean_absolute_error(mask_x, mask_y)
+            metrics[metric["name"]] = mean_absolute_error(masked_x, masked_y)
         elif metric["function"] == "ssim":
-            metrics[metric["name"]] = ssim(mask_x, mask_y, data_range=4000)
+            metrics[metric["name"]] = ssim(masked_x, masked_y, data_range=4000)
         elif metric["function"] == "psnr":
-            metrics[metric["name"]] = psnr(mask_x+1000, mask_y+1000, data_range=4000)
+            metrics[metric["name"]] = psnr(masked_x+1000, masked_y+1000, data_range=4000)
         elif metric["function"] == "acutance":
-            metrics[metric["name"]] = acutance(mask_y)
+            metrics[metric["name"]] = acutance(masked_y)
         elif metric["function"] == "dice_coe":
             metrics[metric["name"]] = dice_coe(data_x, data_y, metric["tissue"])
 
