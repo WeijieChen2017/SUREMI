@@ -75,15 +75,26 @@ def dice_coe(data_x, data_y, tissue="air"):
     # for soft: -500 to 500
     # for bone: 500 to 3000
 
+    # if tissue == "air":
+    #     x_mask = filter_data(data_x, -1000, -500)
+    #     y_mask = filter_data(data_y, -1000, -500)
+    # elif tissue == "soft":
+    #     x_mask = filter_data(data_x, -500, 500)
+    #     y_mask = filter_data(data_y, -500, 500)
+    # elif tissue == "bone":
+    #     x_mask = filter_data(data_x, 500, 3000)
+    #     y_mask = filter_data(data_y, 500, 3000)
+    # else:
+    #     raise ValueError("Invalid tissue type")
     if tissue == "air":
-        x_mask = filter_data(data_x, -1000, -500)
-        y_mask = filter_data(data_y, -1000, -500)
+        x_mask = filter_data(data_x, 0, 500)
+        y_mask = filter_data(data_y, 0, 500)
     if tissue == "soft":
-        x_mask = filter_data(data_x, -500, 500)
-        y_mask = filter_data(data_y, -500, 500)
+        x_mask = filter_data(data_x, 500, 1500)
+        y_mask = filter_data(data_y, 500, 1500)
     if tissue == "bone":
-        x_mask = filter_data(data_x, 500, 3000)
-        y_mask = filter_data(data_y, 500, 3000)
+        x_mask = filter_data(data_x, 1500, 4000)
+        y_mask = filter_data(data_y, 1500, 4000)
     dice_coef = dice_coe_scipy(x_mask.flatten(), y_mask.flatten())
 
     return 1-dice_coef
@@ -104,7 +115,7 @@ def calculate_metrics(data_x, data_y, mask, metric_list):
         elif metric["function"] == "ssim":
             metrics[metric["name"]] = ssim(masked_x, masked_y, data_range=4000)
         elif metric["function"] == "psnr":
-            metrics[metric["name"]] = psnr(masked_x+1000, masked_y+1000, data_range=4000)
+            metrics[metric["name"]] = psnr(masked_x, masked_y, data_range=4000)
         elif metric["function"] == "acutance":
             metrics[metric["name"]] = acutance(masked_y)
         elif metric["function"] == "dice_coe":
@@ -133,11 +144,11 @@ for prediction_folder in prediction_folder_list:
         mr_img = nib.load(mr_path).get_fdata()
         ct_img = nib.load(ct_path).get_fdata()
         pred_img = nib.load(pred_path).get_fdata()
-        ct_img = ct_img * 4000 - 1000
-        pred_img = pred_img * 4000 - 1000
+        ct_img = ct_img * 4000
+        pred_img = pred_img * 4000
         # clip the images
-        mr_img = np.clip(mr_img, -1000, 3000)
-        ct_img = np.clip(ct_img, -1000, 3000)
+        mr_img = np.clip(mr_img, 0, 4000)
+        ct_img = np.clip(ct_img, 0, 4000)
 
         # use 0.05 percentile as the mask threshold
         mr_mask_bool = mr_img > np.percentile(mr_img, 0.05)
