@@ -109,3 +109,5 @@ for case_id in case_id_list:
 results_folder = "results/slice_correlation"
 os.makedirs(results_folder, exist_ok=True)
 np.save(os.path.join(results_folder, "slice_correlation_dict.npy"), slice_correlation_dict)
+
+# this is a test to push and pull from github
