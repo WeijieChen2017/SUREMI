@@ -153,8 +153,8 @@ for prediction_folder in prediction_folder_list:
 
         metrics = calculate_metrics(mask_pred, mask_ct, metric_list)
         model_metric_dict[case_id] = metrics
-        print(f"{prediction_folder['name']} -> [{idx_case+1}/{n_cases}] Processing {case_id}")
-        print(f"RMSE: {metrics['rmse']:.4f}, MAE: {metrics['mae']:.4f}, SSIM: {metrics['ssim']:.4f}, PSNR: {metrics['psnr']:.4f}, Acutance: {metrics['acutance']:.4f} Dice Air: {metrics['dice_air']:.4f}, Dice Soft: {metrics['dice_soft']:.4f}, Dice Bone: {metrics['dice_bone']:.4f}")
+        print(f"{prediction_folder['name']} -> [{idx_case+1}/{n_cases}] Processing {case_id}", end="")
+        print(f" RMSE: {metrics['rmse']:.4f}, MAE: {metrics['mae']:.4f}, SSIM: {metrics['ssim']:.4f}, PSNR: {metrics['psnr']:.4f}, Acutance: {metrics['acutance']:.4f} Dice Air: {metrics['dice_air']:.4f}, Dice Soft: {metrics['dice_soft']:.4f}, Dice Bone: {metrics['dice_bone']:.4f}")
     
     # save the metrics
     np.save(f"{results_folder}/{prediction_folder['name']}_metrics.npy", model_metric_dict)
