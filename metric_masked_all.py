@@ -79,6 +79,9 @@ def dice_coe(data_x, data_y, tissue="air"):
         x_mask = filter_data(data_x, -1024, -500)
         y_mask = filter_data(data_y, -1024, -500)
         print("Air", x_mask.shape, y_mask.shape, np.unique(x_mask), np.unique(y_mask), np.sum(x_mask), np.sum(y_mask))
+        # save the mask for debugging
+        nib.save(nib.Nifti1Image(x_mask, np.eye(4)), "x_mask.nii.gz")
+        exit()
     elif tissue == "soft":
         x_mask = filter_data(data_x, -500, 500)
         y_mask = filter_data(data_y, -500, 500)
