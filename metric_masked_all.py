@@ -148,7 +148,7 @@ for prediction_folder in prediction_folder_list:
         mr_mask_float = mr_mask_bool.astype(float)
 
         # apply the mask
-        mask_ct = mr_img[mr_mask_bool]
+        mask_ct = ct_img[mr_mask_bool]
         mask_pred = pred_img[mr_mask_bool]
 
         metrics = calculate_metrics(mask_pred, mask_ct, metric_list)
