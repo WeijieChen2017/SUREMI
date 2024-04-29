@@ -41,7 +41,7 @@ prediction_folder_list = [
 
 # here we will do the following metrics:
 metric_list = [
-    {"name": "rmse", "function": "mean_squared_error"},
+    {"name": "rmse", "function": "root_mean_squared_error"},
     {"name": "mae", "function": "mean_absolute_error"},
     {"name": "ssim", "function": "ssim"},
     {"name": "psnr", "function": "psnr"},
@@ -51,8 +51,8 @@ metric_list = [
     {"name": "dice_bone", "function": "dice_coe", "tissue": "bone"},
 ]
 
-def mean_squared_error(data_x, data_y):
-    return np.mean((data_x - data_y)**2)
+def root_mean_squared_error(data_x, data_y):
+    return np.sqrt(np.mean(np.square(data_x - data_y)))
 
 def mean_absolute_error(data_x, data_y):
     return np.mean(np.abs(data_x - data_y))
@@ -101,8 +101,8 @@ def calculate_metrics(data_x, data_y, metric_list):
     metrics = {}
 
     for metric in metric_list:
-        if metric["function"] == "mean_squared_error":
-            metrics[metric["name"]] = mean_squared_error(data_x, data_y)
+        if metric["function"] == "root_mean_squared_error":
+            metrics[metric["name"]] = root_mean_squared_error(data_x, data_y)
         elif metric["function"] == "mean_absolute_error":
             metrics[metric["name"]] = mean_absolute_error(data_x, data_y)
         elif metric["function"] == "ssim":
@@ -130,7 +130,6 @@ for prediction_folder in prediction_folder_list:
 
     model_metric_dict = {}
     for idx_case, case_id in enumerate(case_id_list):
-        print(f"{prediction_folder['name']} -> [{idx_case+1}/{n_cases}] Processing {case_id}")
         mr_path = "./project_dir/Unet_Monai_Iman_v2/pred_monai/"+case_id+"_xte.nii.gz"
         ct_path = "./project_dir/Unet_Monai_Iman_v2/pred_monai/"+case_id+"_yte.nii.gz"
         pred_path = f"./project_dir/{prediction_folder['folder']}/{case_id}{prediction_folder['filename_affix']}.nii.gz"
@@ -154,6 +153,8 @@ for prediction_folder in prediction_folder_list:
 
         metrics = calculate_metrics(mask_pred, mask_ct, metric_list)
         model_metric_dict[case_id] = metrics
+        print(f"{prediction_folder['name']} -> [{idx_case+1}/{n_cases}] Processing {case_id}")
+        print(f"RMSE: {metrics['rmse']:.4f}, MAE: {metrics['mae']:.4f}, SSIM: {metrics['ssim']:.4f}, PSNR: {metrics['psnr']:.4f}, Acutance: {metrics['acutance']:.4f} Dice Air: {metrics['dice_air']:.4f}, Dice Soft: {metrics['dice_soft']:.4f}, Dice Bone: {metrics['dice_bone']:.4f}")
     
     # save the metrics
     np.save(f"{results_folder}/{prediction_folder['name']}_metrics.npy", model_metric_dict)
