@@ -89,23 +89,26 @@ def dice_coe(data_x, data_y, tissue="air"):
 
     return dice_coef
 
-def calculate_metrics(data_x, data_y, unmasked_x, unmasked_y, metric_list):
+def calculate_metrics(data_x, data_y, mask, metric_list):
     # here we will calculate the metrics for the given data
-    metrics = {}
 
+    mask_x = data_x[mask]
+    mask_y = data_y[mask]
+
+    metrics = {}
     for metric in metric_list:
         if metric["function"] == "root_mean_squared_error":
-            metrics[metric["name"]] = root_mean_squared_error(data_x, data_y)
+            metrics[metric["name"]] = root_mean_squared_error(mask_x, mask_y)
         elif metric["function"] == "mean_absolute_error":
-            metrics[metric["name"]] = mean_absolute_error(data_x, data_y)
+            metrics[metric["name"]] = mean_absolute_error(mask_x, mask_y)
         elif metric["function"] == "ssim":
-            metrics[metric["name"]] = ssim(data_x, data_y, data_range=4000)
+            metrics[metric["name"]] = ssim(mask_x, mask_y, data_range=4000)
         elif metric["function"] == "psnr":
-            metrics[metric["name"]] = psnr(data_x+1000, data_y+1000, data_range=4000)
+            metrics[metric["name"]] = psnr(mask_x+1000, mask_y+1000, data_range=4000)
         elif metric["function"] == "acutance":
-            metrics[metric["name"]] = acutance(data_y)
+            metrics[metric["name"]] = acutance(mask_y)
         elif metric["function"] == "dice_coe":
-            metrics[metric["name"]] = dice_coe(unmasked_x, unmasked_y)[metric["tissue"]]
+            metrics[metric["name"]] = dice_coe(data_x, data_y)[metric["tissue"]]
 
     return metrics
 
@@ -138,13 +141,12 @@ for prediction_folder in prediction_folder_list:
 
         # use 0.05 percentile as the mask threshold
         mr_mask_bool = mr_img > np.percentile(mr_img, 0.05)
-        mr_mask_float = mr_mask_bool.astype(float)
 
-        # apply the mask
-        mask_ct = ct_img[mr_mask_bool]
-        mask_pred = pred_img[mr_mask_bool]
+        # # apply the mask
+        # mask_ct = ct_img[mr_mask_bool]
+        # mask_pred = pred_img[mr_mask_bool]
 
-        metrics = calculate_metrics(mask_pred, mask_ct, ct_img, pred_img, metric_list)
+        metrics = calculate_metrics(ct_img, pred_img, mr_mask_bool, metric_list)
         model_metric_dict[case_id] = metrics
         print(f"{prediction_folder['name']} -> [{idx_case+1}/{n_cases}] Processing {case_id}", end="")
         print(f" RMSE: {metrics['rmse']:.4f}, MAE: {metrics['mae']:.4f}, SSIM: {metrics['ssim']:.4f}, PSNR: {metrics['psnr']:.4f}, Acutance: {metrics['acutance']:.4f} Dice Air: {metrics['dice_air']:.4f}, Dice Soft: {metrics['dice_soft']:.4f}, Dice Bone: {metrics['dice_bone']:.4f}")
