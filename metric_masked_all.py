@@ -68,35 +68,28 @@ def filter_data(data, range_min, range_max):
     mask = mask_1 * mask_2
     return mask
 
-def dice_coe(data_x, data_y):
+def dice_coe(data_x, data_y, tissue="air"):
     # here we will calculate the dice coefficient for the given tissue
     # for air: -1000 to -500
     # for soft: -500 to 500
     # for bone: 500 to 3000
 
-    dice_coef = {
-        "air": 0,
-        "soft": 0,
-        "bone": 0,
-    }
-
-    for tissue in dice_coef.keys():
-        if tissue == "air":
-            x_mask = filter_data(data_x, -1000, -500)
-            y_mask = filter_data(data_y, -1000, -500)
-        if tissue == "soft":
-            x_mask = filter_data(data_x, -500, 500)
-            y_mask = filter_data(data_y, -500, 500)
-        if tissue == "bone":
-            x_mask = filter_data(data_x, 500, 3000)
-            y_mask = filter_data(data_y, 500, 3000)
-        CM = confusion_matrix(np.ravel(x_mask), np.ravel(y_mask))
-        TN, FP, FN, TP = CM.ravel()
-        dice_coef[tissue] = 2*TP / (2*TP + FN + FP)
+    if tissue == "air":
+        x_mask = filter_data(data_x, -1000, -500)
+        y_mask = filter_data(data_y, -1000, -500)
+    if tissue == "soft":
+        x_mask = filter_data(data_x, -500, 500)
+        y_mask = filter_data(data_y, -500, 500)
+    if tissue == "bone":
+        x_mask = filter_data(data_x, 500, 3000)
+        y_mask = filter_data(data_y, 500, 3000)
+    CM = confusion_matrix(np.ravel(x_mask), np.ravel(y_mask))
+    TN, FP, FN, TP = CM.ravel()
+    dice_coef = 2*TP / (2*TP + FN + FP)
 
     return dice_coef
 
-def calculate_metrics(data_x, data_y, metric_list):
+def calculate_metrics(data_x, data_y, unmasked_x, unmasked_y, metric_list):
     # here we will calculate the metrics for the given data
     metrics = {}
 
@@ -112,7 +105,7 @@ def calculate_metrics(data_x, data_y, metric_list):
         elif metric["function"] == "acutance":
             metrics[metric["name"]] = acutance(data_y)
         elif metric["function"] == "dice_coe":
-            metrics[metric["name"]] = dice_coe(data_x, data_y)[metric["tissue"]]
+            metrics[metric["name"]] = dice_coe(unmasked_x, unmasked_y)[metric["tissue"]]
 
     return metrics
 
@@ -151,7 +144,7 @@ for prediction_folder in prediction_folder_list:
         mask_ct = ct_img[mr_mask_bool]
         mask_pred = pred_img[mr_mask_bool]
 
-        metrics = calculate_metrics(mask_pred, mask_ct, metric_list)
+        metrics = calculate_metrics(mask_pred, mask_ct, ct_img, pred_img, metric_list)
         model_metric_dict[case_id] = metrics
         print(f"{prediction_folder['name']} -> [{idx_case+1}/{n_cases}] Processing {case_id}", end="")
         print(f" RMSE: {metrics['rmse']:.4f}, MAE: {metrics['mae']:.4f}, SSIM: {metrics['ssim']:.4f}, PSNR: {metrics['psnr']:.4f}, Acutance: {metrics['acutance']:.4f} Dice Air: {metrics['dice_air']:.4f}, Dice Soft: {metrics['dice_soft']:.4f}, Dice Bone: {metrics['dice_bone']:.4f}")
