@@ -57,12 +57,6 @@ def mean_squared_error(data_x, data_y):
 def mean_absolute_error(data_x, data_y):
     return np.mean(np.abs(data_x - data_y))
 
-def ssim(data_x, data_y):
-    return ssim(data_x, data_y, data_range=4000)
-
-def psnr(data_x, data_y):
-    return psnr(data_x, data_y, data_range=4000)
-
 def acutance(data_y):
     return np.mean(np.abs(sobel(data_y)))
 
@@ -112,9 +106,9 @@ def calculate_metrics(data_x, data_y, metric_list):
         elif metric["function"] == "mean_absolute_error":
             metrics[metric["name"]] = mean_absolute_error(data_x, data_y)
         elif metric["function"] == "ssim":
-            metrics[metric["name"]] = ssim(data_x, data_y)
+            metrics[metric["name"]] = ssim(data_x, data_y, data_range=4000)
         elif metric["function"] == "psnr":
-            metrics[metric["name"]] = psnr(data_x, data_y)
+            metrics[metric["name"]] = psnr(data_x+1000, data_y+1000, data_range=4000)
         elif metric["function"] == "acutance":
             metrics[metric["name"]] = acutance(data_y)
         elif metric["function"] == "dice_coe":
