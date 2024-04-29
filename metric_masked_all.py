@@ -78,12 +78,15 @@ def dice_coe(data_x, data_y, tissue="air"):
     if tissue == "air":
         x_mask = filter_data(data_x, -1024, -500)
         y_mask = filter_data(data_y, -1024, -500)
+        print("Air", x_mask.shape, y_mask.shape)
     elif tissue == "soft":
         x_mask = filter_data(data_x, -500, 500)
         y_mask = filter_data(data_y, -500, 500)
+        print("Soft", x_mask.shape, y_mask.shape)
     elif tissue == "bone":
         x_mask = filter_data(data_x, 500, 3000)
         y_mask = filter_data(data_y, 500, 3000)
+        print("Bone", x_mask.shape, y_mask.shape)
     else:
         raise ValueError("Invalid tissue type")
     # if tissue == "air":
