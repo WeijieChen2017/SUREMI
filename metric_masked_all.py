@@ -47,9 +47,7 @@ metric_list = [
     {"name": "ssim", "function": "ssim"},
     {"name": "psnr", "function": "psnr"},
     {"name": "acutance", "function": "acutance"},
-    {"name": "dice_air", "function": "dice_coe", "tissue": "air"},
-    {"name": "dice_soft", "function": "dice_coe", "tissue": "soft"},
-    {"name": "dice_bone", "function": "dice_coe", "tissue": "bone"},
+    {"name": "dice_air", "function": "dice_coe", "tissue": ["air", "soft", "bone"]},
 ]
 
 def root_mean_squared_error(data_x, data_y):
@@ -117,7 +115,9 @@ def calculate_metrics(data_x, data_y, mask, metric_list):
         elif metric["function"] == "acutance":
             metrics[metric["name"]] = acutance(masked_y)
         elif metric["function"] == "dice_coe":
-            metrics[metric["name"]] = dice_coe(data_x, data_y)[metric["tissue"]]
+            dice_coef_dict = dice_coe(masked_x, masked_y)
+            for tissue in metric["tissue"]:
+                metrics[metric["name"]] = dice_coef_dict[tissue]
 
     return metrics
 
@@ -149,6 +149,12 @@ for prediction_folder in prediction_folder_list:
         # ct_img = np.clip(ct_img, 0, 4000)
         ct_img = np.clip(ct_img, -1024, 3000)
         pred_img = np.clip(pred_img, -1024, 3000)
+
+        # save the pred_img
+        header = nib.load(pred_path).header
+        affine = nib.load(pred_path).affine
+        pred_img_nii = nib.Nifti1Image(pred_img, affine, header)
+        nib.save(pred_img_nii, f"./results/synthesis_metrics/{case_id}_{prediction_folder['name']}.nii.gz")
 
         # use 0.05 percentile as the mask threshold
         mr_mask_bool = mr_img > np.percentile(mr_img, 0.05)
