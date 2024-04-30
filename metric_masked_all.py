@@ -82,7 +82,7 @@ def dice_coe(data_x, data_y):
     x_mask_soft = ((data_x > -500) & (data_x < 500)).astype(int)
     y_mask_soft = ((data_y > -500) & (data_y < 500)).astype(int)
 
-    print(f"Air: {np.sum(x_mask_air)} {np.sum(y_mask_air)} Bone: {np.sum(x_mask_bone)} {np.sum(y_mask_bone)} Soft: {np.sum(x_mask_soft)} {np.sum(y_mask_soft)}")
+    # print(f"Air: {np.sum(x_mask_air)} {np.sum(y_mask_air)} Bone: {np.sum(x_mask_bone)} {np.sum(y_mask_bone)} Soft: {np.sum(x_mask_soft)} {np.sum(y_mask_soft)}")
     
     dice_coef_dict["air"] = 1-dice_coe_scipy(np.ravel(x_mask_air), np.ravel(y_mask_air))
     dice_coef_dict["soft"] = 1-dice_coe_scipy(np.ravel(x_mask_soft), np.ravel(y_mask_soft))
