@@ -75,23 +75,18 @@ def dice_coe(data_x, data_y):
 
     dice_coef_dict = {}
 
-    # for air:
-    x_mask = filter_data(data_x, -1024, -500)
-    y_mask = filter_data(data_y, -1024, -500)
-    print("Air", x_mask.shape, y_mask.shape, np.unique(x_mask), np.unique(y_mask), np.sum(x_mask), np.sum(y_mask))
-    dice_coef_dict["air"] = 1 - dice_coe_scipy(x_mask.flatten(), y_mask.flatten())
+    x_mask_air = (data_x < -500).astype(int)
+    y_mask_air = (data_y < -500).astype(int)
+    x_mask_bone = (data_x > 500).astype(int)
+    y_mask_bone = (data_y > 500).astype(int)
+    x_mask_soft = ((data_x > -500) & (data_x < 500)).astype(int)
+    y_mask_soft = ((data_y > -500) & (data_y < 500)).astype(int)
 
-    # for soft
-    x_mask = filter_data(data_x, -500, 500)
-    y_mask = filter_data(data_y, -500, 500)
-    print("Soft", x_mask.shape, y_mask.shape, np.unique(x_mask), np.unique(y_mask), np.sum(x_mask), np.sum(y_mask))
-    dice_coef_dict["soft"] = 1 - dice_coe_scipy(x_mask.flatten(), y_mask.flatten())
-
-    # for bone
-    x_mask = filter_data(data_x, 500, 3000)
-    y_mask = filter_data(data_y, 500, 3000)
-    print("Bone", x_mask.shape, y_mask.shape, np.unique(x_mask), np.unique(y_mask), np.sum(x_mask), np.sum(y_mask))
-    dice_coef_dict["bone"] = 1 - dice_coe_scipy(x_mask.flatten(), y_mask.flatten())
+    print(f"Air: {np.sum(x_mask_air)} {np.sum(y_mask_air)} Bone: {np.sum(x_mask_bone)} {np.sum(y_mask_bone)} Soft: {np.sum(x_mask_soft)} {np.sum(y_mask_soft)}")
+    
+    dice_coef_dict["air"] = 1-dice_coe_scipy(np.ravel(x_mask_air), np.ravel(y_mask_air))
+    dice_coef_dict["soft"] = 1-dice_coe_scipy(np.ravel(x_mask_soft), np.ravel(y_mask_soft))
+    dice_coef_dict["bone"] = 1-dice_coe_scipy(np.ravel(x_mask_bone), np.ravel(y_mask_bone))
     
     return dice_coef_dict
 
@@ -117,7 +112,7 @@ def calculate_metrics(data_x, data_y, mask, metric_list):
         elif metric["function"] == "dice_coe":
             dice_coef_dict = dice_coe(masked_x, masked_y)
             for tissue in metric["tissue"]:
-                metrics[metric["name"]] = dice_coef_dict[tissue]
+                metrics[f"{metric['name']}_{tissue}"] = dice_coef_dict[tissue]
 
     return metrics
 
