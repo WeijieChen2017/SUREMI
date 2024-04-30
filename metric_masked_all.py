@@ -145,12 +145,6 @@ for prediction_folder in prediction_folder_list:
         ct_img = np.clip(ct_img, -1024, 3000)
         pred_img = np.clip(pred_img, -1024, 3000)
 
-        # save the pred_img
-        header = nib.load(pred_path).header
-        affine = nib.load(pred_path).affine
-        pred_img_nii = nib.Nifti1Image(pred_img, affine, header)
-        nib.save(pred_img_nii, f"./results/synthesis_metrics/{case_id}_{prediction_folder['name']}.nii.gz")
-
         # use 0.05 percentile as the mask threshold
         mr_mask_bool = mr_img > np.percentile(mr_img, 0.05)
 
