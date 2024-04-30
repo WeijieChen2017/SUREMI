@@ -110,9 +110,9 @@ def calculate_metrics(data_x, data_y, mask, metric_list):
         elif metric["function"] == "acutance":
             metrics[metric["name"]] = acutance(masked_y)
         elif metric["function"] == "dice_coe":
-            dice_coef_dict = dice_coe(masked_x, masked_y)
+            dice_coef_dict = dice_coe(data_x, data_y)
             for tissue in metric["tissue"]:
-                metrics[f"{metric['name']}_{tissue}"] = dice_coef_dict[tissue]
+                metrics[f"dice_{tissue}"] = dice_coef_dict[tissue]
 
     return metrics
 
