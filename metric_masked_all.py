@@ -69,41 +69,33 @@ def filter_data(data, range_min, range_max):
     mask = mask_1 * mask_2
     return mask
 
-def dice_coe(data_x, data_y, tissue="air"):
+def dice_coe(data_x, data_y):
     # here we will calculate the dice coefficient for the given tissue
     # for air: -1000 to -500
     # for soft: -500 to 500
     # for bone: 500 to 3000
 
-    if tissue == "air":
-        x_mask = filter_data(data_x, -1024, -500)
-        y_mask = filter_data(data_y, -1024, -500)
-        print("Air", x_mask.shape, y_mask.shape, np.unique(x_mask), np.unique(y_mask), np.sum(x_mask), np.sum(y_mask))
-        # save the mask for debugging
-        nib.save(nib.Nifti1Image(x_mask, np.eye(4)), "x_mask.nii.gz")
-        exit()
-    elif tissue == "soft":
-        x_mask = filter_data(data_x, -500, 500)
-        y_mask = filter_data(data_y, -500, 500)
-        print("Soft", x_mask.shape, y_mask.shape, np.unique(x_mask), np.unique(y_mask), np.sum(x_mask), np.sum(y_mask))
-    elif tissue == "bone":
-        x_mask = filter_data(data_x, 500, 3000)
-        y_mask = filter_data(data_y, 500, 3000)
-        print("Bone", x_mask.shape, y_mask.shape, np.unique(x_mask), np.unique(y_mask), np.sum(x_mask), np.sum(y_mask))
-    else:
-        raise ValueError("Invalid tissue type")
-    # if tissue == "air":
-    #     x_mask = filter_data(data_x, 0, 500)
-    #     y_mask = filter_data(data_y, 0, 500)
-    # if tissue == "soft":
-    #     x_mask = filter_data(data_x, 500, 1500)
-    #     y_mask = filter_data(data_y, 500, 1500)
-    # if tissue == "bone":
-    #     x_mask = filter_data(data_x, 1500, 4000)
-    #     y_mask = filter_data(data_y, 1500, 4000)
-    dice_coef = dice_coe_scipy(x_mask.flatten(), y_mask.flatten())
+    dice_coef_dict = {}
 
-    return 1-dice_coef
+    # for air:
+    x_mask = filter_data(data_x, -1024, -500)
+    y_mask = filter_data(data_y, -1024, -500)
+    print("Air", x_mask.shape, y_mask.shape, np.unique(x_mask), np.unique(y_mask), np.sum(x_mask), np.sum(y_mask))
+    dice_coef_dict["air"] = 1 - dice_coe_scipy(x_mask.flatten(), y_mask.flatten())
+
+    # for soft
+    x_mask = filter_data(data_x, -500, 500)
+    y_mask = filter_data(data_y, -500, 500)
+    print("Soft", x_mask.shape, y_mask.shape, np.unique(x_mask), np.unique(y_mask), np.sum(x_mask), np.sum(y_mask))
+    dice_coef_dict["soft"] = 1 - dice_coe_scipy(x_mask.flatten(), y_mask.flatten())
+
+    # for bone
+    x_mask = filter_data(data_x, 500, 3000)
+    y_mask = filter_data(data_y, 500, 3000)
+    print("Bone", x_mask.shape, y_mask.shape, np.unique(x_mask), np.unique(y_mask), np.sum(x_mask), np.sum(y_mask))
+    dice_coef_dict["bone"] = 1 - dice_coe_scipy(x_mask.flatten(), y_mask.flatten())
+    
+    return dice_coef_dict
 
 def calculate_metrics(data_x, data_y, mask, metric_list):
     # here we will calculate the metrics for the given data
@@ -125,7 +117,7 @@ def calculate_metrics(data_x, data_y, mask, metric_list):
         elif metric["function"] == "acutance":
             metrics[metric["name"]] = acutance(masked_y)
         elif metric["function"] == "dice_coe":
-            metrics[metric["name"]] = dice_coe(data_x, data_y, metric["tissue"])
+            metrics[metric["name"]] = dice_coe(data_x, data_y)[metric["tissue"]]
 
     return metrics
 
