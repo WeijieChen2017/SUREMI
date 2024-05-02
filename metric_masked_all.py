@@ -11,7 +11,7 @@ from scipy.ndimage import sobel
 from sklearn.metrics import confusion_matrix
 from scipy.spatial.distance import dice as dice_coe_scipy
 
-from .utils import fill_binary_holes
+from utils import fill_binary_holes
 
 # here we will do the following metrics:
 # 1. RMSE
