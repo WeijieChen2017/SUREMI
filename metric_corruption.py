@@ -110,12 +110,17 @@ L1_dict = {}
 # L4 dict is the fourth level dictionary for each level
 # L4_dict_level = {}
 
+filled_hole_mask_folder = "results/masked/filled_hole_mask"
+
 for case_id in case_id_list:
 
     print("Processing", case_id)
     mr_path = case_dict_list[case_id]["mr"]
     mr_data = nib.load(mr_path).get_fdata()
-    mr_mask_bool = mr_data > np.percentile(mr_data, 0.05)
+    # mr_mask_bool = mr_data > np.percentile(mr_data, 0.05)
+    mask_path = f"{filled_hole_mask_folder}/{case_id}_mask_filled.nii.gz"
+    mr_mask_bool = nib.load(mask_path).get_fdata().astype(bool)
+
 
     ct_path = case_dict_list[case_id]["ct"]
     ct_data = nib.load(ct_path).get_fdata()
@@ -159,5 +164,5 @@ for case_id in case_id_list:
 
 result_folder = "results/metric_corruption/"
 os.makedirs(result_folder, exist_ok=True)
-np.save(os.path.join(result_folder, "corruption_metric.npy"), L1_dict)
-print("Saved corruption_metric.npy")
+np.save(os.path.join(result_folder, "corruption_metric_filled_holes.npy"), L1_dict)
+print("Saved corruption_metric_filled_holes.npy")
