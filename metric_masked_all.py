@@ -165,6 +165,8 @@ case_id_list = [os.path.basename(x).split("_")[0] for x in mr_list]
 results_folder = "./results/synthesis_metrics"
 os.makedirs(results_folder, exist_ok=True)
 n_cases = len(case_id_list)
+filled_mask_folder = results_folder + "/filled_mask"
+os.makedirs(filled_mask_folder, exist_ok=True)
 
 for prediction_folder in prediction_folder_list:
     print(f"Processing {prediction_folder['name']}")
@@ -187,7 +189,7 @@ for prediction_folder in prediction_folder_list:
         pred_img = np.clip(pred_img, -1024, 3000)
 
         # check whether the mask file exists
-        mask_filename = f"{results_folder}/{case_id}_mask_filled.nii.gz"
+        mask_filename = f"{filled_mask_folder}/{case_id}_mask_filled.nii.gz"
         if os.path.exists(mask_filename):
             mr_mask = nib.load(mask_filename).get_fdata()
         else:
@@ -197,7 +199,7 @@ for prediction_folder in prediction_folder_list:
             
             # save this mr_mask using mr header and affine to results folder, naming it as case_id_mask_filled.nii.gz
             mr_nii = nib.Nifti1Image(mr_mask, nib.load(mr_path).affine, nib.load(mr_path).header)
-            nib.save(mr_nii, f"{results_folder}/{case_id}_mask_filled.nii.gz")
+            nib.save(mr_nii, f"{filled_mask_folder}/{case_id}_mask_filled.nii.gz")
 
         mr_mask_bool = mr_mask.astype(bool)
 
