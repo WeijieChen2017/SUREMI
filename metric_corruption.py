@@ -110,7 +110,7 @@ L1_dict = {}
 # L4 dict is the fourth level dictionary for each level
 # L4_dict_level = {}
 
-filled_hole_mask_folder = "results/masked/filled_hole_mask"
+filled_hole_mask_folder = "./results/synthesis_metrics/filled_mask"
 
 for case_id in case_id_list:
 
