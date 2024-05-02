@@ -192,7 +192,7 @@ for prediction_folder in prediction_folder_list:
             mr_mask = nib.load(mask_filename).get_fdata()
         else:
             # use 0.05 percentile as the mask threshold
-            mr_mask = mr_img > np.percentile(mr_img, 0.05).astype(np.float32)
+            mr_mask = mr_img > np.percentile(mr_img, 0.05)
             mr_mask = fill_binary_holes(mr_mask)
             
             # save this mr_mask using mr header and affine to results folder, naming it as case_id_mask_filled.nii.gz
