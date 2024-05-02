@@ -15,21 +15,31 @@ from scipy.ndimage import binary_fill_holes
 
 def fill_binary_holes(mask_data):
     ax, ay, az = mask_data.shape
+    print("Before filling holes", np.mean(mask_data))
     # iterate over slices from the three dims
+    print(f"The frist dim")
     for i in range(ax):
         slice = mask_data[i, :, :]
+        print(i, np.mean(slice), end="")
         slice = binary_fill_holes(slice).astype(int)
         mask_data[i, :, :] = slice
+        print(np.mean(slice))
 
+    print(f"The second dim")
     for i in range(ay):
         slice = mask_data[:, i, :]
+        print(i, np.mean(slice), end="")
         slice = binary_fill_holes(slice).astype(int)
         mask_data[:, i, :] = slice
+        print(np.mean(slice))
 
+    print(f"The third dim")
     for i in range(az):
         slice = mask_data[:, :, i]
+        print(i, np.mean(slice), end="")
         slice = binary_fill_holes(slice).astype(int)
         mask_data[:, :, i] = slice
+        print(np.mean(slice))
     
     for idz in range(az):
         # we find the idx of first non-zero value, use the idx+1 mask slice to replace the current mask slice
@@ -38,7 +48,6 @@ def fill_binary_holes(mask_data):
             # only do it once and break
             break
     
-
     return mask_data
 
 # from utils import fill_binary_holes
