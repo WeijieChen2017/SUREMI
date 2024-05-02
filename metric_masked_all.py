@@ -25,7 +25,7 @@ def fill_binary_holes(mask_data):
         mask_data[i, :, :] = slice
         # print(np.mean(slice))
 
-    print(f"The second dim")
+    # print(f"The second dim")
     for i in range(ay):
         slice = mask_data[:, i, :]
         # print(i, np.mean(slice), end="")
@@ -33,7 +33,7 @@ def fill_binary_holes(mask_data):
         mask_data[:, i, :] = slice
         # print(np.mean(slice))
 
-    print(f"The third dim")
+    # print(f"The third dim")
     for i in range(az):
         slice = mask_data[:, :, i]
         # print(i, np.mean(slice), end="")
