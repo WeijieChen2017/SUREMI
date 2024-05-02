@@ -162,6 +162,6 @@ for prediction_folder in prediction_folder_list:
         print(f" RMSE: {metrics['rmse']:.4f}, MAE: {metrics['mae']:.4f}, SSIM: {metrics['ssim']:.4f}, PSNR: {metrics['psnr']:.4f}, Acutance: {metrics['acutance']:.4f} Dice Air: {metrics['dice_air']:.4f}, Dice Soft: {metrics['dice_soft']:.4f}, Dice Bone: {metrics['dice_bone']:.4f}")
     
     # save the metrics
-    np.save(f"{results_folder}/{prediction_folder['name']}_metrics.npy", model_metric_dict)
-    print(f"Metrics saved to {results_folder}/{prediction_folder['name']}_metrics.npy")
+    np.save(f"{results_folder}/{prediction_folder['name']}_metrics_filled_holes.npy", model_metric_dict)
+    print(f"Metrics saved to {results_folder}/{prediction_folder['name']}_metrics_filled_holes.npy")
         
