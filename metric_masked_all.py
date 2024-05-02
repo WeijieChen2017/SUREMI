@@ -11,6 +11,8 @@ from scipy.ndimage import sobel
 from sklearn.metrics import confusion_matrix
 from scipy.spatial.distance import dice as dice_coe_scipy
 
+from .utils import fill_binary_holes
+
 # here we will do the following metrics:
 # 1. RMSE
 # 2. MAE
@@ -19,24 +21,24 @@ from scipy.spatial.distance import dice as dice_coe_scipy
 # 5. Acutance
 
 prediction_folder_list = [
-    # {"name": "E1B4D4_full", "folder": "syn_DLE_1114444_e400_lrn4/full_val_xte", "filename_affix": "_xte"},
-    # {"name": "E1B4D4_part", "folder": "syn_DLE_1114444_e400_lrn4/part_val", "filename_affix": "_xte"},
-    # {"name": "E2B2D2_full", "folder": "syn_DLE_2222222_e400_lrn4/full_val_xte", "filename_affix": "_xte"},
-    # {"name": "E2B2D2_part", "folder": "syn_DLE_2222222_e400_lrn4/part_val", "filename_affix": "_xte"},
-    # {"name": "E4B4D1_full", "folder": "syn_DLE_4444111_e400_lrn4/full_val_xte", "filename_affix": "_xte"},
-    # {"name": "E4B4D1_part", "folder": "syn_DLE_4444111_e400_lrn4/part_val", "filename_affix": "_xte"},
-    # {"name": "E4B4D4_full", "folder": "syn_DLE_4444444_e400_lrn4/full_val_xte", "filename_affix": "_xte"},
-    # {"name": "E4B4D4_part", "folder": "syn_DLE_4444444_e400_lrn4/part_val", "filename_affix": "_xte"},
-    # {"name": "EarlyStop", "folder": "Theseus_v2_47_57_rdp100/pred_monai", "filename_affix": "_xte"},
-    # {"name": "FullPretrain", "folder": "Theseus_v2_181_200_rdp1/pred_monai", "filename_affix": "_xte"},
-    # {"name": "SingleUNet", "folder": "Unet_Monai_Iman_v2/pred_monai", "filename_affix": "_zte"},
-    # {"name": "VoxelDropout25", "folder": "RDO_v1_R00100_D25/pred_monai", "filename_affix": "_xte"},
-    # {"name": "ChannelDropout25", "folder": "RDO_v2_dim3_R100_D25/pred_monai", "filename_affix": "_xte"},
-    # {"name": "weightedChannelDropout50", "folder": "Theseus_v3_channelDOw_rdp050/pred_monai", "filename_affix": "_xte"},
-    # {"name": "weightedChannelDropout100", "folder": "Theseus_v3_channelDOw_rdp100/pred_monai", "filename_affix": "_xte"},
-    # {"name": "Shuffle50", "folder": "Theseus_v4_shuffle_rdp050/pred_monai", "filename_affix": "_xte"},
-    # {"name": "Shuffle100", "folder": "Theseus_v4_shuffle_rdp100/pred_monai", "filename_affix": "_xte"},
-    # {"name": "UNETRv3", "folder": "UnetR_Iman_v3_mse/pred_monai", "filename_affix": ""},
+    {"name": "E1B4D4_full", "folder": "syn_DLE_1114444_e400_lrn4/full_val_xte", "filename_affix": "_xte"},
+    {"name": "E1B4D4_part", "folder": "syn_DLE_1114444_e400_lrn4/part_val", "filename_affix": "_xte"},
+    {"name": "E2B2D2_full", "folder": "syn_DLE_2222222_e400_lrn4/full_val_xte", "filename_affix": "_xte"},
+    {"name": "E2B2D2_part", "folder": "syn_DLE_2222222_e400_lrn4/part_val", "filename_affix": "_xte"},
+    {"name": "E4B4D1_full", "folder": "syn_DLE_4444111_e400_lrn4/full_val_xte", "filename_affix": "_xte"},
+    {"name": "E4B4D1_part", "folder": "syn_DLE_4444111_e400_lrn4/part_val", "filename_affix": "_xte"},
+    {"name": "E4B4D4_full", "folder": "syn_DLE_4444444_e400_lrn4/full_val_xte", "filename_affix": "_xte"},
+    {"name": "E4B4D4_part", "folder": "syn_DLE_4444444_e400_lrn4/part_val", "filename_affix": "_xte"},
+    {"name": "EarlyStop", "folder": "Theseus_v2_47_57_rdp100/pred_monai", "filename_affix": "_xte"},
+    {"name": "FullPretrain", "folder": "Theseus_v2_181_200_rdp1/pred_monai", "filename_affix": "_xte"},
+    {"name": "SingleUNet", "folder": "Unet_Monai_Iman_v2/pred_monai", "filename_affix": "_zte"},
+    {"name": "VoxelDropout25", "folder": "RDO_v1_R00100_D25/pred_monai", "filename_affix": "_xte"},
+    {"name": "ChannelDropout25", "folder": "RDO_v2_dim3_R100_D25/pred_monai", "filename_affix": "_xte"},
+    {"name": "weightedChannelDropout50", "folder": "Theseus_v3_channelDOw_rdp050/pred_monai", "filename_affix": "_xte"},
+    {"name": "weightedChannelDropout100", "folder": "Theseus_v3_channelDOw_rdp100/pred_monai", "filename_affix": "_xte"},
+    {"name": "Shuffle50", "folder": "Theseus_v4_shuffle_rdp050/pred_monai", "filename_affix": "_xte"},
+    {"name": "Shuffle100", "folder": "Theseus_v4_shuffle_rdp100/pred_monai", "filename_affix": "_xte"},
+    {"name": "UNETRv3", "folder": "UnetR_Iman_v3_mse/pred_monai", "filename_affix": ""},
     {"name": "UNETRv4", "folder": "UnetR_Iman_v4_mae/pred_monai", "filename_affix": ""},
 ]
 
@@ -146,7 +148,9 @@ for prediction_folder in prediction_folder_list:
         pred_img = np.clip(pred_img, -1024, 3000)
 
         # use 0.05 percentile as the mask threshold
-        mr_mask_bool = mr_img > np.percentile(mr_img, 0.05)
+        mr_mask = mr_img > np.percentile(mr_img, 0.05).astype(np.float32)
+        mr_mask = fill_binary_holes(mr_mask)
+        mr_mask_bool = mr_mask.astype(bool)
 
         # # apply the mask
         # mask_ct = ct_img[mr_mask_bool]
