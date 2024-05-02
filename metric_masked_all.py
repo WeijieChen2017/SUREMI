@@ -11,7 +11,7 @@ from scipy.ndimage import sobel
 from sklearn.metrics import confusion_matrix
 from scipy.spatial.distance import dice as dice_coe_scipy
 
-from skimage.morphology import binary_fill_holes
+from scipy.ndimage import binary_fill_holes
 
 def fill_binary_holes(mask_data):
     ax, ay, az = mask_data.shape
